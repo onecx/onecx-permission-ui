@@ -1,0 +1,27 @@
+:host ::ng-deep {
+  .card-badge-right {
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    &.badge-1 {
+      top: 5px;
+    }
+    &.badge-2 {
+      top: 5px;
+    }
+  }
+  .p-selectbutton .p-button {
+    min-width: unset !important;
+  }
+  .pseudo-button-link {
+    border-radius: 50%;
+    &:hover {
+      background: var(--button-hover-bg) !important;
+      cursor: pointer;
+    }
+  }
+  .data-view-control,
+  .data-view-control * {
+    color: var(--emphasis-medium);
+  }
+}

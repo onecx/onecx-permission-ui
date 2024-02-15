@@ -1,0 +1,682 @@
+---
+openapi: 3.0.3
+info:
+  title: onecx-permission-bff
+  version: 1.0.0
+servers:
+  - url: "http://onecx-permission-bff:8080"
+tags:
+  - name: permission
+  - name: assignment
+  - name: role
+  - name: workspace
+paths:
+  /roles:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - write
+      tags:
+        - role
+      description: create role
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoleRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /roles/{id}:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - role
+      description: Return role by ID
+      operationId: getRoleById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        404:
+          description: Role not found
+    put:
+      x-onecx:
+        permissions:
+          permission:
+            - write
+      tags:
+        - role
+      description: Update role by ID
+      operationId: updateRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleRequest"
+      responses:
+        204:
+          description: Theme updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+        404:
+          description: Role not found
+    delete:
+      x-onecx:
+        permissions:
+          permission:
+            - delete
+      tags:
+        - role
+      description: Delete role by ID
+      operationId: deleteRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Role deleted
+  /roles/search:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - role
+      description: Search for roles
+      operationId: searchRoles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleSearchCriteria"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RolePageResult"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /permissions/search:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - permission
+      description: Search for permissions
+      operationId: searchPermissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PermissionSearchCriteria"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PermissionPageResult"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /assignments/search:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - assignment
+      description: Search for assignments
+      operationId: searchAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignmentSearchCriteria"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AssignmentPageResult"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /assignments:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - write
+      tags:
+        - assignment
+      description: Create new assignment
+      operationId: createAssignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssignmentRequest"
+      responses:
+        201:
+          description: New assignment created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assignment"
+        404:
+          description: Data not found
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /assignments/{id}:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - assignment
+      description: Get assignment
+      operationId: getAssignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get assignment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assignment"
+        404:
+          description: Assignment not found
+    delete:
+      x-onecx:
+        permissions:
+          permission:
+            - delete
+      tags:
+        - assignment
+      description: Delete assignment
+      operationId: deleteAssignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Assignment deleted
+  /applications/search:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - application
+      description: Search for applications
+      operationId: searchApplications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationSearchCriteria"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApplicationPageResult"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailResponse"
+  /workspaces:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - workspace
+      description: get all workspace names
+      operationId: getAllWorkspaceNames
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceNameList"
+  /workspaces/{workspaceName}/products:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - workspace
+      description: get all products by workspace name
+      operationId: getAllProductsByWorkspaceName
+      parameters:
+        - name: workspaceName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+components:
+  schemas:
+    CreateRoleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        shortDescription:
+          type: string
+        description:
+          type: string
+    Role:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        modificationUser:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    UpdateRoleRequest:
+      type: object
+      required:
+        - modificationCount
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        name:
+          type: string
+        shortDescription:
+          type: string
+        description:
+          type: string
+    RoleSearchCriteria:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    PermissionSearchCriteria:
+      type: object
+      properties:
+        appId:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    RolePageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+    PermissionPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+    Permission:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        modificationUser:
+          type: string
+        id:
+          type: string
+        appId:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+    AssignmentSearchCriteria:
+      type: object
+      properties:
+        appIds:
+          type: array
+          items:
+            type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    AssignmentPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: "#/components/schemas/Assignment"
+    CreateAssignmentRequest:
+      type: object
+      required:
+        - roleId
+        - permissionId
+      properties:
+        roleId:
+          type: string
+        permissionId:
+          type: string
+    Assignment:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        modificationUser:
+          type: string
+        roleId:
+          type: string
+        permissionId:
+          type: string
+        appId:
+          type: string
+    ApplicationSearchCriteria:
+      type: object
+      properties:
+        appId:
+          type: string
+        name:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    ApplicationPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+    Application:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: "#/components/schemas/OffsetDateTime"
+        modificationUser:
+          type: string
+        id:
+          type: string
+        appId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    WorkspaceNameList:
+      type: array
+      items:
+        type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        productName:
+          type: string
+        baseUrl:
+          type: string
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProblemDetailParam"
+        invalidParams:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProblemDetailInvalidParam"
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string

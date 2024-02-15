@@ -1,0 +1,246 @@
+{
+  "ACTIONS": {
+    "CONFIRMATION": {
+      "NO": "Nein",
+      "YES": "Ja",
+      "NO.TOOLTIP": "Abbruch der Aktion",
+      "YES.TOOLTIP": "Fortfahren mit der Aktion"
+    },
+    "COPY": {
+      "LABEL": "Kopieren",
+      "DATA": "Mit den Daten ein neues {{TYPE}} anlegen",
+      "CLIPBOARD": "In die Zwischenablage kopieren"
+    },
+    "CREATE": {
+      "LABEL": "Erstellen",
+      "TOOLTIP": "Ein neues {{TYPE}} erstellen",
+      "PERMISSION": "Berechtigung erstellen",
+      "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
+      "ROLE": "Rolle erstellen",
+      "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
+      "MESSAGE": {
+        "ALREADY_EXIST": "Ein {{TYPE}} mit diesem Namen existert schon",
+        "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
+        "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht erstellt.",
+        "PERMISSION_OK": "Die Berechtigung wurde erfolgreich erstellt",
+        "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht erstellt.",
+        "ROLE_OK": "Die Rolle wurde erfolgreich erstellt",
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt.",
+        "OK": "Die {{TYPE}} wurde erfolgreich erstellt",
+        "NOK": "Ein Fehler ist aufgetreten. Die {{TYPE}} wurde nicht erstellt."
+      }
+    },
+    "DELETE": {
+      "LABEL": "Löschen",
+      "TOOLTIP": "{{TYPE}} löschen",
+      "MESSAGE_TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
+      "MESSAGE_INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
+      "MESSAGE": {
+        "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
+        "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
+        "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
+        "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
+        "ROLE_OK": "Die Rolle wurde erfolgreich gelöscht.",
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht gelöscht."
+      }
+    },
+    "EDIT": {
+      "LABEL": "Bearbeiten",
+      "TOOLTIP": "Die Berechtigungen bearbeiten",
+      "DIRECT.TOOLTIP": "Die Eigenschaften bearbeiten - Jede Änderung wird sofort gespeichert",
+      "DIRECT.TICKER": "Gewähren/Widerrufen von Berechtigungen durch einfachen Klick",
+      "MESSAGE": {
+        "PERMISSION_OK": "Die Berechtigung wurde erfolgreich geändert",
+        "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht geändert.",
+        "ROLE_OK": "Die Rolle wurde erfolgreich geändert",
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht geändert.",
+        "CHANGE_OK": "Das {{TYPE}} wurde erfolgreich geändert",
+        "CHANGE_NOK": "Ein Fehler ist aufgetreten. Das {{TYPE}} wurde nicht ge�ndert."
+      }
+    },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Definition als JSON herunterladen"
+    },
+    "NAVIGATION": {
+      "CLOSE": "Schließen",
+      "CLOSE.TOOLTIP": "Dialog schließen",
+      "CLOSE_WITHOUT_SAVE": "Dialog ohne Speichern schließen",
+      "BACK": "Zurück",
+      "NEXT": "Weiter",
+      "NEXT.TOOLTIP": "Nächste Seite",
+      "BACK.TOOLTIP": "Vorherige Seite",
+      "GOTO": "Zu ... wechseln",
+      "OPEN_IN_NEW_TAB": "In neuem TAB öffnen"
+    },
+    "SEARCH": {
+      "ERROR": "Daten nicht abrufbar",
+      "FILTER": "Filter",
+      "FILTER_OF": "Filter für ",
+      "FILTER_CLEAR": "Filter entfernen",
+      "FILTER_MODE_NOT_CONTAINS": "Filterwert nicht enthalten",
+      "FILTER_MODE_CONTAINS": "Filterwert enthalten",
+      "NO_DATA": "Keine Daten",
+      "RELOAD": "Daten neu laden",
+      "SORT_BY": "Sortiert nach",
+      "SORT_DIRECTION_ASC": "aufsteigend",
+      "SORT_DIRECTION_DESC": "absteigend"
+    },
+    "CANCEL": "Abbrechen",
+    "CHOOSE": "Auswählen",
+    "CLEAR_CACHE": "Cache entfernen",
+    "CONFIRM": "Bestätigen",
+    "IMPORT": "Import",
+    "TODO.LOADING": "...wird geladen",
+    "RELOAD": "Neuladen",
+    "SAVE": "Speichern",
+    "SAVE_AS": "Speichern als ...",
+    "UPLOAD": "Hochladen",
+    "TOOLTIPS": {
+      "CANCEL": "Die Aktion abbrechen",
+      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
+      "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
+      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "IMPORT": "Ein {{TYPE}} importieren",
+      "SAVE": "Die Änderungen speichern",
+      "SAVE_AS": "Speichern als neues {{TYPE}}"
+    }
+  },
+  "BREADCRUMBS": {
+    "SEARCH": "Apps",
+    "DETAIL": "Details",
+    "OVERVIEW": "Überblick"
+  },
+  "APPLICATION": {
+    "GOTO_OVERVIEW": "Berechtigungs-Übersicht",
+    "GOTO_OVERVIEW.TOOLTIP": "Den alten Übersichts-Dialog aufrufen",
+    "CREATE": "Neue App erstellen",
+    "CREATE_HEADER": "App erstellen",
+    "CREATE_MISSING_WORKSPACE": "Diesen Workspace der Berechtigungsverwaltung dazufügen",
+    "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
+    "DELETE_HEADER": "App löschen",
+    "DELETE_NOT_EXISTING_WORKSPACE": "Entferne diesen Workspace von der Berechtigungsverwaltung da es nicht länger existiert",
+    "EDIT": "App ändern",
+    "EDIT_HEADER": "App ändern",
+    "SEARCH": {
+      "HEADER": "Berechtigungs-Verwaltung",
+      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
+      "FILTER": {
+        "TOOLTIP": "Filterwert",
+        "ALL": "Alle",
+        "WORKSPACE": "Workspaces",
+        "APP": "Apps"
+      }
+    },
+    "DETAIL": {
+      "HEADER_WORKSPACE": "Workspace: ",
+      "HEADER_APP": "App: ",
+      "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
+      "SUBHEADER_APP": "Rollen und Berechtigungen verwalten"
+    },
+    "ID": "ID",
+    "TYPE": "Typ",
+    "TYPE_WORKSPACE": "Workspace",
+    "TYPE_APP": "App",
+    "NAME": "Name"
+  },
+  "PERMISSION": {
+    "LABEL": "Berechtigungen",
+    "NAME": "Name",
+    "DESCRIPTION": "Beschreibung",
+    "ACTION": "Aktion",
+    "ACTIONS": "Aktionen",
+    "RESOURCE": "Ressource",
+    "PERMISSION": "Ressource # Aktion",
+    "APP_ID": "App",
+    "APP_ID.WORKSPACE": "Workspace Name",
+    "APP_ID.APP": "App",
+    "COPY": "Berechtigung kopieren",
+    "CREATE": "Neue Berechtigung erstellen",
+    "CREATE_HEADER": "Berechtigung erstellen",
+    "DELETE": "Berechtigung einschließlich aller Rollenzuweisungen löschen",
+    "DELETE_HEADER": "Berechtigung löschen",
+    "EDIT": "Berechtigung ändern",
+    "EDIT_HEADER": "Berechtigung ändern",
+    "SET_ALL_PERMISSIONS": "Alle Berechtigungen erteilen",
+    "RESET_ALL_PERMISSIONS": "Alle Berechtigungen entziehen",
+    "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
+    "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
+    "ROLE_ASSIGNEMENT_CHANGEABLE": "Klick für Änderung",
+    "CREATE_ASSIGNMENT_ERROR": "Berechtigung konnte nicht erteilt werden",
+    "CREATE_ASSIGNMENT_SUCCESS": "Berechtigung erteilt",
+    "DELETE_ASSIGNMENT_ERROR": "Berechtigung konnte nicht entzogen werden",
+    "DELETE_ASSIGNMENT_SUCCESS": "Berechtigung entzogen",
+    "SORT": {
+      "APP_ID": "Sortierung nach Apps"
+    },
+    "SEARCH": {
+      "FILTER": {
+        "APPS": "App",
+        "WORKSPACE": "Workspace",
+        "TOOLTIP": "Filterwert",
+        "ALL": "Alle",
+        "VIEW": "VIEW",
+        "EDIT": "EDIT",
+        "DELETE": "DELETE",
+        "OTHERS": "Andere"
+      },
+      "SCOPE": {
+        "TOOLTIP": "Wahl der angezeigten Berechtigungen: Nur vom 'Workspace' oder von allen Apps der registrierten Produkten",
+        "APPS": "Apps",
+        "WORKSPACE": "Workspace"
+      }
+    }
+  },
+  "ROLE": {
+    "LABEL.APP": "App Rollen",
+    "LABEL.WORKSPACE": "Workspace Rollen",
+    "TOOLTIP": "Alle Rollen die der App zugeordnet sind. Neue Rollen können nur für Workspaces erzeugt werden.",
+    "NAME": "Name",
+    "DESCRIPTION": "Beschreibung",
+    "APP_ID.WORKSPACE": "Workspace Name",
+    "APP_ID.APP": "App",
+    "CREATE": "Neue Rolle erstellen",
+    "CREATE_HEADER": "Rolle erstellen",
+    "DELETE": "Rolle einschließlich aller Berechtigungen löschen",
+    "DELETE_HEADER": "Rolle löschen",
+    "DELETE_MESSAGE": "Rolle löschen",
+    "EDIT": "Rolle ändern",
+    "EDIT_HEADER": "Rolle ändern"
+  },
+  "VALIDATION": {
+    "HINTS": {
+      "FORMAT_URL": "Format: "
+    },
+    "ERRORS": {
+      "CREATE_ALREADY_EXISTS": "Berechtigung konnte nicht erstellt werden, da sie bereits existiert",
+      "EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da sie bereits existiert",
+      "INTERNAL_ERROR": "Interner Fehler",
+      "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
+      "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
+      "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
+      "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
+    }
+  },
+  "EXCEPTIONS": {
+    "HTTP_STATUS_0": {
+      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal.",
+      "APPLICATIONS": "Unbekanntes Problem beim Abrufen von App-Daten - Bitte versuchen sie es noch einmal."
+    },
+    "HTTP_STATUS_403": {
+      "WORKSPACES": "Sie haben keine Rechte um Workspaces zu sehen.",
+      "APPLICATIONS": "Sie haben keine Rechte um Apps zu sehen."
+    },
+    "HTTP_STATUS_404": {
+      "WORKSPACE": "Der Workspace konnte nicht gefunden werden.",
+      "WORKSPACES": "Es konnten keine Workspaces gefunden werden.",
+      "APPLICATION": "Die App konnte nicht gefunden werden.",
+      "APPLICATIONS": "Es konnten keine Apps gefunden werden."
+    },
+    "HTTP_STATUS_500": {
+      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal.",
+      "APPLICATIONS": "Unbekanntes Server-Problem beim Abrufen von App-Daten - Bitte versuchen sie es noch einmal."
+    },
+    "NO_APPLICATION_OR_APPLICATION_ROLE_FOUND": "Rolle konnte nicht gelöscht werden da sie nicht gefunden wurde"
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "ACTIONS": {
+    "CONFIRMATION": {
+      "NO": "No",
+      "YES": "Yes",
+      "NO.TOOLTIP": "Cancel the action",
+      "YES.TOOLTIP": "Proceed with the action"
+    },
+    "COPY": {
+      "LABEL": "Copy",
+      "DATA": "Create a new {{TYPE}} with the data",
+      "CLIPBOARD": "Copy to clipboard"
+    },
+    "CREATE": {
+      "LABEL": "Create",
+      "TOOLTIP": "Create a new {{TYPE}}",
+      "PERMISSION": "Create Permission",
+      "PERMISSION.TOOLTIP": "Create a new Permission",
+      "ROLE": "Create Role",
+      "ROLE.TOOLTIP": "Create a new Role",
+      "MESSAGE": {
+        "ALREADY_EXIST": "A {{TYPE}} with that name already exists",
+        "APPLICATION_OK": "The App was created successfully",
+        "APPLICATION_NOK": "An error has occurred. The App was not created.",
+        "PERMISSION_OK": "The permission was created successfully",
+        "PERMISSION_NOK": "An error has occurred. The permission was not created.",
+        "ROLE_OK": "The role was created successfully",
+        "ROLE_NOK": "An error has occurred. The role was not created.",
+        "OK": "The {{TYPE}} was created successfully",
+        "NOK": "An error has occurred. The {{TYPE}} was not created."
+      }
+    },
+    "DELETE": {
+      "LABEL": "Delete",
+      "TOOLTIP": "Delete {{TYPE}}",
+      "MESSAGE_TEXT": "Do you want to delete \"{{ITEM}}\"?",
+      "MESSAGE_INFO": "This action cannot be undone!",
+      "MESSAGE": {
+        "APPLICATION_OK": "The App was deleted successfully",
+        "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
+        "PERMISSION_OK": "The permission was deleted successfully",
+        "PERMISSION_NOK": "An error has occurred. The permission was not deleted.",
+        "ROLE_OK": "The role was deleted successfully",
+        "ROLE_NOK": "An error has occurred. The role was not deleted."
+      }
+    },
+    "EDIT": {
+      "LABEL": "Edit",
+      "TOOLTIP": "Edit Permissions",
+      "DIRECT.TOOLTIP": "Edit the Permissions - Every change is saved immediately",
+      "DIRECT.TICKER": "Grant/Revoke Permissions with single click",
+      "MESSAGE": {
+        "PERMISSION_OK": "The permission was changed successfully",
+        "PERMISSION_NOK": "An error has occurred. The permission was not changed.",
+        "ROLE_OK": "The role was changed successfully",
+        "ROLE_NOK": "An error has occurred. The role was not changed.",
+        "CHANGE_OK": "The {{TYPE}} was changed successfully",
+        "CHANGE_NOK": "An error has occurred. The {{TYPE}} was not changed."
+      }
+    },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Definition als JSON herunterladen"
+    },
+    "NAVIGATION": {
+      "CLOSE": "Close",
+      "CLOSE.TOOLTIP": "Close dialog",
+      "CLOSE_WITHOUT_SAVE": "Close dialog without saving",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "NEXT.TOOLTIP": "Next page",
+      "BACK.TOOLTIP": "Previous page",
+      "GOTO": "Go to ...",
+      "OPEN_IN_NEW_TAB": "Open in a new TAB"
+    },
+    "SEARCH": {
+      "ERROR": "Data not available",
+      "FILTER": "Filter",
+      "FILTER_OF": "Filter for ",
+      "FILTER_CLEAR": "Clear Filter",
+      "FILTER_MODE_CONTAINS": "Filter value is contained",
+      "FILTER_MODE_NOT_CONTAINS": "Filter value is NOT contained",
+      "NO_DATA": "No Data",
+      "RELOAD": "Reload data",
+      "SORT_BY": "Sort By",
+      "SORT_DIRECTION_ASC": "ascending",
+      "SORT_DIRECTION_DESC": "descending"
+    },
+    "CANCEL": "Cancel",
+    "CHOOSE": "Choose",
+    "CLEAR_CACHE": "Clear Cache",
+    "CONFIRM": "Confirm",
+    "IMPORT": "Import",
+    "TODO.LOADING": "...is loading",
+    "RELOAD": "Reload",
+    "SAVE": "Save",
+    "SAVE_AS": "Save as ...",
+    "UPLOAD": "Upload",
+    "TOOLTIPS": {
+      "CANCEL": "Cancel action",
+      "CANCEL_EDIT": "Cancel edit mode",
+      "CANCEL_AND_CLOSE": "Cancel and close dialog",
+      "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
+      "IMPORT": "Import a definition in JSON format",
+      "SAVE": "Save changes",
+      "SAVE_AS": "Save as new {{TYPE}}"
+    }
+  },
+  "BREADCRUMBS": {
+    "SEARCH": "Apps",
+    "DETAIL": "Details",
+    "OVERVIEW": "Overview"
+  },
+  "APPLICATION": {
+    "GOTO_OVERVIEW": "Permission Overview",
+    "GOTO_OVERVIEW.TOOLTIP": "Call old Overview dialog",
+    "CREATE": "Create new App",
+    "CREATE_HEADER": "Create App",
+    "CREATE_MISSING_WORKSPACE": "Add this Workspace to Permission Management",
+    "DELETE": "Delete App including all permissions and roles",
+    "DELETE_HEADER": "Delete App",
+    "DELETE_NOT_EXISTING_WORKSPACE": "Remove this Workspace from Permission Management because it does not exist any longer.",
+    "EDIT": "Edit App",
+    "EDIT_HEADER": "Edit App",
+    "SEARCH": {
+      "HEADER": "Permission Management",
+      "SUBHEADER": "Management of app and workspace permissions",
+      "FILTER": {
+        "TOOLTIP": "Set filter value",
+        "ALL": "All",
+        "WORKSPACE": "Workspaces",
+        "APP": "Apps"
+      }
+    },
+    "DETAIL": {
+      "HEADER_WORKSPACE": "Workspace: ",
+      "HEADER_APP": "App: ",
+      "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
+      "SUBHEADER_APP": "Managing Roles and Permissions"
+    },
+    "ID": "ID",
+    "TYPE": "Type",
+    "TYPE_WORKSPACE": "Workspace",
+    "TYPE_APP": "App",
+    "NAME": "Name"
+  },
+  "PERMISSION": {
+    "LABEL": "Permissions",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "ACTION": "Action",
+    "ACTIONS": "Actions",
+    "RESOURCE": "Resource",
+    "PERMISSION": "Resource # Action",
+    "APP_ID": "App",
+    "APP_ID.WORKSPACE": "Workspace Name",
+    "APP_ID.APP": "App",
+    "COPY": "Copy Permission",
+    "CREATE": "Create new Permission",
+    "CREATE_HEADER": "Create Permission",
+    "DELETE": "Delete Permission including all Role assignments",
+    "DELETE_HEADER": "Delete Permission",
+    "EDIT": "Change Permission",
+    "EDIT_HEADER": "Change Permission",
+    "SET_ALL_PERMISSIONS": "Grant all Permissions",
+    "RESET_ALL_PERMISSIONS": "Revoke all Permissions",
+    "ROLE_IS_ASSIGNED_0": "No permission",
+    "ROLE_IS_ASSIGNED_1": "Permission granted",
+    "ROLE_ASSIGNEMENT_CHANGEABLE": "Click for change",
+    "CREATE_ASSIGNMENT_ERROR": "Permission could not be granted",
+    "CREATE_ASSIGNMENT_SUCCESS": "Permission granted",
+    "DELETE_ASSIGNMENT_ERROR": "Permission could not be revoked",
+    "DELETE_ASSIGNMENT_SUCCESS": "Permission revoked",
+    "SORT": {
+      "APP_ID": "Sorting by apps"
+    },
+    "SEARCH": {
+      "FILTER": {
+        "APPS": "App",
+        "WORKSPACE": "Workspace",
+        "TOOLTIP": "Set filter value",
+        "ALL": "All",
+        "VIEW": "VIEW",
+        "EDIT": "EDIT",
+        "DELETE": "DELETE",
+        "OTHERS": "OTHERS"
+      },
+      "SCOPE": {
+        "TOOLTIP": "Choice of displayed permissions: Only from 'Workspace' or from all registered products",
+        "APPS": "Apps",
+        "WORKSPACE": "Workspace"
+      }
+    }
+  },
+  "ROLE": {
+    "LABEL.APP": "App Roles",
+    "LABEL.WORKSPACE": "Workspace Roles",
+    "TOOLTIP": "All roles assigned to the App. New roles can be created only for Workspaces.",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "APP_ID.WORKSPACE": "Workspace Name",
+    "APP_ID.APP": "App",
+    "CREATE": "Create new Role",
+    "CREATE_HEADER": "Create Role",
+    "DELETE": "Delete Role including all existing Permissions",
+    "DELETE_HEADER": "Delete Role",
+    "DELETE_MESSAGE": "Delete Role",
+    "EDIT": "Change Role",
+    "EDIT_HEADER": "Change Role"
+  },
+  "VALIDATION": {
+    "HINTS": {
+      "FORMAT_URL": "Format: "
+    },
+    "ERRORS": {
+      "CREATE_ALREADY_EXISTS": "Couldn't create permission because it already exists",
+      "EDIT_ALREADY_EXISTS": "Couldn't change permission because it already exists",
+      "INTERNAL_ERROR": "Internal error",
+      "EMPTY_REQUIRED_FIELD": "This field is required.",
+      "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
+      "MINIMUM_LENGTH": "At least {{chars}} characters are required.",
+      "PATTERN_ERROR": "Your input does not match the required pattern"
+    }
+  },
+  "EXCEPTIONS": {
+    "HTTP_STATUS_0": {
+      "WORKSPACES": "Unknown problem retrieving Workspace data - please try again.",
+      "APPLICATIONS": "Unknown problem retrieving App data - please try again."
+    },
+    "HTTP_STATUS_403": {
+      "WORKSPACES": "You have no permissions to see Workspaces.",
+      "APPLICATIONS": "You have no permissions to see Apps."
+    },
+    "HTTP_STATUS_404": {
+      "WORKSPACE": "Workspace could not be found.",
+      "WORKSPACES": "No Workspaces could be found.",
+      "APPLICATION": "App could not be found.",
+      "APPLICATIONS": "No Apps could be found."
+    },
+    "HTTP_STATUS_500": {
+      "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again.",
+      "APPLICATIONS": "Unknown server problem retrieving App data - please try again."
+    },
+    "NO_APPLICATION_OR_APPLICATION_ROLE_FOUND": "Role could not be deleted because it was not found"
+  }
+}

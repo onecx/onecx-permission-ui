@@ -1,0 +1,114 @@
+<ocx-portal-page helpArticleId="PAGE_PERMISSION_SEARCH">
+  <ocx-page-header
+    [loading]="loading"
+    [actions]="actions"
+    [manualBreadcrumbs]="false"
+    [header]="'APPLICATION.SEARCH.HEADER' | translate"
+    [subheader]="'APPLICATION.SEARCH.SUBHEADER' | translate"
+  >
+  </ocx-page-header>
+
+  <ocx-page-content>
+    <div *ngIf="dataAccessIssue" class="m-3 flex flex-wrap justify-content-between align-items-center">
+      <p-message
+        id="apm_application_search_data_access_issue"
+        severity="error"
+        [text]="exceptionKey | translate"
+      ></p-message>
+      <p-button
+        id="apm_application_search_reload_button"
+        [title]="'ACTIONS.SEARCH.RELOAD' | translate"
+        (onClick)="loadData()"
+        icon="pi pi-refresh"
+      ></p-button>
+    </div>
+
+    <ng-container *ngIf="!dataAccessIssue">
+      <p-dataView
+        id="apm_application_search_dataview"
+        [value]="apps"
+        [paginator]="true"
+        [alwaysShowPaginator]="true"
+        [rowsPerPageOptions]="[12, 24, 48]"
+        [rows]="12"
+        [layout]="viewMode"
+        [filterBy]="filterBy"
+        [sortField]="sortField"
+        [sortOrder]="sortOrder"
+      >
+        <ng-template pTemplate="header">
+          <div class="flex flex-wrap align-items-center mx-1">
+            <div class="flex flex-wrap align-items-center ml-1 gap-2">
+              <div class="data-view-control opacity-90 text-sm">Quick<br />Filter</div>
+              <p-selectButton
+                inputid="apm_application_search_quick_filter"
+                styleClass="data-view-control opacity-90"
+                [options]="quickFilterItems"
+                [(ngModel)]="quickFilterValue"
+                (onChange)="onQuickFilterChange($event)"
+                title="{{ 'APPLICATION.SEARCH.FILTER.TOOLTIP' | translate }}"
+              >
+                <ng-template let-item>{{ item.label | translate }}</ng-template>
+              </p-selectButton>
+            </div>
+            <ocx-data-view-controls
+              class="flex-grow-1"
+              [supportedViews]="['grid']"
+              [initialViewMode]="viewMode"
+              [filterValue]="filterValue"
+              [enableFiltering]="true"
+              (filterChange)="onFilterChange($event)"
+              [filterColumns]="['APPLICATION.ID' | translate, 'APPLICATION.TYPE' | translate]"
+              [enableSorting]="true"
+              [sortingOptions]="[{label: 'APPLICATION.ID' | translate, value: 'id'}, {label: 'APPLICATION.TYPE' | translate, value: 'applicationType'}]"
+              [defaultSortOption]="sortField"
+              [defaultSortDirection]="sortOrder === 1"
+              (sortChange)="onSortChange($event)"
+              (sortDirectionChange)="onSortDirChange($event)"
+              [translations]="dataViewControlsTranslations"
+            >
+            </ocx-data-view-controls>
+          </div>
+        </ng-template>
+        <ng-template let-app let-row="rowIndex" pTemplate="gridItem">
+          <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-3">
+            <div
+              [id]="'apm_application_search_data_row_' + row"
+              class="card relative p-2"
+              [class.bg-primary]="app.applicationType === 'WORKSPACE'"
+              [ngClass]="{'cursor-pointer hover:bg-gray-200' : 
+                (app.applicationType === 'APP' && app.existsInApm) || 
+                (app.applicationType === 'WORKSPACE' && app.existsInApm && app.portalExists),
+                'hover:text-color' : (app.applicationType === 'WORKSPACE' && app.existsInApm && app.portalExists)}"
+              (click)="onAppClick($event, app)"
+            >
+              <span
+                *ngIf="app.applicationType === 'WORKSPACE' && !app.existsInApm"
+                [id]="'apm_application_search_data_row_' + row + '_create'"
+                class="card-badge-right badge-1 p-1 pi pi-plus-circle cursor-pointer pseudo-button-link"
+                [title]="'APPLICATION.CREATE_MISSING_WORKSPACE' | translate"
+                (click)="onRegisterPortalInApm($event, app)"
+              ></span>
+              <span
+                *ngIf="app.applicationType === 'WORKSPACE' && !app.portalExists"
+                [id]="'apm_application_search_data_row_' + row + '_delete'"
+                class="card-badge-right badge-1 p-1 pi pi-trash cursor-pointer pseudo-button-link"
+                [title]="'APPLICATION.DELETE_NOT_EXISTING_WORKSPACE' | translate"
+                (click)="onUnRegisterPortalInApm($event, app)"
+              ></span>
+              <div
+                class="h-3rem lg:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 my-1 lg:my-2 text-center"
+              >
+                <div class="font-bold text-lg lg:text-xl">{{limitText((app.name ? app.name : app.id), 17)}}</div>
+                <div>
+                  {{ app.description ? limitText(app.description, 25) : ('APPLICATION.TYPE_' + app.applicationType) |
+                  translate}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </ng-container>
+  </ocx-page-content>
+</ocx-portal-page>
