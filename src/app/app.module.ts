@@ -61,6 +61,6 @@ const routes: Routes = [
 })
 export class AppModule {
   constructor() {
-    console.info('App Module constructor')
+    console.info('OneCX Permission Module constructor')
   }
 }

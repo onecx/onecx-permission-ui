@@ -111,17 +111,7 @@
     "DETAIL": "Details",
     "OVERVIEW": "Overview"
   },
-  "APPLICATION": {
-    "GOTO_OVERVIEW": "Permission Overview",
-    "GOTO_OVERVIEW.TOOLTIP": "Call old Overview dialog",
-    "CREATE": "Create new App",
-    "CREATE_HEADER": "Create App",
-    "CREATE_MISSING_WORKSPACE": "Add this Workspace to Permission Management",
-    "DELETE": "Delete App including all permissions and roles",
-    "DELETE_HEADER": "Delete App",
-    "DELETE_NOT_EXISTING_WORKSPACE": "Remove this Workspace from Permission Management because it does not exist any longer.",
-    "EDIT": "Edit App",
-    "EDIT_HEADER": "Edit App",
+  "DIALOG": {
     "SEARCH": {
       "HEADER": "Permission Management",
       "SUBHEADER": "Management of app and workspace permissions",
@@ -137,12 +127,18 @@
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
       "SUBHEADER_APP": "Managing Roles and Permissions"
-    },
-    "ID": "ID",
+    }
+  },
+  "APPLICATION": {
+    "NAME": "Name",
     "TYPE": "Type",
     "TYPE_WORKSPACE": "Workspace",
     "TYPE_APP": "App",
-    "NAME": "Name"
+    "DELETE": "Delete App including all permissions and roles",
+    "DELETE_HEADER": "Delete App",
+    "DELETE_NOT_EXISTING_WORKSPACE": "Remove this Workspace from Permission Management because it does not exist any longer.",
+    "EDIT": "Edit App",
+    "EDIT_HEADER": "Edit App"
   },
   "PERMISSION": {
     "LABEL": "Permissions",

@@ -4,7 +4,7 @@ info:
   title: onecx-permission-bff
   version: 1.0.0
 servers:
-  - url: "http://onecx-permission-bff:8080"
+  - url: 'http://onecx-permission-bff:8080'
 tags:
   - name: permission
   - name: assignment
@@ -26,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateRoleRequest"
+              $ref: '#/components/schemas/CreateRoleRequest'
       responses:
         200:
           description: OK
@@ -35,13 +35,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Role"
+                  $ref: '#/components/schemas/Role'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /roles/{id}:
     get:
       x-onecx:
@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Role"
+                $ref: '#/components/schemas/Role'
         404:
           description: Role not found
     put:
@@ -87,20 +87,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateRoleRequest"
+              $ref: '#/components/schemas/UpdateRoleRequest'
       responses:
         204:
           description: Theme updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Role"
+                $ref: '#/components/schemas/Role'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
         404:
           description: Role not found
     delete:
@@ -136,7 +136,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RoleSearchCriteria"
+              $ref: '#/components/schemas/RoleSearchCriteria'
       responses:
         200:
           description: OK
@@ -145,13 +145,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RolePageResult"
+                  $ref: '#/components/schemas/RolePageResult'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /permissions/search:
     post:
       x-onecx:
@@ -167,7 +167,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PermissionSearchCriteria"
+              $ref: '#/components/schemas/PermissionSearchCriteria'
       responses:
         200:
           description: OK
@@ -176,13 +176,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PermissionPageResult"
+                  $ref: '#/components/schemas/PermissionPageResult'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /assignments/search:
     post:
       x-onecx:
@@ -198,7 +198,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AssignmentSearchCriteria"
+              $ref: '#/components/schemas/AssignmentSearchCriteria'
       responses:
         200:
           description: OK
@@ -207,13 +207,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AssignmentPageResult"
+                  $ref: '#/components/schemas/AssignmentPageResult'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /assignments:
     post:
       x-onecx:
@@ -229,7 +229,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateAssignmentRequest"
+              $ref: '#/components/schemas/CreateAssignmentRequest'
       responses:
         201:
           description: New assignment created
@@ -242,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Assignment"
+                $ref: '#/components/schemas/Assignment'
         404:
           description: Data not found
         400:
@@ -250,7 +250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /assignments/{id}:
     get:
       x-onecx:
@@ -273,7 +273,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Assignment"
+                $ref: '#/components/schemas/Assignment'
         404:
           description: Assignment not found
     delete:
@@ -309,7 +309,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ApplicationSearchCriteria"
+              $ref: '#/components/schemas/ApplicationSearchCriteria'
       responses:
         200:
           description: OK
@@ -318,13 +318,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ApplicationPageResult"
+                  $ref: '#/components/schemas/ApplicationPageResult'
         400:
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetailResponse"
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces:
     get:
       x-onecx:
@@ -336,12 +336,12 @@ paths:
       description: get all workspace names
       operationId: getAllWorkspaceNames
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkspaceNameList"
+                $ref: '#/components/schemas/WorkspaceNameList'
   /workspaces/{workspaceName}/products:
     get:
       x-onecx:
@@ -359,14 +359,14 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Product"
+                  $ref: '#/components/schemas/Product'
 components:
   schemas:
     CreateRoleRequest:
@@ -385,11 +385,11 @@ components:
           format: int32
           type: integer
         creationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
           type: string
         modificationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
           type: string
         id:
@@ -463,7 +463,7 @@ components:
         stream:
           type: array
           items:
-            $ref: "#/components/schemas/Role"
+            $ref: '#/components/schemas/Role'
     PermissionPageResult:
       type: object
       properties:
@@ -483,7 +483,7 @@ components:
         stream:
           type: array
           items:
-            $ref: "#/components/schemas/Permission"
+            $ref: '#/components/schemas/Permission'
     Permission:
       type: object
       properties:
@@ -491,11 +491,11 @@ components:
           format: int32
           type: integer
         creationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
           type: string
         modificationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
           type: string
         id:
@@ -544,7 +544,7 @@ components:
         stream:
           type: array
           items:
-            $ref: "#/components/schemas/Assignment"
+            $ref: '#/components/schemas/Assignment'
     CreateAssignmentRequest:
       type: object
       required:
@@ -562,11 +562,11 @@ components:
           format: int32
           type: integer
         creationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
           type: string
         modificationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
           type: string
         roleId:
@@ -611,7 +611,7 @@ components:
         stream:
           type: array
           items:
-            $ref: "#/components/schemas/Application"
+            $ref: '#/components/schemas/Application'
     Application:
       type: object
       properties:
@@ -619,11 +619,11 @@ components:
           format: int32
           type: integer
         creationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
           type: string
         modificationDate:
-          $ref: "#/components/schemas/OffsetDateTime"
+          $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
           type: string
         id:
@@ -661,11 +661,11 @@ components:
         params:
           type: array
           items:
-            $ref: "#/components/schemas/ProblemDetailParam"
+            $ref: '#/components/schemas/ProblemDetailParam'
         invalidParams:
           type: array
           items:
-            $ref: "#/components/schemas/ProblemDetailInvalidParam"
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
     ProblemDetailParam:
       type: object
       properties:

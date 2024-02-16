@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
-import { SharedModule } from '../shared/shared.module'
+import { SharedModule } from 'src/app/shared/shared.module'
 
 import { AppSearchComponent } from './app-search/app-search.component'
-import { AppDetailComponent } from './app-detail/app-detail.component'
+//import { AppDetailComponent } from './app-detail/app-detail.component'
 
 const routes: Routes = [
   {
@@ -17,7 +17,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [AppSearchComponent, AppDetailComponent],
+  declarations: [AppSearchComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,7 +28,7 @@ const routes: Routes = [
   providers: [InitializeModuleGuard],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AnnouncementModule {
+export class PermissionModule {
   constructor() {
     console.info('Permission Module constructor')
   }

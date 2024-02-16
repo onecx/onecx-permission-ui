@@ -111,17 +111,7 @@
     "DETAIL": "Details",
     "OVERVIEW": "Überblick"
   },
-  "APPLICATION": {
-    "GOTO_OVERVIEW": "Berechtigungs-Übersicht",
-    "GOTO_OVERVIEW.TOOLTIP": "Den alten Übersichts-Dialog aufrufen",
-    "CREATE": "Neue App erstellen",
-    "CREATE_HEADER": "App erstellen",
-    "CREATE_MISSING_WORKSPACE": "Diesen Workspace der Berechtigungsverwaltung dazufügen",
-    "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
-    "DELETE_HEADER": "App löschen",
-    "DELETE_NOT_EXISTING_WORKSPACE": "Entferne diesen Workspace von der Berechtigungsverwaltung da es nicht länger existiert",
-    "EDIT": "App ändern",
-    "EDIT_HEADER": "App ändern",
+  "DIALOG": {
     "SEARCH": {
       "HEADER": "Berechtigungs-Verwaltung",
       "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
@@ -137,12 +127,17 @@
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
       "SUBHEADER_APP": "Rollen und Berechtigungen verwalten"
-    },
-    "ID": "ID",
+    }
+  },
+  "APPLICATION": {
+    "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_WORKSPACE": "Workspace",
     "TYPE_APP": "App",
-    "NAME": "Name"
+    "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
+    "DELETE_HEADER": "App löschen",
+    "EDIT": "App ändern",
+    "EDIT_HEADER": "App ändern"
   },
   "PERMISSION": {
     "LABEL": "Berechtigungen",
