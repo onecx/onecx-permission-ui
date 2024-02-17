@@ -220,10 +220,13 @@
     "HTTP_STATUS_0": {
       "APPS": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
+      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
     },
     "HTTP_STATUS_403": {
       "APPS": "Sie haben keine Rechte um Apps zu sehen.",
+      "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
+      "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
       "WORKSPACES": "Sie haben keine Rechte um Workspaces zu sehen."
     },
     "HTTP_STATUS_404": {
@@ -231,14 +234,15 @@
       "APPS": "Es konnten keine Apps gefunden werden.",
       "ROLE": "Die Rolle konnte nicht gefunden werden.",
       "ROLES": "Es konnten keine Rollen gefunden werden.",
+      "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "WORKSPACE": "Der Workspace konnte nicht gefunden werden.",
       "WORKSPACES": "Es konnten keine Workspaces gefunden werden."
     },
     "HTTP_STATUS_500": {
       "APPS": "Unbekanntes Server-Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Server-Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
+      "PERMISSIONS": "Unbekanntes Server-Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
-    },
-    "NO_APPLICATION_OR_APPLICATION_ROLE_FOUND": "Rolle konnte nicht gelöscht werden da sie nicht gefunden wurde"
+    }
   }
 }

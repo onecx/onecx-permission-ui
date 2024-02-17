@@ -401,10 +401,10 @@
               readonly
               type="text"
               class="w-full"
-              id="app_detail_create_permission_appName"
-              formControlName="appName"
+              id="app_detail_create_permission_app_id"
+              formControlName="appId"
             />
-            <label class="ocx-required-label" for="app_detail_create_permission_appName">
+            <label class="ocx-required-label" for="app_detail_create_permission_app_id">
               {{ 'PERMISSION.APP_ID.APP' | translate }}</label
             >
           </span>
@@ -436,18 +436,6 @@
             <label class="ocx-required-label" for="app_detail_create_permission_action">
               {{ 'PERMISSION.ACTION' | translate }}
             </label>
-          </span>
-        </div>
-        <div>
-          <span class="p-float-label">
-            <input
-              pInputText
-              type="text"
-              class="w-full"
-              id="app_detail_create_permission_name"
-              formControlName="name"
-            />
-            <label for="app_detail_create_permission_name">{{ 'PERMISSION.NAME' | translate }} </label>
           </span>
         </div>
         <div>

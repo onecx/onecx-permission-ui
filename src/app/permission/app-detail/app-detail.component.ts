@@ -14,10 +14,8 @@ import {
   Role,
   CreateRoleRequest,
   UpdateRoleRequest,
-  /*  RolePageResult,
-  RoleSearchCriteria,
-  CreateRoleRequest,
   Permission,
+  /*
   PermissionSearchCriteria,
   Assignment,
   AssignmentSearchCriteria,
@@ -35,21 +33,14 @@ import {
 //import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 import { limitText } from 'src/app/shared/utils'
 
-type RoleAssignments = { [key: string]: boolean }
-type PermissionViewRow = {
-  id: string
-  key: string
-  resource?: string
-  action?: string
-  name?: string
-  description?: string
-  applicationId: string
-  applicationName?: string
-  roles: RoleAssignments
-}
 type App = Application & { isApp: boolean; type: AppType }
 type AppType = 'WORKSPACE' | 'APP'
 type AppRole = Role & { appId: string }
+type RoleAssignments = { [key: string]: boolean }
+type PermissionViewRow = Permission & {
+  key: string // combined resource and action => resource#action
+  roles: RoleAssignments
+}
 
 @Component({
   templateUrl: './app-detail.component.html',
@@ -125,10 +116,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
 
     this.formGroupPermission = new FormGroup({
-      appName: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
       resource: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       action: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      name: new FormControl(null),
       description: new FormControl(null)
     })
     this.formGroupRole = new FormGroup({
@@ -264,6 +254,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.currentApp = { ...result.stream[0], type: 'APP' } as App
             this.log('loadApp => App:', this.currentApp)
             this.prepareActionButtons()
+            this.permissionRows = []
+            this.preparePermissionTable(this.currentApp)
           } else {
             this.loadingServerIssue = true
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
@@ -300,6 +292,54 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('searchRoles() => unknown response:', result)
         }
       })
+  }
+
+  /* 1. Prepare rows of the table: permissions of the <application> as Map
+   *    key (resource#action):   'PERMISSION#READ'
+   *    value: {resource: 'PERMISSION', action: 'READ', key: 'PERMISSION#READ', name: 'View permission matrix'
+   */
+  private preparePermissionTable(app: App): void {
+    const permissionRows: Map<string, PermissionViewRow> = new Map()
+    // get permissions for the app
+    this.permApi
+      .searchPermissions({ permissionSearchCriteria: { appId: this.currentApp.appId } })
+      .pipe(catchError((error) => of(error)))
+      .subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.PERMISSIONS'
+          console.error('searchPermissions() result:', result)
+        } else if (result instanceof Object) {
+          for (const permission of result.stream) {
+            permissionRows.set(permission.resource + '#' + permission.action, {
+              ...permission,
+              key: permission.resource + '#' + permission.action,
+              roles: {}
+            })
+          }
+          this.roles.sort(this.sortRoleByName)
+          this.log('loadPermissions:', permissionRows)
+
+          // add permission rows of this app to permission table
+          this.permissionRows = this.permissionRows.concat(
+            Array.from(permissionRows.values()).sort(this.sortPermissionRowByKey)
+          )
+          this.loading = false
+        } else {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
+          console.error('searchPermissions() => unknown response:', result)
+        }
+      })
+    /*
+    // Fill permission rows with role assignments of the current application
+    permissionRows.forEach((row) => {
+      this.currentApp?.assignments?.forEach((ra) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        row.roles[ra.role!] = ra.permissionKeys?.includes(row.key) || false
+      })
+    })
+*/
   }
 
   /*********************************************
@@ -343,7 +383,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.workspaceAppFilterValue = undefined
     this.onSortPermissionTable()
     this.permissionTable?.clear()
-    //this.preparePermissionTable()
   }
   public onSortPermissionTable() {
     if (this.appSortIcon) this.appSortIcon.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
@@ -408,32 +447,27 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * Create a new PERMISSION
    */
   public onCopyPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    //this.onEditPermission(ev, permRow)
-    //this.changeMode = 'CREATE'
+    this.onEditPermission(ev, permRow)
+    this.changeMode = 'CREATE'
   }
   public onCreatePermission(): void {
-    /*
     this.formGroupPermission.reset()
-    this.formGroupPermission.controls['appName'].patchValue(this.urlParamAppId)
+    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
     this.changeMode = 'CREATE'
     this.permissionRow = { key: '' } as PermissionViewRow
     this.showPermissionDetailDialog = true
-    */
   }
   /**
    *  View and Edit a PERMISSION
    */
   public onEditPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    /*
+    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
     this.formGroupPermission.controls['resource'].patchValue(permRow.resource)
     this.formGroupPermission.controls['action'].patchValue(permRow.action)
-    this.formGroupPermission.controls['name'].patchValue(permRow.name)
     this.formGroupPermission.controls['description'].patchValue(permRow.description)
-    this.formGroupPermission.controls['appName'].patchValue(permRow.applicationId)
     this.changeMode = 'EDIT'
     this.permissionRow = permRow
     this.showPermissionDetailDialog = true
-    */
   }
   /**
    * Save a PERMISSION
@@ -573,13 +607,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return (a.key ? (a.key as string).toUpperCase() : '').localeCompare(b.key ? (b.key as string).toUpperCase() : '')
   }
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.applicationId ? (a.applicationId as string).toUpperCase() : '').localeCompare(
-      b.applicationId ? (b.applicationId as string).toUpperCase() : ''
+    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
+      b.appId ? (b.appId as string).toUpperCase() : ''
     )
   }
   private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.applicationId ? (a.applicationId as string).toUpperCase() : '').localeCompare(
-      b.applicationId ? (b.applicationId as string).toUpperCase() : ''
+    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
+      b.appId ? (b.appId as string).toUpperCase() : ''
     )
   }
   private sortRoleByName(a: Role, b: Role): number {

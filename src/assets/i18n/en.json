@@ -221,10 +221,13 @@
     "HTTP_STATUS_0": {
       "APPS": "Unknown problem retrieving App data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
+      "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "WORKSPACES": "Unknown problem retrieving Workspace data - please try again."
     },
     "HTTP_STATUS_403": {
       "APPS": "You have no permissions to see Apps.",
+      "ROLES": "You have no permissions to see Roles.",
+      "PERMISSIONS": "You have no permissions to see Permissions.",
       "WORKSPACES": "You have no permissions to see Workspaces."
     },
     "HTTP_STATUS_404": {
@@ -232,14 +235,15 @@
       "APPS": "No Apps could be found.",
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
+      "PERMISSIONS": "No Permissions could be found.",
       "WORKSPACE": "Workspace could not be found.",
       "WORKSPACES": "No Workspaces could be found."
     },
     "HTTP_STATUS_500": {
       "APPS": "Unknown server problem retrieving App data - please try again.",
       "ROLES": "Unknown server problem retrieving Role data - please try again.",
+      "PERMISSIONS": "Unknown server problem retrieving Permission data - please try again.",
       "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again."
-    },
-    "NO_APPLICATION_OR_APPLICATION_ROLE_FOUND": "Role could not be deleted because it was not found"
+    }
   }
 }
