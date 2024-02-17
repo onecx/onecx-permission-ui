@@ -5,19 +5,31 @@ import { RouterModule, Routes } from '@angular/router'
 
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
 import { SharedModule } from 'src/app/shared/shared.module'
+import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AppSearchComponent } from './app-search/app-search.component'
-//import { AppDetailComponent } from './app-detail/app-detail.component'
+import { AppDetailComponent } from './app-detail/app-detail.component'
 
 const routes: Routes = [
   {
     path: '',
     component: AppSearchComponent,
     pathMatch: 'full'
+  },
+  {
+    path: ':type/:appId',
+    component: AppDetailComponent,
+    data: {
+      breadcrumb: 'BREADCRUMBS.DETAIL',
+      breadcrumbFn: (data: any) => `${data.labeli18n}`
+    },
+    resolve: {
+      labeli18n: LabelResolver
+    }
   }
 ]
 @NgModule({
-  declarations: [AppSearchComponent],
+  declarations: [AppSearchComponent, AppDetailComponent],
   imports: [
     CommonModule,
     FormsModule,

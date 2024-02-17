@@ -19,8 +19,8 @@ import {
   ApplicationPageResult
 } from 'src/app/shared/generated'
 
-export type AppType = 'WORKSPACE' | 'APP'
 export type App = Application & { isApp: boolean; type: AppType }
+export type AppType = 'WORKSPACE' | 'APP'
 export type AppFilterType = 'ALL' | 'WORKSPACE' | 'APP'
 
 @Component({
@@ -40,6 +40,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public dataViewControlsTranslations: DataViewControlTranslations = {}
   @ViewChild(DataView) dv: DataView | undefined
   private apps$!: Observable<ApplicationPageResult>
+  private papps$!: Observable<App[]>
   private workspaces$!: Observable<string[]>
   public apps: App[] = []
   public viewMode = 'grid'
@@ -78,7 +79,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
   private log(text: string, obj?: object): void {
-    if (this.debug) console.log(text, obj)
+    if (this.debug) console.log('app search: ' + text, obj)
   }
 
   /**
@@ -96,38 +97,33 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         applicationSearchCriteria: { pageSize: 1000 }
       })
       .pipe(catchError((error) => of(error)))
-    // get data and process
+    // get data and combine
     forkJoin([this.workspaces$, this.apps$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([workspaces, apps]) => {
-        // First: check for errors
+        // workspaces
         if (workspaces instanceof HttpErrorResponse) {
           this.dataAccessIssue = true
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + workspaces.status + '.WORKSPACES'
           console.error('getAllWorkspaceNames():', workspaces)
         } else if (workspaces instanceof Array) {
           for (let w of workspaces) {
-            this.apps.push({ id: w, name: w, isApp: false, type: 'WORKSPACE' } as App)
+            this.apps.push({ appId: w, name: w, isApp: false, type: 'WORKSPACE' } as App)
           }
           this.log('getAllWorkspaceNames() apps:', this.apps)
         } else console.error('getAllWorkspaceNames() => unknown response:', workspaces)
+        // apps
         if (!this.dataAccessIssue) {
-          // First: check for errors
           if (apps instanceof HttpErrorResponse) {
             this.dataAccessIssue = true
             this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + apps.status + '.APPLICATIONS'
             console.error('searchApplications():', apps)
           } else if (apps.stream instanceof Array) {
-            for (let app of apps.stream) {
-              this.apps.push({
-                id: app.id,
-                name: app.name,
-                type: 'APP',
-                isApp: true
-              } as App)
+            for (const app of apps.stream) {
+              this.apps.push({ ...app, isApp: true, type: 'APP' } as App)
             }
             this.apps.sort(this.sortAppsByAppId)
-            this.log('searchApplications():', this.apps)
+            this.log('loadData():', this.apps)
           } else console.error('searchApplications() => unknown response:', apps)
         }
         this.loading = false
@@ -174,10 +170,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * UI Events
    */
   public onAppClick(ev: any, app: App): void {
-    this.router.navigate(['./', app.name], { relativeTo: this.route })
+    this.router.navigate(['./', app.type.toLowerCase(), app.appId], { relativeTo: this.route })
   }
   public onQuickFilterChange(ev: any): void {
-    console.log('onQuickFilterChange ')
+    this.log('onQuickFilterChange ')
     if (ev.value === 'ALL') {
       this.filterBy = 'id,type'
       this.filterValue = ''
@@ -191,7 +187,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     }
   }
   public onFilterChange(filter: string): void {
-    console.log('onFilterChange')
+    this.log('onFilterChange')
     if (filter === '') {
       this.filterBy = 'id,type'
       this.quickFilterValue = 'ALL'

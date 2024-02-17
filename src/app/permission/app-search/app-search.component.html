@@ -41,7 +41,7 @@
                 [options]="quickFilterItems"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
-                title="{{ 'DIALOG.SEARCH.FILTER.TOOLTIP' | translate }}"
+                [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
               >
                 <ng-template let-item>{{ item.label | translate }}</ng-template>
               </p-selectButton>
