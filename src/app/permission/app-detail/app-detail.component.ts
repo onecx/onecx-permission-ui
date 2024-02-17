@@ -12,10 +12,11 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 
 import {
   Role,
+  CreateRoleRequest,
+  UpdateRoleRequest,
   /*  RolePageResult,
   RoleSearchCriteria,
   CreateRoleRequest,
-  UpdateRoleRequest,
   Permission,
   PermissionSearchCriteria,
   Assignment,
@@ -131,8 +132,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       description: new FormControl(null)
     })
     this.formGroupRole = new FormGroup({
-      roleId: new FormControl(null),
-      roleName: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+      id: new FormControl(null),
+      name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       description: new FormControl(null)
     })
     this.filterMode = FilterMatchMode.CONTAINS
@@ -219,7 +220,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.loadApp()
   }
   private log(text: string, obj?: object): void {
-    if (this.debug) console.log('app detail: ' + text, obj)
+    if (this.debug) {
+      if (obj) console.log('app detail: ' + text, obj)
+      else console.log('app detail: ' + text)
+    }
   }
 
   private loadApp(): void {
@@ -254,7 +258,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           if (result instanceof HttpErrorResponse) {
             this.loadingServerIssue = true
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APPLICATION'
+            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
             console.error('searchApplications() result:', result)
           } else if (result instanceof Object) {
             this.currentApp = { ...result.stream[0], type: 'APP' } as App
@@ -262,7 +266,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.prepareActionButtons()
           } else {
             this.loadingServerIssue = true
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPLICATIONS'
+            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
             console.error('getApplicationById() => unknown response:', result)
           }
           this.loading = false
@@ -281,21 +285,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APPLICATION'
-          console.error('searchApplications() result:', result)
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
+          console.error('searchRoles() result:', result)
         } else if (result instanceof Object) {
           for (const role of result.stream) {
             this.roles.push({ ...role })
             this.permissionDefaultRoles[role.name] = false
           }
+          this.roles.sort(this.sortRoleByName)
           this.log('loadRoles:', this.roles)
         } else {
           this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPLICATIONS'
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
           console.error('searchRoles() => unknown response:', result)
         }
       })
-    this.roles.sort(this.sortRoleByName)
   }
 
   /*********************************************
@@ -459,7 +463,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *  View and Edit a ROLE
    */
   public onEditRole(ev: MouseEvent, role: AppRole): void {
-    this.formGroupRole.controls['roleName'].patchValue(role.name)
+    this.formGroupRole.controls['name'].patchValue(role.name)
     this.formGroupRole.controls['description'].patchValue(role.description)
     this.changeMode = 'EDIT'
     this.role = role
@@ -470,13 +474,83 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    */
   public onSaveRole(): void {
     this.log('onSaveRole()')
+    if (this.formGroupRole.valid) {
+      const roleExists =
+        this.roles.filter(
+          (r) =>
+            r.name === this.formGroupRole.controls['name'].value &&
+            (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
+        ).length > 0
+      if (roleExists) {
+        this.msgService.error({
+          summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
+          detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
+        })
+        return
+      }
+      if (this.changeMode === 'CREATE') {
+        const role = {
+          name: this.formGroupRole.controls['name'].value,
+          description: this.formGroupRole.controls['description'].value
+        } as CreateRoleRequest
+        this.roleApi
+          .createRole({
+            createRoleRequest: role
+          })
+          .subscribe({
+            next: () => {
+              this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_OK' })
+              this.loadApp()
+            },
+            error: (err) => {
+              this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
+              console.error(err)
+            }
+          })
+      } else {
+        const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
+        const role = {
+          modificationCount: this.role?.modificationCount,
+          name: this.formGroupRole.controls['name'].value,
+          description: this.formGroupRole.controls['description'].value
+        } as UpdateRoleRequest
+        this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
+          next: () => {
+            this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
+            if (roleNameChanged) this.loadApp() // reload all to avoid any mistakes
+            else {
+              this.roles.forEach((r) => {
+                if (r.id === this.role?.id) r.description = role.description
+              })
+            }
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
+            console.error(err)
+          }
+        })
+      }
+      this.showRoleDetailDialog = false
+    }
   }
+
   public onDeleteRole(ev: MouseEvent, role: AppRole): void {
     this.role = role
     this.showRoleDeleteDialog = true
   }
   public onDeleteRoleExecute() {
     this.log('onDeleteRoleExecute()')
+    this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
+        this.loadApp()
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
+        console.error(err.error)
+      }
+    })
+    this.showRoleDeleteDialog = false
   }
 
   public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: AppRole, silent?: boolean): void {

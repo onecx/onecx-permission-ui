@@ -188,13 +188,10 @@
     }
   },
   "ROLE": {
-    "LABEL.APP": "App Rollen",
     "LABEL.WORKSPACE": "Workspace Rollen",
-    "TOOLTIP": "Alle Rollen die der App zugeordnet sind. Neue Rollen können nur für Workspaces erzeugt werden.",
+    "TOOLTIP": "Für den Workspace erstellte Rollen, als Auswahl der für den Mandaten definierten Rollen, die dem Benutzer zugeordnet werden können.",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
-    "APP_ID.WORKSPACE": "Workspace Name",
-    "APP_ID.APP": "App",
     "CREATE": "Neue Rolle erstellen",
     "CREATE_HEADER": "Rolle erstellen",
     "DELETE": "Rolle einschließlich aller Berechtigungen löschen",
@@ -208,8 +205,10 @@
       "FORMAT_URL": "Format: "
     },
     "ERRORS": {
-      "CREATE_ALREADY_EXISTS": "Berechtigung konnte nicht erstellt werden, da sie bereits existiert",
-      "EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da sie bereits existiert",
+      "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung mit diesem Namen bereits existiert.",
+      "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung mit diesem Namen bereits existiert.",
+      "ROLE.CREATE_ALREADY_EXISTS": "Rolle konnte nicht erstellt werden, da eine Rolle mit diesem Namen bereits existiert.",
+      "ROLE.EDIT_ALREADY_EXISTS": "Rolle konnte nicht geändert werden, da eine Rolle mit diesem Namen bereits existiert.",
       "INTERNAL_ERROR": "Interner Fehler",
       "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
       "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
@@ -219,22 +218,26 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal.",
-      "APPLICATIONS": "Unbekanntes Problem beim Abrufen von App-Daten - Bitte versuchen sie es noch einmal."
+      "APPS": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
+      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
+      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
     },
     "HTTP_STATUS_403": {
-      "WORKSPACES": "Sie haben keine Rechte um Workspaces zu sehen.",
-      "APPLICATIONS": "Sie haben keine Rechte um Apps zu sehen."
+      "APPS": "Sie haben keine Rechte um Apps zu sehen.",
+      "WORKSPACES": "Sie haben keine Rechte um Workspaces zu sehen."
     },
     "HTTP_STATUS_404": {
+      "APP": "Die App konnte nicht gefunden werden.",
+      "APPS": "Es konnten keine Apps gefunden werden.",
+      "ROLE": "Die Rolle konnte nicht gefunden werden.",
+      "ROLES": "Es konnten keine Rollen gefunden werden.",
       "WORKSPACE": "Der Workspace konnte nicht gefunden werden.",
-      "WORKSPACES": "Es konnten keine Workspaces gefunden werden.",
-      "APPLICATION": "Die App konnte nicht gefunden werden.",
-      "APPLICATIONS": "Es konnten keine Apps gefunden werden."
+      "WORKSPACES": "Es konnten keine Workspaces gefunden werden."
     },
     "HTTP_STATUS_500": {
-      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal.",
-      "APPLICATIONS": "Unbekanntes Server-Problem beim Abrufen von App-Daten - Bitte versuchen sie es noch einmal."
+      "APPS": "Unbekanntes Server-Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
+      "ROLES": "Unbekanntes Server-Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
+      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
     },
     "NO_APPLICATION_OR_APPLICATION_ROLE_FOUND": "Rolle konnte nicht gelöscht werden da sie nicht gefunden wurde"
   }

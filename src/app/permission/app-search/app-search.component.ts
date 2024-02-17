@@ -116,7 +116,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         if (!this.dataAccessIssue) {
           if (apps instanceof HttpErrorResponse) {
             this.dataAccessIssue = true
-            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + apps.status + '.APPLICATIONS'
+            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + apps.status + '.APPS'
             console.error('searchApplications():', apps)
           } else if (apps.stream instanceof Array) {
             for (const app of apps.stream) {

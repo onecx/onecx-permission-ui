@@ -217,7 +217,7 @@
                     <button
                       pbutton
                       type="button"
-                      *ngIf="myPermissions.includes('ROLE#DELETE') && role.appId === urlParamAppId"
+                      *ngIf="myPermissions.includes('ROLE#DELETE')"
                       [id]="'app_detail_permission_table_col_' + role.name + '_delete_action'"
                       (click)="onDeleteRole($event, role)"
                       [title]="'ROLE.DELETE' | translate"
@@ -228,7 +228,7 @@
                     <button
                       pbutton
                       type="button"
-                      *ngIf="myPermissions.includes('ROLE#EDIT') && role.appId === urlParamAppId"
+                      *ngIf="myPermissions.includes('ROLE#EDIT')"
                       [id]="'app_detail_permission_table_col_' + role.id + '_edit_action'"
                       (click)="onEditRole($event, role)"
                       [title]="'ROLE.EDIT' | translate"
@@ -239,11 +239,7 @@
                     <button
                       pbutton
                       type="button"
-                      *ngIf="
-                        myPermissions.includes('ROLE#EDIT') &&
-                        role.appId === urlParamAppId &&
-                        permissionTable.totalRecords > 0
-                      "
+                      *ngIf="myPermissions.includes('ROLE#EDIT') && permissionTable.totalRecords > 0"
                       [id]="'app_detail_permission_table_col_' + role.id + '_set_all_action'"
                       (click)="onGrantAllPermissions($event, role)"
                       [title]="'PERMISSION.SET_ALL_PERMISSIONS' | translate"
@@ -551,9 +547,9 @@
   >
     <form [formGroup]="formGroupRole" errorTailor>
       <div class="flex flex-wrap flex-column gap-4 justify-content-between">
-        <div>
+        <div class="mt-1">
           <span class="p-float-label" controlErrorAnchor>
-            <input pInputText type="text" class="w-full" id="app_detail_create_role_name" formControlName="roleName" />
+            <input pInputText type="text" class="w-full" id="app_detail_create_role_name" formControlName="name" />
             <label class="ocx-required-label" for="app_detail_create_role_name"> {{ 'ROLE.NAME' | translate }} </label>
           </span>
         </div>
@@ -578,7 +574,7 @@
           autofocus
           type="button"
           class="m-0"
-          id="app_detail_create_role_cancel"
+          id="app_detail_create_role_button_cancel"
           icon="pi pi-times"
           iconPos="left"
           [label]="'ACTIONS.CANCEL' | translate"
@@ -588,7 +584,7 @@
           pButton
           type="button"
           class="m-0"
-          id="app_detail_create_role_save"
+          id="app_detail_create_role_button_save"
           icon="pi pi-save"
           iconPos="left"
           [label]="'ACTIONS.SAVE' | translate"
