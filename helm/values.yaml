@@ -39,27 +39,12 @@ app:
             SAVE: Update and save role
     # Keycloak
     keycloak:
-      enabled: true
-      client: |-
-        {
-          "clientId": "onecx-permission-ui",
-          "enabled": true,
-          "description": "Keycloak client for onecx-permission-ui",
-          "redirectUris": ["*"],
-          "webOrigins": ["*"],
-          "publicClient": true,
-          "protocol": "openid-connect"
-        }
-      roles: |-
-        [
-           {
-             "name": "onecx-permission-admin",
-             "description": "OneCX permission admin"
-           },
-           {
-             "name": "onecx-permission-user",
-             "description": "OneCX permission user"
-           }
-         ]
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            clientId: "onecx-permission-ui"
 
 # PIPE Config
+
+
