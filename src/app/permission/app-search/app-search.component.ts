@@ -64,9 +64,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private msgService: PortalMessageService
   ) {
     this.quickFilterItems = [
-      { label: 'DIALOG.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.SEARCH.FILTER.APP', value: 'APP' },
-      { label: 'DIALOG.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
+      { label: 'APP.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
+      { label: 'APP.SEARCH.QUICK_FILTER.APP', value: 'APP' },
+      { label: 'APP.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
   }
 
@@ -79,7 +79,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
   private log(text: string, obj?: object): void {
-    if (this.debug) console.log('app search: ' + text, obj)
+    if (this.debug) {
+      if (obj) console.log('app detail: ' + text, obj)
+      else console.log('app detail: ' + text)
+    }
   }
 
   /**
@@ -110,8 +113,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           for (let w of workspaces) {
             this.apps.push({ appId: w, name: w, isApp: false, type: 'WORKSPACE' } as App)
           }
-          this.log('getAllWorkspaceNames() apps:', this.apps)
+          this.apps.sort(this.sortAppsByAppId)
+          this.log('loadData() workspaces:', this.apps)
         } else console.error('getAllWorkspaceNames() => unknown response:', workspaces)
+
         // apps
         if (!this.dataAccessIssue) {
           if (apps instanceof HttpErrorResponse) {
@@ -123,7 +128,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
               this.apps.push({ ...app, isApp: true, type: 'APP' } as App)
             }
             this.apps.sort(this.sortAppsByAppId)
-            this.log('loadData():', this.apps)
+            this.log('loadData() apps:', this.apps)
+            //this.prepareTranslations()
           } else console.error('searchApplications() => unknown response:', apps)
         }
         this.loading = false
@@ -141,11 +147,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private prepareTranslations(): void {
     this.translate
       .get([
-        'APPLICATION.NAME',
-        'APPLICATION.TYPE',
+        'APP.NAME',
+        'APP.TYPE',
         'ACTIONS.SEARCH.SORT_BY',
-        'ACTIONS.SEARCH.FILTER',
-        'ACTIONS.SEARCH.FILTER_OF',
+        'ACTIONS.SEARCH.FILTER.LABEL',
+        'ACTIONS.SEARCH.FILTER.OF',
         'ACTIONS.SEARCH.SORT_DIRECTION_ASC',
         'ACTIONS.SEARCH.SORT_DIRECTION_DESC'
       ])
@@ -153,9 +159,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         map((data) => {
           this.dataViewControlsTranslations = {
             sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
-            filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER'],
-            filterInputTooltip:
-              data['ACTIONS.SEARCH.FILTER_OF'] + data['APPLICATION.NAME'] + ', ' + data['APPLICATION.TYPE'],
+            filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
+            filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.NAME'] + ', ' + data['APP.TYPE'],
             sortOrderTooltips: {
               ascending: data['ACTIONS.SEARCH.SORT_DIRECTION_ASC'],
               descending: data['ACTIONS.SEARCH.SORT_DIRECTION_DESC']

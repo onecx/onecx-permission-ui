@@ -41,7 +41,7 @@
                 [options]="quickFilterItems"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
-                [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
+                [title]="'APP.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
               >
                 <ng-template let-item>{{ item.label | translate }}</ng-template>
               </p-selectButton>
@@ -53,11 +53,11 @@
               [filterValue]="filterValue"
               [enableFiltering]="true"
               (filterChange)="onFilterChange($event)"
-              [filterColumns]="['APPLICATION.NAME' | translate, 'APPLICATION.TYPE' | translate]"
+              [filterColumns]="['APP.NAME' | translate, 'APP.TYPE' | translate]"
               [enableSorting]="true"
               [sortingOptions]="[
-                { label: 'APPLICATION.NAME' | translate, value: 'name' },
-                { label: 'APPLICATION.TYPE' | translate, value: 'type' }
+                { label: 'APP.NAME' | translate, value: 'name' },
+                { label: 'APP.TYPE' | translate, value: 'type' }
               ]"
               [defaultSortOption]="sortField"
               [defaultSortDirection]="sortOrder === 1"
@@ -80,7 +80,7 @@
                 class="h-3rem lg:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 my-1 lg:my-2 text-center"
               >
                 <div class="font-bold text-lg lg:text-xl">{{ limitText(app.name ? app.name : app.id, 17) }}</div>
-                <div>{{ 'APPLICATION.TYPE_'.concat(app.type) | translate }}</div>
+                <div>{{ 'APP.TYPE_'.concat(app.type) | translate }}</div>
               </div>
             </div>
           </div>

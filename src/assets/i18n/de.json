@@ -8,34 +8,32 @@
     },
     "COPY": {
       "LABEL": "Kopieren",
-      "DATA": "Mit den Daten ein neues {{TYPE}} anlegen",
-      "CLIPBOARD": "In die Zwischenablage kopieren"
+      "CLIPBOARD": "In die Zwischenablage kopieren",
+      "PERMISSION": "Berechtigung kopieren"
     },
     "CREATE": {
       "LABEL": "Erstellen",
-      "TOOLTIP": "Ein neues {{TYPE}} erstellen",
       "PERMISSION": "Berechtigung erstellen",
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
       "MESSAGE": {
-        "ALREADY_EXIST": "Ein {{TYPE}} mit diesem Namen existert schon",
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht erstellt.",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich erstellt",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht erstellt.",
         "ROLE_OK": "Die Rolle wurde erfolgreich erstellt",
-        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt.",
-        "OK": "Die {{TYPE}} wurde erfolgreich erstellt",
-        "NOK": "Ein Fehler ist aufgetreten. Die {{TYPE}} wurde nicht erstellt."
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt."
       }
     },
     "DELETE": {
       "LABEL": "Löschen",
-      "TOOLTIP": "{{TYPE}} löschen",
-      "MESSAGE_TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
-      "MESSAGE_INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
+      "APP": "App löschen",
+      "PERMISSION": "Berechtigung löschen",
+      "ROLE": "Rolle löschen",
       "MESSAGE": {
+        "TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
+        "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
@@ -47,15 +45,15 @@
     "EDIT": {
       "LABEL": "Bearbeiten",
       "TOOLTIP": "Die Berechtigungen bearbeiten",
+      "PERMISSION": "Berechtigung bearbeiten",
+      "ROLE": "Rolle bearbeiten",
       "DIRECT.TOOLTIP": "Die Eigenschaften bearbeiten - Jede Änderung wird sofort gespeichert",
       "DIRECT.TICKER": "Gewähren/Widerrufen von Berechtigungen durch einfachen Klick",
       "MESSAGE": {
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich geändert",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht geändert.",
         "ROLE_OK": "Die Rolle wurde erfolgreich geändert",
-        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht geändert.",
-        "CHANGE_OK": "Das {{TYPE}} wurde erfolgreich geändert",
-        "CHANGE_NOK": "Ein Fehler ist aufgetreten. Das {{TYPE}} wurde nicht ge�ndert."
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht geändert."
       }
     },
     "EXPORT": {
@@ -75,16 +73,18 @@
     },
     "SEARCH": {
       "ERROR": "Daten nicht abrufbar",
-      "FILTER": "Filter",
-      "FILTER_OF": "Filter für ",
-      "FILTER_CLEAR": "Filter entfernen",
-      "FILTER_MODE_NOT_CONTAINS": "Filterwert nicht enthalten",
-      "FILTER_MODE_CONTAINS": "Filterwert enthalten",
       "NO_DATA": "Keine Daten",
       "RELOAD": "Daten neu laden",
       "SORT_BY": "Sortiert nach",
       "SORT_DIRECTION_ASC": "aufsteigend",
-      "SORT_DIRECTION_DESC": "absteigend"
+      "SORT_DIRECTION_DESC": "absteigend",
+      "FILTER": {
+        "LABEL": "Filter",
+        "OF": "Filter für ",
+        "CLEAR": "Filter entfernen",
+        "MODE_NOT_CONTAINS": "Filterwert nicht enthalten",
+        "MODE_CONTAINS": "Filterwert enthalten"
+      }
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
@@ -101,9 +101,7 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "IMPORT": "Ein {{TYPE}} importieren",
-      "SAVE": "Die Änderungen speichern",
-      "SAVE_AS": "Speichern als neues {{TYPE}}"
+      "SAVE": "Die Änderungen speichern"
     }
   },
   "BREADCRUMBS": {
@@ -114,13 +112,7 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Berechtigungs-Verwaltung",
-      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
-      "FILTER": {
-        "TOOLTIP": "Filterwert",
-        "ALL": "Alle",
-        "WORKSPACE": "Workspaces",
-        "APP": "Apps"
-      }
+      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces"
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
@@ -129,7 +121,7 @@
       "SUBHEADER_APP": "Rollen und Berechtigungen verwalten"
     }
   },
-  "APPLICATION": {
+  "APP": {
     "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_WORKSPACE": "Workspace",
@@ -137,35 +129,36 @@
     "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
     "DELETE_HEADER": "App löschen",
     "EDIT": "App ändern",
-    "EDIT_HEADER": "App ändern"
+    "EDIT_HEADER": "App ändern",
+    "SEARCH": {
+      "QUICK_FILTER": {
+        "TOOLTIP": "Filterwert",
+        "ALL": "Alle",
+        "WORKSPACE": "Workspaces",
+        "APP": "Apps"
+      }
+    }
   },
   "PERMISSION": {
-    "LABEL": "Berechtigungen",
+    "APP_ID": "App",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
-    "ACTION": "Aktion",
-    "ACTIONS": "Aktionen",
     "RESOURCE": "Ressource",
+    "ACTION": "Aktion",
     "PERMISSION": "Ressource # Aktion",
-    "APP_ID": "App",
-    "APP_ID.WORKSPACE": "Workspace Name",
-    "APP_ID.APP": "App",
-    "COPY": "Berechtigung kopieren",
-    "CREATE": "Neue Berechtigung erstellen",
-    "CREATE_HEADER": "Berechtigung erstellen",
-    "DELETE": "Berechtigung einschließlich aller Rollenzuweisungen löschen",
-    "DELETE_HEADER": "Berechtigung löschen",
-    "EDIT": "Berechtigung ändern",
-    "EDIT_HEADER": "Berechtigung ändern",
-    "SET_ALL_PERMISSIONS": "Alle Berechtigungen erteilen",
-    "RESET_ALL_PERMISSIONS": "Alle Berechtigungen entziehen",
-    "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
-    "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
-    "ROLE_ASSIGNEMENT_CHANGEABLE": "Klick für Änderung",
-    "CREATE_ASSIGNMENT_ERROR": "Berechtigung konnte nicht erteilt werden",
-    "CREATE_ASSIGNMENT_SUCCESS": "Berechtigung erteilt",
-    "DELETE_ASSIGNMENT_ERROR": "Berechtigung konnte nicht entzogen werden",
-    "DELETE_ASSIGNMENT_SUCCESS": "Berechtigung entzogen",
+    "LABEL": "Berechtigungen",
+    "ACTIONS": "Aktionen",
+    "ASSIGNMENTS": {
+      "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
+      "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
+      "ROLE_ASSIGNEMENT_CHANGEABLE": "Klick für Änderung",
+      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen erteilen",
+      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entziehen",
+      "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
+      "GRANT_SUCCESS": "Berechtigung erteilt",
+      "REVOKE_ERROR": "Berechtigung konnte nicht entzogen werden",
+      "REVOKE_SUCCESS": "Berechtigung entzogen"
+    },
     "SORT": {
       "APP_ID": "Sortierung nach Apps"
     },
@@ -179,11 +172,6 @@
         "EDIT": "EDIT",
         "DELETE": "DELETE",
         "OTHERS": "Andere"
-      },
-      "SCOPE": {
-        "TOOLTIP": "Wahl der angezeigten Berechtigungen: Nur vom 'Workspace' oder von allen Apps der registrierten Produkten",
-        "APPS": "Apps",
-        "WORKSPACE": "Workspace"
       }
     }
   },
@@ -191,14 +179,7 @@
     "LABEL.WORKSPACE": "Workspace Rollen",
     "TOOLTIP": "Für den Workspace erstellte Rollen, als Auswahl der für den Mandaten definierten Rollen, die dem Benutzer zugeordnet werden können.",
     "NAME": "Name",
-    "DESCRIPTION": "Beschreibung",
-    "CREATE": "Neue Rolle erstellen",
-    "CREATE_HEADER": "Rolle erstellen",
-    "DELETE": "Rolle einschließlich aller Berechtigungen löschen",
-    "DELETE_HEADER": "Rolle löschen",
-    "DELETE_MESSAGE": "Rolle löschen",
-    "EDIT": "Rolle ändern",
-    "EDIT_HEADER": "Rolle ändern"
+    "DESCRIPTION": "Beschreibung"
   },
   "VALIDATION": {
     "HINTS": {

@@ -15,13 +15,13 @@ import {
   CreateRoleRequest,
   UpdateRoleRequest,
   Permission,
-  /*
-  PermissionSearchCriteria,
   Assignment,
+  /*
   AssignmentSearchCriteria,
   AssignmentPageResult,
   CreateAssignmentRequest,  */
   Application,
+  Product,
   // ApplicationSearchCriteria,
   // ApplicationPageResult,
   ApplicationAPIService,
@@ -68,21 +68,22 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('appSortIcon') appSortIcon: ElementRef | undefined
 
   // data
-  public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
-  public workspaceAppFilterValue: string | undefined = undefined
-  public workspaceAppFilterValueLength = 10
   public urlParamAppId = ''
   public urlParamAppType = ''
   public currentApp: App = { appId: 'dummy', type: 'APP' } as App
   public dateFormat = 'medium'
   public changeMode = 'CREATE' || 'EDIT'
+  private workspaceApps: Product[] = []
+  public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
+  public workspaceAppFilterValue: string | undefined = undefined
+  public workspaceAppFilterValueLength = 10
   // app management
   public showAppDeleteDialog = false
   // permission management
   public permissionRows: PermissionViewRow[] = new Array<PermissionViewRow>()
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
-  public myPermissions = new Array<string>() // permissions of the user which is working with apm
+  public myPermissions = new Array<string>() // permissions of the user
   public showPermissionDetailDialog = false
   public showPermissionDeleteDialog = false
   public formGroupPermission: FormGroup
@@ -155,8 +156,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         'ACTIONS.CREATE.ROLE',
         'ACTIONS.CREATE.ROLE.TOOLTIP',
         'ACTIONS.DELETE.LABEL',
-        'ACTIONS.DELETE.TOOLTIP',
-        'APPLICATION.TYPE'
+        'ACTIONS.DELETE.APP',
+        'APP.TYPE'
       ])
       .pipe(
         map((data) => {
@@ -188,7 +189,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             },
             {
               label: data['ACTIONS.DELETE.LABEL'],
-              title: data['ACTIONS.DELETE.TOOLTIP'].replace('{{TYPE}}', 'APP'),
+              title: data['ACTIONS.DELETE.APP'],
               actionCallback: () => {
                 this.showAppDeleteDialog = true
               },
@@ -240,6 +241,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.log('loadApp => Workspace:', this.currentApp)
       this.prepareActionButtons()
       this.loadRoles()
+      this.loadWorkspaceApps()
       this.loading = false
     } else {
       this.appApi
@@ -265,9 +267,33 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         })
     }
   }
+  private loadWorkspaceApps() {
+    this.workspaceApps = []
+    this.workspaceApi
+      .getAllProductsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
+      .pipe(catchError((error) => of(error)))
+      .subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
+          console.error('loadWorkspaceApps() result:', result)
+        } else if (result instanceof Array) {
+          for (const app of result) {
+            this.workspaceApps.push({ ...app })
+          }
+          //this.workspaceApps.sort(this.sortRoleByName)
+          this.log('loadWorkspaceApps:', this.workspaceApps)
+        } else {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
+          console.error('loadWorkspaceApps() => unknown response:', result)
+        }
+      })
+  }
   /**
    * COLUMNS => Roles
    */
+  // TODO: load workspace roles and/or keycloak roles
   private loadRoles(): void {
     this.roles = []
     this.permissionDefaultRoles = {}
@@ -317,20 +343,22 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               roles: {}
             })
           }
-          this.roles.sort(this.sortRoleByName)
-          this.log('loadPermissions:', permissionRows)
-
           // add permission rows of this app to permission table
           this.permissionRows = this.permissionRows.concat(
             Array.from(permissionRows.values()).sort(this.sortPermissionRowByKey)
           )
-          this.loading = false
+          this.log('loadPermissions:', this.permissionRows)
+          //this.prepareWorkspaceAppFilter()
+          this.loadAssignments()
+          this.loading = false // TODO
         } else {
           this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
           console.error('searchPermissions() => unknown response:', result)
         }
       })
+  }
+  private loadAssignments() {
     /*
     // Fill permission rows with role assignments of the current application
     permissionRows.forEach((row) => {
@@ -340,6 +368,38 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
     })
 */
+    this.assApi
+      .searchAssignments({ assignmentSearchCriteria: { appIds: [this.currentApp.appId ?? ''] } })
+      .pipe(catchError((error) => of(error)))
+      .subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.PERMISSIONS'
+          console.error('searchAssignments() result:', result)
+        } else if (result instanceof Object) {
+          this.log('loadAssignments result.stream:', result.stream)
+          // result.stream => assignments => roleId, permissionId, appId
+          // this.permissionRows => Permission + key, roles
+          // Permission: id, appId, resource, action
+          // Fill permission rows with role assignments of the current application
+          // TODO
+          this.permissionRows
+            .filter((permission) => permission.appId === this.currentApp.appId)
+            .forEach((row) => {
+              result.stream?.forEach((assignment: Assignment) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                row.roles[assignment.roleId!] = assignment.permissionId === row.id
+              })
+            })
+          this.log('loadAssignments permission rows:', this.permissionRows)
+          //this.prepareWorkspaceAppFilter()
+          this.loading = false // TODO
+        } else {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
+          console.error('searchAssignments() => unknown response:', result)
+        }
+      })
   }
 
   /*********************************************
@@ -405,15 +465,15 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   public onFilterWorkspaceApps() {
-    this.workspaceAppFilterValue = this.urlParamAppId
+    this.workspaceAppFilterValue = this.currentApp.appId
     if (this.permissionTable) {
-      this.permissionTable?.filter(this.workspaceAppFilterValue, 'applicationId', 'notEquals')
+      this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
     }
   }
   // managing the app filter
   private prepareWorkspaceAppFilter(): void {
-    if (this.urlParamAppType === 'WORKSPACE') {
-      this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.urlParamAppId)
+    if (this.currentApp.type === 'WORKSPACE') {
+      this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.currentApp.appId)
       this.onFilterWorkspaceApps()
     } else {
       this.workspaceAppFilterValue = undefined
@@ -437,7 +497,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    */
 
   /****************************************************************************
-   *  Delete an APPLICATION
+   *  Delete an APP
    */
   public onDeleteApplication() {
     this.log('onDeleteApplication()')
