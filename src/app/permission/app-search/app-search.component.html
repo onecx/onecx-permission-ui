@@ -1,0 +1,91 @@
+<ocx-portal-page helpArticleId="PAGE_PERMISSION_SEARCH">
+  <ocx-page-header
+    [loading]="loading"
+    [manualBreadcrumbs]="false"
+    [header]="'DIALOG.SEARCH.HEADER' | translate"
+    [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
+  >
+  </ocx-page-header>
+
+  <ocx-page-content>
+    <div *ngIf="dataAccessIssue" class="m-3 flex flex-wrap justify-content-between align-items-center">
+      <p-message id="app_search_data_access_issue" severity="error" [text]="exceptionKey | translate"></p-message>
+      <p-button
+        id="app_search_reload_button"
+        [title]="'ACTIONS.SEARCH.RELOAD' | translate"
+        (onClick)="loadData()"
+        icon="pi pi-refresh"
+      ></p-button>
+    </div>
+
+    <ng-container *ngIf="!dataAccessIssue">
+      <p-dataView
+        id="app_search_dataview"
+        [value]="apps"
+        [paginator]="true"
+        [alwaysShowPaginator]="true"
+        [rowsPerPageOptions]="[12, 24, 48]"
+        [rows]="12"
+        [layout]="viewMode"
+        [filterBy]="filterBy"
+        [sortField]="sortField"
+        [sortOrder]="sortOrder"
+      >
+        <ng-template pTemplate="header">
+          <div class="flex flex-wrap align-items-center mx-1">
+            <div class="flex flex-wrap align-items-center ml-1 gap-2">
+              <div class="data-view-control opacity-90 text-sm">Quick<br />Filter</div>
+              <p-selectButton
+                inputid="app_search_quick_filter"
+                styleClass="data-view-control opacity-90"
+                [options]="quickFilterItems"
+                [(ngModel)]="quickFilterValue"
+                (onChange)="onQuickFilterChange($event)"
+                [title]="'APP.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+              >
+                <ng-template let-item>{{ item.label | translate }}</ng-template>
+              </p-selectButton>
+            </div>
+            <ocx-data-view-controls
+              class="flex-grow-1"
+              [supportedViews]="['grid']"
+              [initialViewMode]="viewMode"
+              [filterValue]="filterValue"
+              [enableFiltering]="true"
+              (filterChange)="onFilterChange($event)"
+              [filterColumns]="['APP.NAME' | translate, 'APP.TYPE' | translate]"
+              [enableSorting]="true"
+              [sortingOptions]="[
+                { label: 'APP.NAME' | translate, value: 'name' },
+                { label: 'APP.TYPE' | translate, value: 'type' }
+              ]"
+              [defaultSortOption]="sortField"
+              [defaultSortDirection]="sortOrder === 1"
+              (sortChange)="onSortChange($event)"
+              (sortDirectionChange)="onSortDirChange($event)"
+              [translations]="dataViewControlsTranslations"
+            >
+            </ocx-data-view-controls>
+          </div>
+        </ng-template>
+        <ng-template let-app let-row="rowIndex" pTemplate="gridItem">
+          <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-3">
+            <div
+              [id]="'app_search_data_row_' + row"
+              class="card relative p-2 cursor-pointer hover:bg-gray-200 hover:text-color"
+              [class.bg-primary]="app.type === 'WORKSPACE'"
+              (click)="onAppClick($event, app)"
+            >
+              <div
+                class="h-3rem lg:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 my-1 lg:my-2 text-center"
+              >
+                <div class="font-bold text-lg lg:text-xl">{{ limitText(app.name ? app.name : app.id, 17) }}</div>
+                <div>{{ 'APP.TYPE_'.concat(app.type) | translate }}</div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </ng-container>
+  </ocx-page-content>
+</ocx-portal-page>

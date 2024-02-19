@@ -1,0 +1,89 @@
+:host ::ng-deep {
+  .p-datatable .p-datatable-header {
+    padding-left: 0;
+    padding-right: 0;
+    border: unset;
+  }
+  .p-datatable .p-sortable-column:not(.p-highlight):hover .p-sortable-column-icon,
+  .p-datatable .p-sortable-column .p-sortable-column-icon {
+    color: unset;
+  }
+  .border-right-primary {
+    border-right-color: var(--primary-color) !important;
+    border-right-width: 2px !important;
+  }
+  .border-bottom-primary {
+    border-bottom-color: var(--primary-color) !important;
+    border-bottom-width: 2px !important;
+  }
+  // reduce the size of buttons used inside a table row
+  th button.p-button,
+  td button.p-button {
+    &.p-button-icon-only {
+      width: unset !important;
+    }
+    &.p-button-rounded {
+      height: unset !important;
+    }
+    &:disabled {
+      opacity: 0.38 !important;
+    }
+  }
+  .p-datatable .p-sortable-column .p-sortable-column-icon {
+    margin-left: unset;
+  }
+  .p-inputtext.middle-of-inputgroup {
+    border-left: 0;
+    border-right: 0;
+  }
+  .data-view-control-border {
+    border: var(--toggle-button-border);
+    &:last-of-type {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+  .p-inputtext.data-view-control-border,
+  .p-dropdown.data-view-control-border {
+    &:hover {
+      border-color: rgb(0 0 0 / 30%) !important;
+    }
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .p-dropdown .p-inputtext {
+    padding: 0.6rem;
+  }
+  .pseudo-button:hover {
+    background: var(--button-hover-bg) !important;
+    cursor: pointer;
+  }
+  .pseudo-selectbutton {
+    cursor: pointer;
+    background: var(--toggle-button-bg);
+    &:hover {
+      background: var(--toggle-button-hover-bg);
+    }
+    &.p-highlight {
+      background: var(--toggle-button-active-bg);
+      &:hover {
+        background: var(--toggle-button-active-hover-bg);
+      }
+    }
+  }
+  .p-selectbutton .p-button {
+    min-width: unset !important;
+  }
+  .data-view-control,
+  .data-view-control * {
+    color: var(--emphasis-medium);
+  }
+  .danger-action-text {
+    color: var(--danger-button-bg);
+  }
+  .invisible {
+    visibility: hidden;
+  }
+}

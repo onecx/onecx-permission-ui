@@ -1,0 +1,65 @@
+app:
+  name: ui
+  image:
+    repository: 'onecx/onecx-permission-ui'
+  routing:
+    enabled: true
+    path: /mfe/permission/
+  
+  operator:
+    # Microfrontend
+    microfrontend:
+      enabled: true
+      spec:
+        exposedModule: "./OneCXPermissionModule"
+        description: "OneCX Permission UI"
+        note: "OneCX Permission UI module auto import via MF operator"
+    # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          APP:
+            EDIT: Edit app
+            SAVE: Update and save app
+            VIEW: View mode for app
+            SEARCH: Search apps
+          ASSIGNMENT:
+            GRANT: Assign permission to role
+            REVOKE: Remove assignment of permission to role
+          PERMISSION:
+            CREATE: Create permission
+            EDIT: Edit permission
+            DELETE: Delete permission
+            SAVE: Update and save permission
+          ROLE:
+            CREATE: Create role
+            EDIT: Edit role
+            DELETE: Delete role
+            SAVE: Update and save role
+    # Keycloak
+    keycloak:
+      enabled: true
+      client: |-
+        {
+          "clientId": "onecx-permission-ui",
+          "enabled": true,
+          "description": "Keycloak client for onecx-permission-ui",
+          "redirectUris": ["*"],
+          "webOrigins": ["*"],
+          "publicClient": true,
+          "protocol": "openid-connect"
+        }
+      roles: |-
+        [
+           {
+             "name": "onecx-permission-admin",
+             "description": "OneCX permission admin"
+           },
+           {
+             "name": "onecx-permission-user",
+             "description": "OneCX permission user"
+           }
+         ]
+
+# PIPE Config
