@@ -1,3 +1,8 @@
+@import '/src/_mixins.scss';
+
+@include correct-data-view-control;
+@include search-criteria-select-button;
+
 :host ::ng-deep {
   .p-datatable .p-datatable-header {
     padding-left: 0;
@@ -73,13 +78,7 @@
       }
     }
   }
-  .p-selectbutton .p-button {
-    min-width: unset !important;
-  }
-  .data-view-control,
-  .data-view-control * {
-    color: var(--emphasis-medium);
-  }
+
   .danger-action-text {
     color: var(--danger-button-bg);
   }

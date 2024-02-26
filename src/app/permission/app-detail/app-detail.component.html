@@ -6,8 +6,8 @@
   <ocx-page-header
     [loading]="loading"
     [actions]="(actions$ | async) ?? []"
-    [header]="loading ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.type | translate) + currentApp.name"
-    [subheader]="loading ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.type | translate)"
+    [header]="loading ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
+    [subheader]="loading ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
     [manualBreadcrumbs]="false"
   >
   </ocx-page-header>
@@ -139,7 +139,7 @@
               </div>
             </th>
             <th
-              *ngIf="currentApp.type === 'WORKSPACE'"
+              *ngIf="currentApp.appType === 'WORKSPACE'"
               [attr.colspan]="roles.length"
               class="py-0 opacity-80 text-center"
               [title]="'ROLE.TOOLTIP' | translate"
@@ -200,7 +200,7 @@
                 </span>
                 <button
                   pbutton
-                  type="button"
+                  appType="button"
                   [id]="'app_detail_permission_table_sort_action'"
                   (click)="onWorkspaceAppFilterItemSort($event, appSortIcon)"
                   [title]="'PERMISSION.SORT.APP_ID' | translate"
@@ -211,7 +211,7 @@
               </div>
             </th>
             <!-- WORKSPACE ROLES (as part of tenant roles managed by IDM) -->
-            <ng-container *ngIf="currentApp.type === 'WORKSPACE'">
+            <ng-container *ngIf="currentApp.appType === 'WORKSPACE'">
               <th *ngFor="let role of columns" class="pt-2 pb-1 px-2 text-center border-bottom-primary">
                 <div class="flex flex-column justify-content-between">
                   <div class="flex flex-row gap-1 justify-content-center white-space-nowrap">
@@ -324,7 +324,7 @@
               {{ rowData.appId }}
             </td>
             <!-- ASSIGNMENTS -->
-            <ng-container *ngIf="currentApp.type === 'WORKSPACE'">
+            <ng-container *ngIf="currentApp.appType === 'WORKSPACE'">
               <td
                 *ngFor="let role of columns"
                 class="text-center"

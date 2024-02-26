@@ -28,12 +28,13 @@ import {
   AssignmentAPIService,
   PermissionAPIService,
   RoleAPIService,
-  WorkspaceAPIService
+  WorkspaceAPIService,
+  WorkspaceDetails
 } from 'src/app/shared/generated'
 //import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 import { limitText } from 'src/app/shared/utils'
 
-type App = Application & { isApp: boolean; type: AppType }
+type App = Application & { isApp: boolean; appType: AppType; workspaceDetails?: WorkspaceDetails }
 type AppType = 'WORKSPACE' | 'APP'
 type AppRole = Role & { appId: string }
 type RoleAssignments = { [key: string]: boolean }
@@ -70,7 +71,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // data
   public urlParamAppId = ''
   public urlParamAppType = ''
-  public currentApp: App = { appId: 'dummy', type: 'APP' } as App
+  public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
   public dateFormat = 'medium'
   public changeMode = 'CREATE' || 'EDIT'
   private workspaceApps: Product[] = []
@@ -185,7 +186,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'asOverflow',
               permission: 'ROLE#EDIT',
               conditional: true,
-              showCondition: this.currentApp.type === 'WORKSPACE'
+              showCondition: this.currentApp.appType === 'WORKSPACE'
             },
             {
               label: data['ACTIONS.DELETE.LABEL'],
@@ -197,7 +198,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'asOverflow',
               permission: 'APPLICATION#DELETE',
               conditional: true,
-              showCondition: this.currentApp.type === 'APP'
+              showCondition: this.currentApp.appType === 'APP'
             }
           ]
         })
@@ -234,13 +235,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.urlParamAppType === 'WORKSPACE') {
       this.currentApp = {
         id: this.urlParamAppId,
-        appId: this.urlParamAppId,
         name: this.urlParamAppId,
-        type: this.urlParamAppType
+        appId: this.urlParamAppId,
+        appType: this.urlParamAppType
       } as App
       this.log('loadApp => Workspace:', this.currentApp)
       this.prepareActionButtons()
-      this.loadRoles()
+      this.loadWorkspaceDetails()
       this.loadWorkspaceApps()
       this.loading = false
     } else {
@@ -253,7 +254,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
             console.error('searchApplications() result:', result)
           } else if (result instanceof Object) {
-            this.currentApp = { ...result.stream[0], type: 'APP' } as App
+            this.currentApp = { ...result.stream[0], appType: 'APP' } as App
             this.log('loadApp => App:', this.currentApp)
             this.prepareActionButtons()
             this.permissionRows = []
@@ -267,6 +268,25 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         })
     }
   }
+  private loadWorkspaceDetails() {
+    this.workspaceApi
+      .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
+      .pipe(catchError((error) => of(error)))
+      .subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
+          console.error('getDetailsByWorkspaceName() result:', result)
+        } else if (result instanceof Object) {
+          this.currentApp.workspaceDetails = { ...result }
+          this.log('getDetailsByWorkspaceName => App:', this.currentApp)
+          this.loadRoles()
+        } else {
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
+          console.error('getDetailsByWorkspaceName() => unknown response:', result)
+        }
+      })
+  }
+
   private loadWorkspaceApps() {
     this.workspaceApps = []
     this.workspaceApi
@@ -292,11 +312,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   /**
    * COLUMNS => Roles
+   *
+   * Align roles with workspace role: create role if not exist
    */
-  // TODO: load workspace roles and/or keycloak roles
-  private loadRoles(): void {
+  private loadRoles(rolesAligned: boolean = false): void {
+    this.log('loadRoles: ' + rolesAligned)
     this.roles = []
     this.permissionDefaultRoles = {}
+    // get roles from onecx permission
     this.roleApi
       .searchRoles({ roleSearchCriteria: {} })
       .pipe(catchError((error) => of(error)))
@@ -310,8 +333,34 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.roles.push({ ...role })
             this.permissionDefaultRoles[role.name] = false
           }
-          this.roles.sort(this.sortRoleByName)
-          this.log('loadRoles:', this.roles)
+          // check roles from workspace: add missing
+          if (
+            !rolesAligned &&
+            this.currentApp.appType === 'WORKSPACE' &&
+            this.currentApp.workspaceDetails?.workspaceRoles
+          ) {
+            for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
+              this.log('check role: ' + wRole)
+              if (this.roles.filter((r) => r.name === wRole).length === 0) {
+                const newRole: Role = { name: wRole, description: wRole }
+                this.roleApi
+                  .createRole({
+                    createRoleRequest: newRole as CreateRoleRequest
+                  })
+                  .subscribe({
+                    next: () => {
+                      this.log('role created: ' + wRole)
+                      this.roles.push(newRole)
+                      rolesAligned = true
+                    }
+                  })
+              }
+            }
+            if (rolesAligned) this.loadRoles(true)
+          } else {
+            this.roles.sort(this.sortRoleByName)
+            this.log('loadRoles:', this.roles)
+          }
         } else {
           this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
@@ -472,7 +521,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   // managing the app filter
   private prepareWorkspaceAppFilter(): void {
-    if (this.currentApp.type === 'WORKSPACE') {
+    if (this.currentApp.appType === 'WORKSPACE') {
       this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.currentApp.appId)
       this.onFilterWorkspaceApps()
     } else {
