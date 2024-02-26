@@ -151,7 +151,7 @@
                   type="button"
                   *ocxIfPermission="'ROLE#EDIT'"
                   [id]="'app_detail_permission_table_header_add_permission_action'"
-                  (click)="onCreateRole()"
+                  (click)="onCreateRole($event)"
                   [title]="'ACTIONS.CREATE.ROLE' | translate"
                   class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
@@ -522,110 +522,6 @@
     </ng-template>
   </p-dialog>
 
-  <!--
-    NEW/EDIT ROLE
-  -->
-  <p-dialog
-    [(visible)]="showRoleDetailDialog"
-    [header]="'ACTIONS.' + changeMode + '.ROLE' | translate"
-    [modal]="true"
-    [closable]="true"
-    [resizable]="true"
-    [dismissableMask]="true"
-    [style]="{ width: '400px' }"
-  >
-    <form [formGroup]="formGroupRole" errorTailor>
-      <div class="flex flex-wrap flex-column gap-4 justify-content-between">
-        <div class="mt-1">
-          <span class="p-float-label" controlErrorAnchor>
-            <input pInputText type="text" class="w-full" id="app_detail_create_role_name" formControlName="name" />
-            <label class="ocx-required-label" for="app_detail_create_role_name"> {{ 'ROLE.NAME' | translate }} </label>
-          </span>
-        </div>
-        <div>
-          <span class="p-float-label">
-            <input
-              pInputText
-              type="text"
-              class="w-full"
-              id="app_detail_create_role_description"
-              formControlName="description"
-            />
-            <label for="app_detail_create_role_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
-          </span>
-        </div>
-      </div>
-    </form>
-    <ng-template pTemplate="footer">
-      <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-        <button
-          pButton
-          autofocus
-          type="button"
-          class="m-0"
-          id="app_detail_create_role_button_cancel"
-          icon="pi pi-times"
-          iconPos="left"
-          [label]="'ACTIONS.CANCEL' | translate"
-          (click)="showRoleDetailDialog = false"
-        ></button>
-        <button
-          pButton
-          type="button"
-          class="m-0"
-          id="app_detail_create_role_button_save"
-          icon="pi pi-save"
-          iconPos="left"
-          [label]="'ACTIONS.SAVE' | translate"
-          [disabled]="!formGroupRole.valid"
-          (click)="onSaveRole()"
-        ></button>
-      </div>
-    </ng-template>
-  </p-dialog>
-
-  <!-- DELETE ROLE -->
-  <p-dialog
-    [(visible)]="showRoleDeleteDialog"
-    [header]="'ACTIONS.DELETE.ROLE' | translate"
-    [modal]="true"
-    [closable]="true"
-    [resizable]="false"
-    [dismissableMask]="true"
-    [style]="{ 'max-width': '425px' }"
-  >
-    <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
-      <div class="pi pi-question-circle text-3xl danger-action-text"></div>
-      <div>
-        <div>{{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', role?.name) }}</div>
-        <div class="mt-2">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
-      </div>
-    </div>
-    <ng-template pTemplate="footer">
-      <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-        <button
-          pButton
-          autofocus
-          type="button"
-          class="m-0"
-          icon="pi pi-times"
-          iconPos="left"
-          [label]="'ACTIONS.CONFIRMATION.NO' | translate"
-          (click)="showRoleDeleteDialog = false"
-        ></button>
-        <button
-          pButton
-          type="button"
-          class="m-0"
-          icon="pi pi-check"
-          iconPos="left"
-          [label]="'ACTIONS.CONFIRMATION.YES' | translate"
-          (click)="onDeleteRoleExecute()"
-        ></button>
-      </div>
-    </ng-template>
-  </p-dialog>
-
   <!-- DELETE APP -->
   <p-dialog
     [(visible)]="showAppDeleteDialog"
@@ -668,3 +564,13 @@
     </ng-template>
   </p-dialog>
 </ocx-portal-page>
+
+<app-role-detail
+  [currentApp]="currentApp"
+  [roles]="roles"
+  [role]="role"
+  [changeMode]="changeMode"
+  [displayDetailDialog]="showRoleDetailDialog"
+  [displayDeleteDialog]="showRoleDeleteDialog"
+  (dataChanged)="onRoleChanged($event)"
+></app-role-detail>

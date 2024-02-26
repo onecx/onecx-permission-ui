@@ -13,7 +13,6 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 import {
   Role,
   CreateRoleRequest,
-  UpdateRoleRequest,
   Permission,
   Assignment,
   /*
@@ -73,7 +72,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public urlParamAppType = ''
   public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
   public dateFormat = 'medium'
-  public changeMode = 'CREATE' || 'EDIT'
+  public changeMode: ChangeMode = 'CREATE' || 'EDIT'
   private workspaceProducts: Product[] = []
   private workspaceApps: App[] = []
   public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
@@ -110,7 +109,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     private userService: UserService
   ) {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId') || ''
-    this.urlParamAppType = this.route.snapshot.paramMap.get('type')?.toUpperCase() || ''
+    this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase() || ''
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
@@ -135,7 +134,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
       { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
       { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
-      // { label: 'PERMISSION.SEARCH.FILTER.OTHERS', value: 'OTHERS' },
     ]
   }
 
@@ -358,8 +356,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
                   })
               }
             }
-            if (rolesAligned) this.loadRoles(true)
-          } else {
+          }
+          if (rolesAligned) this.loadRoles(true)
+          else {
             this.roles.sort(this.sortRoleByName)
             this.log('loadRoles:', this.roles)
           }
@@ -596,110 +595,35 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   /****************************************************************************
-   ****************************************************************************
-   ****************************************************************************
-   *  Create a ROLE    => currentApp is workspace
-   ****************************************************************************
+   *  ROLE    => if currentApp is workspace
    ****************************************************************************
    */
-  public onCreateRole(): void {
-    this.formGroupRole.reset()
-    this.changeMode = 'CREATE'
+  public onCreateRole(ev?: MouseEvent): void {
+    ev?.stopPropagation
     this.role = undefined
+    this.changeMode = 'CREATE'
     this.showRoleDetailDialog = true
   }
-  /**
-   *  View and Edit a ROLE
-   */
   public onEditRole(ev: MouseEvent, role: Role): void {
-    this.formGroupRole.controls['name'].patchValue(role.name)
-    this.formGroupRole.controls['description'].patchValue(role.description)
-    this.changeMode = 'EDIT'
+    ev.stopPropagation
     this.role = role
+    this.changeMode = 'EDIT'
     this.showRoleDetailDialog = true
   }
-  /**
-   * Save a ROLE
-   */
-  public onSaveRole(): void {
-    this.log('onSaveRole()')
-    if (this.formGroupRole.valid) {
-      const roleExists =
-        this.roles.filter(
-          (r) =>
-            r.name === this.formGroupRole.controls['name'].value &&
-            (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
-        ).length > 0
-      if (roleExists) {
-        this.msgService.error({
-          summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
-          detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
-        })
-        return
-      }
-      if (this.changeMode === 'CREATE') {
-        const role = {
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as CreateRoleRequest
-        this.roleApi
-          .createRole({
-            createRoleRequest: role
-          })
-          .subscribe({
-            next: () => {
-              this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_OK' })
-              this.loadApp()
-            },
-            error: (err) => {
-              this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
-              console.error(err)
-            }
-          })
-      } else {
-        const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
-        const role = {
-          modificationCount: this.role?.modificationCount,
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as UpdateRoleRequest
-        this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
-          next: () => {
-            this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-            if (roleNameChanged) this.loadApp() // reload all to avoid any mistakes
-            else {
-              this.roles.forEach((r) => {
-                if (r.id === this.role?.id) r.description = role.description
-              })
-            }
-          },
-          error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
-            console.error(err)
-          }
-        })
-      }
-      this.showRoleDetailDialog = false
-    }
-  }
-
   public onDeleteRole(ev: MouseEvent, role: Role): void {
+    ev.stopPropagation
     this.role = role
+    this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
+    this.log('onDeleteRole')
   }
-  public onDeleteRoleExecute() {
-    this.log('onDeleteRoleExecute()')
-    this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-        this.loadApp()
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error(err.error)
-      }
-    })
+  public onRoleChanged(changed: boolean) {
+    this.log('onRoleChanged ' + changed)
+    this.role = undefined
+    this.changeMode = 'VIEW'
+    this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
+    if (changed) this.loadApp()
   }
 
   public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {

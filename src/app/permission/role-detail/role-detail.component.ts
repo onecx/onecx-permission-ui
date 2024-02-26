@@ -8,6 +8,7 @@ import { Role, CreateRoleRequest, UpdateRoleRequest, RoleAPIService } from 'src/
 import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
 @Component({
+  selector: 'app-role-detail',
   templateUrl: './role-detail.component.html',
   styleUrls: ['./role-detail.component.scss']
 })
@@ -16,16 +17,15 @@ export class RoleDetailComponent implements OnInit, OnChanges {
   @Input() role: Role | undefined
   @Input() roles: Role[] = []
   @Input() changeMode: ChangeMode = 'VIEW'
-  @Output() dataChanged = new EventEmitter()
+  @Input() displayDetailDialog = false
+  @Input() displayDeleteDialog = false
+  @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   public myPermissions = new Array<string>() // permissions of the user
   public formGroupRole: FormGroup
-  public displayDetailDialog = false
-  public displayDeleteDialog = false
 
   constructor(
     private roleApi: RoleAPIService,
-    private location: Location,
     private translate: TranslateService,
     private msgService: PortalMessageService,
     private userService: UserService
@@ -45,18 +45,9 @@ export class RoleDetailComponent implements OnInit, OnChanges {
   public ngOnChanges(): void {
     this.log('ngOnChanges')
     this.formGroupRole.reset()
-    switch (this.changeMode) {
-      case 'DELETE':
-        this.displayDeleteDialog = true
-        break
-      case 'CREATE':
-      case 'EDIT':
-        if (this.role) {
-          this.formGroupRole.controls['name'].patchValue(this.role.name)
-          this.formGroupRole.controls['description'].patchValue(this.role.description)
-        }
-        this.displayDetailDialog = true
-        break
+    if (this.changeMode === 'EDIT' && this.role) {
+      this.formGroupRole.controls['name'].patchValue(this.role.name)
+      this.formGroupRole.controls['description'].patchValue(this.role.description)
     }
   }
 

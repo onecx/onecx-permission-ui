@@ -86,6 +86,10 @@
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
       }
     },
+    "VIEW": {
+      "ROLE": "Role Details",
+      "PERMISSION": "Permission Details"
+    },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
     "CLEAR_CACHE": "Clear Cache",

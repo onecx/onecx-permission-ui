@@ -18,7 +18,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: ':type/:appId',
+    path: ':appType/:appId',
     component: AppDetailComponent,
     data: {
       breadcrumb: 'BREADCRUMBS.DETAIL',

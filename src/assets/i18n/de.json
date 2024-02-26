@@ -86,6 +86,10 @@
         "MODE_CONTAINS": "Filterwert enthalten"
       }
     },
+    "VIEW": {
+      "ROLE": "Rollendetails",
+      "PERMISSION": "Berechtigungsdetails"
+    },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
     "CLEAR_CACHE": "Cache entfernen",
