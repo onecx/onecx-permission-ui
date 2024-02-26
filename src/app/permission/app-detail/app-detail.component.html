@@ -112,7 +112,7 @@
           <tr>
             <th
               [attr.colspan]="
-                myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 3 : 2
+                myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 5 : 4
               "
               class="opacity-80 text-center border-right-primary"
               [ngClass]="
@@ -177,6 +177,51 @@
               {{ 'PERMISSION.PERMISSION' | translate }}
               <p-sortIcon field="key"></p-sortIcon>
             </th>
+
+            <th
+              spSortableColumn="productName"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
+            >
+              <div class="flex">
+                <span #workspaceProductFilter class="p-float-label inline-block w-full">
+                  <p-dropdown
+                    id="app_detail_permission_table_product_name"
+                    styleClass="w-full"
+                    [appendTo]="'body'"
+                    [options]="workspaceProductFilterItems"
+                    [(ngModel)]="workspaceProductFilterValue"
+                    (onChange)="permissionTable.filter($event.value, 'productName', 'equals')"
+                    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                    [title]="'PERMISSION.SEARCH.FILTER.PRODUCT.TOOLTIP' | translate"
+                  ></p-dropdown>
+                  <label for="app_detail_permission_table_product_name">
+                    {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label
+                  >
+                </span>
+              </div>
+            </th>
+            <th
+              spSortableColumn="appType"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
+            >
+              <div class="flex">
+                <span #workspaceAppTypeFilter class="p-float-label inline-block">
+                  <p-dropdown
+                    id="app_detail_permission_table_app_types"
+                    styleClass="w-full"
+                    [appendTo]="'body'"
+                    [options]="workspaceAppTypeFilterItems"
+                    [(ngModel)]="workspaceAppTypeFilterValue"
+                    (onChange)="permissionTable.filter($event.value, 'appType', 'equals')"
+                    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                    [title]="'PERMISSION.SEARCH.FILTER.APP_TYPE.TOOLTIP' | translate"
+                  ></p-dropdown>
+                  <label for="app_detail_permission_table_app_types">
+                    {{ 'PERMISSION.SEARCH.FILTER.APP_TYPE' | translate }}</label
+                  >
+                </span>
+              </div>
+            </th>
             <th
               spSortableColumn="applicationId"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary border-right-primary white-space-nowrap"
@@ -184,7 +229,7 @@
               <div class="flex">
                 <span #workspaceAppFilter class="p-float-label inline-block">
                   <p-dropdown
-                    id="app_detail_permission_table_portal_apps"
+                    id="app_detail_permission_table_apps"
                     styleClass="w-full"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -194,7 +239,7 @@
                     (onClear)="onFilterWorkspaceApps()"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                   ></p-dropdown>
-                  <label for="app_detail_permission_table_portal_apps">
+                  <label for="app_detail_permission_table_apps">
                     {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label
                   >
                 </span>
@@ -210,6 +255,7 @@
                 </button>
               </div>
             </th>
+
             <!-- WORKSPACE ROLES (as part of tenant roles managed by IDM) -->
             <ng-container *ngIf="currentApp.appType === 'WORKSPACE'">
               <th *ngFor="let role of columns" class="pt-2 pb-1 px-2 text-center border-bottom-primary">

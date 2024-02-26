@@ -64,6 +64,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
+  @ViewChild('workspaceProductFilter') workspaceProductFilter: ElementRef | undefined
+  @ViewChild('workspaceAppTypeFilter') workspaceAppTypeFilter: ElementRef | undefined
   @ViewChild('workspaceAppFilter') workspaceAppFilter: ElementRef | undefined
   @ViewChild('appSortIcon') appSortIcon: ElementRef | undefined
 
@@ -73,7 +75,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'CREATE' || 'EDIT'
+
   private workspaceProducts: Product[] = []
+  public workspaceProductFilterItems: SelectItem[] = new Array<SelectItem>()
+  public workspaceProductFilterValue: string | undefined = undefined
+
+  public workspaceAppTypeFilterItems: SelectItem[] = new Array<SelectItem>()
+  public workspaceAppTypeFilterValue: string | undefined = undefined
+
   private workspaceApps: App[] = []
   public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
   public workspaceAppFilterValue: string | undefined = undefined
@@ -134,6 +143,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
       { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
       { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
+    ]
+    this.workspaceAppTypeFilterItems = [
+      { label: '', value: null },
+      { label: 'MFE', value: 'MFE' },
+      { label: 'MS', value: 'MS' }
     ]
   }
 
@@ -538,6 +552,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           ? this.workspaceAppFilterValueLength
           : 22) +
         'rem'
+  }
+  public onFilterWorkspaceAppTypes() {
+    this.workspaceAppTypeFilterValue = this.currentApp.appId
+    if (this.permissionTable) {
+      this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
+    }
   }
 
   /****************************************************************************

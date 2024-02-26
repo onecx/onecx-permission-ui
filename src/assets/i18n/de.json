@@ -177,6 +177,10 @@
     "SEARCH": {
       "FILTER": {
         "APPS": "App",
+        "APP_TYPE": "Typ",
+        "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
+        "PRODUCT": "Produktname",
+        "PRODUCT.TOOLTIP": "Die beim Workspace registrierten Produkte",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Filterwert",
         "ALL": "Alle",
