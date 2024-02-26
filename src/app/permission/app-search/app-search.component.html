@@ -1,11 +1,29 @@
 <ocx-portal-page helpArticleId="PAGE_PERMISSION_SEARCH">
-  <ocx-page-header
-    [loading]="loading"
-    [manualBreadcrumbs]="false"
+  <ocx-search-header
     [header]="'DIALOG.SEARCH.HEADER' | translate"
     [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
+    (searched)="onSearch()"
+    (resetted)="onSearchReset()"
+    [manualBreadcrumbs]="false"
   >
-  </ocx-page-header>
+    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap gap-4 row-gap-3 px-2">
+      <div class="flex flex-wrap align-items-center ml-1 gap-2">
+        <div class="p-selectbutton-title opacity-90 text-sm" [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate">
+          {{ 'APP.SEARCH.FILTER.LABEL' | translate }}
+        </div>
+        <div class="search-criteria-selectbutton">
+          <p-selectButton
+            inputid="app_search_criteria_app_type"
+            [options]="appTypeItems"
+            formControlName="appType"
+            [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate"
+          >
+            <ng-template let-item>{{ item.label | translate }}</ng-template>
+          </p-selectButton>
+        </div>
+      </div>
+    </div>
+  </ocx-search-header>
 
   <ocx-page-content>
     <div *ngIf="dataAccessIssue" class="m-3 flex flex-wrap justify-content-between align-items-center">
@@ -13,7 +31,7 @@
       <p-button
         id="app_search_reload_button"
         [title]="'ACTIONS.SEARCH.RELOAD' | translate"
-        (onClick)="loadData()"
+        (onClick)="onSearch()"
         icon="pi pi-refresh"
       ></p-button>
     </div>
@@ -21,13 +39,13 @@
     <ng-container *ngIf="!dataAccessIssue">
       <p-dataView
         id="app_search_dataview"
-        [value]="apps"
+        [value]="(apps$ | async) ?? []"
         [paginator]="true"
         [alwaysShowPaginator]="true"
         [rowsPerPageOptions]="[12, 24, 48]"
         [rows]="12"
         [layout]="viewMode"
-        [filterBy]="filterBy"
+        [filterBy]="filterValueDefault"
         [sortField]="sortField"
         [sortOrder]="sortOrder"
       >
@@ -50,17 +68,16 @@
               class="flex-grow-1"
               [supportedViews]="['grid']"
               [initialViewMode]="viewMode"
-              [filterValue]="filterValue"
               [enableFiltering]="true"
               (filterChange)="onFilterChange($event)"
-              [filterColumns]="['APP.NAME' | translate, 'APP.TYPE' | translate]"
+              [filterColumns]="['APP.ID' | translate, 'APP.TYPE' | translate]"
               [enableSorting]="true"
-              [sortingOptions]="[
-                { label: 'APP.NAME' | translate, value: 'name' },
-                { label: 'APP.TYPE' | translate, value: 'type' }
-              ]"
               [defaultSortOption]="sortField"
               [defaultSortDirection]="sortOrder === 1"
+              [sortingOptions]="[
+                { label: 'APP.ID' | translate, value: 'appId' },
+                { label: 'APP.TYPE' | translate, value: 'appType' }
+              ]"
               (sortChange)="onSortChange($event)"
               (sortDirectionChange)="onSortDirChange($event)"
               [translations]="dataViewControlsTranslations"
@@ -73,14 +90,14 @@
             <div
               [id]="'app_search_data_row_' + row"
               class="card relative p-2 cursor-pointer hover:bg-gray-200 hover:text-color"
-              [class.bg-primary]="app.type === 'WORKSPACE'"
+              [class.bg-primary]="app.appType === 'WORKSPACE'"
               (click)="onAppClick($event, app)"
             >
               <div
                 class="h-3rem lg:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 my-1 lg:my-2 text-center"
               >
-                <div class="font-bold text-lg lg:text-xl">{{ limitText(app.name ? app.name : app.id, 17) }}</div>
-                <div>{{ 'APP.TYPE_'.concat(app.type) | translate }}</div>
+                <div class="font-bold text-lg lg:text-xl">{{ limitText(app.appId, 17) }}</div>
+                <div>{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
             </div>
           </div>

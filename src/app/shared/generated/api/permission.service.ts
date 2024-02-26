@@ -105,9 +105,9 @@ export class PermissionAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<PermissionPageResult>>;
-    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<PermissionPageResult>>>;
-    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<PermissionPageResult>>>;
+    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<PermissionPageResult>;
+    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<PermissionPageResult>>;
+    public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<PermissionPageResult>>;
     public searchPermissions(requestParameters: SearchPermissionsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const permissionSearchCriteria = requestParameters.permissionSearchCriteria;
         if (permissionSearchCriteria === null || permissionSearchCriteria === undefined) {
@@ -155,7 +155,7 @@ export class PermissionAPIService {
         }
 
         let localVarPath = `/permissions/search`;
-        return this.httpClient.request<Array<PermissionPageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<PermissionPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: permissionSearchCriteria,

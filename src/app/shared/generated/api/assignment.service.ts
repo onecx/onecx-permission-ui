@@ -307,9 +307,9 @@ export class AssignmentAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<AssignmentPageResult>>;
-    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<AssignmentPageResult>>>;
-    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<AssignmentPageResult>>>;
+    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AssignmentPageResult>;
+    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AssignmentPageResult>>;
+    public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AssignmentPageResult>>;
     public searchAssignments(requestParameters: SearchAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const assignmentSearchCriteria = requestParameters.assignmentSearchCriteria;
         if (assignmentSearchCriteria === null || assignmentSearchCriteria === undefined) {
@@ -357,7 +357,7 @@ export class AssignmentAPIService {
         }
 
         let localVarPath = `/assignments/search`;
-        return this.httpClient.request<Array<AssignmentPageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AssignmentPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: assignmentSearchCriteria,

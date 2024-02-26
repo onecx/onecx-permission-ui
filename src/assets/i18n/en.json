@@ -123,6 +123,7 @@
     }
   },
   "APP": {
+    "ID": "App ID",
     "NAME": "Name",
     "TYPE": "Type",
     "TYPE_WORKSPACE": "Workspace",
@@ -132,11 +133,18 @@
     "EDIT": "Edit App",
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
-      "QUICK_FILTER": {
-        "TOOLTIP": "Set filter value",
+      "FILTER": {
+        "LABEL": "Filter of App Type",
+        "TOOLTIP": "App Type",
         "ALL": "All",
-        "WORKSPACE": "Workspaces",
-        "APP": "Apps"
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
+      },
+      "QUICK_FILTER": {
+        "TOOLTIP": "Quick Filter for App type",
+        "ALL": "All",
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
       }
     }
   },

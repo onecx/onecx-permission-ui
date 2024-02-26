@@ -314,9 +314,9 @@ export class RoleAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<RolePageResult>>;
-    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<RolePageResult>>>;
-    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<RolePageResult>>>;
+    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<RolePageResult>;
+    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<RolePageResult>>;
+    public searchRoles(requestParameters: SearchRolesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<RolePageResult>>;
     public searchRoles(requestParameters: SearchRolesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const roleSearchCriteria = requestParameters.roleSearchCriteria;
         if (roleSearchCriteria === null || roleSearchCriteria === undefined) {
@@ -364,7 +364,7 @@ export class RoleAPIService {
         }
 
         let localVarPath = `/roles/search`;
-        return this.httpClient.request<Array<RolePageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<RolePageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: roleSearchCriteria,

@@ -20,6 +20,7 @@ model/assignmentPageResult.ts
 model/assignmentSearchCriteria.ts
 model/createAssignmentRequest.ts
 model/createRoleRequest.ts
+model/mfeMsAbstract.ts
 model/models.ts
 model/permission.ts
 model/permissionPageResult.ts
@@ -28,9 +29,11 @@ model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
 model/product.ts
+model/productDetails.ts
 model/role.ts
 model/rolePageResult.ts
 model/roleSearchCriteria.ts
 model/updateRoleRequest.ts
+model/workspaceDetails.ts
 param.ts
 variables.ts

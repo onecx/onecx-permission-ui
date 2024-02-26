@@ -143,9 +143,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RolePageResult'
+                $ref: '#/components/schemas/RolePageResult'
         400:
           description: Bad request
           content:
@@ -174,9 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PermissionPageResult'
+                $ref: '#/components/schemas/PermissionPageResult'
         400:
           description: Bad request
           content:
@@ -205,9 +201,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AssignmentPageResult'
+                $ref: '#/components/schemas/AssignmentPageResult'
         400:
           description: Bad request
           content:
@@ -316,9 +310,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApplicationPageResult'
+                $ref: '#/components/schemas/ApplicationPageResult'
         400:
           description: Bad request
           content:
@@ -367,6 +359,29 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+  /workspaces/{workspaceName}/details:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - workspace
+      description: get detailed information to all workspace related products and roles
+      operationId: getDetailsByWorkspaceName
+      parameters:
+        - name: workspaceName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDetails'
 components:
   schemas:
     CreateRoleRequest:
@@ -433,6 +448,8 @@ components:
       type: object
       properties:
         appId:
+          type: string
+        productName:
           type: string
         pageNumber:
           format: int32
@@ -501,6 +518,8 @@ components:
         id:
           type: string
         appId:
+          type: string
+        productName:
           type: string
         resource:
           type: string
@@ -580,6 +599,8 @@ components:
       properties:
         appId:
           type: string
+        productName:
+          type: string
         name:
           type: string
         pageNumber:
@@ -630,6 +651,8 @@ components:
           type: string
         appId:
           type: string
+        productName:
+          type: string
         name:
           type: string
         description:
@@ -646,6 +669,37 @@ components:
         productName:
           type: string
         baseUrl:
+          type: string
+    WorkspaceDetails:
+      type: object
+      properties:
+        workspaceRoles:
+          type: array
+          items:
+            type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDetails'
+    ProductDetails:
+      type: object
+      properties:
+        productName:
+          type: string
+        mfe:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfeMsAbstract'
+        ms:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfeMsAbstract'
+    MfeMsAbstract:
+      type: object
+      properties:
+        appName:
+          type: string
+        appId:
           type: string
     OffsetDateTime:
       format: date-time
