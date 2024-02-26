@@ -30,13 +30,10 @@ export type AppFilterType = 'ALL' | AppType
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
-  private readonly debug = true // to be removed after finalization
-
   // data
   public apps$!: Observable<App[]>
   private papps$!: Observable<ApplicationPageResult>
   private workspaces$!: Observable<string[]>
-  public app: App | undefined
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
   public exceptionKey = ''
@@ -91,12 +88,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
     this.destroy$.complete()
-  }
-  private log(text: string, obj?: object): void {
-    if (this.debug) {
-      if (obj) console.log('app detail: ' + text, obj)
-      else console.log('app detail: ' + text)
-    }
   }
 
   /**
@@ -157,7 +148,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
     )
   }
-
   public searchApps(): void {
     this.searchInProgress = true
     switch (this.appSearchCriteriaGroup.controls['appType'].value) {
