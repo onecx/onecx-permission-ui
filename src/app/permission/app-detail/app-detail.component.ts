@@ -34,10 +34,10 @@ import {
 //import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 import { limitText } from 'src/app/shared/utils'
 
-type App = Application & { isApp: boolean; appType: AppType; workspaceDetails?: WorkspaceDetails }
-type AppType = 'WORKSPACE' | 'APP'
-type AppRole = Role & { appId: string }
-type RoleAssignments = { [key: string]: boolean }
+export type App = Application & { isApp: boolean; appType: AppType; workspaceDetails?: WorkspaceDetails }
+export type AppType = 'WORKSPACE' | 'APP'
+export type RoleAssignments = { [key: string]: boolean }
+export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments
@@ -74,7 +74,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
   public dateFormat = 'medium'
   public changeMode = 'CREATE' || 'EDIT'
-  private workspaceApps: Product[] = []
+  private workspaceProducts: Product[] = []
+  private workspaceApps: App[] = []
   public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
   public workspaceAppFilterValue: string | undefined = undefined
   public workspaceAppFilterValueLength = 10
@@ -242,7 +243,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.log('loadApp => Workspace:', this.currentApp)
       this.prepareActionButtons()
       this.loadWorkspaceDetails()
-      this.loadWorkspaceApps()
       this.loading = false
     } else {
       this.appApi
@@ -280,6 +280,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.currentApp.workspaceDetails = { ...result }
           this.log('getDetailsByWorkspaceName => App:', this.currentApp)
           this.loadRoles()
+          this.loadWorkspaceApps()
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
@@ -289,6 +290,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadWorkspaceApps() {
     this.workspaceApps = []
+
+    /*
     this.workspaceApi
       .getAllProductsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
       .pipe(catchError((error) => of(error)))
@@ -309,6 +312,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('loadWorkspaceApps() => unknown response:', result)
         }
       })
+      */
   }
   /**
    * COLUMNS => Roles
@@ -316,7 +320,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * Align roles with workspace role: create role if not exist
    */
   private loadRoles(rolesAligned: boolean = false): void {
-    this.log('loadRoles: ' + rolesAligned)
     this.roles = []
     this.permissionDefaultRoles = {}
     // get roles from onecx permission
@@ -340,7 +343,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.currentApp.workspaceDetails?.workspaceRoles
           ) {
             for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
-              this.log('check role: ' + wRole)
               if (this.roles.filter((r) => r.name === wRole).length === 0) {
                 const newRole: Role = { name: wRole, description: wRole }
                 this.roleApi
@@ -594,7 +596,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   /****************************************************************************
-   *  Create a ROLE    only if currentApp is portal
+   ****************************************************************************
+   ****************************************************************************
+   *  Create a ROLE    => currentApp is workspace
+   ****************************************************************************
+   ****************************************************************************
    */
   public onCreateRole(): void {
     this.formGroupRole.reset()
@@ -605,7 +611,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    *  View and Edit a ROLE
    */
-  public onEditRole(ev: MouseEvent, role: AppRole): void {
+  public onEditRole(ev: MouseEvent, role: Role): void {
     this.formGroupRole.controls['name'].patchValue(role.name)
     this.formGroupRole.controls['description'].patchValue(role.description)
     this.changeMode = 'EDIT'
@@ -677,7 +683,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onDeleteRole(ev: MouseEvent, role: AppRole): void {
+  public onDeleteRole(ev: MouseEvent, role: Role): void {
     this.role = role
     this.showRoleDeleteDialog = true
   }
@@ -696,16 +702,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.showRoleDeleteDialog = false
   }
 
-  public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: AppRole, silent?: boolean): void {
+  public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {
     this.log('onAssignPermission()')
   }
-  public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: AppRole, silent?: boolean): void {
+  public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {
     this.log('onRemovePermission()')
   }
-  public onGrantAllPermissions(ev: MouseEvent, role: AppRole): void {
+  public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onGrantAllPermissions()')
   }
-  public onRevokeAllPermissions(ev: MouseEvent, role: AppRole): void {
+  public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onRevokeAllPermissions()')
   }
 
