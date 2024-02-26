@@ -37,6 +37,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
   public exceptionKey = ''
+  public dataAccessIssue = false
   public loading = true
   public viewMode = 'grid'
   public appTypeItems: SelectItem[]
@@ -97,6 +98,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.workspaces$ = this.workspaceApi.getAllWorkspaceNames().pipe(
       startWith([] as string[]),
       catchError((err) => {
+        this.dataAccessIssue = true
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
         console.error('getAllWorkspaceNames():', err)
         return of([] as string[])
@@ -115,6 +117,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .pipe(
         startWith({} as ApplicationPageResult),
         catchError((err) => {
+          this.dataAccessIssue = true
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
           console.error('searchMicrofrontends():', err)
           return of({} as ApplicationPageResult)
