@@ -626,6 +626,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (changed) this.loadApp()
   }
 
+  /****************************************************************************
+   *  ASSIGNMENTS    => grant + revoke
+   ****************************************************************************
+   */
   public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {
     this.log('onAssignPermission()')
   }

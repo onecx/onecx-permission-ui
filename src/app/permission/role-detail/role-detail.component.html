@@ -1,6 +1,7 @@
 <p-dialog
   [(visible)]="displayDetailDialog"
   [header]="'ACTIONS.' + changeMode + '.ROLE' | translate"
+  (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
   [resizable]="true"
@@ -61,6 +62,7 @@
 <p-dialog
   [(visible)]="displayDeleteDialog"
   [header]="'ACTIONS.DELETE.ROLE' | translate"
+  (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
   [resizable]="false"
