@@ -69,7 +69,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('workspaceProductFilter') workspaceProductFilter: ElementRef | undefined
   @ViewChild('workspaceAppTypeFilter') workspaceAppTypeFilter: ElementRef | undefined
   @ViewChild('workspaceAppFilter') workspaceAppFilter: ElementRef | undefined
-  @ViewChild('appSortIcon') appSortIcon: ElementRef | undefined
+  @ViewChild('sortIconAppId') sortIconAppId: ElementRef | undefined
+  @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
   // data
   public urlParamAppId = ''
@@ -477,9 +478,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissionTable?.clear()
   }
   public onSortPermissionTable() {
-    if (this.appSortIcon) this.appSortIcon.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
+    if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
+    if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
   }
-  public onWorkspaceAppFilterItemSort(ev: any, icon: HTMLSpanElement) {
+  private onFilterItemSortIcon(ev: any, icon: HTMLSpanElement) {
     ev.stopPropagation
     icon.className =
       'pi pi-fw ' +
@@ -489,11 +491,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         ? 'pi-sort-amount-down'
         : 'pi-sort-amount-up-alt')
     this.permissionTable?.clear()
-    // sort table data directly
+  }
+  public onFilterItemSortAppId(ev: any, icon: HTMLSpanElement) {
+    this.onFilterItemSortIcon(ev, icon)
     this.permissionTable?._value.sort(
       icon.className.match('pi-sort-amount-up-alt')
         ? this.sortPermissionRowByAppIdAsc
         : this.sortPermissionRowByAppIdDesc
+    )
+  }
+  public onFilterItemSortProduct(ev: any, icon: HTMLSpanElement) {
+    this.onFilterItemSortIcon(ev, icon)
+    this.permissionTable?._value.sort(
+      icon.className.match('pi-sort-amount-up-alt')
+        ? this.sortPermissionRowByProductAsc
+        : this.sortPermissionRowByProductDesc
     )
   }
   public onFilterWorkspaceApps() {
@@ -549,10 +561,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.role = role
     this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
-    this.log('onDeleteRole')
   }
   public onRoleChanged(changed: boolean) {
-    this.log('onRoleChanged ' + changed)
     this.role = undefined
     this.changeMode = 'VIEW'
     this.showRoleDetailDialog = false
@@ -583,6 +593,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private sortPermissionRowByKey(a: PermissionViewRow, b: PermissionViewRow): number {
     return (a.key ? (a.key as string).toUpperCase() : '').localeCompare(b.key ? (b.key as string).toUpperCase() : '')
   }
+
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
       b.appId ? (b.appId as string).toUpperCase() : ''
@@ -593,6 +604,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       b.appId ? (b.appId as string).toUpperCase() : ''
     )
   }
+  private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
+    return (
+      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+        b.productName ? (b.productName as string).toUpperCase() : ''
+      ) || this.sortPermissionRowByAppIdAsc(a, b)
+    )
+  }
+  private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
+    return (
+      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+        b.productName ? (b.productName as string).toUpperCase() : ''
+      ) || this.sortPermissionRowByAppIdDesc(a, b)
+    )
+  }
+
   private sortRoleByName(a: Role, b: Role): number {
     return (a.name ? (a.name as string).toUpperCase() : '').localeCompare(
       b.name ? (b.name as string).toUpperCase() : ''

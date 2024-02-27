@@ -67,7 +67,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       appId: new FormControl<string | null>(null),
       appType: new FormControl<AppFilterType | null>('WORKSPACE')
     })
-    this.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE') // default: all app types
+    this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
     this.appTypeItems = [
       { label: 'APP.SEARCH.FILTER.ALL', value: 'ALL' },
       { label: 'APP.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' },

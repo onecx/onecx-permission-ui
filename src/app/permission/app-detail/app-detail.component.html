@@ -112,7 +112,7 @@
           <tr>
             <th
               [attr.colspan]="
-                myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 5 : 4
+                myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 4 : 3
               "
               class="opacity-80 text-center border-right-primary"
               [ngClass]="
@@ -128,7 +128,7 @@
               </div>
             </th>
             <th
-              *ngIf="currentApp.appType === 'WORKSPACE'"
+              *ngIf="!currentApp.isApp"
               [attr.colspan]="roles.length"
               class="py-0 opacity-80 text-center"
               [title]="'ROLE.TOOLTIP' | translate"
@@ -164,10 +164,11 @@
               spSortableColumn="productName"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
-              <div class="flex">
+              <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label>
+              <div *ngIf="!currentApp.isApp" class="flex">
                 <span #workspaceProductFilter class="p-float-label inline-block w-full">
                   <p-dropdown
-                    id="app_detail_permission_table_product_name"
+                    id="app_detail_permission_table_filter_product_name"
                     styleClass="w-full"
                     [appendTo]="'body'"
                     [options]="workspaceProductFilterItems"
@@ -176,14 +177,24 @@
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                     [title]="'PERMISSION.SEARCH.FILTER.PRODUCT.TOOLTIP' | translate"
                   ></p-dropdown>
-                  <label for="app_detail_permission_table_product_name">
+                  <label for="app_detail_permission_table_filter_product_name">
                     {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label
                   >
                 </span>
+                <button
+                  pbutton
+                  type="button"
+                  [id]="'app_detail_permission_table_sort_product_name'"
+                  (click)="onFilterItemSortAppId($event, sortIconProduct)"
+                  [title]="'PERMISSION.SORT.PRODUCT' | translate"
+                  class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                >
+                  <span #sortIconProduct class="pi pi-fw pi-sort-alt"></span>
+                </button>
               </div>
             </th>
             <th
-              *ngIf="!currentApp.isApp"
+              *ngIf="!currentApp.isApp && false"
               spSortableColumn="appType"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
@@ -209,10 +220,11 @@
               spSortableColumn="applicationId"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary border-right-primary white-space-nowrap"
             >
-              <div class="flex">
+              <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label>
+              <div *ngIf="!currentApp.isApp" class="flex">
                 <span #workspaceAppFilter class="p-float-label inline-block">
                   <p-dropdown
-                    id="app_detail_permission_table_apps"
+                    id="app_detail_permission_table_filter_app_id"
                     styleClass="w-full"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -222,19 +234,19 @@
                     (onClear)="onFilterWorkspaceApps()"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                   ></p-dropdown>
-                  <label for="app_detail_permission_table_apps">
+                  <label for="app_detail_permission_table_filter_app_id">
                     {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label
                   >
                 </span>
                 <button
                   pbutton
                   type="button"
-                  [id]="'app_detail_permission_table_sort_action'"
-                  (click)="onWorkspaceAppFilterItemSort($event, appSortIcon)"
+                  [id]="'app_detail_permission_table_sort_app_id'"
+                  (click)="onFilterItemSortAppId($event, sortIconAppId)"
                   [title]="'PERMISSION.SORT.APP_ID' | translate"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
-                  <span #appSortIcon class="pi pi-fw pi-sort-alt"></span>
+                  <span #sortIconAppId class="pi pi-fw pi-sort-alt"></span>
                 </button>
               </div>
             </th>
@@ -312,14 +324,18 @@
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
             <td class="text-left px-2" id="app_detail_permission_table_data_product_name">{{ rowData.productName }}</td>
-            <td *ngIf="!currentApp.isApp" class="text-left px-2" id="app_detail_permission_table_data_app_type">
-              {{ rowData.appType }} app type
+            <td
+              *ngIf="!currentApp.isApp && false"
+              class="text-left px-2"
+              id="app_detail_permission_table_data_app_type"
+            >
+              {{ rowData.appType }}
             </td>
             <td class="text-left px-2 border-right-primary" id="app_detail_permission_table_data_app_id">
               {{ rowData.appId }}
             </td>
             <!-- ASSIGNMENTS -->
-            <ng-container *ngIf="currentApp.appType === 'WORKSPACE'">
+            <ng-container *ngIf="!currentApp.isApp">
               <td
                 *ngFor="let role of columns"
                 class="text-center"

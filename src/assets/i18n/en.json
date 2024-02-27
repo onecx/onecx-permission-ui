@@ -173,7 +173,8 @@
       "REVOKE_SUCCESS": "Permission revoked"
     },
     "SORT": {
-      "APP_ID": "Sorting by apps"
+      "APP_ID": "Sorting by App IDs",
+      "PRODUCT": "Sorting by Product und App IDs"
     },
     "SEARCH": {
       "FILTER": {
@@ -193,6 +194,7 @@
     }
   },
   "ROLE": {
+    "LABEL.APP": "App Roles",
     "LABEL.WORKSPACE": "Workspace Roles",
     "TOOLTIP": "Roles created for the workspace, as a selection of the roles defined for the tenant that can be assigned to the user.",
     "NAME": "Name",

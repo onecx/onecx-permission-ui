@@ -172,7 +172,8 @@
       "REVOKE_SUCCESS": "Berechtigung entzogen"
     },
     "SORT": {
-      "APP_ID": "Sortierung nach Apps"
+      "APP_ID": "Sortierung nach App IDs",
+      "PRODUCT": "Sortierung nach Produkt und App IDs"
     },
     "SEARCH": {
       "FILTER": {
@@ -192,6 +193,7 @@
     }
   },
   "ROLE": {
+    "LABEL.APP": "App Rollen",
     "LABEL.WORKSPACE": "Workspace Rollen",
     "TOOLTIP": "Für den Workspace erstellte Rollen, als Auswahl der für den Mandaten definierten Rollen, die dem Benutzer zugeordnet werden können.",
     "NAME": "Name",
