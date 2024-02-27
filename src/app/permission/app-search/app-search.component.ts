@@ -133,9 +133,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.workspaces$.pipe(
       map((workspaces) => {
         return workspaces
-          ? [...workspaces]?.map((name) => {
-              return { appId: name, isApp: false, appType: 'WORKSPACE' } as App
-            })
+          ? [...workspaces]
+              ?.map((name) => {
+                return { appId: name, isApp: false, appType: 'WORKSPACE' } as App
+              })
+              .sort(this.sortAppsByAppId)
           : []
       })
     )
@@ -144,9 +146,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.papps$.pipe(
       map((a) => {
         return a.stream
-          ? a.stream?.map((app) => {
-              return { ...app, appType: 'APP' } as App
-            })
+          ? a.stream
+              ?.map((app) => {
+                return { ...app, appType: 'APP' } as App
+              })
+              .sort(this.sortAppsByAppId)
           : []
       })
     )

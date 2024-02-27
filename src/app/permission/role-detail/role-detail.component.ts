@@ -9,8 +9,7 @@ import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.compon
 
 @Component({
   selector: 'app-role-detail',
-  templateUrl: './role-detail.component.html',
-  styleUrls: ['./role-detail.component.scss']
+  templateUrl: './role-detail.component.html'
 })
 export class RoleDetailComponent implements OnInit, OnChanges {
   @Input() currentApp!: App

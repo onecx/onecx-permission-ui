@@ -35,11 +35,13 @@ import { limitText } from 'src/app/shared/utils'
 
 export type App = Application & { isApp: boolean; appType: AppType; workspaceDetails?: WorkspaceDetails }
 export type AppType = 'WORKSPACE' | 'APP'
+export type WorkspaceAppType = 'MFE' | 'MS'
 export type RoleAssignments = { [key: string]: boolean }
 export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
-type PermissionViewRow = Permission & {
+export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments
+  appType: WorkspaceAppType
 }
 
 @Component({
@@ -75,6 +77,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'CREATE' || 'EDIT'
+  public myPermissions = new Array<string>() // permissions of the user
 
   private workspaceProducts: Product[] = []
   public workspaceProductFilterItems: SelectItem[] = new Array<SelectItem>()
@@ -93,10 +96,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public permissionRows: PermissionViewRow[] = new Array<PermissionViewRow>()
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
-  public myPermissions = new Array<string>() // permissions of the user
-  public showPermissionDetailDialog = false
-  public showPermissionDeleteDialog = false
-  public formGroupPermission: FormGroup
   // role management
   public roles: Role[] = new Array<Role>()
   public role: Role | undefined
@@ -123,15 +122,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
-    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
-    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
 
-    this.formGroupPermission = new FormGroup({
-      appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      resource: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      action: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      description: new FormControl(null)
-    })
     this.formGroupRole = new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
@@ -184,14 +175,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'always'
             },
             {
-              label: data['ACTIONS.CREATE.PERMISSION'],
-              title: data['ACTIONS.CREATE.PERMISSION.TOOLTIP'],
-              actionCallback: () => this.onCreatePermission(),
-              icon: 'pi pi-plus',
-              show: 'asOverflow',
-              permission: 'PERMISSION#EDIT'
-            },
-            {
               label: data['ACTIONS.CREATE.ROLE'],
               title: data['ACTIONS.CREATE.ROLE.TOOLTIP'],
               actionCallback: () => this.onCreateRole(),
@@ -199,19 +182,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'asOverflow',
               permission: 'ROLE#EDIT',
               conditional: true,
-              showCondition: this.currentApp.appType === 'WORKSPACE'
-            },
-            {
-              label: data['ACTIONS.DELETE.LABEL'],
-              title: data['ACTIONS.DELETE.APP'],
-              actionCallback: () => {
-                this.showAppDeleteDialog = true
-              },
-              icon: 'pi pi-trash',
-              show: 'asOverflow',
-              permission: 'APPLICATION#DELETE',
-              conditional: true,
-              showCondition: this.currentApp.appType === 'APP'
+              showCondition: !this.currentApp.isApp
             }
           ]
         })
@@ -250,7 +221,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         id: this.urlParamAppId,
         name: this.urlParamAppId,
         appId: this.urlParamAppId,
-        appType: this.urlParamAppType
+        appType: this.urlParamAppType,
+        isApp: false
       } as App
       this.log('loadApp => Workspace:', this.currentApp)
       this.prepareActionButtons()
@@ -266,7 +238,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
             console.error('searchApplications() result:', result)
           } else if (result instanceof Object) {
-            this.currentApp = { ...result.stream[0], appType: 'APP' } as App
+            this.currentApp = { ...result.stream[0], appType: 'APP', isApp: true } as App
             this.log('loadApp => App:', this.currentApp)
             this.prepareActionButtons()
             this.permissionRows = []
@@ -349,11 +321,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.permissionDefaultRoles[role.name] = false
           }
           // check roles from workspace: add missing
-          if (
-            !rolesAligned &&
-            this.currentApp.appType === 'WORKSPACE' &&
-            this.currentApp.workspaceDetails?.workspaceRoles
-          ) {
+          if (!rolesAligned && !this.currentApp.isApp && this.currentApp.workspaceDetails?.workspaceRoles) {
             for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
               if (this.roles.filter((r) => r.name === wRole).length === 0) {
                 const newRole: Role = { name: wRole, description: wRole }
@@ -536,7 +504,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   // managing the app filter
   private prepareWorkspaceAppFilter(): void {
-    if (this.currentApp.appType === 'WORKSPACE') {
+    if (!this.currentApp.isApp) {
       this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.currentApp.appId)
       this.onFilterWorkspaceApps()
     } else {
@@ -558,60 +526,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.permissionTable) {
       this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
     }
-  }
-
-  /****************************************************************************
-   *  1. Load current app
-   *  2. Identify app type => use default APP
-   *  3. If WORKSPACE then load apps
-   */
-
-  /****************************************************************************
-   *  Delete an APP
-   */
-  public onDeleteApplication() {
-    this.log('onDeleteApplication()')
-  }
-
-  /****************************************************************************
-   * Create a new PERMISSION
-   */
-  public onCopyPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.onEditPermission(ev, permRow)
-    this.changeMode = 'CREATE'
-  }
-  public onCreatePermission(): void {
-    this.formGroupPermission.reset()
-    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
-    this.changeMode = 'CREATE'
-    this.permissionRow = { key: '' } as PermissionViewRow
-    this.showPermissionDetailDialog = true
-  }
-  /**
-   *  View and Edit a PERMISSION
-   */
-  public onEditPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
-    this.formGroupPermission.controls['resource'].patchValue(permRow.resource)
-    this.formGroupPermission.controls['action'].patchValue(permRow.action)
-    this.formGroupPermission.controls['description'].patchValue(permRow.description)
-    this.changeMode = 'EDIT'
-    this.permissionRow = permRow
-    this.showPermissionDetailDialog = true
-  }
-  /**
-   * Save a PERMISSION
-   *  check existence of (new) key value first to be unique
-   */
-  public onSavePermission(): void {
-    this.log('savePermission ' + this.changeMode + ' valid:' + this.formGroupPermission.valid, this.permissionRow)
-  }
-  public onDeletePermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.permissionRow = permRow
-    this.showPermissionDeleteDialog = true
-  }
-  public onDeletePermissionExecute() {
-    this.log('onDeletePermissionExecute()')
   }
 
   /****************************************************************************
