@@ -33,15 +33,20 @@ import {
 //import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 import { limitText } from 'src/app/shared/utils'
 
-export type App = Application & { isApp: boolean; appType: AppType; workspaceDetails?: WorkspaceDetails }
-export type AppType = 'WORKSPACE' | 'APP'
-export type WorkspaceAppType = 'MFE' | 'MS'
+export type App = Application & {
+  isApp: boolean
+  isMfe: boolean
+  appType: PermissionAppType
+  workspaceDetails?: WorkspaceDetails
+}
+export type PermissionAppType = 'WORKSPACE' | 'APP'
+export type ServiceAppType = 'MFE' | 'MS'
 export type RoleAssignments = { [key: string]: boolean }
 export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments
-  appType: WorkspaceAppType
+  appType: ServiceAppType
 }
 
 @Component({
@@ -75,7 +80,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // data
   public urlParamAppId = ''
   public urlParamAppType = ''
-  public currentApp: App = { appId: 'dummy', appType: 'APP' } as App
+  public currentApp: App = { appId: 'dummy', appType: 'APP', isApp: true } as App
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'CREATE' || 'EDIT'
   public myPermissions = new Array<string>() // permissions of the user
@@ -151,6 +156,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.destroy$.next(undefined)
     this.destroy$.complete()
   }
+  private log(text: string, obj?: object): void {
+    if (this.debug) {
+      if (obj) console.log('app detail: ' + text, obj)
+      else console.log('app detail: ' + text)
+    }
+  }
 
   private prepareActionButtons(): void {
     this.actions$ = this.translate
@@ -195,12 +206,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onReload(): void {
     this.loadApp()
-  }
-  private log(text: string, obj?: object): void {
-    if (this.debug) {
-      if (obj) console.log('app detail: ' + text, obj)
-      else console.log('app detail: ' + text)
-    }
   }
 
   private loadApp(): void {
@@ -264,40 +269,36 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
           this.log('getDetailsByWorkspaceName => App:', this.currentApp)
-          this.loadRoles()
-          this.loadWorkspaceApps()
+          this.prepareWorkspaceApps()
+          this.loadRoles() // ...and assignments
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
   }
-
-  private loadWorkspaceApps() {
+  private prepareWorkspaceApps() {
     this.workspaceApps = []
-
-    /*
-    this.workspaceApi
-      .getAllProductsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
-      .pipe(catchError((error) => of(error)))
-      .subscribe((result) => {
-        if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
-          console.error('loadWorkspaceApps() result:', result)
-        } else if (result instanceof Array) {
-          for (const app of result) {
-            this.workspaceApps.push({ ...app })
-          }
-          //this.workspaceApps.sort(this.sortRoleByName)
-          this.log('loadWorkspaceApps:', this.workspaceApps)
-        } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('loadWorkspaceApps() => unknown response:', result)
+    this.workspaceProductFilterItems = [{ label: '', value: null } as SelectItem]
+    this.workspaceAppFilterItems = [{ label: '', value: null } as SelectItem]
+    if (this.currentApp.workspaceDetails?.products) {
+      this.currentApp.workspaceDetails?.products.map((product) => {
+        this.workspaceProductFilterItems.push({ label: product.productName, value: product.productName } as SelectItem)
+        if (product.mfe) {
+          product.mfe.map((app) => {
+            this.workspaceApps.push({ ...app, appType: 'APP', isApp: true, isMfe: true } as App)
+            this.workspaceAppFilterItems.push({ label: app.appName, value: app.appId } as SelectItem)
+          })
+        }
+        if (product.ms) {
+          product.ms.map((app) => {
+            this.workspaceApps.push({ ...app, appType: 'APP', isApp: true, isMfe: false } as App)
+            this.workspaceAppFilterItems.push({ label: app.appName, value: app.appId } as SelectItem)
+          })
         }
       })
-      */
+    }
+    this.log('workspaceApps: ', this.workspaceApps)
   }
   /**
    * COLUMNS => Roles
@@ -323,22 +324,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           }
           // check roles from workspace: add missing
           if (!rolesAligned && !this.currentApp.isApp && this.currentApp.workspaceDetails?.workspaceRoles) {
-            for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
-              if (this.roles.filter((r) => r.name === wRole).length === 0) {
-                const newRole: Role = { name: wRole, description: wRole }
-                this.roleApi
-                  .createRole({
-                    createRoleRequest: newRole as CreateRoleRequest
-                  })
-                  .subscribe({
-                    next: () => {
-                      this.log('role created: ' + wRole)
-                      this.roles.push(newRole)
-                      rolesAligned = true
-                    }
-                  })
-              }
-            }
+            rolesAligned = this.createRoleIRequired(this.currentApp.workspaceDetails?.workspaceRoles)
           }
           if (rolesAligned) this.loadRoles(true)
           else {
@@ -351,6 +337,26 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('searchRoles() => unknown response:', result)
         }
       })
+  }
+  private createRoleIRequired(roles: string[]): boolean {
+    let created = false
+    for (let wRole of roles) {
+      if (this.roles.filter((r) => r.name === wRole).length === 0) {
+        const newRole: Role = { name: wRole, description: wRole }
+        this.roleApi
+          .createRole({
+            createRoleRequest: newRole as CreateRoleRequest
+          })
+          .subscribe({
+            next: () => {
+              this.log('role created: ' + wRole)
+              this.roles.push(newRole)
+              created = true
+            }
+          })
+      }
+    }
+    return created
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map

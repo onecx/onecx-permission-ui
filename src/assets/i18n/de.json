@@ -180,7 +180,7 @@
         "APPS": "App",
         "APP_TYPE": "Typ",
         "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Produktname",
+        "PRODUCT": "Produkt",
         "PRODUCT.TOOLTIP": "Die beim Workspace registrierten Produkte",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Filterwert",

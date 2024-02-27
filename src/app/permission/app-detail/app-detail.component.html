@@ -222,7 +222,7 @@
             >
               <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label>
               <div *ngIf="!currentApp.isApp" class="flex">
-                <span #workspaceAppFilter class="p-float-label inline-block">
+                <span #workspaceAppFilter class="p-float-label inline-block w-full">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"
                     styleClass="w-full"

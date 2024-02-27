@@ -181,7 +181,7 @@
         "APPS": "App",
         "APP_TYPE": "Type",
         "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Product Name",
+        "PRODUCT": "Product",
         "PRODUCT.TOOLTIP": "The products registered in the workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value",
