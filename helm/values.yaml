@@ -22,20 +22,18 @@ app:
           APP:
             EDIT: Edit app
             SAVE: Update and save app
-            VIEW: View mode for app
             SEARCH: Search apps
-          ASSIGNMENT:
-            GRANT: Assign permission to role
-            REVOKE: Remove assignment of permission to role
+            VIEW: View mode for app
           PERMISSION:
+            GRANT: Assign or remove assignment of a permission to a role
             CREATE: Create permission
-            EDIT: Edit permission
             DELETE: Delete permission
+            EDIT: Edit permission
             SAVE: Update and save permission
           ROLE:
             CREATE: Create role
-            EDIT: Edit role
             DELETE: Delete role
+            EDIT: Edit role
             SAVE: Update and save role
     # Keycloak
     keycloak:
