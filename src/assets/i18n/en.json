@@ -218,20 +218,22 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APPS": "Unknown problem retrieving App data - please try again.",
+      "APP": "Unknown problem retrieving App data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
-      "WORKSPACES": "Unknown problem retrieving Workspace data - please try again."
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
     },
     "HTTP_STATUS_400": {
       "ROLES": "The Role could not be processed.",
       "PERMISSIONS": "The permission could not be processed."
     },
     "HTTP_STATUS_403": {
-      "APPS": "You have no permissions to see Apps.",
+      "APP": "You have no permissions to see App data.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
-      "WORKSPACES": "You have no permissions to see Workspaces."
+      "ASSIGNMENTS": "You have no permissions to see Assignments.",
+      "WORKSPACE": "You have no permissions to see Workspace Data."
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
@@ -239,14 +241,14 @@
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
-      "WORKSPACE": "Workspace could not be found.",
-      "WORKSPACES": "No Workspaces could be found."
+      "WORKSPACE": "Workspace could not be found."
     },
     "HTTP_STATUS_500": {
-      "APPS": "Unknown server problem retrieving App data - please try again.",
-      "ROLES": "Unknown server problem retrieving Role data - please try again.",
-      "PERMISSIONS": "Unknown server problem retrieving Permission data - please try again.",
-      "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again."
+      "APP": "Unknown problem retrieving App data - please try again.",
+      "ROLES": "Unknown problem retrieving Role data - please try again.",
+      "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
     }
   }
 }

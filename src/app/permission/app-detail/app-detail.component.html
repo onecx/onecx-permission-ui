@@ -260,7 +260,7 @@
                       pbutton
                       type="button"
                       *ngIf="myPermissions.includes('ROLE#DELETE')"
-                      [id]="'app_detail_permission_table_col_' + role.name + '_delete_action'"
+                      [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                       (click)="onDeleteRole($event, role)"
                       [title]="'ACTIONS.DELETE.ROLE' | translate"
                       class="p-1 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
@@ -271,7 +271,7 @@
                       pbutton
                       type="button"
                       *ngIf="myPermissions.includes('ROLE#EDIT')"
-                      [id]="'app_detail_permission_table_col_' + role.id + '_edit_action'"
+                      [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                       (click)="onEditRole($event, role)"
                       [title]="'ACTIONS.EDIT.ROLE' | translate"
                       class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
@@ -281,8 +281,8 @@
                     <button
                       pbutton
                       type="button"
-                      *ngIf="myPermissions.includes('ROLE#EDIT') && permissionTable.totalRecords > 0"
-                      [id]="'app_detail_permission_table_col_' + role.id + '_set_all_action'"
+                      *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
+                      [id]="'app_detail_permission_table_col_' + role.id + '_action_grant_all'"
                       (click)="onGrantAllPermissions($event, role)"
                       [title]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                       class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
@@ -293,11 +293,11 @@
                       pbutton
                       type="button"
                       *ngIf="
-                        myPermissions.includes('ROLE#EDIT') &&
+                        myPermissions.includes('PERMISSION#GRANT') &&
                         role.appId === urlParamAppId &&
                         permissionTable.totalRecords > 0
                       "
-                      [id]="'app_detail_permission_table_col_' + role.id + '_reset_all_action'"
+                      [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                       (click)="onRevokeAllPermissions($event, role)"
                       [title]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                       class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
