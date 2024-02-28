@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
+import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
@@ -20,7 +20,6 @@ import {
   CreateAssignmentRequestParams,
   //DeleteAssignmentRequestParams,
   Application,
-  Product,
   ApplicationAPIService,
   AssignmentAPIService,
   PermissionAPIService,
@@ -59,6 +58,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public loadingExceptionKey = ''
   public loadingServerIssue = false
   public actions$: Observable<Action[]> | undefined
+  // filter row
   public filterBy = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
@@ -68,9 +68,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
-  @ViewChild('workspaceProductFilter') workspaceProductFilter: ElementRef | undefined
-  @ViewChild('workspaceAppTypeFilter') workspaceAppTypeFilter: ElementRef | undefined
-  @ViewChild('workspaceAppFilter') workspaceAppFilter: ElementRef | undefined
+  @ViewChild('filterProduct') filterProduct: ElementRef | undefined
+  @ViewChild('filterApp') filterApp: ElementRef | undefined
   @ViewChild('sortIconAppId') sortIconAppId: ElementRef | undefined
   @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
@@ -82,20 +81,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'CREATE' || 'EDIT'
   public myPermissions = new Array<string>() // permissions of the user
-
-  private workspaceProducts: Product[] = []
-  public workspaceProductFilterItems: SelectItem[] = new Array<SelectItem>()
-  public workspaceProductFilterValue: string | undefined = undefined
-
-  public workspaceAppTypeFilterItems: SelectItem[] = new Array<SelectItem>()
-  public workspaceAppTypeFilterValue: string | undefined = undefined
-
+  // permission filter
+  public filterProductItems!: SelectItem[]
+  public filterProductValue: string | undefined = undefined
+  public filterAppItems: SelectItem[] = new Array<SelectItem>()
+  public filterAppValue: string | undefined = undefined
+  public filterAppValueLength = 10
   private workspaceApps: App[] = []
-  public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
-  public workspaceAppFilterValue: string | undefined = undefined
-  public workspaceAppFilterValueLength = 10
-  // app management
-  public showAppDeleteDialog = false
+
   // permission management
   private permissions$!: Observable<PermissionPageResult>
   public permissions!: Permission[]
@@ -106,9 +99,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private roles$!: Observable<RolePageResult>
   public roles!: Role[]
   public role: Role | undefined
+  public formGroupRole: FormGroup
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
-  public formGroupRole: FormGroup
 
   constructor(
     private appApi: ApplicationAPIService,
@@ -117,7 +110,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     private roleApi: RoleAPIService,
     private workspaceApi: WorkspaceAPIService,
     private route: ActivatedRoute,
-    private router: Router,
     private location: Location,
     private translate: TranslateService,
     private msgService: PortalMessageService,
@@ -142,11 +134,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
       { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
       { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
-    ]
-    this.workspaceAppTypeFilterItems = [
-      { label: '', value: null },
-      { label: 'MFE', value: 'MFE' },
-      { label: 'MS', value: 'MS' }
     ]
   }
 
@@ -262,39 +249,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.currentApp.workspaceDetails = { ...result }
           this.log('getDetailsByWorkspaceName => App:', this.currentApp)
           this.prepareActionButtons()
-          this.prepareWorkspaceApps()
           this.loadRolesAndPermissions()
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
-  }
-  private prepareWorkspaceApps() {
-    this.workspaceApps = []
-    this.workspaceProductFilterItems = [{ label: '', value: null } as SelectItem]
-    this.workspaceAppFilterItems = [{ label: '', value: null } as SelectItem]
-    if (this.currentApp.workspaceDetails?.products) {
-      this.currentApp.workspaceDetails?.products.map((product) => {
-        this.workspaceProductFilterItems.push({ label: product.productName, value: product.productName } as SelectItem)
-        if (product.mfe) {
-          product.mfe.map((app) => {
-            this.workspaceApps.push({ ...app, appType: 'APP', isApp: true, isMfe: true } as App)
-            this.workspaceAppFilterItems.push({ label: app.appName, value: app.appId } as SelectItem)
-          })
-        }
-        if (product.ms) {
-          product.ms.map((app) => {
-            this.workspaceApps.push({ ...app, appType: 'APP', isApp: true, isMfe: false } as App)
-            this.workspaceAppFilterItems.push({ label: app.appName, value: app.appId } as SelectItem)
-          })
-        }
-      })
-      this.workspaceProductFilterItems.sort(dropDownSortItemsByLabel)
-      this.workspaceAppFilterItems.sort(dropDownSortItemsByLabel)
-    }
-
-    this.log('workspaceApps: ', this.workspaceApps)
   }
 
   /**
@@ -312,6 +272,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private declarePermissionObservable(appIds?: string): void {
+    // TODO: product name
     this.permissions$ = this.permApi
       .searchPermissions({ permissionSearchCriteria: { appId: appIds, pageSize: this.pageSize } })
       .pipe(
@@ -360,6 +321,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.log('roles', this.roles)
         this.log('permissions', this.permissions)
         //this.createNonExistingRoles
+        this.prepareFilterProducts()
+        this.prepareFilterApps()
         this.preparePermissionTable()
       }
     )
@@ -388,6 +351,43 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.log('createNonExistingRoles this.roles', this.roles)
       }
     }
+  }
+  private prepareFilterProducts() {
+    this.filterProductItems = [{ label: '', value: null } as SelectItem]
+    if (this.currentApp.workspaceDetails?.products) {
+      this.currentApp.workspaceDetails?.products.map((product) => {
+        this.filterProductItems.push({ label: product.productName, value: product.productName } as SelectItem)
+      })
+      this.filterProductItems.sort(dropDownSortItemsByLabel)
+    }
+    this.log('filterProductItems: ', this.filterProductItems)
+  }
+  private prepareFilterApps() {
+    // 1. collect apps registered in workspace
+    this.workspaceApps = []
+    if (this.currentApp.workspaceDetails?.products) {
+      this.currentApp.workspaceDetails?.products.map((product) => {
+        if (product.mfe)
+          product.mfe.map((app) => {
+            this.workspaceApps.push({ appId: app.appId, name: app.appName, productName: product.productName } as App)
+          })
+        if (product.ms)
+          product.ms.map((app) => {
+            this.workspaceApps.push({ appId: app.appId, name: app.appName, productName: product.productName } as App)
+          })
+      })
+    }
+    this.log('this.workspaceApps: ', this.workspaceApps)
+
+    // 2. fill app filter with apps which have permissions
+    this.filterAppItems = [{ label: '', value: null } as SelectItem]
+    this.permissions.map((p) => {
+      // get the app name from workspace apps
+      const app = this.workspaceApps.filter((app) => app.productName === p.productName && app.appId === p.appId)[0]
+      if (this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0)
+        this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
+    })
+    this.log('filterAppItems: ', this.filterAppItems)
   }
 
   private loadAppDetails() {
@@ -420,6 +420,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         roles: {}
       } as PermissionViewRow)
     }
+    this.permissionRows.sort(this.sortPermissionRowByKey)
     this.log('permissionRows:', this.permissionRows)
     if (!this.currentApp.isApp) this.loadRoleAssignments()
   }
@@ -497,7 +498,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.permissionTableFilterInput.nativeElement.value = ''
       this.quickFilterValue = 'ALL'
     }
-    this.workspaceAppFilterValue = undefined
+    this.filterAppValue = undefined
     this.onSortPermissionTable()
     this.permissionTable?.clear()
   }
@@ -533,35 +534,25 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   public onFilterWorkspaceApps() {
-    this.workspaceAppFilterValue = this.currentApp.appId
+    this.filterAppValue = this.currentApp.appId
     if (this.permissionTable) {
-      this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
+      this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     }
   }
   // managing the app filter
   private prepareWorkspaceAppFilter(): void {
     if (!this.currentApp.isApp) {
-      this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.currentApp.appId)
+      this.filterAppItems = this.filterAppItems.filter((a) => a.value !== this.currentApp.appId)
       this.onFilterWorkspaceApps()
     } else {
-      this.workspaceAppFilterValue = undefined
-      this.workspaceAppFilterValueLength = 10
+      this.filterAppValue = undefined
+      this.filterAppValueLength = 10
     }
-    if (this.workspaceAppFilter)
-      this.workspaceAppFilter.nativeElement.className =
+    if (this.filterApp)
+      this.filterApp.nativeElement.className =
         'p-float-label inline-block w-' +
-        (this.workspaceAppFilterValueLength <= 10
-          ? 10
-          : this.workspaceAppFilterValueLength <= 20
-          ? this.workspaceAppFilterValueLength
-          : 22) +
+        (this.filterAppValueLength <= 10 ? 10 : this.filterAppValueLength <= 20 ? this.filterAppValueLength : 22) +
         'rem'
-  }
-  public onFilterWorkspaceAppTypes() {
-    this.workspaceAppTypeFilterValue = this.currentApp.appId
-    if (this.permissionTable) {
-      this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
-    }
   }
 
   /****************************************************************************

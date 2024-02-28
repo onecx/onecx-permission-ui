@@ -114,7 +114,8 @@
               [attr.colspan]="
                 myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 4 : 3
               "
-              class="opacity-80 text-center border-right-primary"
+              class="opacity-80 text-center"
+              [class.border-right-primary]="!currentApp.isApp"
               [ngClass]="
                 myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE')
                   ? 'py-0'
@@ -156,23 +157,20 @@
               pSortableColumn="key"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
-              {{ 'PERMISSION.PERMISSION' | translate }}
+              {{ 'PERMISSION.KEY' | translate }}
               <p-sortIcon field="key"></p-sortIcon>
             </th>
 
-            <th
-              spSortableColumn="productName"
-              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
-            >
+            <th class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap">
               <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label>
               <div *ngIf="!currentApp.isApp" class="flex">
-                <span #workspaceProductFilter class="p-float-label inline-block w-full">
+                <span #filterProduct class="p-float-label inline-block w-full">
                   <p-dropdown
                     id="app_detail_permission_table_filter_product_name"
                     styleClass="w-full"
                     [appendTo]="'body'"
-                    [options]="workspaceProductFilterItems"
-                    [(ngModel)]="workspaceProductFilterValue"
+                    [options]="filterProductItems"
+                    [(ngModel)]="filterProductValue"
                     (onChange)="permissionTable.filter($event.value, 'productName', 'equals')"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                     [title]="'PERMISSION.SEARCH.FILTER.PRODUCT.TOOLTIP' | translate"
@@ -194,42 +192,22 @@
               </div>
             </th>
             <th
-              *ngIf="!currentApp.isApp && false"
-              spSortableColumn="appType"
+              pSortableColumn="appId"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
+              [class.border-right-primary]="!currentApp.isApp"
             >
-              <div class="flex">
-                <span #workspaceAppTypeFilter class="p-float-label inline-block">
-                  <p-dropdown
-                    id="app_detail_permission_table_app_types"
-                    styleClass="w-full"
-                    [appendTo]="'body'"
-                    [options]="workspaceAppTypeFilterItems"
-                    [(ngModel)]="workspaceAppTypeFilterValue"
-                    (onChange)="permissionTable.filter($event.value, 'appType', 'equals')"
-                    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                    [title]="'PERMISSION.SEARCH.FILTER.APP_TYPE.TOOLTIP' | translate"
-                  ></p-dropdown>
-                  <label for="app_detail_permission_table_app_types">
-                    {{ 'PERMISSION.SEARCH.FILTER.APP_TYPE' | translate }}</label
-                  >
-                </span>
-              </div>
-            </th>
-            <th
-              spSortableColumn="applicationId"
-              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary border-right-primary white-space-nowrap"
-            >
-              <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label>
-              <div *ngIf="!currentApp.isApp" class="flex">
-                <span #workspaceAppFilter class="p-float-label inline-block w-full">
+              {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
+              <p-sortIcon field="appId"></p-sortIcon>
+
+              <div *ngIf="false" class="flex">
+                <span #filterApp class="p-float-label inline-block w-full">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"
                     styleClass="w-full"
                     [appendTo]="'body'"
                     [showClear]="true"
-                    [options]="workspaceAppFilterItems"
-                    [(ngModel)]="workspaceAppFilterValue"
+                    [options]="filterAppItems"
+                    [(ngModel)]="filterAppValue"
                     (onChange)="permissionTable.filter($event.value, 'appId', 'equals')"
                     (onClear)="onFilterWorkspaceApps()"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
@@ -312,7 +290,7 @@
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns" let-i="rowIndex">
+        <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
           <tr [id]="'app_detail_permission_table_row_' + row">
             <td
               class="text-left py-1 px-2 white-space-nowrap sm:white-space-normal"
@@ -324,14 +302,14 @@
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
             <td class="text-left px-2" id="app_detail_permission_table_data_product_name">{{ rowData.productName }}</td>
-            <td
-              *ngIf="!currentApp.isApp && false"
-              class="text-left px-2"
-              id="app_detail_permission_table_data_app_type"
-            >
+            <td *ngIf="false" class="text-left px-2" id="app_detail_permission_table_data_app_type">
               {{ rowData.appType }}
             </td>
-            <td class="text-left px-2 border-right-primary" id="app_detail_permission_table_data_app_id">
+            <td
+              class="text-left px-2"
+              [class.border-right-primary]="!currentApp.isApp"
+              id="app_detail_permission_table_data_app_id"
+            >
               {{ rowData.appId }}
             </td>
             <!-- ASSIGNMENTS -->

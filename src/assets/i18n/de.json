@@ -157,7 +157,7 @@
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
     "ACTION": "Aktion",
-    "PERMISSION": "Ressource # Aktion",
+    "KEY": "Ressource # Aktion",
     "LABEL": "Berechtigungen",
     "ACTIONS": "Aktionen",
     "ASSIGNMENTS": {
