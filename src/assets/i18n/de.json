@@ -222,6 +222,10 @@
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
     },
+    "HTTP_STATUS_400": {
+      "ROLES": "Die Rolle konnte nicht verarbeitet werden.",
+      "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
+    },
     "HTTP_STATUS_403": {
       "APPS": "Sie haben keine Rechte um Apps zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",

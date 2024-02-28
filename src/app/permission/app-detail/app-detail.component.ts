@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Subject, catchError, map, of, Observable } from 'rxjs'
+import { Subject, catchError, combineLatest, finalize, map, of, Observable, startWith } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
@@ -13,16 +13,18 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 import {
   Role,
   CreateRoleRequest,
+  RolePageResult,
+  PermissionPageResult,
   Permission,
   Assignment,
+  CreateAssignmentRequestParams,
+  DeleteAssignmentRequestParams,
   /*
   AssignmentSearchCriteria,
   AssignmentPageResult,
   CreateAssignmentRequest,  */
   Application,
   Product,
-  // ApplicationSearchCriteria,
-  // ApplicationPageResult,
   ApplicationAPIService,
   AssignmentAPIService,
   PermissionAPIService,
@@ -78,6 +80,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
   // data
+  private pageSize = 1000
   public urlParamAppId = ''
   public urlParamAppType = ''
   public currentApp: App = { appId: 'dummy', appType: 'APP', isApp: true } as App
@@ -99,11 +102,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // app management
   public showAppDeleteDialog = false
   // permission management
-  public permissionRows: PermissionViewRow[] = new Array<PermissionViewRow>()
+  private permissions$!: Observable<PermissionPageResult>
+  public permissions!: Permission[]
+  public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
   // role management
-  public roles: Role[] = new Array<Role>()
+  private roles$!: Observable<RolePageResult>
+  public roles!: Role[]
   public role: Role | undefined
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
@@ -128,6 +134,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
+    if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
 
     this.formGroupRole = new FormGroup({
       id: new FormControl(null),
@@ -228,12 +235,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         name: this.urlParamAppId,
         appId: this.urlParamAppId,
         appType: this.urlParamAppType,
-        isApp: false
+        isApp: false,
+        isMfe: false
       } as App
       this.log('loadApp => Workspace:', this.currentApp)
       this.prepareActionButtons()
       this.loadWorkspaceDetails()
-      this.loading = false
     } else {
       this.appApi
         .searchApplications({ applicationSearchCriteria: { appId: this.urlParamAppId } })
@@ -247,8 +254,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.currentApp = { ...result.stream[0], appType: 'APP', isApp: true } as App
             this.log('loadApp => App:', this.currentApp)
             this.prepareActionButtons()
-            this.permissionRows = []
-            this.preparePermissionTable(this.currentApp)
+            this.loadAppDetails()
+            //this.preparePermissionTable(this.currentApp)
           } else {
             this.loadingServerIssue = true
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
@@ -270,7 +277,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.currentApp.workspaceDetails = { ...result }
           this.log('getDetailsByWorkspaceName => App:', this.currentApp)
           this.prepareWorkspaceApps()
-          this.loadRoles() // ...and assignments
+          this.loadRolesAndPermissions()
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
@@ -301,114 +308,147 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.log('workspaceApps: ', this.workspaceApps)
   }
   /**
-   * COLUMNS => Roles
-   *
-   * Align roles with workspace role: create role if not exist
+   * COLUMNS => Roles, ROWS => Permissions
    */
-  private loadRoles(rolesAligned: boolean = false): void {
-    this.roles = []
-    this.permissionDefaultRoles = {}
-    // get roles from onecx permission
-    this.roleApi
-      .searchRoles({ roleSearchCriteria: {} })
-      .pipe(catchError((error) => of(error)))
-      .subscribe((result) => {
-        if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
-          console.error('searchRoles() result:', result)
-        } else if (result instanceof Object) {
-          for (const role of result.stream) {
-            this.roles.push({ ...role })
-            this.permissionDefaultRoles[role.name] = false
-          }
-          // check roles from workspace: add missing
-          if (!rolesAligned && !this.currentApp.isApp && this.currentApp.workspaceDetails?.workspaceRoles) {
-            rolesAligned = this.createRoleIRequired(this.currentApp.workspaceDetails?.workspaceRoles)
-          }
-          if (rolesAligned) this.loadRoles(true)
-          else {
-            this.roles.sort(this.sortRoleByName)
-            this.log('loadRoles:', this.roles)
-          }
-        } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('searchRoles() => unknown response:', result)
-        }
-      })
+  private declareRoleObservable(): void {
+    this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
+      startWith({} as RolePageResult),
+      catchError((err) => {
+        this.loadingServerIssue = true
+        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        console.error('searchRoles():', err)
+        return of({} as RolePageResult)
+      }),
+      finalize(() => (this.loading = false))
+    )
   }
-  private createRoleIRequired(roles: string[]): boolean {
-    let created = false
-    for (let wRole of roles) {
-      if (this.roles.filter((r) => r.name === wRole).length === 0) {
-        const newRole: Role = { name: wRole, description: wRole }
-        this.roleApi
-          .createRole({
-            createRoleRequest: newRole as CreateRoleRequest
-          })
-          .subscribe({
-            next: () => {
-              this.log('role created: ' + wRole)
-              this.roles.push(newRole)
-              created = true
-            }
-          })
+  private declarePermissionObservable(appIds?: string): void {
+    this.permissions$ = this.permApi
+      .searchPermissions({ permissionSearchCriteria: { appId: appIds, pageSize: this.pageSize } })
+      .pipe(
+        startWith({} as PermissionPageResult),
+        catchError((err) => {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          console.error('searchPermissions():', err)
+          return of({} as PermissionPageResult)
+        })
+      )
+  }
+  private searchRoles(): Observable<Role[]> {
+    return this.roles$.pipe(
+      map((result) => {
+        return result.stream
+          ? result.stream?.map((role) => {
+              this.roles.push(role)
+              return role
+            })
+          : []
+      })
+    )
+  }
+  private searchPermissions(): Observable<Permission[]> {
+    return this.permissions$.pipe(
+      map((result) => {
+        return result.stream
+          ? result.stream?.map((permission) => {
+              this.permissions.push(permission)
+              return permission
+            })
+          : []
+      })
+    )
+  }
+  private loadRolesAndPermissions(): void {
+    this.declareRoleObservable()
+    this.declarePermissionObservable()
+    this.roles = []
+    this.permissions = []
+    combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(
+      () => {}, // next
+      () => {}, // error
+      () => {
+        this.log('loadRolesAndPermissions completed')
+        this.log('roles', this.roles)
+        this.log('permissions', this.permissions)
+        //this.prepareRoles()
+        this.preparePermissionTable()
+      }
+    )
+  }
+  private prepareRoles() {
+    if (this.currentApp.workspaceDetails?.workspaceRoles) {
+      let created = false
+      for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
+        this.log('check role ' + wRole)
+        if (this.roles.filter((r) => r.name === wRole).length === 0) {
+          this.roleApi
+            .createRole({
+              createRoleRequest: { name: wRole } as CreateRoleRequest
+            })
+            .subscribe({
+              next: () => {
+                this.log('role created: ' + wRole)
+                created = true
+              }
+            })
+        }
+      }
+      if (created) this.loadRolesAndPermissions()
+      else {
+        this.roles.sort(this.sortRoleByName)
+        this.log('prepareRoles this.roles', this.roles)
       }
     }
-    return created
   }
 
+  private loadAppDetails() {
+    this.permissions = []
+    this.declarePermissionObservable(this.currentApp.appId)
+    this.searchPermissions().subscribe(
+      () => {}, // next
+      () => {}, // error
+      () => {
+        this.preparePermissionTable() // on complete
+      }
+    )
+  }
   /* 1. Prepare rows of the table: permissions of the <application> as Map
    *    key (resource#action):   'PERMISSION#READ'
    *    value: {resource: 'PERMISSION', action: 'READ', key: 'PERMISSION#READ', name: 'View permission matrix'
    */
-  private preparePermissionTable(app: App): void {
-    const permissionRows: Map<string, PermissionViewRow> = new Map()
-    // get permissions for the app
-    this.permApi
-      .searchPermissions({ permissionSearchCriteria: { appId: this.currentApp.appId } })
-      .pipe(catchError((error) => of(error)))
-      .subscribe((result) => {
-        if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.PERMISSIONS'
-          console.error('searchPermissions() result:', result)
-        } else if (result instanceof Object) {
-          for (const permission of result.stream) {
-            permissionRows.set(permission.resource + '#' + permission.action, {
-              ...permission,
-              key: permission.resource + '#' + permission.action,
-              roles: {}
-            })
-          }
-          // add permission rows of this app to permission table
-          this.permissionRows = this.permissionRows.concat(
-            Array.from(permissionRows.values()).sort(this.sortPermissionRowByKey)
-          )
-          this.log('loadPermissions:', this.permissionRows)
-          //this.prepareWorkspaceAppFilter()
-          this.loadAssignments()
-          this.loading = false // TODO
-        } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('searchPermissions() => unknown response:', result)
-        }
-      })
+  private preparePermissionTable(): void {
+    if (this.permissions.length === 0) {
+      console.warn('No permissions found for the apps - stop processing')
+      return
+    }
+    // go on
+    this.permissionRows = []
+    for (const permission of this.permissions) {
+      this.permissionRows.push({
+        ...permission,
+        key: permission.resource + '#' + permission.action,
+        roles: {}
+      } as PermissionViewRow)
+    }
+    this.log('permissionRows:', this.permissionRows)
+    // proceed only on workspaces
+    if (!this.currentApp.isApp) {
+      const permissionRows: Map<string, PermissionViewRow> = new Map()
+      for (const permissionRow of this.permissionRows) {
+        permissionRows.set(permissionRow.resource + '#' + permissionRow.action, permissionRow)
+      }
+      this.loadAssignments()
+    }
   }
   private loadAssignments() {
-    /*
-    // Fill permission rows with role assignments of the current application
-    permissionRows.forEach((row) => {
-      this.currentApp?.assignments?.forEach((ra) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        row.roles[ra.role!] = ra.permissionKeys?.includes(row.key) || false
-      })
-    })
-*/
+    if (this.workspaceApps.length === 0) {
+      console.warn('No workspace apps found - stop processing')
+      return
+    }
+    const appList = this.workspaceApps.map((app) => app.appId ?? '')
     this.assApi
-      .searchAssignments({ assignmentSearchCriteria: { appIds: [this.currentApp.appId ?? ''] } })
+      .searchAssignments({ assignmentSearchCriteria: { appIds: appList, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
@@ -419,17 +459,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.log('loadAssignments result.stream:', result.stream)
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
-          // Permission: id, appId, resource, action
-          // Fill permission rows with role assignments of the current application
-          // TODO
-          this.permissionRows
-            .filter((permission) => permission.appId === this.currentApp.appId)
-            .forEach((row) => {
-              result.stream?.forEach((assignment: Assignment) => {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                row.roles[assignment.roleId!] = assignment.permissionId === row.id
-              })
+          // Permission (row): id, appId, resource, action
+          this.permissionRows.forEach((permission) => {
+            this.log('loadAssignments row.id:' + permission.id)
+            result.stream?.forEach((assignment: Assignment) => {
+              if (assignment.permissionId === permission.id) {
+                permission.roles[assignment.roleId!] = assignment.permissionId === permission.id
+                this.log('loadAssignments assignment.permissionId:' + assignment.permissionId)
+                this.log('loadAssignments assignment.roleId:' + assignment.roleId)
+                this.log('loadAssignments row.roles[assignment.roleId!]:' + permission.roles[assignment.roleId!])
+              }
             })
+          })
           this.log('loadAssignments permission rows:', this.permissionRows)
           //this.prepareWorkspaceAppFilter()
           this.loading = false // TODO
@@ -577,14 +618,43 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   /****************************************************************************
-   *  ASSIGNMENTS    => grant + revoke
+   *  ASSIGNMENTS    => grant + revoke permissions
    ****************************************************************************
    */
   public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {
     this.log('onAssignPermission()')
+    this.assApi
+      .createAssignment({
+        createAssignmentRequest: {
+          roleId: role.id,
+          permissionId: permRow.id
+        }
+      } as CreateAssignmentRequestParams)
+      .subscribe({
+        next: () => {
+          if (!silent || silent === undefined)
+            this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+          if (role.id) permRow.roles[role.id] = !permRow.roles[role.id]
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+          console.error(err)
+        }
+      })
   }
   public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role, silent?: boolean): void {
     this.log('onRemovePermission()')
+    this.assApi.deleteAssignment({ id: permRow.id } as DeleteAssignmentRequestParams).subscribe({
+      next: () => {
+        if (!silent || silent === undefined)
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+        if (role.id) permRow.roles[role.id] = !permRow.roles[role.id]
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+        console.error(err)
+      }
+    })
   }
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onGrantAllPermissions()')

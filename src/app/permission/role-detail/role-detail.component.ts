@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -11,7 +11,7 @@ import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.compon
   selector: 'app-role-detail',
   templateUrl: './role-detail.component.html'
 })
-export class RoleDetailComponent implements OnInit, OnChanges {
+export class RoleDetailComponent implements OnChanges {
   @Input() currentApp!: App
   @Input() role: Role | undefined
   @Input() roles: Role[] = []
@@ -38,11 +38,7 @@ export class RoleDetailComponent implements OnInit, OnChanges {
     })
   }
 
-  public ngOnInit(): void {
-    this.log('ngOnInit')
-  }
   public ngOnChanges(): void {
-    this.log('ngOnChanges')
     this.formGroupRole.reset()
     if (this.changeMode === 'EDIT' && this.role) {
       this.formGroupRole.controls['name'].patchValue(this.role.name)

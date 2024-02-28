@@ -129,7 +129,7 @@
             </th>
             <th
               *ngIf="!currentApp.isApp"
-              [attr.colspan]="roles.length"
+              [attr.colspan]="roles ? roles.length : 0"
               class="py-0 opacity-80 text-center"
               [title]="'ROLE.TOOLTIP' | translate"
             >
@@ -339,31 +339,32 @@
               <td
                 *ngFor="let role of columns"
                 class="text-center"
-                [id]="'app_detail_permission_table_data_' + role.name"
+                [id]="'app_detail_permission_table_data_' + role.name + '_' + rowData.key"
               >
-                <div *ngIf="!myPermissions.includes('PERMISSION#EDIT')">
+                <!-- display only -->
+                <div *ngIf="!myPermissions.includes('PERMISSION#GRANT')">
                   <span
-                    *ngIf="rowData.roles[role.name]"
+                    *ngIf="rowData.roles[role.id]"
                     class="pi pi-circle-fill text-primary text-lg"
-                    [title]="'PERMISSION.ROLE_IS_ASSIGNED_1' | translate"
+                    [title]="'PERMISSION.ASSIGNMENTS.ROLE_IS_ASSIGNED_1' | translate"
                   >
                   </span>
                   <span
-                    *ngIf="!rowData.roles[role.name]"
+                    *ngIf="!rowData.roles[role.id]"
                     class="pi pi-circle text-primary text-lg"
-                    [title]="'PERMISSION.ROLE_IS_ASSIGNED_0' | translate"
+                    [title]="'PERMISSION.ASSIGNMENTS.ROLE_IS_ASSIGNED_0' | translate"
                   >
                   </span>
                 </div>
 
-                <div *ngIf="myPermissions.includes('PERMISSION#EDIT')">
+                <div *ngIf="myPermissions.includes('PERMISSION#GRANT')">
                   <!-- not assigned -->
                   <button
                     pbutton
                     type="button"
-                    *ngIf="!rowData.roles[role.name]"
+                    *ngIf="!rowData.roles[role.id]"
                     (click)="onAssignPermission($event, rowData, role)"
-                    [title]="'PERMISSION.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                    [title]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   >
                     <span class="text-primary text-lg font-medium p-button-icon pi pi-circle" aria-hidden="true"></span>
@@ -373,9 +374,9 @@
                   <button
                     pbutton
                     type="button"
-                    *ngIf="rowData.roles[role.name]"
+                    *ngIf="rowData.roles[role.id]"
                     (click)="onRemovePermission($event, rowData, role)"
-                    [title]="'PERMISSION.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                    [title]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   >
                     <span
