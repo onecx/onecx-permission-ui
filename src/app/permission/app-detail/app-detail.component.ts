@@ -84,9 +84,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // permission filter
   public filterProductItems!: SelectItem[]
   public filterProductValue: string | undefined = undefined
+  public filterProductValueLength = 10 // start value for field length calculation
   public filterAppItems: SelectItem[] = new Array<SelectItem>()
   public filterAppValue: string | undefined = undefined
-  public filterAppValueLength = 10
+  public filterAppValueLength = 10 // start value for field length calculation
   private workspaceApps: App[] = []
 
   // permission management
@@ -357,9 +358,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.productName, value: product.productName } as SelectItem)
+        if (product.productName) {
+          this.filterProductValueLength =
+            product.productName.length > this.filterProductValueLength
+              ? product.productName.length
+              : this.filterProductValueLength
+        }
       })
       this.filterProductItems.sort(dropDownSortItemsByLabel)
     }
+    if (this.filterProduct)
+      this.filterProduct.nativeElement.className =
+        'p-float-label inline-block w-' + Math.round(this.filterProductValueLength.valueOf() * 0.8) + 'rem'
     this.log('filterProductItems: ', this.filterProductItems)
   }
   private prepareFilterApps() {
@@ -384,10 +394,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissions.map((p) => {
       // get the app name from workspace apps
       const app = this.workspaceApps.filter((app) => app.productName === p.productName && app.appId === p.appId)[0]
-      if (this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0)
+      if (this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0) {
         this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
+        if (app.appId) {
+          this.filterAppValueLength =
+            app.appId.length > this.filterAppValueLength ? app.appId.length : this.filterAppValueLength
+        }
+      }
     })
-    this.log('filterAppItems: ', this.filterAppItems)
+    // 3. manipulate field length (needs corrects using clear icon)
+    if (this.filterApp)
+      this.filterApp.nativeElement.className =
+        'p-float-label inline-block w-' + Math.round(this.filterAppValueLength.valueOf() * 0.8) + 'rem'
   }
 
   private loadAppDetails() {
@@ -420,7 +438,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         roles: {}
       } as PermissionViewRow)
     }
-    this.permissionRows.sort(this.sortPermissionRowByKey)
+    //this.permissionRows.sort(this.sortPermissionRowByProductAsc)
     this.log('permissionRows:', this.permissionRows)
     if (!this.currentApp.isApp) this.loadRoleAssignments()
   }
@@ -450,7 +468,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             })
           })
           this.log('loadRoleAssignments permission rows:', this.permissionRows)
-          //this.prepareWorkspaceAppFilter()
           this.loading = false // TODO
         } else {
           this.loadingServerIssue = true
@@ -506,6 +523,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
     if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
   }
+  /**
+   * Filter: Product, AppId
+   */
   private onFilterItemSortIcon(ev: any, icon: HTMLSpanElement) {
     ev.stopPropagation
     icon.className =
@@ -533,26 +553,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         : this.sortPermissionRowByProductDesc
     )
   }
-  public onFilterWorkspaceApps() {
+  public onFilterItemClearAppId() {
     this.filterAppValue = this.currentApp.appId
     if (this.permissionTable) {
       this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     }
-  }
-  // managing the app filter
-  private prepareWorkspaceAppFilter(): void {
-    if (!this.currentApp.isApp) {
-      this.filterAppItems = this.filterAppItems.filter((a) => a.value !== this.currentApp.appId)
-      this.onFilterWorkspaceApps()
-    } else {
-      this.filterAppValue = undefined
-      this.filterAppValueLength = 10
-    }
-    if (this.filterApp)
-      this.filterApp.nativeElement.className =
-        'p-float-label inline-block w-' +
-        (this.filterAppValueLength <= 10 ? 10 : this.filterAppValueLength <= 20 ? this.filterAppValueLength : 22) +
-        'rem'
   }
 
   /****************************************************************************
@@ -649,17 +654,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (
-      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-        b.productName ? (b.productName as string).toUpperCase() : ''
-      ) || this.sortPermissionRowByAppIdAsc(a, b)
+    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+      b.productName ? (b.productName as string).toUpperCase() : ''
     )
   }
   private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (
-      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-        b.productName ? (b.productName as string).toUpperCase() : ''
-      ) || this.sortPermissionRowByAppIdDesc(a, b)
+    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+      b.productName ? (b.productName as string).toUpperCase() : ''
     )
   }
 

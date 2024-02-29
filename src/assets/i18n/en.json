@@ -164,9 +164,9 @@
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Click for change",
-      "GRANT_ALL_FOR_ROLE": "Grant all Permissions",
-      "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions",
+      "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
+      "GRANT_ALL_FOR_ROLE": "Grant all Permissions for the selected or all products",
+      "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
       "REVOKE_ERROR": "Permission could not be revoked",

@@ -169,6 +169,7 @@
                     id="app_detail_permission_table_filter_product_name"
                     styleClass="w-full"
                     [appendTo]="'body'"
+                    [showClear]="true"
                     [options]="filterProductItems"
                     [(ngModel)]="filterProductValue"
                     (onChange)="permissionTable.filter($event.value, 'productName', 'equals')"
@@ -183,7 +184,7 @@
                   pbutton
                   type="button"
                   [id]="'app_detail_permission_table_sort_product_name'"
-                  (click)="onFilterItemSortAppId($event, sortIconProduct)"
+                  (click)="onFilterItemSortProduct($event, sortIconProduct)"
                   [title]="'PERMISSION.SORT.PRODUCT' | translate"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
@@ -192,14 +193,14 @@
               </div>
             </th>
             <th
-              pSortableColumn="appId"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
               [class.border-right-primary]="!currentApp.isApp"
             >
-              {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
-              <p-sortIcon field="appId"></p-sortIcon>
-
-              <div *ngIf="false" class="flex">
+              <span *ngIf="false" pSortableColumn="appId">
+                {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
+                <p-sortIcon field="appId"></p-sortIcon>
+              </span>
+              <div class="flex">
                 <span #filterApp class="p-float-label inline-block w-full">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"
@@ -209,7 +210,7 @@
                     [options]="filterAppItems"
                     [(ngModel)]="filterAppValue"
                     (onChange)="permissionTable.filter($event.value, 'appId', 'equals')"
-                    (onClear)="onFilterWorkspaceApps()"
+                    (onClear)="onFilterItemClearAppId()"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                   ></p-dropdown>
                   <label for="app_detail_permission_table_filter_app_id">
@@ -270,11 +271,7 @@
                     <button
                       pbutton
                       type="button"
-                      *ngIf="
-                        myPermissions.includes('PERMISSION#GRANT') &&
-                        role.appId === urlParamAppId &&
-                        permissionTable.totalRecords > 0
-                      "
+                      *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                       [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                       (click)="onRevokeAllPermissions($event, role)"
                       [title]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"

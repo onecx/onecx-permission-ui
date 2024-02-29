@@ -163,9 +163,9 @@
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Klick für Änderung",
-      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen erteilen",
-      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entziehen",
+      "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
+      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte erteilen",
+      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
       "GRANT_SUCCESS": "Berechtigung erteilt",
       "REVOKE_ERROR": "Berechtigung konnte nicht entzogen werden",
