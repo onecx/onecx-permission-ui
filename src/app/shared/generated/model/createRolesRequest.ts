@@ -9,17 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { CreateRoleRequest } from './createRoleRequest';
 
 
-export interface Assignment { 
-    modificationCount?: number;
-    creationDate?: string;
-    creationUser?: string;
-    modificationDate?: string;
-    modificationUser?: string;
-    roleId?: string;
-    permissionId?: string;
-    appId?: string;
-    id?: string;
+export interface CreateRolesRequest { 
+    roles?: Array<CreateRoleRequest>;
 }
 

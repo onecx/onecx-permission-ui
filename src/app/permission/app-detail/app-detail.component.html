@@ -196,11 +196,11 @@
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
               [class.border-right-primary]="!currentApp.isApp"
             >
-              <span *ngIf="false" pSortableColumn="appId">
+              <span *ngIf="currentApp.isApp" pSortableColumn="appId">
                 {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
                 <p-sortIcon field="appId"></p-sortIcon>
               </span>
-              <div class="flex">
+              <div *ngIf="!currentApp.isApp" class="flex">
                 <span #filterApp class="p-float-label inline-block w-full">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"

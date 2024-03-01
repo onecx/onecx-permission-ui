@@ -18,7 +18,7 @@ import {
   Permission,
   Assignment,
   CreateAssignmentRequestParams,
-  //DeleteAssignmentRequestParams,
+  DeleteAssignmentRequestParams,
   Application,
   ApplicationAPIService,
   AssignmentAPIService,
@@ -37,7 +37,7 @@ export type App = Application & {
 }
 export type PermissionAppType = 'WORKSPACE' | 'APP'
 export type ServiceAppType = 'MFE' | 'MS'
-export type RoleAssignments = { [key: string]: boolean }
+export type RoleAssignments = { [key: string]: string | undefined }
 export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
@@ -336,7 +336,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (this.roles.filter((r) => r.name === wRole).length === 0) {
           this.roleApi
             .createRole({
-              createRoleRequest: { name: wRole } as CreateRoleRequest
+              createRolesRequest: { roles: [{ name: wRole } as CreateRoleRequest] }
             })
             .subscribe({
               next: () => {
@@ -464,7 +464,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
             permissions.map((permission) => {
-              permission.roles[assignment.roleId!] = true
+              permission.roles[assignment.roleId!] = assignment.id
             })
           })
           this.log('loadRoleAssignments permission rows:', this.permissionRows)
@@ -604,9 +604,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         }
       } as CreateAssignmentRequestParams)
       .subscribe({
-        next: () => {
+        next: (data) => {
           this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
-          permRow.roles[role.id!] = true
+          permRow.roles[role.id!] = data.id
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
@@ -616,18 +616,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
     this.log('onRemovePermission()')
-    /*
-    // get assignmentt id => permRow.roles[role.id]
     this.assApi.deleteAssignment({ id: permRow.roles[role.id!] } as DeleteAssignmentRequestParams).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
-        permRow.roles[role.id!] = false
+        permRow.roles[role.id!] = undefined
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
         console.error(err)
       }
-    })*/
+    })
   }
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onGrantAllPermissions()')

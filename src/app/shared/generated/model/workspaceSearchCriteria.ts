@@ -11,15 +11,16 @@
  */
 
 
-export interface Assignment { 
-    modificationCount?: number;
-    creationDate?: string;
-    creationUser?: string;
-    modificationDate?: string;
-    modificationUser?: string;
-    roleId?: string;
-    permissionId?: string;
-    appId?: string;
-    id?: string;
+export interface WorkspaceSearchCriteria { 
+    themeName?: string;
+    productName?: string;
+    /**
+     * The number of page.
+     */
+    pageNumber?: number;
+    /**
+     * The size of page
+     */
+    pageSize?: number;
 }
 

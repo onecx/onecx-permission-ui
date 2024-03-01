@@ -245,6 +245,7 @@
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving App data - please try again.",
+      "APPS": "Unknown problem retrieving App data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",

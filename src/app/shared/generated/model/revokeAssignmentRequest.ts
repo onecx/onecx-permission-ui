@@ -11,15 +11,9 @@
  */
 
 
-export interface Assignment { 
-    modificationCount?: number;
-    creationDate?: string;
-    creationUser?: string;
-    modificationDate?: string;
-    modificationUser?: string;
-    roleId?: string;
+export interface RevokeAssignmentRequest { 
+    roleId: string;
     permissionId?: string;
-    appId?: string;
-    id?: string;
+    productNames?: Array<string>;
 }
 

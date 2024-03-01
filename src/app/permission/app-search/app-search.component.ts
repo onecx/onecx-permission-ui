@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, FormGroup } from '@angular/forms'
-import { combineLatest, finalize, map, of, Observable, Subject, startWith, catchError } from 'rxjs'
+import { combineLatest, finalize, map, of, Observable, Subject, catchError } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
@@ -13,6 +13,7 @@ import {
   Application,
   ApplicationAPIService,
   WorkspaceAPIService,
+  WorkspacePageResult,
   ApplicationPageResult
 } from 'src/app/shared/generated'
 
@@ -33,7 +34,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   // data
   public apps$!: Observable<App[]>
   private papps$!: Observable<ApplicationPageResult>
-  private workspaces$!: Observable<string[]>
+  private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
   public exceptionKey = ''
@@ -82,7 +83,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.prepareDialogTranslations()
-    this.declareWorkspaceObservable()
     this.declarePermissionAppObservable()
     this.searchApps()
   }
@@ -95,13 +95,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * DECLARE Observables
    */
   private declareWorkspaceObservable(): void {
-    this.workspaces$ = this.workspaceApi.getAllWorkspaceNames().pipe(
-      startWith([] as string[]),
+    this.workspaces$ = this.workspaceApi.searchWorkspaces({ workspaceSearchCriteria: {} }).pipe(
       catchError((err) => {
         this.dataAccessIssue = true
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
         console.error('getAllWorkspaceNames():', err)
-        return of([] as string[])
+        return of({} as WorkspacePageResult)
       }),
       finalize(() => (this.searchInProgress = false))
     )
@@ -115,7 +114,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         }
       })
       .pipe(
-        startWith({} as ApplicationPageResult),
         catchError((err) => {
           this.dataAccessIssue = true
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
@@ -130,12 +128,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * SEARCH
    */
   private searchWorkspaces(): Observable<App[]> {
+    this.declareWorkspaceObservable()
     return this.workspaces$.pipe(
-      map((workspaces) => {
-        return workspaces
-          ? [...workspaces]
-              ?.map((name) => {
-                return { appId: name, isApp: false, appType: 'WORKSPACE' } as App
+      map((result) => {
+        return result.stream
+          ? result.stream
+              ?.map((w) => {
+                return { appId: w.name, appType: 'WORKSPACE', description: w.description } as App
               })
               .sort(this.sortAppsByAppId)
           : []
@@ -144,9 +143,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   private searchPermissionApps(): Observable<App[]> {
     return this.papps$.pipe(
-      map((a) => {
-        return a.stream
-          ? a.stream
+      map((result) => {
+        return result.stream
+          ? result.stream
               ?.map((app) => {
                 return { ...app, appType: 'APP' } as App
               })

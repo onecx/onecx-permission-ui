@@ -19,7 +19,7 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { CreateRoleRequest } from '../model/createRoleRequest';
+import { CreateRolesRequest } from '../model/createRolesRequest';
 // @ts-ignore
 import { ProblemDetailResponse } from '../model/problemDetailResponse';
 // @ts-ignore
@@ -37,7 +37,7 @@ import { Configuration }                                     from '../configurat
 
 
 export interface CreateRoleRequestParams {
-    createRoleRequest: CreateRoleRequest;
+    createRolesRequest: CreateRolesRequest;
 }
 
 export interface DeleteRoleRequestParams {
@@ -132,9 +132,9 @@ export class RoleAPIService {
     public createRole(requestParameters: CreateRoleRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<Role>>>;
     public createRole(requestParameters: CreateRoleRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<Role>>>;
     public createRole(requestParameters: CreateRoleRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const createRoleRequest = requestParameters.createRoleRequest;
-        if (createRoleRequest === null || createRoleRequest === undefined) {
-            throw new Error('Required parameter createRoleRequest was null or undefined when calling createRole.');
+        const createRolesRequest = requestParameters.createRolesRequest;
+        if (createRolesRequest === null || createRolesRequest === undefined) {
+            throw new Error('Required parameter createRolesRequest was null or undefined when calling createRole.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -181,7 +181,7 @@ export class RoleAPIService {
         return this.httpClient.request<Array<Role>>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: createRoleRequest,
+                body: createRolesRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
