@@ -12,7 +12,7 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 
 import {
   Role,
-  CreateRoleRequest,
+  //CreateRoleRequest,
   RolePageResult,
   PermissionPageResult,
   Permission,
@@ -84,10 +84,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // permission filter
   public filterProductItems!: SelectItem[]
   public filterProductValue: string | undefined = undefined
-  public filterProductValueLength = 10 // start value for field length calculation
   public filterAppItems: SelectItem[] = new Array<SelectItem>()
   public filterAppValue: string | undefined = undefined
-  public filterAppValueLength = 10 // start value for field length calculation
   private workspaceApps: App[] = []
 
   // permission management
@@ -331,18 +329,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.log('loadRolesAndPermissions completed')
         this.log('roles', this.roles)
         this.log('permissions', this.permissions)
-        //this.createNonExistingRoles
-        this.prepareFilterProducts()
-        this.prepareFilterApps()
-        this.preparePermissionTable()
+        if (this.createNonExistingRoles()) this.loadRolesAndPermissions()
+        else {
+          this.prepareFilterProducts()
+          this.prepareFilterApps()
+          this.preparePermissionTable()
+        }
       }
     )
   }
   private createNonExistingRoles() {
+    let created = false
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
-      let created = false
       for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
-        // this.log('check role ' + wRole)
+        this.log('check role ' + wRole)
+        /*
         if (this.roles.filter((r) => r.name === wRole).length === 0) {
           this.roleApi
             .createRole({
@@ -354,14 +355,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
                 created = true
               }
             })
-        }
-      }
-      if (created) this.loadRolesAndPermissions()
-      else {
-        this.roles.sort(this.sortRoleByName)
-        this.log('createNonExistingRoles this.roles', this.roles)
+        }*/
       }
     }
+    this.roles.sort(this.sortRoleByName)
+    this.log('createNonExistingRoles this.roles', this.roles)
+    return created
   }
 
   /**
@@ -372,18 +371,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.productName, value: product.productName } as SelectItem)
-        if (product.productName) {
-          this.filterProductValueLength =
-            product.productName.length > this.filterProductValueLength
-              ? product.productName.length
-              : this.filterProductValueLength
-        }
       })
       this.filterProductItems.sort(dropDownSortItemsByLabel)
     }
-    if (this.filterProduct)
-      this.filterProduct.nativeElement.className =
-        'p-float-label inline-block w-' + Math.round(this.filterProductValueLength.valueOf() * 0.8) + 'rem'
     this.log('filterProductItems: ', this.filterProductItems)
   }
 
@@ -414,17 +404,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
       ) {
         this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
-        if (app[0].appId) {
-          this.filterAppValueLength =
-            app[0].appId.length > this.filterAppValueLength ? app[0].appId.length : this.filterAppValueLength
-        }
       }
     })
     this.log('filterAppItems: filterAppItems', this.filterAppItems)
-    // 3. manipulate field length (needs corrects using clear icon)
-    if (this.filterApp)
-      this.filterApp.nativeElement.className =
-        'p-float-label inline-block w-' + Math.round(this.filterAppValueLength.valueOf() * 0.8) + 'rem'
   }
 
   private loadAppDetails() {

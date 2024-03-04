@@ -135,7 +135,7 @@
               [title]="'ROLE.TOOLTIP' | translate"
             >
               <div class="flex justify-content-center align-items-center">
-                <span class="inline-block font-bold">{{ 'ROLE.LABEL.' + urlParamAppType | translate }}</span>
+                <span class="inline-block font-bold">{{ 'ROLE.LABEL' | translate }}</span>
                 <button
                   pbutton
                   type="button"
@@ -164,10 +164,10 @@
             <th class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap">
               <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label>
               <div *ngIf="!currentApp.isApp" class="flex">
-                <span #filterProduct class="p-float-label inline-block w-full">
+                <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
                     id="app_detail_permission_table_filter_product_name"
-                    styleClass="w-full"
+                    styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
                     [options]="filterProductItems"
@@ -201,10 +201,10 @@
                 <p-sortIcon field="appId"></p-sortIcon>
               </span>
               <div *ngIf="!currentApp.isApp" class="flex">
-                <span #filterApp class="p-float-label inline-block w-full">
+                <span #filterApp class="p-float-label inline-block">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"
-                    styleClass="w-full"
+                    styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
                     [options]="filterAppItems"

@@ -194,9 +194,8 @@
     }
   },
   "ROLE": {
-    "LABEL.APP": "App Roles",
-    "LABEL.WORKSPACE": "Workspace Roles",
-    "TOOLTIP": "Roles created for the workspace, as a selection of the roles defined for the tenant that can be assigned to the user.",
+    "LABEL": "Roles",
+    "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
     "NAME": "Name",
     "DESCRIPTION": "Description"
   },

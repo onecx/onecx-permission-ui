@@ -42,6 +42,6 @@ app:
         enabled: true
         spec:
           kcConfig:
-            clientId: "onecx-theme-ui"
+            clientId: "onecx-permission-ui"
             
 # PIPE Config

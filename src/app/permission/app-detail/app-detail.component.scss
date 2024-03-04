@@ -58,8 +58,13 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
   }
-  .p-dropdown .p-inputtext {
-    padding: 0.6rem;
+  .p-dropdown {
+    &.clear-icon-used .p-inputtext {
+      padding-right: 2rem;
+    }
+    .p-inputtext {
+      padding: 0.6rem;
+    }
   }
   .pseudo-button:hover {
     background: var(--button-hover-bg) !important;

@@ -193,9 +193,8 @@
     }
   },
   "ROLE": {
-    "LABEL.APP": "App Rollen",
-    "LABEL.WORKSPACE": "Workspace Rollen",
-    "TOOLTIP": "Für den Workspace erstellte Rollen, als Auswahl der für den Mandaten definierten Rollen, die dem Benutzer zugeordnet werden können.",
+    "LABEL": "Rollen",
+    "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung"
   },
