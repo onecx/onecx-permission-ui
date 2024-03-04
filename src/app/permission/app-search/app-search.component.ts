@@ -98,7 +98,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.workspaces$ = this.workspaceApi.searchWorkspaces({ workspaceSearchCriteria: {} }).pipe(
       catchError((err) => {
         this.dataAccessIssue = true
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
         console.error('getAllWorkspaceNames():', err)
         return of({} as WorkspacePageResult)
       }),
@@ -239,7 +239,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.searchApps()
   }
   public onSearchReset() {
-    this.appSearchCriteriaGroup.reset({ appType: 'WORKSPACE' })
+    this.appSearchCriteriaGroup.reset({ appType: 'ALL' })
     this.apps$ = of([] as App[])
   }
 }

@@ -122,7 +122,7 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
-      "SUBHEADER_APP": "Rollen und Berechtigungen verwalten"
+      "SUBHEADER_APP": "Berechtigungen anzeigen"
     }
   },
   "APP": {
@@ -249,7 +249,8 @@
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es erneut.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
-      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut."
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut.",
+      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - Bitte versuchen sie es erneut."
     }
   }
 }

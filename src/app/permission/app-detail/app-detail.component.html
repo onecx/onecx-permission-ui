@@ -97,9 +97,9 @@
               </span>
             </div>
             <p-button
-              *ngIf="permissionRows"
               id="app_detail_permission_table_reload_button"
               styleClass="h-full"
+              [disabled]="!permissionRows"
               [title]="'ACTIONS.SEARCH.RELOAD' | translate"
               (onClick)="onReload()"
               icon="pi pi-refresh"

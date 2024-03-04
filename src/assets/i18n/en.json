@@ -123,7 +123,7 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
-      "SUBHEADER_APP": "Managing Roles and Permissions"
+      "SUBHEADER_APP": "Displaying Permissions"
     }
   },
   "APP": {
@@ -249,7 +249,8 @@
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
-      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again.",
+      "WORKSPACES": "Unknown problem retrieving Workspaces - please try again."
     }
   }
 }

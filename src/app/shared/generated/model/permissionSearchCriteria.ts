@@ -13,7 +13,7 @@
 
 export interface PermissionSearchCriteria { 
     appId?: string;
-    productName?: string;
+    productNames?: Array<string>;
     /**
      * The number of page.
      */

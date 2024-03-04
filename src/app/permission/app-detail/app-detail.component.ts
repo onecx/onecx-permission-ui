@@ -227,7 +227,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.currentApp = { ...result.stream[0], appType: 'APP', isApp: true } as App
             this.log('loadApp => App:', this.currentApp)
             this.loadAppDetails()
-            //this.preparePermissionTable(this.currentApp)
           } else {
             this.loadingServerIssue = true
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
@@ -273,9 +272,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private declarePermissionObservable(appIds?: string): void {
-    // TODO: product name
+    const productNames = this.currentApp.isApp
+      ? this.currentApp.productName
+      : this.currentApp.workspaceDetails?.products?.map((p) => p.productName)[0]
+    // TODO
+    //productName: this.currentApp.workspaceDetails?.products?.map((p) => p.productName)
     this.permissions$ = this.permApi
-      .searchPermissions({ permissionSearchCriteria: { appId: appIds, pageSize: this.pageSize } })
+      .searchPermissions({
+        permissionSearchCriteria: {
+          productName: productNames,
+          appId: appIds,
+          pageSize: this.pageSize
+        }
+      })
       .pipe(
         catchError((err) => {
           this.loadingServerIssue = true
@@ -324,7 +333,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         //this.createNonExistingRoles
         this.prepareFilterProducts()
         this.prepareFilterApps()
-        this.preparePermissionTable()
+        //this.preparePermissionTable()
       }
     )
   }
@@ -393,19 +402,28 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.filterAppItems = [{ label: '', value: null } as SelectItem]
     this.permissions.map((p) => {
       // get the app name from workspace apps
-      const app = this.workspaceApps.filter((app) => app.productName === p.productName && app.appId === p.appId)[0]
-      if (this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0) {
+      // const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
+      const app = this.workspaceApps.filter((a) => a.productName === p.productName)
+      console.log('filterAppItems: product', p)
+      console.log('filterAppItems: app', app)
+      if (
+        app.length > 0 &&
+        this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0
+      ) {
         this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
         if (app.appId) {
           this.filterAppValueLength =
             app.appId.length > this.filterAppValueLength ? app.appId.length : this.filterAppValueLength
         }
       }
+      console.log('filterAppItems: filterAppItems', this.filterAppItems)
     })
+    /*
     // 3. manipulate field length (needs corrects using clear icon)
     if (this.filterApp)
       this.filterApp.nativeElement.className =
         'p-float-label inline-block w-' + Math.round(this.filterAppValueLength.valueOf() * 0.8) + 'rem'
+    */
   }
 
   private loadAppDetails() {
@@ -438,7 +456,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         roles: {}
       } as PermissionViewRow)
     }
-    //this.permissionRows.sort(this.sortPermissionRowByProductAsc)
+    this.permissionRows.sort(this.currentApp.isApp ? this.sortPermissionRowByKey : this.sortPermissionRowByProductAsc)
     this.log('permissionRows:', this.permissionRows)
     if (!this.currentApp.isApp) this.loadRoleAssignments()
   }
