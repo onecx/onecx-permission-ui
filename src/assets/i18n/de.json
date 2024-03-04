@@ -122,7 +122,7 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
-      "SUBHEADER_APP": "Berechtigungen anzeigen"
+      "SUBHEADER_APP": "Verwalten von Berechtigungen für die App"
     }
   },
   "APP": {

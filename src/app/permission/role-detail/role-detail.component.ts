@@ -60,58 +60,63 @@ export class RoleDetailComponent implements OnChanges {
    * Save a ROLE
    */
   public onSaveRole(): void {
-    this.log('onSaveRole()')
-    if (this.formGroupRole.valid) {
-      const roleExists =
+    this.log('onSaveRole() ' + this.formGroupRole.valid)
+    if (!this.formGroupRole.valid) {
+      console.info('form not valid')
+      return
+    }
+    let roleExists = false
+    if (this.roles.length > 0)
+      roleExists =
         this.roles.filter(
           (r) =>
             r.name === this.formGroupRole.controls['name'].value &&
             (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
         ).length > 0
-      if (roleExists) {
-        this.msgService.error({
-          summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
-          detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
+    if (roleExists) {
+      this.msgService.error({
+        summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
+        detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
+      })
+      return
+    }
+    if (this.changeMode === 'CREATE') {
+      console.info('form valid ' + this.changeMode)
+      const role = {
+        name: this.formGroupRole.controls['name'].value,
+        description: this.formGroupRole.controls['description'].value
+      } as CreateRoleRequest
+      this.roleApi
+        .createRole({
+          createRolesRequest: { roles: [role as CreateRoleRequest] }
         })
-        return
-      }
-      if (this.changeMode === 'CREATE') {
-        const role = {
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as CreateRoleRequest
-        this.roleApi
-          .createRole({
-            createRolesRequest: { roles: [role as CreateRoleRequest] }
-          })
-          .subscribe({
-            next: () => {
-              this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_OK' })
-              this.dataChanged.emit(true)
-            },
-            error: (err) => {
-              this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
-              console.error(err)
-            }
-          })
-      } else {
-        const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
-        const role = {
-          modificationCount: this.role?.modificationCount,
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as UpdateRoleRequest
-        this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
+        .subscribe({
           next: () => {
-            this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-            if (roleNameChanged) this.dataChanged.emit(true)
+            this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_OK' })
+            this.dataChanged.emit(true)
           },
           error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
+            this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
             console.error(err)
           }
         })
-      }
+    } else {
+      const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
+      const role = {
+        modificationCount: this.role?.modificationCount,
+        name: this.formGroupRole.controls['name'].value,
+        description: this.formGroupRole.controls['description'].value
+      } as UpdateRoleRequest
+      this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
+          if (roleNameChanged) this.dataChanged.emit(true)
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
+          console.error(err)
+        }
+      })
     }
   }
 

@@ -123,7 +123,7 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
-      "SUBHEADER_APP": "Displaying Permissions"
+      "SUBHEADER_APP": "Managing Business Roles and Permissions of the App"
     }
   },
   "APP": {

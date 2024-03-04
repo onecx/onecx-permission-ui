@@ -367,6 +367,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * FILTER
    */
   private prepareFilterProducts() {
+    if (this.currentApp.isApp) return
     this.filterProductItems = [{ label: '', value: null } as SelectItem]
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
@@ -378,6 +379,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps() {
+    if (this.currentApp.isApp) return
     // 1. collect apps registered in workspace
     this.workspaceApps = []
     if (this.currentApp.workspaceDetails?.products) {
@@ -417,7 +419,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       () => {}, // error
       () => {
         this.prepareActionButtons()
-        this.preparePermissionTable() // on complete
+        this.loadRolesAndPermissions()
       }
     )
   }
@@ -441,15 +443,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     this.permissionRows.sort(this.currentApp.isApp ? this.sortPermissionRowByKey : this.sortPermissionRowByProductAsc)
     this.log('permissionRows:', this.permissionRows)
-    if (!this.currentApp.isApp) this.loadRoleAssignments()
+    this.loadRoleAssignments()
   }
 
   private loadRoleAssignments() {
-    if (this.workspaceApps.length === 0) {
-      console.warn('No workspace apps found - stop processing')
-      return
+    const appList: string[] = []
+    if (this.currentApp.isApp) appList.push(this.currentApp.appId ?? '')
+    else {
+      if (this.workspaceApps.length === 0) {
+        console.warn('No workspace apps found - stop processing')
+        return
+      } else
+        this.workspaceApps.map((app) => {
+          appList.push(app.appId ?? '')
+        })
     }
-    const appList = this.workspaceApps.map((app) => app.appId!)
     this.assApi
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
