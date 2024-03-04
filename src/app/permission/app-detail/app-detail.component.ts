@@ -272,15 +272,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private declarePermissionObservable(appIds?: string): void {
-    const productNames = this.currentApp.isApp
-      ? this.currentApp.productName
-      : this.currentApp.workspaceDetails?.products?.map((p) => p.productName)[0]
-    // TODO
-    //productName: this.currentApp.workspaceDetails?.products?.map((p) => p.productName)
+    const productNames: string[] = []
+    if (this.currentApp.isApp) productNames.push(this.currentApp.productName ?? '')
+    else
+      this.currentApp.workspaceDetails?.products?.map((p) => {
+        productNames.push(p.productName ?? '')
+      })
     this.permissions$ = this.permApi
       .searchPermissions({
         permissionSearchCriteria: {
-          productName: productNames,
+          productNames: productNames,
           appId: appIds,
           pageSize: this.pageSize
         }
@@ -333,7 +334,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         //this.createNonExistingRoles
         this.prepareFilterProducts()
         this.prepareFilterApps()
-        //this.preparePermissionTable()
+        this.preparePermissionTable()
       }
     )
   }
@@ -362,6 +363,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  /**
+   * FILTER
+   */
   private prepareFilterProducts() {
     this.filterProductItems = [{ label: '', value: null } as SelectItem]
     if (this.currentApp.workspaceDetails?.products) {
@@ -381,18 +386,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         'p-float-label inline-block w-' + Math.round(this.filterProductValueLength.valueOf() * 0.8) + 'rem'
     this.log('filterProductItems: ', this.filterProductItems)
   }
+
   private prepareFilterApps() {
     // 1. collect apps registered in workspace
     this.workspaceApps = []
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         if (product.mfe)
-          product.mfe.map((app) => {
-            this.workspaceApps.push({ appId: app.appId, name: app.appName, productName: product.productName } as App)
+          product.mfe.map((a) => {
+            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
           })
         if (product.ms)
-          product.ms.map((app) => {
-            this.workspaceApps.push({ appId: app.appId, name: app.appName, productName: product.productName } as App)
+          product.ms.map((a) => {
+            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
           })
       })
     }
@@ -401,29 +407,24 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // 2. fill app filter with apps which have permissions
     this.filterAppItems = [{ label: '', value: null } as SelectItem]
     this.permissions.map((p) => {
-      // get the app name from workspace apps
-      // const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
-      const app = this.workspaceApps.filter((a) => a.productName === p.productName)
-      console.log('filterAppItems: product', p)
-      console.log('filterAppItems: app', app)
+      // get the app name from workspace apps - needed for label
+      const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
       if (
-        app.length > 0 &&
-        this.filterAppItems.filter((item) => item.label === app.name && item.value === app.appId).length === 0
+        app.length === 1 &&
+        this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
       ) {
-        this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
-        if (app.appId) {
+        this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
+        if (app[0].appId) {
           this.filterAppValueLength =
-            app.appId.length > this.filterAppValueLength ? app.appId.length : this.filterAppValueLength
+            app[0].appId.length > this.filterAppValueLength ? app[0].appId.length : this.filterAppValueLength
         }
       }
-      console.log('filterAppItems: filterAppItems', this.filterAppItems)
     })
-    /*
+    this.log('filterAppItems: filterAppItems', this.filterAppItems)
     // 3. manipulate field length (needs corrects using clear icon)
     if (this.filterApp)
       this.filterApp.nativeElement.className =
         'p-float-label inline-block w-' + Math.round(this.filterAppValueLength.valueOf() * 0.8) + 'rem'
-    */
   }
 
   private loadAppDetails() {
