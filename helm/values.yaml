@@ -27,6 +27,7 @@ app:
           ASSIGNMENT:
             GRANT: Assign / Remove assignment of permission to role
           PERMISSION:
+            GRANT: Assign or remove assignment of a permission to a role
             CREATE: Create permission
             DELETE: Delete permission
             EDIT: Edit permission
@@ -43,5 +44,5 @@ app:
         spec:
           kcConfig:
             clientId: "onecx-permission-ui"
-            
+
 # PIPE Config
