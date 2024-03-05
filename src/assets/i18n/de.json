@@ -17,6 +17,8 @@
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
+      "IDM_ROLES.TOOLTIP": "IDM Rollen erstellen",
+      "WORKSPACE_ROLES.TOOLTIP": "Workspace Rollen erstellen",
       "MESSAGE": {
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht erstellt.",

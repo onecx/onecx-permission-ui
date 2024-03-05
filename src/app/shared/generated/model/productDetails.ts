@@ -14,6 +14,7 @@ import { MfeMsAbstract } from './mfeMsAbstract';
 
 export interface ProductDetails { 
     productName?: string;
+    displayName?: string;
     mfe?: Array<MfeMsAbstract>;
     ms?: Array<MfeMsAbstract>;
 }

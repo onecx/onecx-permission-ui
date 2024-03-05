@@ -17,7 +17,9 @@ import {
   PermissionPageResult,
   Permission,
   Assignment,
+  RevokeAssignmentRequest,
   CreateAssignmentRequestParams,
+  CreateProductAssignmentsRequest,
   DeleteAssignmentRequestParams,
   Application,
   ApplicationAPIService,
@@ -43,7 +45,9 @@ export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments // true if assignment exist
   appType: ServiceAppType
+  productDisplayName: string
 }
+export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined }
 
 @Component({
   templateUrl: './app-detail.component.html',
@@ -96,8 +100,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
   // role management
   private roles$!: Observable<RolePageResult>
-  public roles!: Role[]
+  public roles!: PermissionRole[]
   public role: Role | undefined
+  public missingWorkspaceRoles = false
   public formGroupRole: FormGroup
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
@@ -298,7 +303,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       map((result) => {
         return result.stream
           ? result.stream?.map((role) => {
-              this.roles.push(role)
+              this.roles.push(role as PermissionRole)
               return role
             })
           : []
@@ -327,23 +332,31 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       () => {}, // error
       () => {
         this.log('loadRolesAndPermissions completed')
+        this.checkWorkspaceRoles()
         this.log('roles', this.roles)
         this.log('permissions', this.permissions)
-        if (this.createNonExistingRoles()) this.loadRolesAndPermissions()
-        else {
-          this.prepareFilterProducts()
-          this.prepareFilterApps()
-          this.preparePermissionTable()
-        }
+        this.prepareFilterProducts()
+        this.prepareFilterApps()
+        this.preparePermissionTable()
       }
     )
   }
-  private createNonExistingRoles() {
+  private checkWorkspaceRoles() {
+    if (this.currentApp.workspaceDetails?.workspaceRoles) {
+      this.roles.forEach(
+        (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name ?? ''))
+      )
+    }
+  }
+  public onCreateIDMRoles(ev: MouseEvent) {}
+  public onCreateWorkspaceRoles(ev: MouseEvent) {
+    ev.stopPropagation
+    /*
     let created = false
+    this.log('missing roles ' + this.roles.filter((r) => r.isWorkspaceRole === false))
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
       for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
         this.log('check role ' + wRole)
-        /*
         if (this.roles.filter((r) => r.name === wRole).length === 0) {
           this.roleApi
             .createRole({
@@ -355,12 +368,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
                 created = true
               }
             })
-        }*/
       }
     }
-    this.roles.sort(this.sortRoleByName)
-    this.log('createNonExistingRoles this.roles', this.roles)
-    return created
+    }*/
   }
 
   /**
@@ -535,7 +545,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * Filter: Product, AppId
    */
-  private onFilterItemSortIcon(ev: any, icon: HTMLSpanElement) {
+  private onFilterItemSortIcon(ev: MouseEvent, icon: HTMLSpanElement) {
     ev.stopPropagation
     icon.className =
       'pi pi-fw ' +
@@ -636,11 +646,59 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     })
   }
+  private prepareProductList(): string[] {
+    const pList: string[] = []
+    // => case 1
+    if (this.currentApp.isApp) pList.push(this.currentApp.productName ?? '')
+    else {
+      // => case 2
+      if (this.filterProductValue) pList.push(this.filterProductValue)
+      else if (this.filterProductItems.length > 1)
+        this.filterProductItems.map((p) => {
+          if (p.value) pList.push(p.value ?? '') // ignore empty entry
+        })
+    }
+    return pList
+  }
+  // 1. Permission App => the own product
+  // 2. Workspace App  => a) selected product  b) all products
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onGrantAllPermissions()')
+    const pList = this.prepareProductList()
+    if (pList.length === 0) return // products are required
+    this.assApi
+      .createProductAssignments({
+        createProductAssignmentsRequest: { roleId: role.id, productNames: pList } as CreateProductAssignmentsRequest
+      })
+      .subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+          this.loadRolesAndPermissions()
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+          console.error(err)
+        }
+      })
   }
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onRevokeAllPermissions()')
+    const pList = this.prepareProductList()
+    if (pList.length === 0) return // products are required
+    this.assApi
+      .revokeAssignments({
+        revokeAssignmentRequest: { roleId: role.id, productNames: pList } as RevokeAssignmentRequest
+      })
+      .subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+          this.loadRolesAndPermissions()
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+          console.error(err)
+        }
+      })
   }
 
   /****************************************************************************

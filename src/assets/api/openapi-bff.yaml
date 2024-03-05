@@ -825,6 +825,8 @@ components:
       properties:
         productName:
           type: string
+        displayName:
+          type: string
         mfe:
           type: array
           items:
