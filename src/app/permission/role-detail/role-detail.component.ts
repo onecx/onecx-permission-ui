@@ -88,7 +88,7 @@ export class RoleDetailComponent implements OnChanges {
       } as CreateRoleRequest
       this.roleApi
         .createRole({
-          createRolesRequest: { roles: [role as CreateRoleRequest] }
+          createRolesRequest: { roles: [role] }
         })
         .subscribe({
           next: () => {

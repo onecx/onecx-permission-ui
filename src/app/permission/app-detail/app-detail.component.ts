@@ -84,7 +84,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public urlParamAppType = ''
   public currentApp: App = { appId: 'dummy', appType: 'APP', isApp: true } as App
   public dateFormat = 'medium'
-  public changeMode: ChangeMode = 'CREATE' || 'EDIT'
+  public changeMode: ChangeMode = 'VIEW'
   public myPermissions = new Array<string>() // permissions of the user
   // permission filter
   public filterProductItems!: SelectItem[]
@@ -354,10 +354,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onCreateIDMRoles(ev: MouseEvent) {} // TODO
+  public onCreateIDMRoles(ev: MouseEvent) {
+    console.log('TODO: select IDM roles to take over into permissions')
+  }
 
   public onCreateWorkspaceRoles(ev: MouseEvent) {
-    ev.stopPropagation
+    ev.stopPropagation()
     if (!this.missingWorkspaceRoles) return
     // get workspace roles which are not exists within permission product
     const mwr: CreateRoleRequest[] = []
@@ -468,15 +470,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private loadRoleAssignments() {
     const appList: string[] = []
     if (this.currentApp.isApp) appList.push(this.currentApp.appId ?? '')
-    else {
-      if (this.workspaceApps.length === 0) {
-        console.warn('No workspace apps found - stop processing')
-        return
-      } else
-        this.workspaceApps.map((app) => {
-          appList.push(app.appId ?? '')
-        })
-    }
+    else if (this.workspaceApps.length === 0) {
+      console.warn('No workspace apps found - stop processing')
+      return
+    } else
+      this.workspaceApps.map((app) => {
+        appList.push(app.appId ?? '')
+      })
+
     this.assApi
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
@@ -555,7 +556,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * Filter: Product, AppId
    */
   private onFilterItemSortIcon(ev: MouseEvent, icon: HTMLSpanElement) {
-    ev.stopPropagation
+    ev.stopPropagation()
     icon.className =
       'pi pi-fw ' +
       (icon.className.match('pi-sort-alt')
@@ -593,19 +594,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    ****************************************************************************
    */
   public onCreateRole(ev?: MouseEvent): void {
-    ev?.stopPropagation
+    ev?.stopPropagation()
     this.role = undefined
     this.changeMode = 'CREATE'
     this.showRoleDetailDialog = true
   }
   public onEditRole(ev: MouseEvent, role: Role): void {
-    ev.stopPropagation
+    ev.stopPropagation()
     this.role = role
     this.changeMode = 'EDIT'
     this.showRoleDetailDialog = true
   }
   public onDeleteRole(ev: MouseEvent, role: Role): void {
-    ev.stopPropagation
+    ev.stopPropagation()
     this.role = role
     this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
@@ -659,14 +660,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     const pList: string[] = []
     // => case 1
     if (this.currentApp.isApp) pList.push(this.currentApp.productName ?? '')
-    else {
-      // => case 2
-      if (this.filterProductValue) pList.push(this.filterProductValue)
-      else if (this.filterProductItems.length > 1)
-        this.filterProductItems.map((p) => {
-          if (p.value) pList.push(p.value ?? '') // ignore empty entry
-        })
-    }
+    // => case 2
+    else if (this.filterProductValue) pList.push(this.filterProductValue)
+    else if (this.filterProductItems.length > 1)
+      this.filterProductItems.map((p) => {
+        if (p.value) pList.push(p.value ?? '') // ignore empty entry
+      })
     return pList
   }
   // 1. Permission App => the own product
@@ -718,23 +717,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
-      b.appId ? (b.appId as string).toUpperCase() : ''
-    )
+    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
   private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
-      b.appId ? (b.appId as string).toUpperCase() : ''
-    )
+    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-      b.productName ? (b.productName as string).toUpperCase() : ''
+    return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+      b.productName ? b.productName.toUpperCase() : ''
     )
   }
   private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-      b.productName ? (b.productName as string).toUpperCase() : ''
+    return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+      b.productName ? b.productName.toUpperCase() : ''
     )
   }
 

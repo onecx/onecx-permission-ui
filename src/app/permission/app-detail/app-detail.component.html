@@ -111,6 +111,7 @@
           <!-- 1. header row -->
           <tr>
             <th
+              id="app_detail_permission_table_header_permissions"
               [attr.colspan]="
                 myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 4 : 3
               "
@@ -128,6 +129,7 @@
               </div>
             </th>
             <th
+              id="app_detail_permission_table_header_roles"
               [attr.colspan]="roles ? roles.length : 0"
               class="py-0 opacity-80 text-center"
               [title]="'ROLE.TOOLTIP' | translate"
@@ -178,14 +180,17 @@
           <tr>
             <th
               pSortableColumn="key"
+              id="app_detail_permission_table_header_permission_key"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
               {{ 'PERMISSION.KEY' | translate }}
               <p-sortIcon field="key"></p-sortIcon>
             </th>
-
-            <th class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap">
-              <label *ngIf="currentApp.isApp"> {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label>
+            <th
+              id="app_detail_permission_table_header_permission_filter_product"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
+            >
+              <div *ngIf="currentApp.isApp">{{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</div>
               <div *ngIf="!currentApp.isApp" class="flex">
                 <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
@@ -216,6 +221,7 @@
               </div>
             </th>
             <th
+              id="app_detail_permission_table_header_permission_filter_app_id"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary border-right-primary white-space-nowrap"
             >
               <span *ngIf="currentApp.isApp" pSortableColumn="appId">
@@ -253,7 +259,11 @@
             </th>
 
             <!-- ROLES (actually managed by IDM, duplicated to manage permission assignments) -->
-            <th *ngFor="let role of columns" class="pt-2 pb-1 px-2 text-center border-bottom-primary">
+            <th
+              id="app_detail_permission_table_header_roles"
+              *ngFor="let role of columns"
+              class="pt-2 pb-1 px-2 text-center border-bottom-primary"
+            >
               <div class="flex flex-column justify-content-between">
                 <div class="flex flex-row gap-1 justify-content-center white-space-nowrap">
                   <button
@@ -312,20 +322,20 @@
         <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
           <tr [id]="'app_detail_permission_table_row_' + row">
             <td
+              id="app_detail_permission_table_data_permission_key"
               class="text-left py-1 px-2 white-space-nowrap sm:white-space-normal"
-              id="app_detail_permission_table_data_permission"
               [title]="rowData.description ? rowData.description : ''"
             >
               <strong>{{ rowData.resource }} </strong>#
               <strong>{{ rowData.action }} </strong>
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
-            <td class="text-left px-2" id="app_detail_permission_table_data_product_name">
+            <td id="app_detail_permission_table_data_product_name" class="text-left px-2">
               <div *ngIf="currentApp.isApp">{{ rowData.productName }}</div>
               <div *ngIf="!currentApp.isApp">{{ rowData.productDisplayName }}</div>
               <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
-            <td class="text-left px-2 border-right-primary" id="app_detail_permission_table_data_app_id">
+            <td id="app_detail_permission_table_data_app_id" class="text-left px-2 border-right-primary">
               <div>{{ rowData.appDisplayName }}</div>
               <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
