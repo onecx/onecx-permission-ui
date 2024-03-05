@@ -157,7 +157,7 @@
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-bolt" aria-hidden="true"></span>
                 </button>
-                <div class="p-1">
+                <div *ngIf="missingWorkspaceRoles" class="p-1">
                   <button
                     pbutton
                     type="button"
@@ -321,14 +321,13 @@
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
             <td class="text-left px-2" id="app_detail_permission_table_data_product_name">
+              <div *ngIf="currentApp.isApp">{{ rowData.productName }}</div>
               <div *ngIf="!currentApp.isApp">{{ rowData.productDisplayName }}</div>
-              <div [class.text-sm]="!currentApp.isApp">{{ rowData.productName }}</div>
-            </td>
-            <td *ngIf="false" class="text-left px-2" id="app_detail_permission_table_data_app_type">
-              {{ rowData.appType }}
+              <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
             <td class="text-left px-2 border-right-primary" id="app_detail_permission_table_data_app_id">
-              {{ rowData.appId }}
+              <div>{{ rowData.appDisplayName }}</div>
+              <div class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
             <td

@@ -12,7 +12,7 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 
 import {
   Role,
-  //CreateRoleRequest,
+  CreateRoleRequest,
   RolePageResult,
   PermissionPageResult,
   Permission,
@@ -39,12 +39,13 @@ export type App = Application & {
 }
 export type PermissionAppType = 'WORKSPACE' | 'APP'
 export type ServiceAppType = 'MFE' | 'MS'
-export type RoleAssignments = { [key: string]: string | undefined }
+export type RoleAssignments = { [key: string]: string | undefined } // assignment id or undefined
 export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
-  roles: RoleAssignments // true if assignment exist
+  roles: RoleAssignments
   appType: ServiceAppType
+  appDisplayName: string
   productDisplayName: string
 }
 export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined }
@@ -333,6 +334,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       () => {
         this.log('loadRolesAndPermissions completed')
         this.checkWorkspaceRoles()
+        this.roles.sort(this.sortRoleByName)
         this.log('roles', this.roles)
         this.log('permissions', this.permissions)
         this.prepareFilterProducts()
@@ -346,31 +348,32 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.roles.forEach(
         (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name ?? ''))
       )
+      this.missingWorkspaceRoles =
+        this.roles.filter((r) => r.isWorkspaceRole === true).length !=
+        this.currentApp.workspaceDetails?.workspaceRoles.length
     }
   }
-  public onCreateIDMRoles(ev: MouseEvent) {}
+
+  public onCreateIDMRoles(ev: MouseEvent) {} // TODO
+
   public onCreateWorkspaceRoles(ev: MouseEvent) {
     ev.stopPropagation
-    /*
-    let created = false
-    this.log('missing roles ' + this.roles.filter((r) => r.isWorkspaceRole === false))
-    if (this.currentApp.workspaceDetails?.workspaceRoles) {
-      for (let wRole of this.currentApp.workspaceDetails?.workspaceRoles) {
-        this.log('check role ' + wRole)
-        if (this.roles.filter((r) => r.name === wRole).length === 0) {
-          this.roleApi
-            .createRole({
-              createRolesRequest: { roles: [{ name: wRole } as CreateRoleRequest] }
-            })
-            .subscribe({
-              next: () => {
-                this.log('role created: ' + wRole)
-                created = true
-              }
-            })
+    if (!this.missingWorkspaceRoles) return
+    // get workspace roles which are not exists within permission product
+    const mwr: CreateRoleRequest[] = []
+    this.currentApp.workspaceDetails?.workspaceRoles?.map((r) => {
+      mwr.push({ name: r } as CreateRoleRequest)
+    })
+    this.roleApi.createRole({ createRolesRequest: { roles: mwr } }).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+        this.loadRolesAndPermissions()
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+        console.error(err)
       }
-    }
-    }*/
+    })
   }
 
   /**
@@ -381,7 +384,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.filterProductItems = [{ label: '', value: null } as SelectItem]
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
-        this.filterProductItems.push({ label: product.productName, value: product.productName } as SelectItem)
+        this.filterProductItems.push({ label: product.displayName, value: product.productName } as SelectItem)
       })
       this.filterProductItems.sort(dropDownSortItemsByLabel)
     }
@@ -418,7 +421,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
       }
     })
-    this.log('filterAppItems: filterAppItems', this.filterAppItems)
+    this.log('filterAppItems', this.filterAppItems)
   }
 
   private loadAppDetails() {
@@ -448,6 +451,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.permissionRows.push({
         ...permission,
         key: permission.resource + '#' + permission.action,
+        productDisplayName: this.currentApp.isApp
+          ? permission.productName
+          : this.filterProductItems.filter((p) => p.value === permission.productName)[0].label,
+        appDisplayName: this.filterAppItems.filter((p) => p.value === permission.appId)[0].label,
         roles: {}
       } as PermissionViewRow)
     }
@@ -730,8 +737,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private sortRoleByName(a: Role, b: Role): number {
-    return (a.name ? (a.name as string).toUpperCase() : '').localeCompare(
-      b.name ? (b.name as string).toUpperCase() : ''
-    )
+    return (a.name ? a.name.toUpperCase() : '').localeCompare(b.name ? b.name.toUpperCase() : '')
   }
 }

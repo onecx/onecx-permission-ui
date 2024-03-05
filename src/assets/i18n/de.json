@@ -25,7 +25,9 @@
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich erstellt",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht erstellt.",
         "ROLE_OK": "Die Rolle wurde erfolgreich erstellt",
-        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt."
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt.",
+        "WORKSPACE_ROLES_OK": "Die Workspace Rollen wurden erfolgreich erstellt.",
+        "WORKSPACE_ROLES_NOK": "Ein Fehler ist aufgetreten. Die Workspace-Rollen konnten nicht erstellt werden."
       }
     },
     "DELETE": {

@@ -25,7 +25,9 @@
         "PERMISSION_OK": "The permission was created successfully",
         "PERMISSION_NOK": "An error has occurred. The permission was not created.",
         "ROLE_OK": "The role was created successfully",
-        "ROLE_NOK": "An error has occurred. The role was not created."
+        "ROLE_NOK": "An error has occurred. The role was not created.",
+        "WORKSPACE_ROLES_OK": "The workspace roles were created successfully",
+        "WORKSPACE_ROLES_NOK": "An error has occurred. The workspace roles could not be created."
       }
     },
     "DELETE": {
