@@ -720,7 +720,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
   private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
+    return this.sortPermissionRowByAppIdAsc(a, b)
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
@@ -728,9 +728,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
-      b.productName ? b.productName.toUpperCase() : ''
-    )
+    return this.sortPermissionRowByProductAsc(a, b)
   }
 
   private sortRoleByName(a: Role, b: Role): number {

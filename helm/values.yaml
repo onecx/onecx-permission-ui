@@ -24,10 +24,8 @@ app:
             SAVE: Update and save permission app details
             SEARCH: Search permission apps
             VIEW: View app details
-          ASSIGNMENT:
-            GRANT: Assign / Remove assignment of permission to role
           PERMISSION:
-            GRANT: Assign or remove assignment of a permission to a role
+            GRANT: Assign or remove a permission to a role
             CREATE: Create permission
             DELETE: Delete permission
             EDIT: Edit permission
