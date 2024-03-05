@@ -454,7 +454,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         productDisplayName: this.currentApp.isApp
           ? permission.productName
           : this.filterProductItems.filter((p) => p.value === permission.productName)[0].label,
-        appDisplayName: this.filterAppItems.filter((p) => p.value === permission.appId)[0].label,
+        appDisplayName: this.currentApp.isApp
+          ? permission.appId
+          : this.filterAppItems.filter((p) => p.value === permission.appId)[0].label,
         roles: {}
       } as PermissionViewRow)
     }

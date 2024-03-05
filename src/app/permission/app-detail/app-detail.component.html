@@ -327,7 +327,7 @@
             </td>
             <td class="text-left px-2 border-right-primary" id="app_detail_permission_table_data_app_id">
               <div>{{ rowData.appDisplayName }}</div>
-              <div class="mt-1 text-xs">{{ rowData.appId }}</div>
+              <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
             <td
