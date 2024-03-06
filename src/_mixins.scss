@@ -79,14 +79,21 @@
       color: var(--emphasis-medium);
     }
     // correction for data-view-control component
-    .data-view-control-border.p-dropdown {
-      .p-inputtext {
-        color: var(--emphasis-medium);
-        opacity: 0.9;
+    .data-view-control-border {
+      border: var(--toggle-button-border);
+      &.p-dropdown {
+        .p-inputtext {
+          color: var(--emphasis-medium);
+          opacity: 0.9;
+        }
+        &:last-of-type {
+          border-top-left-radius: var(--border-radius);
+          border-bottom-left-radius: var(--border-radius);
+        }
       }
-      &:last-of-type {
-        border-top-left-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
+      &.p-inputtext:hover,
+      &.p-dropdown:hover {
+        border-color: rgb(0 0 0 / 30%) !important;
       }
     }
   }
@@ -110,12 +117,8 @@
   }
 }
 
-@mixin search-criteria-select-button {
+@mixin search-criteria-select-button-slim {
   :host ::ng-deep {
-    .p-selectbutton-title {
-      width: 2rem;
-      text-align: right;
-    }
     .slim-selectbutton {
       display: flex;
       flex-wrap: wrap;
@@ -136,6 +139,33 @@
         font-size: 0.8rem;
       }
     }
+  }
+}
+@mixin search-criteria-select-button-filter {
+  :host ::ng-deep {
+    .filter-selectbutton {
+      .p-selectbutton .p-button {
+        opacity: 0.9 !important;
+        border: var(--toggle-button-border);
+        &.p-highlight {
+          background: var(--toggle-button-active-bg);
+          border-color: var(--toggle-button-active-border-color);
+        }
+        &:not(.p-disabled):not(.p-highlight):hover {
+          color: var(--text-color);
+          border-color: var(--toggle-button-hover-border-color);
+          background-color: var(--toggle-button-hover-bg);
+        }
+      }
+    }
+  }
+}
+@mixin search-criteria-select-button {
+  :host ::ng-deep {
+    .p-selectbutton-title {
+      width: 2rem;
+      text-align: right;
+    }
     .search-criteria-selectbutton {
       .p-selectbutton .p-button {
         &.p-highlight {
@@ -150,19 +180,21 @@
         }
       }
     }
-    .filter-selectbutton {
-      .p-selectbutton .p-button {
-        opacity: 0.9 !important;
-        border: var(--toggle-button-border);
-        &.p-highlight {
-          background: var(--toggle-button-active-bg);
-          border-color: var(--toggle-button-active-border-color);
-        }
-        &:not(.p-disabled):not(.p-highlight):hover {
-          color: var(--text-color);
-          border-color: var(--toggle-button-hover-border-color);
-          background-color: var(--toggle-button-hover-bg);
-        }
+  }
+}
+@mixin table-inline-buttons {
+  :host ::ng-deep {
+    // reduce the size of buttons used inside a table row
+    th button.p-button,
+    td button.p-button {
+      &.p-button-icon-only {
+        width: unset !important;
+      }
+      &.p-button-rounded {
+        height: unset !important;
+      }
+      &:disabled {
+        opacity: 0.38 !important;
       }
     }
   }

@@ -46,13 +46,7 @@ export class RoleDetailComponent implements OnChanges {
     }
   }
 
-  private log(text: string, obj?: object): void {
-    if (obj) console.log('role detail: ' + text, obj)
-    else console.log('role detail: ' + text)
-  }
-
   public onClose(): void {
-    this.log('onClose')
     this.dataChanged.emit(false)
   }
 
@@ -60,19 +54,22 @@ export class RoleDetailComponent implements OnChanges {
    * Save a ROLE
    */
   public onSaveRole(): void {
-    this.log('onSaveRole() ' + this.formGroupRole.valid)
     if (!this.formGroupRole.valid) {
       console.info('form not valid')
       return
     }
     let roleExists = false
-    if (this.roles.length > 0)
-      roleExists =
-        this.roles.filter(
-          (r) =>
-            r.name === this.formGroupRole.controls['name'].value &&
-            (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
-        ).length > 0
+    if (this.roles.length > 0) {
+      let roles = this.roles.filter((r) => r.name === this.formGroupRole.controls['name'].value)
+      if (this.changeMode !== 'CREATE') roles = roles.filter((r) => r.id !== this.role?.id)
+      roleExists = roles.length > 0
+    }
+    roleExists =
+      this.roles.filter(
+        (r) =>
+          r.name === this.formGroupRole.controls['name'].value &&
+          (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
+      ).length > 0
     if (roleExists) {
       this.msgService.error({
         summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
@@ -110,7 +107,7 @@ export class RoleDetailComponent implements OnChanges {
       this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-          if (roleNameChanged) this.dataChanged.emit(true)
+          this.dataChanged.emit(roleNameChanged)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
@@ -121,7 +118,6 @@ export class RoleDetailComponent implements OnChanges {
   }
 
   public onDeleteRoleConfirmation() {
-    this.log('onDeleteRoleConfirmation()')
     this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })

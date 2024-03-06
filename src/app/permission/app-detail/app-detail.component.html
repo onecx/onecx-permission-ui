@@ -212,7 +212,7 @@
                   pbutton
                   type="button"
                   [id]="'app_detail_permission_table_sort_product_name'"
-                  (click)="onFilterItemSortProduct($event, sortIconProduct)"
+                  (click)="onFilterItemSortIcon($event, sortIconProduct, 'product')"
                   [title]="'PERMISSION.SORT.PRODUCT' | translate"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
@@ -221,14 +221,18 @@
               </div>
             </th>
             <th
+              *ngIf="currentApp.isApp"
               id="app_detail_permission_table_header_permission_filter_app_id"
-              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary border-right-primary white-space-nowrap"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
             >
-              <span *ngIf="currentApp.isApp" pSortableColumn="appId">
-                {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
-                <p-sortIcon field="appId"></p-sortIcon>
-              </span>
-              <div *ngIf="!currentApp.isApp" class="flex">
+              {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
+            </th>
+            <th
+              *ngIf="!currentApp.isApp"
+              id="app_detail_permission_table_header_permission_filter_app_id"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
+            >
+              <div class="flex">
                 <span #filterApp class="p-float-label inline-block">
                   <p-dropdown
                     id="app_detail_permission_table_filter_app_id"
@@ -249,7 +253,7 @@
                   pbutton
                   type="button"
                   [id]="'app_detail_permission_table_sort_app_id'"
-                  (click)="onFilterItemSortAppId($event, sortIconAppId)"
+                  (click)="onFilterItemSortIcon($event, sortIconAppId, 'appId')"
                   [title]="'PERMISSION.SORT.APP_ID' | translate"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
