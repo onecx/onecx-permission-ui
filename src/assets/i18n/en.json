@@ -109,7 +109,7 @@
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "IMPORT": "Import a definition in JSON format",
+      "IMPORT": "Import permissions in JSON format",
       "SAVE": "Save changes"
     }
   },
@@ -142,8 +142,8 @@
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
       "FILTER": {
-        "LABEL": "Filter of App Type",
-        "TOOLTIP": "App Type",
+        "LABEL": "App Type",
+        "TOOLTIP": "Filter for App Type",
         "ALL": "All",
         "APP": "Apps",
         "WORKSPACE": "Workspaces"
@@ -233,6 +233,7 @@
     },
     "HTTP_STATUS_403": {
       "APP": "You have no permissions to see App data.",
+      "APPS": "You have no permissions to see Apps.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
       "ASSIGNMENTS": "You have no permissions to see Assignments.",
@@ -244,6 +245,7 @@
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
+      "ASSIGNMENTS": "No Permissions could be found.",
       "WORKSPACE": "Workspace could not be found."
     },
     "HTTP_STATUS_500": {

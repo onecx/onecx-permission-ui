@@ -109,6 +109,7 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "IMPORT": "Import Berechtigungen im JSON Format",
       "SAVE": "Die Änderungen speichern"
     }
   },
@@ -231,7 +232,8 @@
       "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
     "HTTP_STATUS_403": {
-      "APP": "Sie haben keine Rechte um Apps zu sehen.",
+      "APP": "Sie haben keine Rechte um App Daten zu sehen.",
+      "APPS": "Sie haben keine Rechte um Apps zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
       "ASSIGNMENTS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
