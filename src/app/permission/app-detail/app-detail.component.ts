@@ -715,7 +715,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
   private sortPermissionRowByAppIdDesc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return this.sortPermissionRowByAppIdAsc(b, a)
+    return (b.appId ? b.appId.toUpperCase() : '').localeCompare(a.appId ? a.appId.toUpperCase() : '')
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (a.productName ? a.productName.toUpperCase() : '').localeCompare(

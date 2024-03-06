@@ -64,15 +64,9 @@ export class RoleDetailComponent implements OnChanges {
       if (this.changeMode !== 'CREATE') roles = roles.filter((r) => r.id !== this.role?.id)
       roleExists = roles.length > 0
     }
-    roleExists =
-      this.roles.filter(
-        (r) =>
-          r.name === this.formGroupRole.controls['name'].value &&
-          (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
-      ).length > 0
     if (roleExists) {
       this.msgService.error({
-        summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
+        summaryKey: 'ACTIONS.' + this.changeMode + '.ROLE',
         detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
       })
       return
