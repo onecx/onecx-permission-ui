@@ -11,9 +11,9 @@
  */
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
+export interface WorkspaceSearchCriteria { 
+    themeName?: string;
+    productName?: string;
     /**
      * The number of page.
      */

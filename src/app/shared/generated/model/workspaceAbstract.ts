@@ -11,16 +11,8 @@
  */
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+export interface WorkspaceAbstract { 
+    name?: string;
+    description?: string;
 }
 

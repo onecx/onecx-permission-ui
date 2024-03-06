@@ -11,16 +11,8 @@
  */
 
 
-export interface PermissionSearchCriteria { 
+export interface MfeMsAbstract { 
+    appName?: string;
     appId?: string;
-    productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
 }
 

@@ -19,6 +19,7 @@ export interface Permission {
     modificationUser?: string;
     id?: string;
     appId?: string;
+    productName?: string;
     resource?: string;
     action?: string;
     description?: string;

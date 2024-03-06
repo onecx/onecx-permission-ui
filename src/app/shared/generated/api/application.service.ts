@@ -105,9 +105,9 @@ export class ApplicationAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<ApplicationPageResult>>;
-    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<ApplicationPageResult>>>;
-    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<ApplicationPageResult>>>;
+    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ApplicationPageResult>;
+    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ApplicationPageResult>>;
+    public searchApplications(requestParameters: SearchApplicationsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ApplicationPageResult>>;
     public searchApplications(requestParameters: SearchApplicationsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const applicationSearchCriteria = requestParameters.applicationSearchCriteria;
         if (applicationSearchCriteria === null || applicationSearchCriteria === undefined) {
@@ -155,7 +155,7 @@ export class ApplicationAPIService {
         }
 
         let localVarPath = `/applications/search`;
-        return this.httpClient.request<Array<ApplicationPageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ApplicationPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: applicationSearchCriteria,

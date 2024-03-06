@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Subject, catchError, map, of, Observable } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
+import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
@@ -13,34 +13,42 @@ import { Action, PortalMessageService, UserService } from '@onecx/portal-integra
 import {
   Role,
   CreateRoleRequest,
-  UpdateRoleRequest,
+  RolePageResult,
+  PermissionPageResult,
   Permission,
   Assignment,
-  /*
-  AssignmentSearchCriteria,
-  AssignmentPageResult,
-  CreateAssignmentRequest,  */
+  RevokeAssignmentRequest,
+  CreateAssignmentRequestParams,
+  CreateProductAssignmentsRequest,
+  DeleteAssignmentRequestParams,
   Application,
-  Product,
-  // ApplicationSearchCriteria,
-  // ApplicationPageResult,
   ApplicationAPIService,
   AssignmentAPIService,
   PermissionAPIService,
   RoleAPIService,
-  WorkspaceAPIService
+  WorkspaceAPIService,
+  WorkspaceDetails
 } from 'src/app/shared/generated'
-//import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
-import { limitText } from 'src/app/shared/utils'
+import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 
-type App = Application & { isApp: boolean; type: AppType }
-type AppType = 'WORKSPACE' | 'APP'
-type AppRole = Role & { appId: string }
-type RoleAssignments = { [key: string]: boolean }
-type PermissionViewRow = Permission & {
+export type App = Application & {
+  isApp: boolean
+  isMfe: boolean
+  appType: PermissionAppType
+  workspaceDetails?: WorkspaceDetails
+}
+export type PermissionAppType = 'WORKSPACE' | 'APP'
+export type ServiceAppType = 'MFE' | 'MS'
+export type RoleAssignments = { [key: string]: string | undefined } // assignment id or undefined
+export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
+export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments
+  appType: ServiceAppType
+  appDisplayName: string
+  productDisplayName: string
 }
+export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined }
 
 @Component({
   templateUrl: './app-detail.component.html',
@@ -55,6 +63,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public loadingExceptionKey = ''
   public loadingServerIssue = false
   public actions$: Observable<Action[]> | undefined
+  // filter row
   public filterBy = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
@@ -64,35 +73,40 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
-  @ViewChild('workspaceAppFilter') workspaceAppFilter: ElementRef | undefined
-  @ViewChild('appSortIcon') appSortIcon: ElementRef | undefined
+  @ViewChild('filterProduct') filterProduct: ElementRef | undefined
+  @ViewChild('filterApp') filterApp: ElementRef | undefined
+  @ViewChild('sortIconAppId') sortIconAppId: ElementRef | undefined
+  @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
   // data
+  private pageSize = 1000
   public urlParamAppId = ''
   public urlParamAppType = ''
-  public currentApp: App = { appId: 'dummy', type: 'APP' } as App
+  public currentApp: App = { appId: 'dummy', appType: 'APP', isApp: true } as App
   public dateFormat = 'medium'
-  public changeMode = 'CREATE' || 'EDIT'
-  private workspaceApps: Product[] = []
-  public workspaceAppFilterItems: SelectItem[] = new Array<SelectItem>()
-  public workspaceAppFilterValue: string | undefined = undefined
-  public workspaceAppFilterValueLength = 10
-  // app management
-  public showAppDeleteDialog = false
+  public changeMode: ChangeMode = 'VIEW'
+  public myPermissions = new Array<string>() // permissions of the user
+  // permission filter
+  public filterProductItems!: SelectItem[]
+  public filterProductValue: string | undefined = undefined
+  public filterAppItems: SelectItem[] = new Array<SelectItem>()
+  public filterAppValue: string | undefined = undefined
+  private workspaceApps: App[] = []
+
   // permission management
-  public permissionRows: PermissionViewRow[] = new Array<PermissionViewRow>()
+  private permissions$!: Observable<PermissionPageResult>
+  public permissions!: Permission[]
+  public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
-  public myPermissions = new Array<string>() // permissions of the user
-  public showPermissionDetailDialog = false
-  public showPermissionDeleteDialog = false
-  public formGroupPermission: FormGroup
   // role management
-  public roles: Role[] = new Array<Role>()
+  private roles$!: Observable<RolePageResult>
+  public roles!: PermissionRole[]
   public role: Role | undefined
+  public missingWorkspaceRoles = false
+  public formGroupRole: FormGroup
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
-  public formGroupRole: FormGroup
 
   constructor(
     private appApi: ApplicationAPIService,
@@ -101,27 +115,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     private roleApi: RoleAPIService,
     private workspaceApi: WorkspaceAPIService,
     private route: ActivatedRoute,
-    private router: Router,
     private location: Location,
     private translate: TranslateService,
     private msgService: PortalMessageService,
     private userService: UserService
   ) {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId') || ''
-    this.urlParamAppType = this.route.snapshot.paramMap.get('type')?.toUpperCase() || ''
+    this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase() || ''
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
-    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
-    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
+    if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
 
-    this.formGroupPermission = new FormGroup({
-      appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      resource: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      action: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      description: new FormControl(null)
-    })
     this.formGroupRole = new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
@@ -133,7 +139,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
       { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
       { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
-      // { label: 'PERMISSION.SEARCH.FILTER.OTHERS', value: 'OTHERS' },
     ]
   }
 
@@ -144,6 +149,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
     this.destroy$.complete()
+  }
+  private log(text: string, obj?: object): void {
+    if (this.debug) {
+      if (obj) console.log('app detail: ' + text, obj)
+      else console.log('app detail: ' + text)
+    }
   }
 
   private prepareActionButtons(): void {
@@ -170,14 +181,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'always'
             },
             {
-              label: data['ACTIONS.CREATE.PERMISSION'],
-              title: data['ACTIONS.CREATE.PERMISSION.TOOLTIP'],
-              actionCallback: () => this.onCreatePermission(),
-              icon: 'pi pi-plus',
-              show: 'asOverflow',
-              permission: 'PERMISSION#EDIT'
-            },
-            {
               label: data['ACTIONS.CREATE.ROLE'],
               title: data['ACTIONS.CREATE.ROLE.TOOLTIP'],
               actionCallback: () => this.onCreateRole(),
@@ -185,19 +188,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'asOverflow',
               permission: 'ROLE#EDIT',
               conditional: true,
-              showCondition: this.currentApp.type === 'WORKSPACE'
-            },
-            {
-              label: data['ACTIONS.DELETE.LABEL'],
-              title: data['ACTIONS.DELETE.APP'],
-              actionCallback: () => {
-                this.showAppDeleteDialog = true
-              },
-              icon: 'pi pi-trash',
-              show: 'asOverflow',
-              permission: 'APPLICATION#DELETE',
-              conditional: true,
-              showCondition: this.currentApp.type === 'APP'
+              showCondition: !this.currentApp.isApp
             }
           ]
         })
@@ -210,39 +201,23 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onReload(): void {
     this.loadApp()
   }
-  private log(text: string, obj?: object): void {
-    if (this.debug) {
-      if (obj) console.log('app detail: ' + text, obj)
-      else console.log('app detail: ' + text)
-    }
-  }
 
   private loadApp(): void {
     this.loading = true
     this.loadingServerIssue = false
     this.loadingExceptionKey = ''
-    // check parameter
-    if (!this.urlParamAppId || this.urlParamAppId === '') {
-      this.msgService.error({ summaryKey: 'TODO_MISSING_URL_PARAMETER_APP_ID' })
-      return
-    }
-    if (!this.urlParamAppType || !',APP,WORKSPACE,'.includes(this.urlParamAppType)) {
-      this.msgService.error({ summaryKey: 'TODO_MISSING_URL_PARAMETER_APP_TYPE' })
-      return
-    }
     // on workspace: create a dummy app
     if (this.urlParamAppType === 'WORKSPACE') {
       this.currentApp = {
         id: this.urlParamAppId,
-        appId: this.urlParamAppId,
         name: this.urlParamAppId,
-        type: this.urlParamAppType
+        appId: this.urlParamAppId,
+        appType: this.urlParamAppType,
+        isApp: false,
+        isMfe: false
       } as App
       this.log('loadApp => Workspace:', this.currentApp)
-      this.prepareActionButtons()
-      this.loadRoles()
-      this.loadWorkspaceApps()
-      this.loading = false
+      this.loadWorkspaceDetails()
     } else {
       this.appApi
         .searchApplications({ applicationSearchCriteria: { appId: this.urlParamAppId } })
@@ -253,150 +228,279 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
             console.error('searchApplications() result:', result)
           } else if (result instanceof Object) {
-            this.currentApp = { ...result.stream[0], type: 'APP' } as App
+            this.currentApp = { ...result.stream[0], appType: 'APP', isApp: true } as App
             this.log('loadApp => App:', this.currentApp)
-            this.prepareActionButtons()
-            this.permissionRows = []
-            this.preparePermissionTable(this.currentApp)
+            this.loadAppDetails()
           } else {
             this.loadingServerIssue = true
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APPS'
+            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
             console.error('getApplicationById() => unknown response:', result)
           }
           this.loading = false
         })
     }
   }
-  private loadWorkspaceApps() {
-    this.workspaceApps = []
+  private loadWorkspaceDetails() {
     this.workspaceApi
-      .getAllProductsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
+      .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
-          console.error('loadWorkspaceApps() result:', result)
-        } else if (result instanceof Array) {
-          for (const app of result) {
-            this.workspaceApps.push({ ...app })
-          }
-          //this.workspaceApps.sort(this.sortRoleByName)
-          this.log('loadWorkspaceApps:', this.workspaceApps)
-        } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('loadWorkspaceApps() => unknown response:', result)
-        }
-      })
-  }
-  /**
-   * COLUMNS => Roles
-   */
-  // TODO: load workspace roles and/or keycloak roles
-  private loadRoles(): void {
-    this.roles = []
-    this.permissionDefaultRoles = {}
-    this.roleApi
-      .searchRoles({ roleSearchCriteria: {} })
-      .pipe(catchError((error) => of(error)))
-      .subscribe((result) => {
-        if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ROLES'
-          console.error('searchRoles() result:', result)
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
+          console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
-          for (const role of result.stream) {
-            this.roles.push({ ...role })
-            this.permissionDefaultRoles[role.name] = false
-          }
-          this.roles.sort(this.sortRoleByName)
-          this.log('loadRoles:', this.roles)
+          this.currentApp.workspaceDetails = { ...result }
+          this.log('getDetailsByWorkspaceName => App:', this.currentApp)
+          this.prepareActionButtons()
+          this.loadRolesAndPermissions()
         } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('searchRoles() => unknown response:', result)
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
+          console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
   }
 
+  /**
+   * COLUMNS => Roles, ROWS => Permissions
+   */
+  private declareRoleObservable(): void {
+    this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
+      catchError((err) => {
+        this.loadingServerIssue = true
+        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        console.error('searchRoles():', err)
+        return of({} as RolePageResult)
+      }),
+      finalize(() => (this.loading = false))
+    )
+  }
+  private declarePermissionObservable(appIds?: string): void {
+    const productNames: string[] = []
+    if (this.currentApp.isApp) productNames.push(this.currentApp.productName ?? '')
+    else
+      this.currentApp.workspaceDetails?.products?.map((p) => {
+        productNames.push(p.productName ?? '')
+      })
+    this.permissions$ = this.permApi
+      .searchPermissions({
+        permissionSearchCriteria: {
+          productNames: productNames,
+          appId: appIds,
+          pageSize: this.pageSize
+        }
+      })
+      .pipe(
+        catchError((err) => {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          console.error('searchPermissions():', err)
+          return of({} as PermissionPageResult)
+        })
+      )
+  }
+  private searchRoles(): Observable<Role[]> {
+    return this.roles$.pipe(
+      map((result) => {
+        return result.stream
+          ? result.stream?.map((role) => {
+              this.roles.push(role as PermissionRole)
+              return role
+            })
+          : []
+      })
+    )
+  }
+  private searchPermissions(): Observable<Permission[]> {
+    return this.permissions$.pipe(
+      map((result) => {
+        return result.stream
+          ? result.stream?.map((permission) => {
+              this.permissions.push(permission)
+              return permission
+            })
+          : []
+      })
+    )
+  }
+  private loadRolesAndPermissions(): void {
+    this.declareRoleObservable()
+    this.declarePermissionObservable()
+    this.roles = []
+    this.permissions = []
+    combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(
+      () => {}, // next
+      () => {}, // error
+      () => {
+        this.log('loadRolesAndPermissions completed')
+        this.checkWorkspaceRoles()
+        this.roles.sort(this.sortRoleByName)
+        this.log('roles', this.roles)
+        this.log('permissions', this.permissions)
+        this.prepareFilterProducts()
+        this.prepareFilterApps()
+        this.preparePermissionTable()
+      }
+    )
+  }
+  private checkWorkspaceRoles() {
+    if (this.currentApp.workspaceDetails?.workspaceRoles) {
+      this.roles.forEach(
+        (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name ?? ''))
+      )
+      this.missingWorkspaceRoles =
+        this.roles.filter((r) => r.isWorkspaceRole === true).length !=
+        this.currentApp.workspaceDetails?.workspaceRoles.length
+    }
+  }
+
+  public onCreateIDMRoles(ev: MouseEvent) {
+    console.log('TODO: select IDM roles to take over into permissions')
+  }
+
+  public onCreateWorkspaceRoles(ev: MouseEvent) {
+    ev.stopPropagation()
+    if (!this.missingWorkspaceRoles) return
+    // get workspace roles which are not exists within permission product
+    const mwr: CreateRoleRequest[] = []
+    this.currentApp.workspaceDetails?.workspaceRoles?.map((r) => {
+      mwr.push({ name: r } as CreateRoleRequest)
+    })
+    this.roleApi.createRole({ createRolesRequest: { roles: mwr } }).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+        this.loadRolesAndPermissions()
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+        console.error(err)
+      }
+    })
+  }
+
+  /**
+   * FILTER
+   */
+  private prepareFilterProducts() {
+    if (this.currentApp.isApp) return
+    this.filterProductItems = [{ label: '', value: null } as SelectItem]
+    if (this.currentApp.workspaceDetails?.products) {
+      this.currentApp.workspaceDetails?.products.map((product) => {
+        this.filterProductItems.push({ label: product.displayName, value: product.productName } as SelectItem)
+      })
+      this.filterProductItems.sort(dropDownSortItemsByLabel)
+    }
+    this.log('filterProductItems: ', this.filterProductItems)
+  }
+
+  private prepareFilterApps() {
+    if (this.currentApp.isApp) return
+    // 1. collect apps registered in workspace
+    this.workspaceApps = []
+    if (this.currentApp.workspaceDetails?.products) {
+      this.currentApp.workspaceDetails?.products.map((product) => {
+        if (product.mfe)
+          product.mfe.map((a) => {
+            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+          })
+        if (product.ms)
+          product.ms.map((a) => {
+            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+          })
+      })
+    }
+    this.log('this.workspaceApps: ', this.workspaceApps)
+
+    // 2. fill app filter with apps which have permissions
+    this.filterAppItems = [{ label: '', value: null } as SelectItem]
+    this.permissions.map((p) => {
+      // get the app name from workspace apps - needed for label
+      const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
+      if (
+        app.length === 1 &&
+        this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
+      ) {
+        this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
+      }
+    })
+    this.log('filterAppItems', this.filterAppItems)
+  }
+
+  private loadAppDetails() {
+    this.permissions = []
+    this.declarePermissionObservable(this.currentApp.appId)
+    this.searchPermissions().subscribe(
+      () => {}, // next
+      () => {}, // error
+      () => {
+        this.prepareActionButtons()
+        this.loadRolesAndPermissions()
+      }
+    )
+  }
   /* 1. Prepare rows of the table: permissions of the <application> as Map
    *    key (resource#action):   'PERMISSION#READ'
    *    value: {resource: 'PERMISSION', action: 'READ', key: 'PERMISSION#READ', name: 'View permission matrix'
    */
-  private preparePermissionTable(app: App): void {
-    const permissionRows: Map<string, PermissionViewRow> = new Map()
-    // get permissions for the app
-    this.permApi
-      .searchPermissions({ permissionSearchCriteria: { appId: this.currentApp.appId } })
-      .pipe(catchError((error) => of(error)))
-      .subscribe((result) => {
-        if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.PERMISSIONS'
-          console.error('searchPermissions() result:', result)
-        } else if (result instanceof Object) {
-          for (const permission of result.stream) {
-            permissionRows.set(permission.resource + '#' + permission.action, {
-              ...permission,
-              key: permission.resource + '#' + permission.action,
-              roles: {}
-            })
-          }
-          // add permission rows of this app to permission table
-          this.permissionRows = this.permissionRows.concat(
-            Array.from(permissionRows.values()).sort(this.sortPermissionRowByKey)
-          )
-          this.log('loadPermissions:', this.permissionRows)
-          //this.prepareWorkspaceAppFilter()
-          this.loadAssignments()
-          this.loading = false // TODO
-        } else {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
-          console.error('searchPermissions() => unknown response:', result)
-        }
-      })
+  private preparePermissionTable(): void {
+    if (this.permissions.length === 0) {
+      console.warn('No permissions found for the apps - stop processing')
+      return
+    }
+    // go on
+    this.permissionRows = []
+    for (const permission of this.permissions) {
+      this.permissionRows.push({
+        ...permission,
+        key: permission.resource + '#' + permission.action,
+        productDisplayName: this.currentApp.isApp
+          ? permission.productName
+          : this.filterProductItems.filter((p) => p.value === permission.productName)[0].label,
+        appDisplayName: this.currentApp.isApp
+          ? permission.appId
+          : this.filterAppItems.filter((p) => p.value === permission.appId)[0].label,
+        roles: {}
+      } as PermissionViewRow)
+    }
+    this.permissionRows.sort(this.currentApp.isApp ? this.sortPermissionRowByKey : this.sortPermissionRowByProductAsc)
+    this.log('permissionRows:', this.permissionRows)
+    this.loadRoleAssignments()
   }
-  private loadAssignments() {
-    /*
-    // Fill permission rows with role assignments of the current application
-    permissionRows.forEach((row) => {
-      this.currentApp?.assignments?.forEach((ra) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        row.roles[ra.role!] = ra.permissionKeys?.includes(row.key) || false
+
+  private loadRoleAssignments() {
+    const appList: string[] = []
+    if (this.currentApp.isApp) appList.push(this.currentApp.appId ?? '')
+    else if (this.workspaceApps.length === 0) {
+      console.warn('No workspace apps found - stop processing')
+      return
+    } else
+      this.workspaceApps.map((app) => {
+        appList.push(app.appId ?? '')
       })
-    })
-*/
+
     this.assApi
-      .searchAssignments({ assignmentSearchCriteria: { appIds: [this.currentApp.appId ?? ''] } })
+      .searchAssignments({ assignmentSearchCriteria: { appIds: appList, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.PERMISSIONS'
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object) {
-          this.log('loadAssignments result.stream:', result.stream)
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
-          // Permission: id, appId, resource, action
-          // Fill permission rows with role assignments of the current application
-          // TODO
-          this.permissionRows
-            .filter((permission) => permission.appId === this.currentApp.appId)
-            .forEach((row) => {
-              result.stream?.forEach((assignment: Assignment) => {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                row.roles[assignment.roleId!] = assignment.permissionId === row.id
-              })
+          // Permission (row): id, appId, resource, action
+          result.stream?.forEach((assignment: Assignment) => {
+            const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
+            permissions.map((permission) => {
+              permission.roles[assignment.roleId!] = assignment.id
             })
-          this.log('loadAssignments permission rows:', this.permissionRows)
-          //this.prepareWorkspaceAppFilter()
+          })
+          this.log('loadRoleAssignments permission rows:', this.permissionRows)
           this.loading = false // TODO
         } else {
           this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ROLES'
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments() => unknown response:', result)
         }
       })
@@ -440,245 +544,189 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.permissionTableFilterInput.nativeElement.value = ''
       this.quickFilterValue = 'ALL'
     }
-    this.workspaceAppFilterValue = undefined
+    this.filterAppValue = undefined
     this.onSortPermissionTable()
     this.permissionTable?.clear()
   }
   public onSortPermissionTable() {
-    if (this.appSortIcon) this.appSortIcon.nativeElement.className = 'pi pi-fw pi-sort-alt' // reset icon
+    // reset icons
+    if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-fw pi-sort-alt'
+    if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-fw pi-sort-alt'
   }
-  public onWorkspaceAppFilterItemSort(ev: any, icon: HTMLSpanElement) {
-    ev.stopPropagation
-    icon.className =
-      'pi pi-fw ' +
-      (icon.className.match('pi-sort-alt')
-        ? 'pi-sort-amount-down'
-        : icon.className.match('pi-sort-amount-up-alt')
-        ? 'pi-sort-amount-down'
-        : 'pi-sort-amount-up-alt')
+  /**
+   * Filter: Product, AppId
+   */
+  public onFilterItemSortIcon(ev: MouseEvent, icon: HTMLSpanElement, field: string) {
+    ev.stopPropagation()
     this.permissionTable?.clear()
-    // sort table data directly
-    this.permissionTable?._value.sort(
-      icon.className.match('pi-sort-amount-up-alt')
-        ? this.sortPermissionRowByAppIdAsc
-        : this.sortPermissionRowByAppIdDesc
-    )
+    switch (icon.className) {
+      case 'pi pi-fw pi-sort-alt': // init
+        icon.className = 'pi pi-fw pi-sort-amount-down'
+        break
+      case 'pi pi-fw pi-sort-amount-down':
+        icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+        this.permissionTable?._value.sort(
+          field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
+        )
+        break
+      case 'pi pi-fw pi-sort-amount-up-alt':
+        icon.className = 'pi pi-fw pi-sort-amount-down'
+        this.permissionTable?._value.sort(
+          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
+        )
+        break
+    }
   }
-  public onFilterWorkspaceApps() {
-    this.workspaceAppFilterValue = this.currentApp.appId
+  public onFilterItemClearAppId() {
+    this.filterAppValue = this.currentApp.appId
     if (this.permissionTable) {
-      this.permissionTable?.filter(this.workspaceAppFilterValue, 'appId', 'notEquals')
+      this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     }
   }
-  // managing the app filter
-  private prepareWorkspaceAppFilter(): void {
-    if (this.currentApp.type === 'WORKSPACE') {
-      this.workspaceAppFilterItems = this.workspaceAppFilterItems.filter((a) => a.value !== this.currentApp.appId)
-      this.onFilterWorkspaceApps()
-    } else {
-      this.workspaceAppFilterValue = undefined
-      this.workspaceAppFilterValueLength = 10
-    }
-    if (this.workspaceAppFilter)
-      this.workspaceAppFilter.nativeElement.className =
-        'p-float-label inline-block w-' +
-        (this.workspaceAppFilterValueLength <= 10
-          ? 10
-          : this.workspaceAppFilterValueLength <= 20
-          ? this.workspaceAppFilterValueLength
-          : 22) +
-        'rem'
-  }
 
   /****************************************************************************
-   *  1. Load current app
-   *  2. Identify app type => use default APP
-   *  3. If WORKSPACE then load apps
+   *  ROLE    => if currentApp is workspace
+   ****************************************************************************
    */
-
-  /****************************************************************************
-   *  Delete an APP
-   */
-  public onDeleteApplication() {
-    this.log('onDeleteApplication()')
-  }
-
-  /****************************************************************************
-   * Create a new PERMISSION
-   */
-  public onCopyPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.onEditPermission(ev, permRow)
-    this.changeMode = 'CREATE'
-  }
-  public onCreatePermission(): void {
-    this.formGroupPermission.reset()
-    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
-    this.changeMode = 'CREATE'
-    this.permissionRow = { key: '' } as PermissionViewRow
-    this.showPermissionDetailDialog = true
-  }
-  /**
-   *  View and Edit a PERMISSION
-   */
-  public onEditPermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.formGroupPermission.controls['appId'].patchValue(this.currentApp.appId)
-    this.formGroupPermission.controls['resource'].patchValue(permRow.resource)
-    this.formGroupPermission.controls['action'].patchValue(permRow.action)
-    this.formGroupPermission.controls['description'].patchValue(permRow.description)
-    this.changeMode = 'EDIT'
-    this.permissionRow = permRow
-    this.showPermissionDetailDialog = true
-  }
-  /**
-   * Save a PERMISSION
-   *  check existence of (new) key value first to be unique
-   */
-  public onSavePermission(): void {
-    this.log('savePermission ' + this.changeMode + ' valid:' + this.formGroupPermission.valid, this.permissionRow)
-  }
-  public onDeletePermission(ev: MouseEvent, permRow: PermissionViewRow): void {
-    this.permissionRow = permRow
-    this.showPermissionDeleteDialog = true
-  }
-  public onDeletePermissionExecute() {
-    this.log('onDeletePermissionExecute()')
-  }
-
-  /****************************************************************************
-   *  Create a ROLE    only if currentApp is portal
-   */
-  public onCreateRole(): void {
-    this.formGroupRole.reset()
-    this.changeMode = 'CREATE'
+  public onCreateRole(ev?: MouseEvent): void {
+    ev?.stopPropagation()
     this.role = undefined
+    this.changeMode = 'CREATE'
     this.showRoleDetailDialog = true
   }
-  /**
-   *  View and Edit a ROLE
-   */
-  public onEditRole(ev: MouseEvent, role: AppRole): void {
-    this.formGroupRole.controls['name'].patchValue(role.name)
-    this.formGroupRole.controls['description'].patchValue(role.description)
+  public onEditRole(ev: MouseEvent, role: Role): void {
+    ev.stopPropagation()
+    this.role = role
     this.changeMode = 'EDIT'
-    this.role = role
     this.showRoleDetailDialog = true
   }
-  /**
-   * Save a ROLE
-   */
-  public onSaveRole(): void {
-    this.log('onSaveRole()')
-    if (this.formGroupRole.valid) {
-      const roleExists =
-        this.roles.filter(
-          (r) =>
-            r.name === this.formGroupRole.controls['name'].value &&
-            (this.changeMode === 'CREATE' ? true : r.id ? r.id !== this.role?.id : true)
-        ).length > 0
-      if (roleExists) {
-        this.msgService.error({
-          summaryKey: 'ROLE.' + this.changeMode + '_HEADER',
-          detailKey: 'VALIDATION.ERRORS.ROLE.' + this.changeMode + '_ALREADY_EXISTS'
-        })
-        return
-      }
-      if (this.changeMode === 'CREATE') {
-        const role = {
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as CreateRoleRequest
-        this.roleApi
-          .createRole({
-            createRoleRequest: role
-          })
-          .subscribe({
-            next: () => {
-              this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_OK' })
-              this.loadApp()
-            },
-            error: (err) => {
-              this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
-              console.error(err)
-            }
-          })
-      } else {
-        const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
-        const role = {
-          modificationCount: this.role?.modificationCount,
-          name: this.formGroupRole.controls['name'].value,
-          description: this.formGroupRole.controls['description'].value
-        } as UpdateRoleRequest
-        this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
-          next: () => {
-            this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-            if (roleNameChanged) this.loadApp() // reload all to avoid any mistakes
-            else {
-              this.roles.forEach((r) => {
-                if (r.id === this.role?.id) r.description = role.description
-              })
-            }
-          },
-          error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
-            console.error(err)
-          }
-        })
-      }
-      this.showRoleDetailDialog = false
-    }
-  }
-
-  public onDeleteRole(ev: MouseEvent, role: AppRole): void {
+  public onDeleteRole(ev: MouseEvent, role: Role): void {
+    ev.stopPropagation()
     this.role = role
+    this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
   }
-  public onDeleteRoleExecute() {
-    this.log('onDeleteRoleExecute()')
-    this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-        this.loadApp()
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error(err.error)
-      }
-    })
+  public onRoleChanged(changed: boolean) {
+    this.role = undefined
+    this.changeMode = 'VIEW'
+    this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
+    if (changed) this.loadApp()
   }
 
-  public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: AppRole, silent?: boolean): void {
+  /****************************************************************************
+   *  ASSIGNMENTS    => grant + revoke permissions
+   ****************************************************************************
+   */
+  public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
     this.log('onAssignPermission()')
+    this.assApi
+      .createAssignment({
+        createAssignmentRequest: {
+          roleId: role.id,
+          permissionId: permRow.id
+        }
+      } as CreateAssignmentRequestParams)
+      .subscribe({
+        next: (data) => {
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+          permRow.roles[role.id!] = data.id
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+          console.error(err)
+        }
+      })
   }
-  public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: AppRole, silent?: boolean): void {
+  public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
     this.log('onRemovePermission()')
+    this.assApi.deleteAssignment({ id: permRow.roles[role.id!] } as DeleteAssignmentRequestParams).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+        permRow.roles[role.id!] = undefined
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+        console.error(err)
+      }
+    })
   }
-  public onGrantAllPermissions(ev: MouseEvent, role: AppRole): void {
+  private prepareProductList(): string[] {
+    const pList: string[] = []
+    // => case 1
+    if (this.currentApp.isApp) pList.push(this.currentApp.productName ?? '')
+    // => case 2
+    else if (this.filterProductValue) pList.push(this.filterProductValue)
+    else if (this.filterProductItems.length > 1)
+      this.filterProductItems.map((p) => {
+        if (p.value) pList.push(p.value ?? '') // ignore empty entry
+      })
+    return pList
+  }
+  // 1. Permission App => the own product
+  // 2. Workspace App  => a) selected product  b) all products
+  public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onGrantAllPermissions()')
+    const pList = this.prepareProductList()
+    if (pList.length === 0) return // products are required
+    this.assApi
+      .createProductAssignments({
+        createProductAssignmentsRequest: { roleId: role.id, productNames: pList } as CreateProductAssignmentsRequest
+      })
+      .subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+          this.loadRolesAndPermissions()
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+          console.error(err)
+        }
+      })
   }
-  public onRevokeAllPermissions(ev: MouseEvent, role: AppRole): void {
+  public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     this.log('onRevokeAllPermissions()')
+    const pList = this.prepareProductList()
+    if (pList.length === 0) return // products are required
+    this.assApi
+      .revokeAssignments({
+        revokeAssignmentRequest: { roleId: role.id, productNames: pList } as RevokeAssignmentRequest
+      })
+      .subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+          this.loadRolesAndPermissions()
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+          console.error(err)
+        }
+      })
   }
 
   /****************************************************************************
    *  SORT
    */
   private sortPermissionRowByKey(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.key ? (a.key as string).toUpperCase() : '').localeCompare(b.key ? (b.key as string).toUpperCase() : '')
+    return (a.key ? a.key.toUpperCase() : '').localeCompare(b.key ? b.key.toUpperCase() : '')
   }
+
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
-      b.appId ? (b.appId as string).toUpperCase() : ''
+    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
+  }
+  private sortPermissionRowByAppIdDesc(a: PermissionViewRow, b: PermissionViewRow): number {
+    return (b.appId ? b.appId.toUpperCase() : '').localeCompare(a.appId ? a.appId.toUpperCase() : '')
+  }
+  private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
+    return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+      b.productName ? b.productName.toUpperCase() : ''
     )
   }
-  private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
-      b.appId ? (b.appId as string).toUpperCase() : ''
-    )
+  private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
+    return this.sortPermissionRowByProductAsc(a, b)
   }
+
   private sortRoleByName(a: Role, b: Role): number {
-    return (a.name ? (a.name as string).toUpperCase() : '').localeCompare(
-      b.name ? (b.name as string).toUpperCase() : ''
-    )
+    return (a.name ? a.name.toUpperCase() : '').localeCompare(b.name ? b.name.toUpperCase() : '')
   }
 }

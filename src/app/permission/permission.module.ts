@@ -9,6 +9,7 @@ import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AppSearchComponent } from './app-search/app-search.component'
 import { AppDetailComponent } from './app-detail/app-detail.component'
+import { RoleDetailComponent } from './role-detail/role-detail.component'
 
 const routes: Routes = [
   {
@@ -17,7 +18,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: ':type/:appId',
+    path: ':appType/:appId',
     component: AppDetailComponent,
     data: {
       breadcrumb: 'BREADCRUMBS.DETAIL',
@@ -29,7 +30,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [AppSearchComponent, AppDetailComponent],
+  declarations: [AppSearchComponent, AppDetailComponent, RoleDetailComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -13,6 +13,7 @@
 
 export interface ApplicationSearchCriteria { 
     appId?: string;
+    productName?: string;
     name?: string;
     /**
      * The number of page.

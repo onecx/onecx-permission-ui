@@ -13,7 +13,6 @@
 
 export interface CreateRoleRequest { 
     name?: string;
-    shortDescription?: string;
     description?: string;
 }
 

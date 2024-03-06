@@ -9,18 +9,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MfeMsAbstract } from './mfeMsAbstract';
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+export interface ProductDetails { 
+    productName?: string;
+    displayName?: string;
+    mfe?: Array<MfeMsAbstract>;
+    ms?: Array<MfeMsAbstract>;
 }
 
