@@ -19,6 +19,7 @@ export interface Application {
     modificationUser?: string;
     id?: string;
     appId?: string;
+    productName?: string;
     name?: string;
     description?: string;
 }

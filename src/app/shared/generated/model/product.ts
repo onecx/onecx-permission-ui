@@ -9,10 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Microfrontend } from './microfrontend';
 
 
 export interface Product { 
-    id?: string;
+    microfrontends?: Array<Microfrontend>;
     productName?: string;
     baseUrl?: string;
 }

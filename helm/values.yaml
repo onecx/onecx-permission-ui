@@ -20,12 +20,12 @@ app:
       spec:
         permissions:
           APP:
-            EDIT: Edit app
-            SAVE: Update and save app
-            SEARCH: Search apps
-            VIEW: View mode for app
+            EDIT: Edit permission app details
+            SAVE: Update and save permission app details
+            SEARCH: Search permission apps
+            VIEW: View app details
           PERMISSION:
-            GRANT: Assign or remove assignment of a permission to a role
+            GRANT: Assign or remove a permission to a role
             CREATE: Create permission
             DELETE: Delete permission
             EDIT: Edit permission
@@ -44,5 +44,3 @@ app:
             clientId: "onecx-permission-ui"
 
 # PIPE Config
-
-

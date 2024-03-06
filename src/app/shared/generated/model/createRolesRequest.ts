@@ -9,18 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { CreateRoleRequest } from './createRoleRequest';
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+export interface CreateRolesRequest { 
+    roles?: Array<CreateRoleRequest>;
 }
 

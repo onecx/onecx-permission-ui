@@ -17,13 +17,17 @@
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
+      "IDM_ROLES.TOOLTIP": "IDM Rollen erstellen",
+      "WORKSPACE_ROLES.TOOLTIP": "Workspace Rollen erstellen",
       "MESSAGE": {
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht erstellt.",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich erstellt",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht erstellt.",
         "ROLE_OK": "Die Rolle wurde erfolgreich erstellt",
-        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt."
+        "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht erstellt.",
+        "WORKSPACE_ROLES_OK": "Die Workspace Rollen wurden erfolgreich erstellt.",
+        "WORKSPACE_ROLES_NOK": "Ein Fehler ist aufgetreten. Die Workspace-Rollen konnten nicht erstellt werden."
       }
     },
     "DELETE": {
@@ -86,6 +90,10 @@
         "MODE_CONTAINS": "Filterwert enthalten"
       }
     },
+    "VIEW": {
+      "ROLE": "Rollendetails",
+      "PERMISSION": "Berechtigungsdetails"
+    },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
     "CLEAR_CACHE": "Cache entfernen",
@@ -118,10 +126,11 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
-      "SUBHEADER_APP": "Rollen und Berechtigungen verwalten"
+      "SUBHEADER_APP": "Verwalten von Berechtigungen für die App"
     }
   },
   "APP": {
+    "ID": "App ID",
     "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_WORKSPACE": "Workspace",
@@ -131,11 +140,18 @@
     "EDIT": "App ändern",
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
-      "QUICK_FILTER": {
-        "TOOLTIP": "Filterwert",
+      "FILTER": {
+        "LABEL": "App Typ",
+        "TOOLTIP": "Filter für App-Typ",
         "ALL": "Alle",
-        "WORKSPACE": "Workspaces",
-        "APP": "Apps"
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
+      },
+      "QUICK_FILTER": {
+        "TOOLTIP": "Quickfilter für App Typ",
+        "ALL": "Alle",
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
       }
     }
   },
@@ -145,26 +161,31 @@
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
     "ACTION": "Aktion",
-    "PERMISSION": "Ressource # Aktion",
+    "KEY": "Ressource # Aktion",
     "LABEL": "Berechtigungen",
     "ACTIONS": "Aktionen",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Klick für Änderung",
-      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen erteilen",
-      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entziehen",
+      "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
+      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte erteilen",
+      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
       "GRANT_SUCCESS": "Berechtigung erteilt",
       "REVOKE_ERROR": "Berechtigung konnte nicht entzogen werden",
       "REVOKE_SUCCESS": "Berechtigung entzogen"
     },
     "SORT": {
-      "APP_ID": "Sortierung nach Apps"
+      "APP_ID": "Sortierung nach App IDs",
+      "PRODUCT": "Sortierung nach Produkt und App IDs"
     },
     "SEARCH": {
       "FILTER": {
         "APPS": "App",
+        "APP_TYPE": "Typ",
+        "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
+        "PRODUCT": "Produkt",
+        "PRODUCT.TOOLTIP": "Die beim Workspace registrierten Produkte",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Filterwert",
         "ALL": "Alle",
@@ -176,8 +197,8 @@
     }
   },
   "ROLE": {
-    "LABEL.WORKSPACE": "Workspace Rollen",
-    "TOOLTIP": "Für den Workspace erstellte Rollen, als Auswahl der für den Mandaten definierten Rollen, die dem Benutzer zugeordnet werden können.",
+    "LABEL": "Rollen",
+    "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung"
   },
@@ -199,16 +220,22 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APPS": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
+      "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
-      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
+    },
+    "HTTP_STATUS_400": {
+      "ROLES": "Die Rolle konnte nicht verarbeitet werden.",
+      "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
     "HTTP_STATUS_403": {
-      "APPS": "Sie haben keine Rechte um Apps zu sehen.",
+      "APP": "Sie haben keine Rechte um Apps zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
-      "WORKSPACES": "Sie haben keine Rechte um Workspaces zu sehen."
+      "ASSIGNMENTS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
+      "WORKSPACE": "Sie haben keine Rechte um Workspace Daten zu sehen."
     },
     "HTTP_STATUS_404": {
       "APP": "Die App konnte nicht gefunden werden.",
@@ -216,14 +243,17 @@
       "ROLE": "Die Rolle konnte nicht gefunden werden.",
       "ROLES": "Es konnten keine Rollen gefunden werden.",
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
-      "WORKSPACE": "Der Workspace konnte nicht gefunden werden.",
-      "WORKSPACES": "Es konnten keine Workspaces gefunden werden."
+      "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
+      "WORKSPACE": "Der Workspace konnte nicht gefunden werden."
     },
     "HTTP_STATUS_500": {
-      "APPS": "Unbekanntes Server-Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
-      "ROLES": "Unbekanntes Server-Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
-      "PERMISSIONS": "Unbekanntes Server-Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
-      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
+      "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
+      "APPS": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
+      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es erneut.",
+      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut.",
+      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - Bitte versuchen sie es erneut."
     }
   }
 }

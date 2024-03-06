@@ -20,5 +20,6 @@ export interface Assignment {
     roleId?: string;
     permissionId?: string;
     appId?: string;
+    id?: string;
 }
 

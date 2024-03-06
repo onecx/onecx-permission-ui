@@ -9,18 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { WorkspaceAbstract } from './workspaceAbstract';
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
+export interface WorkspacePageResult { 
     /**
-     * The number of page.
+     * The total elements in the resource.
      */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+    totalElements?: number;
+    number?: number;
+    size?: number;
+    totalPages?: number;
+    stream?: Array<WorkspaceAbstract>;
 }
 

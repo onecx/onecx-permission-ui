@@ -19,7 +19,11 @@ model/assignment.ts
 model/assignmentPageResult.ts
 model/assignmentSearchCriteria.ts
 model/createAssignmentRequest.ts
+model/createProductAssignmentsRequest.ts
 model/createRoleRequest.ts
+model/createRolesRequest.ts
+model/mfeMsAbstract.ts
+model/microfrontend.ts
 model/models.ts
 model/permission.ts
 model/permissionPageResult.ts
@@ -28,9 +32,15 @@ model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
 model/product.ts
+model/productDetails.ts
+model/revokeAssignmentRequest.ts
 model/role.ts
 model/rolePageResult.ts
 model/roleSearchCriteria.ts
 model/updateRoleRequest.ts
+model/workspaceAbstract.ts
+model/workspaceDetails.ts
+model/workspacePageResult.ts
+model/workspaceSearchCriteria.ts
 param.ts
 variables.ts

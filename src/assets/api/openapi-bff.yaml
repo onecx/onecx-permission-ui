@@ -15,7 +15,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          permission:
+          role:
             - write
       tags:
         - role
@@ -26,9 +26,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateRoleRequest'
+              $ref: '#/components/schemas/CreateRolesRequest'
       responses:
-        200:
+        201:
           description: OK
           content:
             application/json:
@@ -46,7 +46,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          permission:
+          role:
             - read
       tags:
         - role
@@ -70,7 +70,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          permission:
+          role:
             - write
       tags:
         - role
@@ -106,7 +106,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          permission:
+          role:
             - delete
       tags:
         - role
@@ -125,7 +125,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          permission:
+          role:
             - read
       tags:
         - role
@@ -143,9 +143,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RolePageResult'
+                $ref: '#/components/schemas/RolePageResult'
         400:
           description: Bad request
           content:
@@ -174,9 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PermissionPageResult'
+                $ref: '#/components/schemas/PermissionPageResult'
         400:
           description: Bad request
           content:
@@ -187,7 +183,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          permission:
+          assignment:
             - read
       tags:
         - assignment
@@ -205,9 +201,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AssignmentPageResult'
+                $ref: '#/components/schemas/AssignmentPageResult'
         400:
           description: Bad request
           content:
@@ -218,7 +212,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          permission:
+          assignment:
             - write
       tags:
         - assignment
@@ -251,11 +245,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments/product:
+    post:
+      x-onecx:
+        permissions:
+          assignment:
+            - write
+      tags:
+        - assignment
+      description: Create new assignments for products
+      operationId: createProductAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductAssignmentsRequest'
+      responses:
+        201:
+          description: New assignment created
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments/revoke:
+    post:
+      x-onecx:
+        permissions:
+          assignment:
+            - delete
+      tags:
+        - assignment
+      description: delete assignments by criteria
+      operationId: revokeAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeAssignmentRequest'
+      responses:
+        204:
+          description: revoked assignments
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /assignments/{id}:
     get:
       x-onecx:
         permissions:
-          permission:
+          assignment:
             - read
       tags:
         - assignment
@@ -279,7 +323,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          permission:
+          assignment:
             - delete
       tags:
         - assignment
@@ -298,7 +342,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          permission:
+          application:
             - read
       tags:
         - application
@@ -316,37 +360,41 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApplicationPageResult'
+                $ref: '#/components/schemas/ApplicationPageResult'
         400:
           description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces:
-    get:
+  /workspaces/search:
+    post:
       x-onecx:
         permissions:
-          permission:
+          workspace:
             - read
       tags:
         - workspace
-      description: get all workspace names
-      operationId: getAllWorkspaceNames
+      description: search workspaces by criteria
+      operationId: searchWorkspaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceSearchCriteria'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceNameList'
+                $ref: '#/components/schemas/WorkspacePageResult'
   /workspaces/{workspaceName}/products:
     get:
       x-onecx:
         permissions:
-          permission:
+          workspace:
             - read
       tags:
         - workspace
@@ -367,14 +415,42 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+  /workspaces/{workspaceName}/details:
+    get:
+      x-onecx:
+        permissions:
+          workspace:
+            - read
+      tags:
+        - workspace
+      description: get detailed information to all workspace related products and roles
+      operationId: getDetailsByWorkspaceName
+      parameters:
+        - name: workspaceName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDetails'
 components:
   schemas:
+    CreateRolesRequest:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateRoleRequest'
     CreateRoleRequest:
       type: object
       properties:
         name:
-          type: string
-        shortDescription:
           type: string
         description:
           type: string
@@ -434,6 +510,10 @@ components:
       properties:
         appId:
           type: string
+        productNames:
+          type: array
+          items:
+            type: string
         pageNumber:
           format: int32
           description: The number of page.
@@ -502,6 +582,8 @@ components:
           type: string
         appId:
           type: string
+        productName:
+          type: string
         resource:
           type: string
         action:
@@ -555,6 +637,31 @@ components:
           type: string
         permissionId:
           type: string
+    CreateProductAssignmentsRequest:
+      type: object
+      required:
+        - roleId
+        - productNames
+      properties:
+        roleId:
+          type: string
+        productNames:
+          type: array
+          items:
+            type: string
+    RevokeAssignmentRequest:
+      type: object
+      required:
+        - roleId
+      properties:
+        roleId:
+          type: string
+        permissionId:
+          type: string
+        productNames:
+          type: array
+          items:
+            type: string
     Assignment:
       type: object
       properties:
@@ -575,10 +682,14 @@ components:
           type: string
         appId:
           type: string
+        id:
+          type: string
     ApplicationSearchCriteria:
       type: object
       properties:
         appId:
+          type: string
+        productName:
           type: string
         name:
           type: string
@@ -630,22 +741,106 @@ components:
           type: string
         appId:
           type: string
+        productName:
+          type: string
         name:
           type: string
         description:
           type: string
-    WorkspaceNameList:
-      type: array
-      items:
-        type: string
-    Product:
+    WorkspacePageResult:
       type: object
       properties:
-        id:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceAbstract'
+    WorkspaceAbstract:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    WorkspaceSearchCriteria:
+      type: object
+      properties:
+        themeName:
           type: string
         productName:
           type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    Product:
+      type: object
+      properties:
+        microfrontends:
+          type: array
+          items:
+            $ref: '#/components/schemas/Microfrontend'
+        productName:
+          type: string
         baseUrl:
+          type: string
+    Microfrontend:
+      type: object
+      properties:
+        mfeId:
+          type: string
+        basePath:
+          type: string
+    WorkspaceDetails:
+      type: object
+      properties:
+        workspaceRoles:
+          type: array
+          items:
+            type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDetails'
+    ProductDetails:
+      type: object
+      properties:
+        productName:
+          type: string
+        displayName:
+          type: string
+        mfe:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfeMsAbstract'
+        ms:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfeMsAbstract'
+    MfeMsAbstract:
+      type: object
+      properties:
+        appName:
+          type: string
+        appId:
           type: string
     OffsetDateTime:
       format: date-time

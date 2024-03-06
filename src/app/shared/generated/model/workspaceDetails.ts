@@ -9,18 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProductDetails } from './productDetails';
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
-    productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+export interface WorkspaceDetails { 
+    workspaceRoles?: Array<string>;
+    products?: Array<ProductDetails>;
 }
 

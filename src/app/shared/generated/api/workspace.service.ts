@@ -20,6 +20,12 @@ import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
 import { Product } from '../model/product';
+// @ts-ignore
+import { WorkspaceDetails } from '../model/workspaceDetails';
+// @ts-ignore
+import { WorkspacePageResult } from '../model/workspacePageResult';
+// @ts-ignore
+import { WorkspaceSearchCriteria } from '../model/workspaceSearchCriteria';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -28,6 +34,14 @@ import { Configuration }                                     from '../configurat
 
 export interface GetAllProductsByWorkspaceNameRequestParams {
     workspaceName: string;
+}
+
+export interface GetDetailsByWorkspaceNameRequestParams {
+    workspaceName: string;
+}
+
+export interface SearchWorkspacesRequestParams {
+    workspaceSearchCriteria: WorkspaceSearchCriteria;
 }
 
 
@@ -155,14 +169,19 @@ export class WorkspaceAPIService {
     }
 
     /**
-     * get all workspace names
+     * get detailed information to all workspace related products and roles
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllWorkspaceNames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<string>>;
-    public getAllWorkspaceNames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<string>>>;
-    public getAllWorkspaceNames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<string>>>;
-    public getAllWorkspaceNames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getDetailsByWorkspaceName(requestParameters: GetDetailsByWorkspaceNameRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<WorkspaceDetails>;
+    public getDetailsByWorkspaceName(requestParameters: GetDetailsByWorkspaceNameRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<WorkspaceDetails>>;
+    public getDetailsByWorkspaceName(requestParameters: GetDetailsByWorkspaceNameRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<WorkspaceDetails>>;
+    public getDetailsByWorkspaceName(requestParameters: GetDetailsByWorkspaceNameRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const workspaceName = requestParameters.workspaceName;
+        if (workspaceName === null || workspaceName === undefined) {
+            throw new Error('Required parameter workspaceName was null or undefined when calling getDetailsByWorkspaceName.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -195,10 +214,79 @@ export class WorkspaceAPIService {
             }
         }
 
-        let localVarPath = `/workspaces`;
-        return this.httpClient.request<Array<string>>('get', `${this.configuration.basePath}${localVarPath}`,
+        let localVarPath = `/workspaces/${this.configuration.encodeParam({name: "workspaceName", value: workspaceName, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/details`;
+        return this.httpClient.request<WorkspaceDetails>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * search workspaces by criteria
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public searchWorkspaces(requestParameters: SearchWorkspacesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<WorkspacePageResult>;
+    public searchWorkspaces(requestParameters: SearchWorkspacesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<WorkspacePageResult>>;
+    public searchWorkspaces(requestParameters: SearchWorkspacesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<WorkspacePageResult>>;
+    public searchWorkspaces(requestParameters: SearchWorkspacesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const workspaceSearchCriteria = requestParameters.workspaceSearchCriteria;
+        if (workspaceSearchCriteria === null || workspaceSearchCriteria === undefined) {
+            throw new Error('Required parameter workspaceSearchCriteria was null or undefined when calling searchWorkspaces.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/workspaces/search`;
+        return this.httpClient.request<WorkspacePageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: workspaceSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

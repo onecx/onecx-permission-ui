@@ -17,13 +17,17 @@
       "PERMISSION.TOOLTIP": "Create a new Permission",
       "ROLE": "Create Role",
       "ROLE.TOOLTIP": "Create a new Role",
+      "IDM_ROLES.TOOLTIP": "Create IDM Roles",
+      "WORKSPACE_ROLES.TOOLTIP": "Create Workspace Roles",
       "MESSAGE": {
         "APPLICATION_OK": "The App was created successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not created.",
         "PERMISSION_OK": "The permission was created successfully",
         "PERMISSION_NOK": "An error has occurred. The permission was not created.",
         "ROLE_OK": "The role was created successfully",
-        "ROLE_NOK": "An error has occurred. The role was not created."
+        "ROLE_NOK": "An error has occurred. The role was not created.",
+        "WORKSPACE_ROLES_OK": "The workspace roles were created successfully",
+        "WORKSPACE_ROLES_NOK": "An error has occurred. The workspace roles could not be created."
       }
     },
     "DELETE": {
@@ -86,6 +90,10 @@
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
       }
     },
+    "VIEW": {
+      "ROLE": "Role Details",
+      "PERMISSION": "Permission Details"
+    },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
     "CLEAR_CACHE": "Clear Cache",
@@ -119,10 +127,11 @@
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
-      "SUBHEADER_APP": "Managing Roles and Permissions"
+      "SUBHEADER_APP": "Managing Business Roles and Permissions of the App"
     }
   },
   "APP": {
+    "ID": "App ID",
     "NAME": "Name",
     "TYPE": "Type",
     "TYPE_WORKSPACE": "Workspace",
@@ -132,11 +141,18 @@
     "EDIT": "Edit App",
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
-      "QUICK_FILTER": {
-        "TOOLTIP": "Set filter value",
+      "FILTER": {
+        "LABEL": "Filter of App Type",
+        "TOOLTIP": "App Type",
         "ALL": "All",
-        "WORKSPACE": "Workspaces",
-        "APP": "Apps"
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
+      },
+      "QUICK_FILTER": {
+        "TOOLTIP": "Quick Filter for App type",
+        "ALL": "All",
+        "APP": "Apps",
+        "WORKSPACE": "Workspaces"
       }
     }
   },
@@ -146,26 +162,31 @@
     "DESCRIPTION": "Description",
     "RESOURCE": "Resource",
     "ACTION": "Action",
-    "PERMISSION": "Resource # Action",
+    "KEY": "Resource # Action",
     "LABEL": "Permissions",
     "ACTIONS": "Actions",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Click for change",
-      "GRANT_ALL_FOR_ROLE": "Grant all Permissions",
-      "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions",
+      "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
+      "GRANT_ALL_FOR_ROLE": "Grant all Permissions for the selected or all products",
+      "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
       "REVOKE_ERROR": "Permission could not be revoked",
       "REVOKE_SUCCESS": "Permission revoked"
     },
     "SORT": {
-      "APP_ID": "Sorting by apps"
+      "APP_ID": "Sorting by App IDs",
+      "PRODUCT": "Sorting by Product und App IDs"
     },
     "SEARCH": {
       "FILTER": {
         "APPS": "App",
+        "APP_TYPE": "Type",
+        "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
+        "PRODUCT": "Product",
+        "PRODUCT.TOOLTIP": "The products registered in the workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value",
         "ALL": "All",
@@ -177,8 +198,8 @@
     }
   },
   "ROLE": {
-    "LABEL.WORKSPACE": "Workspace Roles",
-    "TOOLTIP": "Roles created for the workspace, as a selection of the roles defined for the tenant that can be assigned to the user.",
+    "LABEL": "Roles",
+    "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
     "NAME": "Name",
     "DESCRIPTION": "Description"
   },
@@ -200,16 +221,22 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APPS": "Unknown problem retrieving App data - please try again.",
+      "APP": "Unknown problem retrieving App data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
-      "WORKSPACES": "Unknown problem retrieving Workspace data - please try again."
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
+    },
+    "HTTP_STATUS_400": {
+      "ROLES": "The Role could not be processed.",
+      "PERMISSIONS": "The permission could not be processed."
     },
     "HTTP_STATUS_403": {
-      "APPS": "You have no permissions to see Apps.",
+      "APP": "You have no permissions to see App data.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
-      "WORKSPACES": "You have no permissions to see Workspaces."
+      "ASSIGNMENTS": "You have no permissions to see Assignments.",
+      "WORKSPACE": "You have no permissions to see Workspace Data."
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
@@ -217,14 +244,16 @@
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
-      "WORKSPACE": "Workspace could not be found.",
-      "WORKSPACES": "No Workspaces could be found."
+      "WORKSPACE": "Workspace could not be found."
     },
     "HTTP_STATUS_500": {
-      "APPS": "Unknown server problem retrieving App data - please try again.",
-      "ROLES": "Unknown server problem retrieving Role data - please try again.",
-      "PERMISSIONS": "Unknown server problem retrieving Permission data - please try again.",
-      "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again."
+      "APP": "Unknown problem retrieving App data - please try again.",
+      "APPS": "Unknown problem retrieving App data - please try again.",
+      "ROLES": "Unknown problem retrieving Role data - please try again.",
+      "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again.",
+      "WORKSPACES": "Unknown problem retrieving Workspaces - please try again."
     }
   }
 }

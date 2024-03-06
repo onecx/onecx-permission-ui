@@ -11,16 +11,9 @@
  */
 
 
-export interface PermissionSearchCriteria { 
-    appId?: string;
+export interface RevokeAssignmentRequest { 
+    roleId: string;
+    permissionId?: string;
     productNames?: Array<string>;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
 }
 
