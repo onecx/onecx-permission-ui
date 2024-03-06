@@ -142,8 +142,8 @@
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
       "FILTER": {
-        "LABEL": "Filter of App Type",
-        "TOOLTIP": "App Type",
+        "LABEL": "App Type",
+        "TOOLTIP": "Filter for App Type",
         "ALL": "All",
         "APP": "Apps",
         "WORKSPACE": "Workspaces"
