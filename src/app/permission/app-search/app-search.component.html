@@ -42,8 +42,8 @@
         [value]="(apps$ | async) ?? []"
         [paginator]="true"
         [alwaysShowPaginator]="true"
-        [rowsPerPageOptions]="[12, 24, 48]"
-        [rows]="12"
+        [rowsPerPageOptions]="[16, 32, 64]"
+        [rows]="16"
         [layout]="viewMode"
         [filterBy]="filterValueDefault"
         [sortField]="sortField"
@@ -86,7 +86,7 @@
           </div>
         </ng-template>
         <ng-template let-app let-row="rowIndex" pTemplate="gridItem">
-          <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-3">
+          <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-1 md:p-2 lg:p-3">
             <div
               [id]="'app_search_data_row_' + row"
               class="card relative p-2 cursor-pointer hover:bg-gray-200 hover:text-color"
@@ -94,10 +94,10 @@
               (click)="onAppClick($event, app)"
             >
               <div
-                class="h-3rem lg:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 my-1 lg:my-2 text-center"
+                class="h-2rem lg:h-3rem flex flex-column justify-content-between md:gap-1 lg:gap-2 amy-1 md:my-2 text-center"
               >
-                <div class="font-bold text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
-                <div>{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
+                <div class="font-bold md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
+                <div class="text-xs md:text-md lg:text-lg">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
             </div>
           </div>
