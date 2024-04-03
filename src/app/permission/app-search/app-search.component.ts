@@ -20,6 +20,7 @@ import {
 export interface AppSearchCriteria {
   appId: FormControl<string | null>
   appType: FormControl<AppFilterType | null>
+  productName: FormControl<string | null>
 }
 export type App = Application & { isApp: boolean; appType: AppType }
 export type AppType = 'WORKSPACE' | 'APP'
@@ -66,7 +67,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     // search criteria
     this.appSearchCriteriaGroup = new FormGroup<AppSearchCriteria>({
       appId: new FormControl<string | null>(null),
-      appType: new FormControl<AppFilterType | null>('WORKSPACE')
+      appType: new FormControl<AppFilterType | null>('WORKSPACE'),
+      productName: new FormControl<string | null>(null)
     })
     this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
     this.appTypeItems = [
@@ -110,6 +112,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .searchApplications({
         applicationSearchCriteria: {
           appId: this.appSearchCriteriaGroup.controls['appId'].value ?? '',
+          productName: this.appSearchCriteriaGroup.controls['productName'].value ?? '',
           pageSize: 100
         }
       })

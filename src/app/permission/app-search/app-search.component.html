@@ -94,10 +94,10 @@
               (click)="onAppClick($event, app)"
             >
               <div
-                class="h-2rem lg:h-3rem flex flex-column justify-content-between md:gap-1 lg:gap-2 amy-1 md:my-2 text-center"
+                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center"
               >
-                <div class="font-bold md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
-                <div class="text-xs md:text-md lg:text-lg">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
+                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
+                <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
             </div>
           </div>
