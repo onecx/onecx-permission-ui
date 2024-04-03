@@ -2,6 +2,7 @@
 
 @include correct-data-view-control;
 @include table-inline-buttons;
+@include compact-dropdown-list-items;
 
 :host ::ng-deep {
   .p-datatable .p-datatable-header {
@@ -24,10 +25,6 @@
   .p-inputtext.middle-of-inputgroup {
     border-left: 0;
     border-right: 0;
-  }
-  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
   }
   .p-dropdown {
     &.clear-icon-used .p-inputtext {

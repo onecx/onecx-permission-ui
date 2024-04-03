@@ -99,7 +99,6 @@
             <p-button
               id="app_detail_permission_table_reload_button"
               styleClass="h-full"
-              [disabled]="!permissionRows"
               [title]="'ACTIONS.SEARCH.RELOAD' | translate"
               (onClick)="onReload()"
               icon="pi pi-refresh"
@@ -327,26 +326,26 @@
           <tr [id]="'app_detail_permission_table_row_' + row">
             <td
               id="app_detail_permission_table_data_permission_key"
-              class="text-left py-1 px-2 white-space-nowrap sm:white-space-normal"
+              class="text-left p-2 white-space-nowrap sm:white-space-normal"
               [title]="rowData.description ? rowData.description : ''"
             >
               <strong>{{ rowData.resource }} </strong>#
               <strong>{{ rowData.action }} </strong>
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
-            <td id="app_detail_permission_table_data_product_name" class="text-left px-2">
+            <td id="app_detail_permission_table_data_product_name" class="text-left p-2">
               <div *ngIf="currentApp.isApp">{{ rowData.productName }}</div>
               <div *ngIf="!currentApp.isApp">{{ rowData.productDisplayName }}</div>
               <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
-            <td id="app_detail_permission_table_data_app_id" class="text-left px-2 border-right-primary">
+            <td id="app_detail_permission_table_data_app_id" class="text-left p-2 border-right-primary">
               <div>{{ rowData.appDisplayName }}</div>
               <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
             <td
               *ngFor="let role of columns"
-              class="text-center"
+              class="text-center p-2"
               [id]="'app_detail_permission_table_data_' + role.name + '_' + rowData.key"
             >
               <!-- display only -->

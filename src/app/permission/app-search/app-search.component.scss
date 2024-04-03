@@ -3,3 +3,9 @@
 @include correct-data-view-control;
 @include correct-search-criteria;
 @include search-criteria-select-button;
+
+@media screen and (min-width: 768px) {
+  .md\:h-2-5rem {
+    height: 2.5rem !important;
+  }
+}

@@ -375,7 +375,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * FILTER
    */
   private prepareFilterProducts() {
-    if (this.currentApp.isApp) return
+    if (this.currentApp.isApp) {
+      this.filterProductItems = []
+      return
+    }
     this.filterProductItems = [{ label: '', value: null } as SelectItem]
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
@@ -386,10 +389,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps() {
-    if (this.currentApp.isApp) return
+    if (this.currentApp.isApp) {
+      this.filterAppItems = []
+      return
+    }
     // 1. collect apps registered in workspace
     this.workspaceApps = []
-    if (this.currentApp.workspaceDetails?.products) {
+    if (this.currentApp.workspaceDetails?.products && this.currentApp.workspaceDetails?.products.length > 0) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         if (product.mfe)
           product.mfe.map((a) => {
@@ -401,19 +407,20 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           })
       })
     }
-
     // 2. fill app filter with apps which have permissions
-    this.filterAppItems = [{ label: '', value: null } as SelectItem]
-    this.permissions.map((p) => {
-      // get the app name from workspace apps - needed for label
-      const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
-      if (
-        app.length === 1 &&
-        this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
-      ) {
-        this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
-      }
-    })
+    this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
+    if (this.permissions.length > 0 && this.workspaceApps.length > 0)
+      this.permissions.map((p) => {
+        // get the app name from workspace apps - needed for label
+        const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
+        if (app.length > 0)
+          if (
+            app.length === 1 &&
+            this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
+          ) {
+            this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
+          }
+      })
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map
@@ -425,18 +432,24 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       console.warn('No permissions found for the apps - stop processing')
       return
     }
-    // go on
     this.permissionRows = []
     for (const permission of this.permissions) {
+      const products = this.filterProductItems.filter((p) => p.value === permission.productName)
+      const apps = this.filterAppItems.filter((p) => p.value === permission.appId)
       this.permissionRows.push({
         ...permission,
         key: permission.resource + '#' + permission.action,
         productDisplayName: this.currentApp.isApp
           ? permission.productName
-          : this.filterProductItems.filter((p) => p.value === permission.productName)[0].label,
-        appDisplayName: this.currentApp.isApp
-          ? permission.appId
-          : this.filterAppItems.filter((p) => p.value === permission.appId)[0].label,
+          : products.length > 0
+          ? products[0].label
+          : permission.productName,
+        appDisplayName:
+          this.currentApp.isApp || this.filterAppItems.length < 2
+            ? permission.appId
+            : apps.length > 0
+            ? apps[0].label
+            : permission.appId,
         roles: {}
       } as PermissionViewRow)
     }
@@ -448,7 +461,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     const appList: string[] = []
     if (this.currentApp.isApp) appList.push(this.currentApp.appId ?? '')
     else if (this.workspaceApps.length === 0) {
-      console.warn('No workspace apps found - stop processing')
+      console.warn('No workspace apps found on workspace - stop loading assignments')
       return
     } else
       this.workspaceApps.map((app) => {
@@ -690,14 +703,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
+    return (
+      (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '') ||
+      a.key.localeCompare(b.key)
+    )
   }
   private sortPermissionRowByAppIdDesc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (b.appId ? b.appId.toUpperCase() : '').localeCompare(a.appId ? a.appId.toUpperCase() : '')
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.productName ? a.productName.toUpperCase() : '').localeCompare(
-      b.productName ? b.productName.toUpperCase() : ''
+    return (
+      (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+        b.productName ? b.productName.toUpperCase() : ''
+      ) || a.key.localeCompare(b.key)
     )
   }
   private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {

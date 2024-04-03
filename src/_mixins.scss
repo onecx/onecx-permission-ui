@@ -15,6 +15,30 @@
   }
 }
 
+@mixin compact-dropdown-list-items {
+  :host ::ng-deep {
+    .p-dropdown-items .p-dropdown-item {
+      padding: 0.4rem 1rem;
+    }
+  }
+}
+
+@mixin invisible {
+  :host ::ng-deep {
+    .invisible {
+      visibility: hidden;
+    }
+  }
+}
+
+@mixin danger-action {
+  :host ::ng-deep {
+    .danger-action-text {
+      color: var(--danger-button-bg);
+    }
+  }
+}
+
 @mixin prepare-inputgroup {
   :host ::ng-deep {
     .inputgroup-dropdown-with-link {
