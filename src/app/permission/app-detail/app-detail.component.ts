@@ -32,12 +32,11 @@ import {
 import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 
 export type App = Application & {
-  isApp: boolean
-  isMfe: boolean
-  appType: PermissionAppType
+  isProduct: boolean
+  appType: AppType
   workspaceDetails?: WorkspaceDetails
 }
-export type PermissionAppType = 'WORKSPACE' | 'APP'
+export type AppType = 'WORKSPACE' | 'PRODUCT'
 export type ServiceAppType = 'MFE' | 'MS'
 export type RoleAssignments = { [key: string]: string | undefined } // assignment id or undefined
 export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
@@ -82,7 +81,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private pageSize = 1000
   public urlParamAppId = ''
   public urlParamAppType = ''
-  public currentApp: App = { appId: 'dummy', appType: 'APP', isApp: true } as App
+  public currentApp: App = { appId: 'dummy', appType: 'PRODUCT', isProduct: true } as App
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'VIEW'
   public myPermissions = new Array<string>() // permissions of the user
@@ -91,7 +90,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterProductValue: string | undefined = undefined
   public filterAppItems: SelectItem[] = new Array<SelectItem>()
   public filterAppValue: string | undefined = undefined
-  private workspaceApps: App[] = []
+  private productApps: App[] = []
 
   // permission management
   private permissions$!: Observable<PermissionPageResult>
@@ -180,9 +179,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               actionCallback: () => this.onCreateRole(),
               icon: 'pi pi-plus',
               show: 'asOverflow',
-              permission: 'ROLE#EDIT',
-              conditional: true,
-              showCondition: !this.currentApp.isApp
+              permission: 'ROLE#EDIT'
             }
           ]
         })
@@ -200,38 +197,41 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.loading = true
     this.loadingServerIssue = false
     this.loadingExceptionKey = ''
-    // on workspace: create a dummy app
+    this.currentApp = {
+      id: this.urlParamAppId,
+      name: this.urlParamAppId,
+      appId: this.urlParamAppId,
+      appType: this.urlParamAppType,
+      isProduct: !(this.urlParamAppType === 'WORKSPACE')
+    } as App
+    this.productApps = []
     if (this.urlParamAppType === 'WORKSPACE') {
-      this.currentApp = {
-        id: this.urlParamAppId,
-        name: this.urlParamAppId,
-        appId: this.urlParamAppId,
-        appType: this.urlParamAppType,
-        isApp: false,
-        isMfe: false
-      } as App
       this.loadWorkspaceDetails()
     } else {
-      this.appApi
-        .searchApplications({ applicationSearchCriteria: { appId: this.urlParamAppId } })
-        .pipe(catchError((error) => of(error)))
-        .subscribe((result) => {
-          if (result instanceof HttpErrorResponse) {
-            this.loadingServerIssue = true
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
-            console.error('searchApplications() result:', result)
-          } else if (result instanceof Object) {
-            this.currentApp = { ...result.stream[0], appType: 'APP', isApp: true } as App
-            this.prepareActionButtons()
-            this.loadRolesAndPermissions()
-          } else {
-            this.loadingServerIssue = true
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
-            console.error('getApplicationById() => unknown response:', result)
-          }
-          this.loading = false
-        })
+      this.loadProductDetails()
     }
+  }
+  private loadProductDetails() {
+    this.appApi
+      .searchApplications({ applicationSearchCriteria: { productName: this.urlParamAppId ?? '' } })
+      .pipe(catchError((error) => of(error)))
+      .subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
+          console.error('searchApplications() result:', result)
+        } else if (result instanceof Object) {
+          this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
+          result.stream.map((app: Application) => this.productApps.push(app as App))
+          this.prepareActionButtons()
+          this.loadRolesAndPermissions()
+        } else {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
+          console.error('getApplicationById() => unknown response:', result)
+        }
+        this.loading = false
+      })
   }
   private loadWorkspaceDetails() {
     this.workspaceApi
@@ -244,6 +244,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
+          if (this.currentApp.workspaceDetails?.products && this.currentApp.workspaceDetails?.products.length > 0) {
+            this.currentApp.workspaceDetails?.products.map((product) => {
+              if (product.mfe)
+                product.mfe.map((a) => {
+                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+                })
+              if (product.ms)
+                product.ms.map((a) => {
+                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+                })
+            })
+          }
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         } else {
@@ -256,7 +268,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
-  private declareRoleObservable(): void {
+  private searchRoles(): Observable<Role[]> {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
       catchError((err) => {
         this.loadingServerIssue = true
@@ -266,35 +278,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }),
       finalize(() => (this.loading = false))
     )
-  }
-  private declarePermissionObservable(): void {
-    const productNames: string[] = []
-    let appIds: string | undefined = undefined
-    if (this.currentApp.isApp) {
-      productNames.push(this.currentApp.productName ?? '')
-      appIds = this.currentApp.appId
-    } else
-      this.currentApp.workspaceDetails?.products?.map((p) => {
-        productNames.push(p.productName ?? '')
-      })
-    this.permissions$ = this.permApi
-      .searchPermissions({
-        permissionSearchCriteria: {
-          productNames: productNames,
-          appId: appIds,
-          pageSize: this.pageSize
-        }
-      })
-      .pipe(
-        catchError((err) => {
-          this.loadingServerIssue = true
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-          console.error('searchPermissions():', err)
-          return of({} as PermissionPageResult)
-        })
-      )
-  }
-  private searchRoles(): Observable<Role[]> {
     return this.roles$.pipe(
       map((result) => {
         return result.stream
@@ -307,6 +290,31 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private searchPermissions(): Observable<Permission[]> {
+    const productNames: string[] = []
+    //let appIds: string | undefined = undefined
+    if (this.currentApp.isProduct) {
+      productNames.push(this.currentApp.productName ?? '')
+      //appIds = this.currentApp.appId
+    } else
+      this.currentApp.workspaceDetails?.products?.map((p) => {
+        productNames.push(p.productName ?? '')
+      })
+    this.permissions$ = this.permApi
+      .searchPermissions({
+        permissionSearchCriteria: {
+          productNames: productNames,
+          //appId: appIds,
+          pageSize: this.pageSize
+        }
+      })
+      .pipe(
+        catchError((err) => {
+          this.loadingServerIssue = true
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          console.error('searchPermissions():', err)
+          return of({} as PermissionPageResult)
+        })
+      )
     return this.permissions$.pipe(
       map((result) => {
         return result.stream
@@ -319,8 +327,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private loadRolesAndPermissions(): void {
-    this.declareRoleObservable()
-    this.declarePermissionObservable()
     this.roles = []
     this.permissions = []
     combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(
@@ -336,7 +342,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
   private checkWorkspaceRoles() {
-    if (this.currentApp.isApp) return
+    if (this.currentApp.isProduct) return
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
       this.roles.forEach(
         (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name ?? ''))
@@ -375,44 +381,29 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * FILTER
    */
   private prepareFilterProducts() {
-    if (this.currentApp.isApp) {
-      this.filterProductItems = []
+    this.filterProductItems = []
+    if (this.currentApp.isProduct) {
+      this.filterProductItems.push({
+        label: this.currentApp.productName,
+        value: this.currentApp.productName
+      } as SelectItem)
       return
     }
-    this.filterProductItems = [{ label: '', value: null } as SelectItem]
+    this.filterProductItems.push({ label: '', value: null })
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
-        this.filterProductItems.push({ label: product.displayName, value: product.productName } as SelectItem)
+        this.filterProductItems.push({ label: product.displayName, value: product.productName })
       })
       this.filterProductItems.sort(dropDownSortItemsByLabel)
     }
   }
 
   private prepareFilterApps() {
-    if (this.currentApp.isApp) {
-      this.filterAppItems = []
-      return
-    }
-    // 1. collect apps registered in workspace
-    this.workspaceApps = []
-    if (this.currentApp.workspaceDetails?.products && this.currentApp.workspaceDetails?.products.length > 0) {
-      this.currentApp.workspaceDetails?.products.map((product) => {
-        if (product.mfe)
-          product.mfe.map((a) => {
-            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-          })
-        if (product.ms)
-          product.ms.map((a) => {
-            this.workspaceApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-          })
-      })
-    }
-    // 2. fill app filter with apps which have permissions
     this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
-    if (this.permissions.length > 0 && this.workspaceApps.length > 0)
+    if (this.permissions.length > 0 && this.productApps.length > 0)
       this.permissions.map((p) => {
-        // get the app name from workspace apps - needed for label
-        const app = this.workspaceApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
+        // get the app name from product apps - needed for label
+        const app = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
         if (app.length > 0)
           if (
             app.length === 1 &&
@@ -434,37 +425,38 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     this.permissionRows = []
     for (const permission of this.permissions) {
+      console.log('this.filterProductItems', this.filterProductItems)
+      console.log('this.filterAppItems', this.filterAppItems)
       const products = this.filterProductItems.filter((p) => p.value === permission.productName)
       const apps = this.filterAppItems.filter((p) => p.value === permission.appId)
+      console.log('products', products)
+      console.log('apps', apps)
+
       this.permissionRows.push({
         ...permission,
         key: permission.resource + '#' + permission.action,
-        productDisplayName: this.currentApp.isApp
+        productDisplayName: this.currentApp.isProduct
           ? permission.productName
           : products.length > 0
           ? products[0].label
           : permission.productName,
-        appDisplayName:
-          this.currentApp.isApp || this.filterAppItems.length < 2
-            ? permission.appId
-            : apps.length > 0
-            ? apps[0].label
-            : permission.appId,
+        appDisplayName: apps.length > 0 ? apps[0].label : permission.appId,
         roles: {}
       } as PermissionViewRow)
     }
-    this.permissionRows.sort(this.currentApp.isApp ? this.sortPermissionRowByKey : this.sortPermissionRowByProductAsc)
+    this.permissionRows.sort(
+      this.currentApp.isProduct ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
+    )
     this.loadRoleAssignments(false)
   }
 
   private loadRoleAssignments(clear: boolean) {
     const appList: string[] = []
-    if (this.currentApp.isApp) appList.push(this.currentApp.appId ?? '')
-    else if (this.workspaceApps.length === 0) {
-      console.warn('No workspace apps found on workspace - stop loading assignments')
+    if (this.productApps.length === 0) {
+      console.warn('No apps found - stop loading assignments')
       return
     } else
-      this.workspaceApps.map((app) => {
+      this.productApps.map((app) => {
         appList.push(app.appId ?? '')
       })
     if (clear) {
@@ -685,7 +677,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private prepareProductList(): string[] {
     const pList: string[] = []
     // => case 1
-    if (this.currentApp.isApp) pList.push(this.currentApp.productName ?? '')
+    if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
     // => case 2
     else if (this.filterProductValue) pList.push(this.filterProductValue)
     else if (this.filterProductItems.length > 1)
@@ -698,18 +690,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /****************************************************************************
    *  SORT
    */
-  private sortPermissionRowByKey(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (a.key ? a.key.toUpperCase() : '').localeCompare(b.key ? b.key.toUpperCase() : '')
-  }
-
   private sortPermissionRowByAppIdAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (
       (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '') ||
       a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByAppIdDesc(a: PermissionViewRow, b: PermissionViewRow): number {
-    return (b.appId ? b.appId.toUpperCase() : '').localeCompare(a.appId ? a.appId.toUpperCase() : '')
+  private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
+    return this.sortPermissionRowByAppIdAsc(a, b)
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (

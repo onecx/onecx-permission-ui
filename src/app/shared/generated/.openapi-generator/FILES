@@ -22,6 +22,9 @@ model/createAssignmentRequest.ts
 model/createProductAssignmentsRequest.ts
 model/createRoleRequest.ts
 model/createRolesRequest.ts
+model/iAMRole.ts
+model/iAMRolePageResult.ts
+model/iAMRoleSearchCriteria.ts
 model/mfeMsAbstract.ts
 model/microfrontend.ts
 model/models.ts

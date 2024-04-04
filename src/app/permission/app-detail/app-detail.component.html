@@ -189,8 +189,8 @@
               id="app_detail_permission_table_header_permission_filter_product"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
-              <div *ngIf="currentApp.isApp">{{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</div>
-              <div *ngIf="!currentApp.isApp" class="flex">
+              <div *ngIf="currentApp.isProduct">{{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</div>
+              <div *ngIf="!currentApp.isProduct" class="flex">
                 <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
                     id="app_detail_permission_table_filter_product_name"
@@ -220,14 +220,6 @@
               </div>
             </th>
             <th
-              *ngIf="currentApp.isApp"
-              id="app_detail_permission_table_header_permission_filter_app_id"
-              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
-            >
-              {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}
-            </th>
-            <th
-              *ngIf="!currentApp.isApp"
               id="app_detail_permission_table_header_permission_filter_app_id"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
             >
@@ -334,13 +326,13 @@
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
             <td id="app_detail_permission_table_data_product_name" class="text-left p-2">
-              <div *ngIf="currentApp.isApp">{{ rowData.productName }}</div>
-              <div *ngIf="!currentApp.isApp">{{ rowData.productDisplayName }}</div>
-              <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.productName }}</div>
+              <div *ngIf="currentApp.isProduct">{{ rowData.productName }}</div>
+              <div *ngIf="!currentApp.isProduct">{{ rowData.productDisplayName }}</div>
+              <div *ngIf="!currentApp.isProduct" class="mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
             <td id="app_detail_permission_table_data_app_id" class="text-left p-2 border-right-primary">
               <div>{{ rowData.appDisplayName }}</div>
-              <div *ngIf="!currentApp.isApp" class="mt-1 text-xs">{{ rowData.appId }}</div>
+              <div *ngIf="currentApp.isProduct" class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
             <td

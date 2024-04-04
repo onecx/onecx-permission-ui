@@ -11,17 +11,8 @@
  */
 
 
-export interface WorkspaceSearchCriteria { 
-    themeName?: string;
-    productName?: string;
-    workspaceName?: string;
-    /**
-     * The number of page.
-     */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+export interface IAMRole { 
+    name?: string;
+    description?: string;
 }
 

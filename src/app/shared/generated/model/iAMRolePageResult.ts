@@ -9,19 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { IAMRole } from './iAMRole';
 
 
-export interface WorkspaceSearchCriteria { 
-    themeName?: string;
-    productName?: string;
-    workspaceName?: string;
+export interface IAMRolePageResult { 
     /**
-     * The number of page.
+     * The total elements in the resource.
      */
-    pageNumber?: number;
-    /**
-     * The size of page
-     */
-    pageSize?: number;
+    totalElements?: number;
+    number?: number;
+    size?: number;
+    totalPages?: number;
+    stream?: Array<IAMRole>;
 }
 
