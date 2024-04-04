@@ -200,7 +200,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       name: this.urlParamAppId,
       appId: this.urlParamAppId,
       appType: this.urlParamAppType,
-      isProduct: !(this.urlParamAppType === 'WORKSPACE')
+      isProduct: this.urlParamAppType !== 'WORKSPACE'
     } as App
     this.productApps = []
     this.urlParamAppType === 'WORKSPACE' ? this.loadWorkspaceDetails() : this.loadProductDetails()

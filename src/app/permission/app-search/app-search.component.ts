@@ -49,7 +49,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public filterValueDefault = 'appId,appType'
   public filterBy = this.filterValueDefault || 'appType'
   public filter: string | undefined
-  public sortField = 'appId' || 'appType'
+  public sortField = 'appId'
   public sortOrder = 1
   public searchInProgress = false
   public limitText = limitText
