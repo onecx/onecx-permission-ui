@@ -14,14 +14,14 @@
 
   <ocx-page-content>
     <p-message
-      *ngIf="loadingServerIssue"
+      *ngIf="loadingExceptionKey"
       id="app_detail_permission_table_data_access_issue"
       severity="error"
       styleClass="m-3"
       [text]="loadingExceptionKey | translate"
     ></p-message>
 
-    <ng-container *ngIf="!loadingServerIssue">
+    <ng-container *ngIf="!loadingExceptionKey">
       <p-table
         #permissionTable
         id="app_detail_permission_table"
@@ -326,13 +326,12 @@
               <div class="mt-1 text-xs">{{ limitText(rowData.description, 60) }}</div>
             </td>
             <td id="app_detail_permission_table_data_product_name" class="text-left p-2">
-              <div *ngIf="currentApp.isProduct">{{ rowData.productName }}</div>
-              <div *ngIf="!currentApp.isProduct">{{ rowData.productDisplayName }}</div>
-              <div *ngIf="!currentApp.isProduct" class="mt-1 text-xs">{{ rowData.productName }}</div>
+              <div>{{ rowData.productDisplayName }}</div>
+              <div class="mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
             <td id="app_detail_permission_table_data_app_id" class="text-left p-2 border-right-primary">
               <div>{{ rowData.appDisplayName }}</div>
-              <div *ngIf="currentApp.isProduct" class="mt-1 text-xs">{{ rowData.appId }}</div>
+              <div class="mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
             <td

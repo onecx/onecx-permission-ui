@@ -60,7 +60,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // dialog control
   public loading = true
   public loadingExceptionKey = ''
-  public loadingServerIssue = false
   public actions$: Observable<Action[]> | undefined
   // filter row
   public filterBy = ['action', 'resource']
@@ -195,7 +194,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     this.loading = true
-    this.loadingServerIssue = false
     this.loadingExceptionKey = ''
     this.currentApp = {
       id: this.urlParamAppId,
@@ -205,11 +203,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       isProduct: !(this.urlParamAppType === 'WORKSPACE')
     } as App
     this.productApps = []
-    if (this.urlParamAppType === 'WORKSPACE') {
-      this.loadWorkspaceDetails()
-    } else {
-      this.loadProductDetails()
-    }
+    this.urlParamAppType === 'WORKSPACE' ? this.loadWorkspaceDetails() : this.loadProductDetails()
   }
   private loadProductDetails() {
     this.appApi
@@ -217,16 +211,15 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
           console.error('searchApplications() result:', result)
         } else if (result instanceof Object) {
           this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
+          this.currentApp.name = this.currentApp.productName
           result.stream.map((app: Application) => this.productApps.push(app as App))
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         } else {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
           console.error('getApplicationById() => unknown response:', result)
         }
@@ -239,7 +232,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
           console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
@@ -271,7 +263,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private searchRoles(): Observable<Role[]> {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
       catchError((err) => {
-        this.loadingServerIssue = true
         this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
         console.error('searchRoles():', err)
         return of({} as RolePageResult)
@@ -291,10 +282,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   private searchPermissions(): Observable<Permission[]> {
     const productNames: string[] = []
-    //let appIds: string | undefined = undefined
     if (this.currentApp.isProduct) {
       productNames.push(this.currentApp.productName ?? '')
-      //appIds = this.currentApp.appId
     } else
       this.currentApp.workspaceDetails?.products?.map((p) => {
         productNames.push(p.productName ?? '')
@@ -303,13 +292,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .searchPermissions({
         permissionSearchCriteria: {
           productNames: productNames,
-          //appId: appIds,
           pageSize: this.pageSize
         }
       })
       .pipe(
         catchError((err) => {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
           console.error('searchPermissions():', err)
           return of({} as PermissionPageResult)
@@ -425,13 +412,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     this.permissionRows = []
     for (const permission of this.permissions) {
-      console.log('this.filterProductItems', this.filterProductItems)
-      console.log('this.filterAppItems', this.filterAppItems)
       const products = this.filterProductItems.filter((p) => p.value === permission.productName)
       const apps = this.filterAppItems.filter((p) => p.value === permission.appId)
-      console.log('products', products)
-      console.log('apps', apps)
-
       this.permissionRows.push({
         ...permission,
         key: permission.resource + '#' + permission.action,
@@ -469,7 +451,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object) {
@@ -484,7 +465,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           })
           this.loading = false
         } else {
-          this.loadingServerIssue = true
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments() => unknown response:', result)
         }
@@ -600,7 +580,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   /****************************************************************************
-   *  ASSIGNMENTS    => grant + revoke permissions
+   *  ASSIGNMENTS    => grant + revoke permissions => assign roles
    ****************************************************************************
    */
   public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
