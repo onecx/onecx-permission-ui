@@ -20,10 +20,10 @@ import {
 export interface AppSearchCriteria {
   appId: FormControl<string | null>
   appType: FormControl<AppFilterType | null>
-  productName: FormControl<string | null>
+  name: FormControl<string | null>
 }
 export type App = Application & { isApp: boolean; appType: AppType }
-export type AppType = 'WORKSPACE' | 'APP'
+export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
 
 @Component({
@@ -49,7 +49,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public filterValueDefault = 'appId,appType'
   public filterBy = this.filterValueDefault || 'appType'
   public filter: string | undefined
-  public sortField = 'appId' || 'appType'
+  public sortField = 'appId'
   public sortOrder = 1
   public searchInProgress = false
   public limitText = limitText
@@ -68,24 +68,25 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteriaGroup = new FormGroup<AppSearchCriteria>({
       appId: new FormControl<string | null>(null),
       appType: new FormControl<AppFilterType | null>('WORKSPACE'),
-      productName: new FormControl<string | null>(null)
+      name: new FormControl<string | null>(null)
     })
     this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
+    this.appSearchCriteriaGroup.controls['name'].disable()
     this.appTypeItems = [
       { label: 'APP.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'APP.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' },
-      { label: 'APP.SEARCH.FILTER.APP', value: 'APP' }
+      { label: 'APP.SEARCH.FILTER.APP', value: 'APP' },
+      { label: 'APP.SEARCH.FILTER.PRODUCT', value: 'PRODUCT' },
+      { label: 'APP.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
     this.quickFilterItems = [
       { label: 'APP.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'APP.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' },
-      { label: 'APP.SEARCH.QUICK_FILTER.APP', value: 'APP' }
+      { label: 'APP.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' },
+      { label: 'APP.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
   }
 
   ngOnInit(): void {
     this.prepareDialogTranslations()
-    this.declarePermissionAppObservable()
     this.searchApps()
   }
   public ngOnDestroy(): void {
@@ -94,44 +95,26 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * DECLARE Observables
+   * SEARCH
+   *
+   * Workspaces groups Products(Apps) by registration
    */
-  private declareWorkspaceObservable(): void {
-    this.workspaces$ = this.workspaceApi.searchWorkspaces({ workspaceSearchCriteria: {} }).pipe(
-      catchError((err) => {
-        this.dataAccessIssue = true
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
-        console.error('getAllWorkspaceNames():', err)
-        return of({} as WorkspacePageResult)
-      }),
-      finalize(() => (this.searchInProgress = false))
-    )
-  }
-  private declarePermissionAppObservable(): void {
-    this.papps$ = this.appApi
-      .searchApplications({
-        applicationSearchCriteria: {
-          appId: this.appSearchCriteriaGroup.controls['appId'].value ?? '',
-          productName: this.appSearchCriteriaGroup.controls['productName'].value ?? '',
-          pageSize: 100
+  private searchWorkspaces(appType?: string): Observable<App[]> {
+    this.workspaces$ = this.workspaceApi
+      .searchWorkspaces({
+        workspaceSearchCriteria: {
+          workspaceName: appType === 'WORKSPACE' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined
         }
       })
       .pipe(
         catchError((err) => {
           this.dataAccessIssue = true
-          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
-          console.error('searchMicrofrontends():', err)
-          return of({} as ApplicationPageResult)
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+          console.error('getAllWorkspaceNames():', err)
+          return of({} as WorkspacePageResult)
         }),
         finalize(() => (this.searchInProgress = false))
       )
-  }
-
-  /**
-   * SEARCH
-   */
-  private searchWorkspaces(): Observable<App[]> {
-    this.declareWorkspaceObservable()
     return this.workspaces$.pipe(
       map((result) => {
         return result.stream
@@ -144,32 +127,56 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
     )
   }
-  private searchPermissionApps(): Observable<App[]> {
+  // Product => Group of Permission Applications with same product name
+  private searchProducts(searchAppType?: string): Observable<App[]> {
+    this.papps$ = this.appApi
+      .searchApplications({
+        applicationSearchCriteria: {
+          appId: searchAppType === 'APP' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined,
+          productName:
+            searchAppType === 'PRODUCT' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined
+        }
+      })
+      .pipe(
+        catchError((err) => {
+          this.dataAccessIssue = true
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
+          console.error('searchMicrofrontends():', err)
+          return of({} as ApplicationPageResult)
+        }),
+        finalize(() => (this.searchInProgress = false))
+      )
     return this.papps$.pipe(
       map((result) => {
-        return result.stream
-          ? result.stream
-              ?.map((app) => {
-                return { ...app, appType: 'APP' } as App
-              })
-              .sort(this.sortAppsByAppId)
-          : []
+        if (!result.stream) return []
+        const productNames: string[] = []
+        const apps: App[] = []
+        result.stream?.map((app) => {
+          if (!productNames.includes(app.productName ?? '')) {
+            productNames.push(app.productName ?? '')
+            apps.push({ ...app, appType: 'PRODUCT' } as App)
+          }
+          //}
+        })
+        return apps.sort(this.sortAppsByAppId)
       })
     )
   }
   public searchApps(): void {
+    console.log('searchApps: ' + this.appSearchCriteriaGroup.controls['appType'].value)
     this.searchInProgress = true
     switch (this.appSearchCriteriaGroup.controls['appType'].value) {
       case 'ALL':
-        this.apps$ = combineLatest([this.searchWorkspaces(), this.searchPermissionApps()]).pipe(
+        this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
           map(([w, a]) => w.concat(a).sort(this.sortAppsByAppId))
         )
         break
       case 'WORKSPACE':
-        this.apps$ = this.searchWorkspaces()
+        this.apps$ = this.searchWorkspaces('WORKSPACE')
         break
       case 'APP':
-        this.apps$ = this.searchPermissionApps()
+      case 'PRODUCT':
+        this.apps$ = this.searchProducts(this.appSearchCriteriaGroup.controls['appType'].value)
         break
     }
   }
@@ -213,7 +220,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * UI Events
    */
   public onAppClick(ev: any, app: App): void {
-    this.router.navigate(['./', app.appType.toLowerCase(), app.appId], { relativeTo: this.route })
+    this.router.navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
+      relativeTo: this.route
+    })
   }
   public onQuickFilterChange(ev: any): void {
     if (ev.value === 'ALL') {
@@ -227,6 +236,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.dv?.filter(ev.value, 'equals')
       }
     }
+  }
+  public onAppTypeFilterChange(ev: any): void {
+    if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
+    else this.appSearchCriteriaGroup.controls['name'].enable()
   }
   public onFilterChange(filter: string): void {
     this.filter = filter

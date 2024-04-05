@@ -17,8 +17,8 @@
       "PERMISSION.TOOLTIP": "Create a new Permission",
       "ROLE": "Create Role",
       "ROLE.TOOLTIP": "Create a new Role",
-      "IDM_ROLES.TOOLTIP": "Create IDM Roles",
-      "WORKSPACE_ROLES.TOOLTIP": "Create Workspace Roles",
+      "IDM_ROLES.TOOLTIP": "Select IDM Roles to be used here",
+      "WORKSPACE_ROLES.TOOLTIP": "Create missing Workspace Roles to be used here",
       "MESSAGE": {
         "APPLICATION_OK": "The App was created successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not created.",
@@ -125,8 +125,10 @@
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
+      "HEADER_PRODUCT": "Product: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
+      "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Product including all of its Apps",
       "SUBHEADER_APP": "Managing Business Roles and Permissions of the App"
     }
   },
@@ -134,24 +136,29 @@
     "ID": "App ID",
     "NAME": "Name",
     "TYPE": "Type",
-    "TYPE_WORKSPACE": "Workspace",
     "TYPE_APP": "App",
+    "TYPE_PRODUCT": "Product",
+    "TYPE_WORKSPACE": "Workspace",
     "DELETE": "Delete App including all permissions and roles",
     "DELETE_HEADER": "Delete App",
     "EDIT": "Edit App",
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
+      "NAME": "Name",
+      "NAME.TOOLTIP": "The corresponding name to match the App type (ignored by ALL)",
       "FILTER": {
         "LABEL": "App Type",
         "TOOLTIP": "Filter for App Type",
         "ALL": "All",
         "APP": "Apps",
+        "PRODUCT": "Products",
         "WORKSPACE": "Workspaces"
       },
       "QUICK_FILTER": {
         "TOOLTIP": "Quick Filter for App type",
         "ALL": "All",
         "APP": "Apps",
+        "PRODUCT": "Products",
         "WORKSPACE": "Workspaces"
       }
     }
@@ -221,7 +228,7 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APP": "Unknown problem retrieving App data - please try again.",
+      "APP": "Unknown problem retrieving App/Product data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
@@ -233,7 +240,7 @@
     },
     "HTTP_STATUS_403": {
       "APP": "You have no permissions to see App data.",
-      "APPS": "You have no permissions to see Apps.",
+      "APPS": "You have no permissions to see Apps/Products.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
       "ASSIGNMENTS": "You have no permissions to see Assignments.",
@@ -241,7 +248,7 @@
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
-      "APPS": "No Apps could be found.",
+      "APPS": "No Apps/Products could be found.",
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
@@ -249,8 +256,8 @@
       "WORKSPACE": "Workspace could not be found."
     },
     "HTTP_STATUS_500": {
-      "APP": "Unknown problem retrieving App data - please try again.",
-      "APPS": "Unknown problem retrieving App data - please try again.",
+      "APP": "Unknown problem retrieving App/Product data - please try again.",
+      "APPS": "Unknown problem retrieving App/Products data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",

@@ -6,8 +6,8 @@
     (resetted)="onSearchReset()"
     [manualBreadcrumbs]="false"
   >
-    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap gap-4 row-gap-3 px-2">
-      <div class="flex flex-wrap align-items-center ml-1 gap-2">
+    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 px-2">
+      <div class="flex flex-wrap flex-row align-items-center ml-1 gap-2">
         <div class="p-selectbutton-title opacity-90 text-sm" [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate">
           {{ 'APP.SEARCH.FILTER.LABEL' | translate }}
         </div>
@@ -17,10 +17,25 @@
             [options]="appTypeItems"
             formControlName="appType"
             [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate"
+            (onChange)="onAppTypeFilterChange($event)"
           >
             <ng-template let-item>{{ item.label | translate }}</ng-template>
           </p-selectButton>
         </div>
+      </div>
+      <div>
+        <span class="p-float-label">
+          <input
+            id="app_search_criteria_name"
+            pInputText
+            type="text"
+            formControlName="name"
+            class="w-15rem"
+            [clear]="true"
+            [title]="'APP.SEARCH.NAME.TOOLTIP' | translate"
+          />
+          <label for="app_search_criteria_name">{{ 'APP.SEARCH.NAME' | translate }}</label>
+        </span>
       </div>
     </div>
   </ocx-search-header>
@@ -52,7 +67,7 @@
         <ng-template pTemplate="header">
           <div class="flex flex-wrap align-items-center mx-1">
             <div class="flex flex-wrap align-items-center ml-1 gap-2">
-              <div class="data-view-control opacity-90 text-sm">Quick<br />Filter</div>
+              <div class="data-view-control opacity-90 text-sm text-right">Quick<br />Filter</div>
               <p-selectButton
                 inputid="app_search_quick_filter"
                 styleClass="data-view-control opacity-90"
@@ -94,9 +109,25 @@
               (click)="onAppClick($event, app)"
             >
               <div
+                *ngIf="app.appType === 'WORKSPACE'"
                 class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center"
               >
                 <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
+                <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
+              </div>
+              <div
+                *ngIf="app.appType === 'PRODUCT'"
+                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center"
+              >
+                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.productName, 20) }}</div>
+                <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
+              </div>
+              <div
+                *ngIf="app.appType === 'APP'"
+                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between text-center"
+              >
+                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
+                <div class="font-bold text-xs">{{ limitText(app.productName, 20) }}</div>
                 <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
             </div>

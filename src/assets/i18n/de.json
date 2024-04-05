@@ -125,8 +125,10 @@
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
+      "HEADER_PRODUCT": "Produkt: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
+      "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für das Produkt und dessen Apps",
       "SUBHEADER_APP": "Verwalten von Berechtigungen für die App"
     }
   },
@@ -134,24 +136,29 @@
     "ID": "App ID",
     "NAME": "Name",
     "TYPE": "Typ",
-    "TYPE_WORKSPACE": "Workspace",
     "TYPE_APP": "App",
+    "TYPE_PRODUCT": "Produkt",
+    "TYPE_WORKSPACE": "Workspace",
     "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
     "DELETE_HEADER": "App löschen",
     "EDIT": "App ändern",
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
+      "NAME": "Name",
+      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (ignoriert bei ALLE)",
       "FILTER": {
         "LABEL": "App Typ",
         "TOOLTIP": "Filter für App-Typ",
         "ALL": "Alle",
         "APP": "Apps",
+        "PRODUCT": "Produkte",
         "WORKSPACE": "Workspaces"
       },
       "QUICK_FILTER": {
-        "TOOLTIP": "Quickfilter für App Typ",
+        "TOOLTIP": "Quickfilter für App-Typ",
         "ALL": "Alle",
         "APP": "Apps",
+        "PRODUCT": "Produkte",
         "WORKSPACE": "Workspaces"
       }
     }
@@ -221,7 +228,7 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es noch einmal.",
+      "APP": "Unbekanntes Problem beim Abrufen von Apps/Produkten - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
@@ -232,8 +239,8 @@
       "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
     "HTTP_STATUS_403": {
-      "APP": "Sie haben keine Rechte um App Daten zu sehen.",
-      "APPS": "Sie haben keine Rechte um Apps zu sehen.",
+      "APP": "Sie haben keine Rechte um App/Produkt Daten zu sehen.",
+      "APPS": "Sie haben keine Rechte um Apps/Produkte zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
       "ASSIGNMENTS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
