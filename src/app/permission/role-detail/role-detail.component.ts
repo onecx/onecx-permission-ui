@@ -111,7 +111,7 @@ export class RoleDetailComponent implements OnChanges {
     }
   }
 
-  public onDeleteRoleConfirmation() {
+  public onDeleteConfirmation() {
     this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })

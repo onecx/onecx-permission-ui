@@ -12,9 +12,39 @@
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="app_detail_create_permission_name" formControlName="appId" />
-          <label class="ocx-required-label" for="app_detail_create_permission_name">
+          <input pInputText type="text" class="w-full" id="permission_detail_app_id" formControlName="appId" />
+          <label class="ocx-required-label" for="permission_detail_app_id">
             {{ 'PERMISSION.APP_ID' | translate }}
+          </label>
+        </span>
+      </div>
+      <div>
+        <span class="p-float-label" controlErrorAnchor>
+          <input
+            pInputText
+            type="text"
+            class="w-full"
+            id="permission_detail_product_name"
+            formControlName="productName"
+          />
+          <label class="ocx-required-label" for="permission_detail_product_name">
+            {{ 'PERMISSION.PRODUCT_NAME' | translate }}
+          </label>
+        </span>
+      </div>
+      <div>
+        <span class="p-float-label" controlErrorAnchor>
+          <input pInputText type="text" class="w-full" id="permission_detail_resource" formControlName="resource" />
+          <label class="ocx-required-label" for="permission_detail_resource">
+            {{ 'PERMISSION.RESOURCE' | translate }}
+          </label>
+        </span>
+      </div>
+      <div>
+        <span class="p-float-label" controlErrorAnchor>
+          <input pInputText type="text" class="w-full" id="permission_detail_action" formControlName="action" />
+          <label class="ocx-required-label" for="permission_detail_action">
+            {{ 'PERMISSION.ACTION' | translate }}
           </label>
         </span>
       </div>
@@ -24,10 +54,10 @@
             pInputText
             type="text"
             class="w-full"
-            id="app_detail_create_permission_description"
+            id="permission_detail_description"
             formControlName="description"
           />
-          <label for="app_detail_create_permission_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
+          <label for="permission_detail_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
         </span>
       </div>
     </div>
@@ -39,7 +69,7 @@
         autofocus
         type="button"
         class="m-0"
-        id="app_detail_create_permission_button_cancel"
+        id="permission_detail_button_cancel"
         icon="pi pi-times"
         iconPos="left"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -49,7 +79,7 @@
         pButton
         type="button"
         class="m-0"
-        id="app_detail_create_permission_button_save"
+        id="permission_detail_button_save"
         icon="pi pi-save"
         iconPos="left"
         [label]="'ACTIONS.SAVE' | translate"
@@ -74,7 +104,7 @@
   <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
     <div>
-      <div>
+      <div id="permission_delete_button_message">
         {{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', permission?.resource + '#' +
         permission?.action) }}
       </div>
@@ -87,6 +117,7 @@
         pButton
         autofocus
         type="button"
+        id="permission_delete_button_no"
         class="m-0"
         icon="pi pi-times"
         iconPos="left"
@@ -96,6 +127,7 @@
       <button
         pButton
         type="button"
+        id="permission_delete_button_yes"
         class="m-0"
         icon="pi pi-check"
         iconPos="left"

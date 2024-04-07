@@ -186,8 +186,8 @@
   },
   "PERMISSION": {
     "LABEL": "Permissions",
-    "APP_ID": "App",
-    "PRODUCT_NAME": "Name",
+    "APP_ID": "App ID",
+    "PRODUCT_NAME": "Product Name",
     "DESCRIPTION": "Description",
     "RESOURCE": "Resource",
     "ACTION": "Action",
@@ -201,8 +201,10 @@
       "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
+      "GRANT_ALL_SUCCESS": "Permissions granted",
       "REVOKE_ERROR": "Permission could not be revoked",
-      "REVOKE_SUCCESS": "Permission revoked"
+      "REVOKE_SUCCESS": "Permission revoked",
+      "REVOKE_ALL_SUCCESS": "Permissions revoked"
     },
     "SORT": {
       "APP_ID": "Sorting by App IDs",

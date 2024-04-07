@@ -8,15 +8,15 @@
   >
     <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 px-2">
       <div class="flex flex-wrap flex-row align-items-center ml-1 gap-2">
-        <div class="p-selectbutton-title opacity-90 text-sm" [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate">
-          {{ 'APP.SEARCH.FILTER.LABEL' | translate }}
+        <div class="p-selectbutton-title opacity-90 text-sm" [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate">
+          {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}
         </div>
         <div class="search-criteria-selectbutton">
           <p-selectButton
             inputid="app_search_criteria_app_type"
             [options]="appTypeItems"
             formControlName="appType"
-            [title]="'APP.SEARCH.FILTER.TOOLTIP' | translate"
+            [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
             (onChange)="onAppTypeFilterChange($event)"
           >
             <ng-template let-item>{{ item.label | translate }}</ng-template>

@@ -73,10 +73,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
     this.appSearchCriteriaGroup.controls['name'].disable()
     this.appTypeItems = [
-      { label: 'APP.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'APP.SEARCH.FILTER.APP', value: 'APP' },
-      { label: 'APP.SEARCH.FILTER.PRODUCT', value: 'PRODUCT' },
-      { label: 'APP.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
+      { label: 'DIALOG.SEARCH.FILTER.ALL', value: 'ALL' },
+      { label: 'DIALOG.SEARCH.FILTER.APP', value: 'APP' },
+      { label: 'DIALOG.SEARCH.FILTER.PRODUCT', value: 'PRODUCT' },
+      { label: 'DIALOG.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
     this.quickFilterItems = [
       { label: 'DIALOG.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },

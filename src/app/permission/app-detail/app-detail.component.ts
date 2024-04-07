@@ -671,7 +671,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
       .subscribe({
         next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
           this.loadRoleAssignments(true)
         },
         error: (err) => {
@@ -689,7 +689,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
       .subscribe({
         next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
           this.loadRoleAssignments(true)
         },
         error: (err) => {

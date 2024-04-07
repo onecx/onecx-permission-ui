@@ -186,8 +186,8 @@
   },
   "PERMISSION": {
     "LABEL": "Berechtigungen",
-    "APP_ID": "App",
-    "PRODUCT_NAME": "Name",
+    "APP_ID": "App ID",
+    "PRODUCT_NAME": "Produktname",
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
     "ACTION": "Aktion",
@@ -201,8 +201,10 @@
       "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
       "GRANT_SUCCESS": "Berechtigung erteilt",
+      "GRANT_ALL_SUCCESS": "Berechtigungen erteilt",
       "REVOKE_ERROR": "Berechtigung konnte nicht entzogen werden",
-      "REVOKE_SUCCESS": "Berechtigung entzogen"
+      "REVOKE_SUCCESS": "Berechtigung entzogen",
+      "REVOKE_ALL_SUCCESS": "Berechtigungen entzogen"
     },
     "SORT": {
       "APP_ID": "Sortierung nach App IDs",

@@ -12,20 +12,14 @@
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="app_detail_create_role_name" formControlName="name" />
-          <label class="ocx-required-label" for="app_detail_create_role_name"> {{ 'ROLE.NAME' | translate }} </label>
+          <input pInputText type="text" class="w-full" id="role_detail_name" formControlName="name" />
+          <label class="ocx-required-label" for="role_detail_name"> {{ 'ROLE.NAME' | translate }} </label>
         </span>
       </div>
       <div>
         <span class="p-float-label">
-          <input
-            pInputText
-            type="text"
-            class="w-full"
-            id="app_detail_create_role_description"
-            formControlName="description"
-          />
-          <label for="app_detail_create_role_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
+          <input pInputText type="text" class="w-full" id="role_detail_description" formControlName="description" />
+          <label for="role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
         </span>
       </div>
     </div>
@@ -36,8 +30,8 @@
         pButton
         autofocus
         type="button"
+        id="role_detail_button_cancel"
         class="m-0"
-        id="app_detail_create_role_button_cancel"
         icon="pi pi-times"
         iconPos="left"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -46,8 +40,8 @@
       <button
         pButton
         type="button"
+        id="role_detail_button_save"
         class="m-0"
-        id="app_detail_create_role_button_save"
         icon="pi pi-save"
         iconPos="left"
         [label]="'ACTIONS.SAVE' | translate"
@@ -82,6 +76,7 @@
         pButton
         autofocus
         type="button"
+        id="role_delete_button_no"
         class="m-0"
         icon="pi pi-times"
         iconPos="left"
@@ -91,11 +86,12 @@
       <button
         pButton
         type="button"
+        id="role_delete_button_yes"
         class="m-0"
         icon="pi pi-check"
         iconPos="left"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
-        (click)="onDeleteRoleConfirmation()"
+        (click)="onDeleteConfirmation()"
       ></button>
     </div>
   </ng-template>
