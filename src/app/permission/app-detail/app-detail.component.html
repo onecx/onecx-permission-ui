@@ -239,7 +239,7 @@
                     [showClear]="true"
                     [options]="filterProductItems"
                     [(ngModel)]="filterProductValue"
-                    (onChange)="permissionTable.filter($event.value, 'productName', 'equals')"
+                    (onChange)="onFilterItemChangeProduct($event)"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                     [title]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   ></p-dropdown>

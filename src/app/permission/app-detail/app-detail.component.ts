@@ -400,9 +400,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  private prepareFilterApps() {
+  private prepareFilterApps(selectedProductName?: string) {
     this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
-    if (this.permissions.length > 0 && this.productApps.length > 0)
+    if (this.productApps.length > 0)
+      this.productApps.map((app) => {
+        //if (this.filterAppItems.filter((item) => item.label === app.productName && item.value === app.appId).length === 0)
+        if (!selectedProductName || (selectedProductName && app.productName === selectedProductName))
+          this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
+      })
+
+    /*  if (this.permissions.length > 0 && this.productApps.length > 0)
       this.permissions.map((p) => {
         // get the app name from product apps - needed for label
         const app = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
@@ -413,7 +420,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           ) {
             this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
           }
-      })
+      }) */
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map
@@ -559,9 +566,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onFilterItemClearAppId() {
     this.filterAppValue = this.currentApp.appId
-    if (this.permissionTable) {
-      this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
-    }
+    this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+  }
+
+  // if product name selected then reload app id filter
+  public onFilterItemChangeProduct(ev: any) {
+    this.filterProductValue = ev.value
+    this.filterAppValue = undefined
+    this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+    this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
+    this.prepareFilterApps(this.filterProductValue)
   }
 
   /****************************************************************************
