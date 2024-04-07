@@ -86,13 +86,15 @@
         "LABEL": "Filter",
         "OF": "Filter für ",
         "CLEAR": "Filter entfernen",
-        "MODE_NOT_CONTAINS": "Filterwert nicht enthalten",
-        "MODE_CONTAINS": "Filterwert enthalten"
+        "MODE_CONTAINS": "Filterwert enthalten",
+        "MODE_NOT_CONTAINS": "Filterwert nicht enthalten"
       }
     },
     "VIEW": {
       "ROLE": "Rollendetails",
-      "PERMISSION": "Berechtigungsdetails"
+      "ROLE.TOOLS": "Rollen verwalten",
+      "PERMISSION": "Berechtigungsdetails",
+      "PERMISSION.TOOLS": "Berechtigungen verwalten"
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
@@ -121,7 +123,23 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Berechtigungs-Verwaltung",
-      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces"
+      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
+      "QUICK_FILTER": {
+        "LABEL": "Typ",
+        "TOOLTIP": "Quickfilter für App-Typ",
+        "ALL": "Alle",
+        "APP": "Apps",
+        "PRODUCT": "Produkte",
+        "WORKSPACE": "Workspaces"
+      },
+      "FILTER": {
+        "LABEL": "App Typ",
+        "TOOLTIP": "Filter für App-Typ",
+        "ALL": "Alle",
+        "APP": "Apps",
+        "PRODUCT": "Produkte",
+        "WORKSPACE": "Workspaces"
+      }
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
@@ -129,7 +147,25 @@
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
       "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für das Produkt und dessen Apps",
-      "SUBHEADER_APP": "Verwalten von Berechtigungen für die App"
+      "SUBHEADER_APP": "Verwalten von Berechtigungen für die App",
+      "QUICK_FILTER": {
+        "LABEL": "Action",
+        "TOOLTIP": "Quick Filter for Action",
+        "ALL": "Alle",
+        "VIEW": "VIEW",
+        "EDIT": "EDIT",
+        "DELETE": "DELETE",
+        "OTHERS": "OTHERS"
+      },
+      "FILTER": {
+        "APPS": "App",
+        "APP_TYPE": "Typ",
+        "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
+        "PRODUCT": "Produkt",
+        "PRODUCT.TOOLTIP": "Registrierte Produkte im Workspace",
+        "WORKSPACE": "Workspace",
+        "TOOLTIP": "Set filter value"
+      }
     }
   },
   "APP": {
@@ -145,32 +181,17 @@
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (ignoriert bei ALLE)",
-      "FILTER": {
-        "LABEL": "App Typ",
-        "TOOLTIP": "Filter für App-Typ",
-        "ALL": "Alle",
-        "APP": "Apps",
-        "PRODUCT": "Produkte",
-        "WORKSPACE": "Workspaces"
-      },
-      "QUICK_FILTER": {
-        "TOOLTIP": "Quickfilter für App-Typ",
-        "ALL": "Alle",
-        "APP": "Apps",
-        "PRODUCT": "Produkte",
-        "WORKSPACE": "Workspaces"
-      }
+      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (ignoriert bei ALLE)"
     }
   },
   "PERMISSION": {
+    "LABEL": "Berechtigungen",
     "APP_ID": "App",
-    "NAME": "Name",
+    "PRODUCT_NAME": "Name",
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
     "ACTION": "Aktion",
     "KEY": "Ressource # Aktion",
-    "LABEL": "Berechtigungen",
     "ACTIONS": "Aktionen",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
@@ -186,22 +207,6 @@
     "SORT": {
       "APP_ID": "Sortierung nach App IDs",
       "PRODUCT": "Sortierung nach Produkt und App IDs"
-    },
-    "SEARCH": {
-      "FILTER": {
-        "APPS": "App",
-        "APP_TYPE": "Typ",
-        "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Produkt",
-        "PRODUCT.TOOLTIP": "Die beim Workspace registrierten Produkte",
-        "WORKSPACE": "Workspace",
-        "TOOLTIP": "Filterwert",
-        "ALL": "Alle",
-        "VIEW": "VIEW",
-        "EDIT": "EDIT",
-        "DELETE": "DELETE",
-        "OTHERS": "Andere"
-      }
     }
   },
   "ROLE": {

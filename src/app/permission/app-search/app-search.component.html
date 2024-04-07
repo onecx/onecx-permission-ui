@@ -67,14 +67,16 @@
         <ng-template pTemplate="header">
           <div class="flex flex-wrap align-items-center mx-1">
             <div class="flex flex-wrap align-items-center ml-1 gap-2">
-              <div class="data-view-control opacity-90 text-sm text-right">Quick<br />Filter</div>
+              <div class="data-view-control opacity-90 text-sm text-right">
+                {{ 'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate }}
+              </div>
               <p-selectButton
                 inputid="app_search_quick_filter"
                 styleClass="data-view-control opacity-90"
                 [options]="quickFilterItems"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
-                [title]="'APP.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+                [title]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
               >
                 <ng-template let-item>{{ item.label | translate }}</ng-template>
               </p-selectButton>

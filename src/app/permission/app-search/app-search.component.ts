@@ -46,10 +46,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterValue: AppFilterType = 'ALL'
   public quickFilterItems: SelectItem[]
   public filterValue: string | undefined
-  public filterValueDefault = 'appId,appType'
+  public filterValueDefault = 'appType,appId'
   public filterBy = this.filterValueDefault || 'appType'
   public filter: string | undefined
-  public sortField = 'appId'
+  public sortField = 'appType'
   public sortOrder = 1
   public searchInProgress = false
   public limitText = limitText
@@ -79,9 +79,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       { label: 'APP.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
     this.quickFilterItems = [
-      { label: 'APP.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'APP.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' },
-      { label: 'APP.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
+      { label: 'DIALOG.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
+      { label: 'DIALOG.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' },
+      { label: 'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
   }
 

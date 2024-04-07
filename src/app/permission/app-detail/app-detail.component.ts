@@ -2,7 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
@@ -94,17 +93,22 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // permission management
   private permissions$!: Observable<PermissionPageResult>
   public permissions!: Permission[]
+  public permission: PermissionViewRow | undefined
   public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
+  public showPermissionDetailDialog = false
+  public showPermissionDeleteDialog = false
+  public showPermissionTools = false
+
   // role management
   private roles$!: Observable<RolePageResult>
   public roles!: PermissionRole[]
   public role: Role | undefined
   public missingWorkspaceRoles = false
-  public formGroupRole: FormGroup
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
+  public showRoleTools = false
 
   constructor(
     private appApi: ApplicationAPIService,
@@ -123,20 +127,31 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
+    if (userService.hasPermission('ROLE#CREATE')) this.myPermissions.push('ROLE#CREATE')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
+    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
+    if (userService.hasPermission('PERMISSION#CREATE')) this.myPermissions.push('PERMISSION#CREATE')
+    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
     if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
+    if (
+      userService.hasPermission('ROLE#EDIT') ||
+      userService.hasPermission('ROLE#CREATE') ||
+      userService.hasPermission('ROLE#DELETE')
+    )
+      this.myPermissions.push('ROLE#MANAGE')
+    if (
+      userService.hasPermission('PERMISSION#EDIT') ||
+      userService.hasPermission('PERMISSION#CREATE') ||
+      userService.hasPermission('PERMISSION#DELETE')
+    )
+      this.myPermissions.push('PERMISSION#MANAGE')
 
-    this.formGroupRole = new FormGroup({
-      id: new FormControl(null),
-      name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      description: new FormControl(null)
-    })
     this.filterMode = FilterMatchMode.CONTAINS
     this.quickFilterItems = [
-      { label: 'PERMISSION.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
-      { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
-      { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.ALL', value: 'ALL' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.DELETE', value: 'DELETE' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.EDIT', value: 'EDIT' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' }
     ]
   }
 
@@ -305,9 +320,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return this.permissions$.pipe(
       map((result) => {
         return result.stream
-          ? result.stream?.map((permission) => {
-              this.permissions.push(permission)
-              return permission
+          ? result.stream?.map((perm) => {
+              this.permissions.push(perm)
+              return perm
             })
           : []
       })
@@ -411,18 +426,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     }
     this.permissionRows = []
-    for (const permission of this.permissions) {
-      const products = this.filterProductItems.filter((p) => p.value === permission.productName)
-      const apps = this.filterAppItems.filter((p) => p.value === permission.appId)
+    for (const perm of this.permissions) {
+      const products = this.filterProductItems.filter((p) => p.value === perm.productName)
+      const apps = this.filterAppItems.filter((p) => p.value === perm.appId)
       this.permissionRows.push({
-        ...permission,
-        key: permission.resource + '#' + permission.action,
+        ...perm,
+        key: perm.resource + '#' + perm.action,
         productDisplayName: this.currentApp.isProduct
-          ? permission.productName
+          ? perm.productName
           : products.length > 0
           ? products[0].label
-          : permission.productName,
-        appDisplayName: apps.length > 0 ? apps[0].label : permission.appId,
+          : perm.productName,
+        appDisplayName: apps.length > 0 ? apps[0].label : perm.appId,
         roles: {}
       } as PermissionViewRow)
     }
@@ -459,8 +474,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           // Permission (row): id, appId, resource, action
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
-            permissions.map((permission) => {
-              permission.roles[assignment.roleId!] = assignment.id
+            permissions.map((perm) => {
+              perm.roles[assignment.roleId!] = assignment.id
             })
           })
           this.loading = false
@@ -550,7 +565,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   /****************************************************************************
-   *  ROLE    => if currentApp is workspace
+   *  ROLE
    ****************************************************************************
    */
   public onCreateRole(ev?: MouseEvent): void {
@@ -571,12 +586,42 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
   }
-  public onRoleChanged(changed: boolean) {
+  public onDetailChanged(changed: boolean) {
     this.role = undefined
+    this.permission = undefined
     this.changeMode = 'VIEW'
+    this.showPermissionDetailDialog = false
+    this.showPermissionDeleteDialog = false
     this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
     if (changed) this.loadData()
+  }
+
+  /****************************************************************************
+   *  PERMISSION
+   ****************************************************************************
+   */
+  public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    this.onEditPermission(ev, perm)
+    this.changeMode = 'CREATE'
+  }
+  public onCreatePermission(ev?: MouseEvent): void {
+    ev?.stopPropagation()
+    this.role = undefined
+    this.changeMode = 'CREATE'
+    this.showPermissionDetailDialog = true
+  }
+  public onEditPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    ev.stopPropagation()
+    this.permission = perm
+    this.changeMode = 'EDIT'
+    this.showPermissionDetailDialog = true
+  }
+  public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    ev.stopPropagation()
+    this.permission = perm
+    this.changeMode = 'DELETE'
+    this.showPermissionDeleteDialog = true
   }
 
   /****************************************************************************
