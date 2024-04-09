@@ -13,6 +13,7 @@
 
 export interface CreateProductAssignmentsRequest { 
     roleId: string;
-    productNames: Array<string>;
+    appId?: string;
+    productNames?: Array<string>;
 }
 

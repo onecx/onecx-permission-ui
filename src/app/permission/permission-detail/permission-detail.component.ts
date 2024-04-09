@@ -42,13 +42,16 @@ export class PermissionDetailComponent implements OnChanges {
 
   public ngOnChanges(): void {
     this.formGroup.reset()
-    if (this.changeMode === 'EDIT' && this.permission) {
+    if (this.permission) {
       this.formGroup.controls['appId'].patchValue(this.permission.appId)
       this.formGroup.controls['productName'].patchValue(this.permission.productName)
       this.formGroup.controls['resource'].patchValue(this.permission.resource)
       this.formGroup.controls['action'].patchValue(this.permission.action)
       this.formGroup.controls['description'].patchValue(this.permission.description)
     }
+    if (this.userService.hasPermission('PERMISSION#EDIT') || this.userService.hasPermission('PERMISSION#CREATE'))
+      this.formGroup.enable()
+    else this.formGroup.disable()
   }
 
   public onClose(): void {
@@ -77,7 +80,7 @@ export class PermissionDetailComponent implements OnChanges {
       return
     }
     if (this.changeMode === 'CREATE') {
-      console.info('form valid ' + this.changeMode)
+      console.info('form valid ' + this.formGroup.valid)
       /*       const permission = {
         appId: this.formGroup.controls['appId'].value,
         productName: this.formGroup.controls['productName'].value,
@@ -101,6 +104,7 @@ export class PermissionDetailComponent implements OnChanges {
         })
  */
     } else {
+      console.info('form valid ' + this.formGroup.valid)
       //const roleNameChanged = this.formGroup.controls['name'].value !== this.permission?.name
       /*       const permission = {
         modificationCount: this.permission?.modificationCount,
@@ -126,6 +130,7 @@ export class PermissionDetailComponent implements OnChanges {
   }
 
   public onDeleteConfirmation() {
+    console.info('form valid ' + this.formGroup.valid)
     /*     this.permApi.deletePermission({ id: this.permission?.id ?? '' }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })

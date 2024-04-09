@@ -13,6 +13,7 @@
 
 export interface AssignmentSearchCriteria { 
     appIds?: Array<string>;
+    roleId?: string;
     /**
      * The number of page.
      */
