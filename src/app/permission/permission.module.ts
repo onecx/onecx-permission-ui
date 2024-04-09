@@ -10,6 +10,7 @@ import { LabelResolver } from 'src/app/shared/label.resolver'
 import { AppSearchComponent } from './app-search/app-search.component'
 import { AppDetailComponent } from './app-detail/app-detail.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
+import { PermissionDetailComponent } from './permission-detail/permission-detail.component'
 
 const routes: Routes = [
   {
@@ -30,7 +31,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [AppSearchComponent, AppDetailComponent, RoleDetailComponent],
+  declarations: [AppSearchComponent, AppDetailComponent, RoleDetailComponent, PermissionDetailComponent],
   imports: [
     CommonModule,
     FormsModule,

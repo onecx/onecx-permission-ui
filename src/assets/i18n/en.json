@@ -92,7 +92,9 @@
     },
     "VIEW": {
       "ROLE": "Role Details",
-      "PERMISSION": "Permission Details"
+      "ROLE.TOOLS": "Manage Roles",
+      "PERMISSION": "Permission Details",
+      "PERMISSION.TOOLS": "Manage Permissions"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
@@ -121,7 +123,23 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Permission Management",
-      "SUBHEADER": "Management of app and workspace permissions"
+      "SUBHEADER": "Management of app and workspace permissions",
+      "QUICK_FILTER": {
+        "LABEL": "Type",
+        "TOOLTIP": "Quick Filter for App type",
+        "ALL": "All",
+        "APP": "Apps",
+        "PRODUCT": "Products",
+        "WORKSPACE": "Workspaces"
+      },
+      "FILTER": {
+        "LABEL": "App Type",
+        "TOOLTIP": "Filter for App Type",
+        "ALL": "All",
+        "APP": "Apps",
+        "PRODUCT": "Products",
+        "WORKSPACE": "Workspaces"
+      }
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
@@ -129,7 +147,25 @@
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
       "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Product including all of its Apps",
-      "SUBHEADER_APP": "Managing Business Roles and Permissions of the App"
+      "SUBHEADER_APP": "Managing Business Roles and Permissions of the App",
+      "QUICK_FILTER": {
+        "LABEL": "Type",
+        "TOOLTIP": "Quick Filter for Action",
+        "ALL": "All",
+        "VIEW": "VIEW",
+        "EDIT": "EDIT",
+        "DELETE": "DELETE",
+        "OTHERS": "OTHERS"
+      },
+      "FILTER": {
+        "APPS": "App",
+        "APP_TYPE": "Type",
+        "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
+        "PRODUCT": "Product",
+        "PRODUCT.TOOLTIP": "The products registered in the workspace",
+        "WORKSPACE": "Workspace",
+        "TOOLTIP": "Set filter value"
+      }
     }
   },
   "APP": {
@@ -145,32 +181,17 @@
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "The corresponding name to match the App type (ignored by ALL)",
-      "FILTER": {
-        "LABEL": "App Type",
-        "TOOLTIP": "Filter for App Type",
-        "ALL": "All",
-        "APP": "Apps",
-        "PRODUCT": "Products",
-        "WORKSPACE": "Workspaces"
-      },
-      "QUICK_FILTER": {
-        "TOOLTIP": "Quick Filter for App type",
-        "ALL": "All",
-        "APP": "Apps",
-        "PRODUCT": "Products",
-        "WORKSPACE": "Workspaces"
-      }
+      "NAME.TOOLTIP": "The corresponding name to match the App type (ignored by ALL)"
     }
   },
   "PERMISSION": {
-    "APP_ID": "App",
-    "NAME": "Name",
+    "LABEL": "Permissions",
+    "APP_ID": "App ID",
+    "PRODUCT_NAME": "Product Name",
     "DESCRIPTION": "Description",
     "RESOURCE": "Resource",
     "ACTION": "Action",
     "KEY": "Resource # Action",
-    "LABEL": "Permissions",
     "ACTIONS": "Actions",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
@@ -180,28 +201,14 @@
       "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
+      "GRANT_ALL_SUCCESS": "Permissions granted",
       "REVOKE_ERROR": "Permission could not be revoked",
-      "REVOKE_SUCCESS": "Permission revoked"
+      "REVOKE_SUCCESS": "Permission revoked",
+      "REVOKE_ALL_SUCCESS": "Permissions revoked"
     },
     "SORT": {
       "APP_ID": "Sorting by App IDs",
       "PRODUCT": "Sorting by Product und App IDs"
-    },
-    "SEARCH": {
-      "FILTER": {
-        "APPS": "App",
-        "APP_TYPE": "Type",
-        "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Product",
-        "PRODUCT.TOOLTIP": "The products registered in the workspace",
-        "WORKSPACE": "Workspace",
-        "TOOLTIP": "Set filter value",
-        "ALL": "All",
-        "VIEW": "VIEW",
-        "EDIT": "EDIT",
-        "DELETE": "DELETE",
-        "OTHERS": "OTHERS"
-      }
     }
   },
   "ROLE": {

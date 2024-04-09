@@ -39,14 +39,16 @@
         <ng-template pTemplate="caption">
           <div class="flex flex-wrap justify-content-between row-gap-1 p-1">
             <div class="flex align-items-center ml-1 gap-2">
-              <div class="data-view-control opacity-90 text-sm">Quick<br />Filter</div>
+              <div class="data-view-control opacity-90 text-sm">
+                {{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}
+              </div>
               <p-selectButton
                 inputid="app_detail_permission_table_quick_filter"
                 styleClass="data-view-control opacity-90"
                 [options]="quickFilterItems"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
-                title="{{ 'PERMISSION.SEARCH.FILTER.TOOLTIP' | translate }}"
+                [title]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
               >
                 <ng-template let-item>{{ item.label | translate }}</ng-template>
               </p-selectButton>
@@ -111,9 +113,7 @@
           <tr>
             <th
               id="app_detail_permission_table_header_permissions"
-              [attr.colspan]="
-                myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 4 : 3
-              "
+              [attr.colspan]="!showPermissionTools ? 3 : 4"
               class="opacity-80 text-center border-right-primary"
               [ngClass]="
                 myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE')
@@ -124,6 +124,28 @@
               <div class="flex justify-content-evenly align-items-center">
                 <div class="flex justify-content-center align-items-center">
                   <span class="inline-block font-bold">{{ 'PERMISSION.LABEL' | translate }} </span>
+                  <button
+                    pbutton
+                    type="button"
+                    *ngIf="myPermissions.includes('PERMISSION#MANAGE') && !showPermissionTools"
+                    [id]="'apm_application_detail_permission_table_header_permission_tools'"
+                    (click)="showPermissionTools = true"
+                    [title]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
+                    class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  >
+                    <span class="text-primary font-medium p-button-icon pi pi-cog" aria-hidden="true"></span>
+                  </button>
+                  <button
+                    pbutton
+                    type="button"
+                    *ngIf="showPermissionTools"
+                    [id]="'apm_application_detail_permission_table_header_permission_create'"
+                    (click)="onCreatePermission()"
+                    [title]="'ACTIONS.CREATE.PERMISSION' | translate"
+                    class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  >
+                    <span class="text-primary font-medium p-button-icon pi pi-plus-circle" aria-hidden="true"></span>
+                  </button>
                 </div>
               </div>
             </th>
@@ -134,22 +156,33 @@
               [title]="'ROLE.TOOLTIP' | translate"
             >
               <div class="flex justify-content-center align-items-center">
-                <span class="inline-block font-bold pr-2">{{ 'ROLE.LABEL' | translate }}</span>
+                <span class="inline-block font-bold">{{ 'ROLE.LABEL' | translate }}</span>
                 <button
                   pbutton
                   type="button"
-                  *ocxIfPermission="'ROLE#CREATE'"
+                  *ngIf="myPermissions.includes('ROLE#MANAGE') && !showRoleTools"
+                  [id]="'apm_application_detail_permission_table_header_permission_tools'"
+                  (click)="showRoleTools = true"
+                  [title]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
+                  class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                >
+                  <span class="text-primary font-medium p-button-icon pi pi-cog" aria-hidden="true"></span>
+                </button>
+                <button
+                  pbutton
+                  type="button"
+                  *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                   [id]="'app_detail_permission_table_header_add_role_action'"
                   (click)="onCreateRole($event)"
                   [title]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
-                  class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  class="pr-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-plus-circle" aria-hidden="true"></span>
                 </button>
                 <button
                   pbutton
                   type="button"
-                  *ocxIfPermission="'ROLE#CREATE'"
+                  *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                   [id]="'app_detail_permission_table_header_add_idm_roles_action'"
                   (click)="onCreateIDMRoles($event)"
                   [disabled]="true"
@@ -162,7 +195,7 @@
                   <button
                     pbutton
                     type="button"
-                    *ocxIfPermission="'ROLE#CREATE'"
+                    *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                     [id]="'app_detail_permission_table_header_add_workspace_roles_action'"
                     (click)="onCreateWorkspaceRoles($event)"
                     [title]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
@@ -178,6 +211,13 @@
           <!-- 2. header row: permission filter and role management -->
           <tr>
             <th
+              *ngIf="showPermissionTools"
+              id="app_detail_permission_table_header_actions"
+              class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
+            >
+              {{ 'PERMISSION.ACTIONS' | translate }}
+            </th>
+            <th
               pSortableColumn="key"
               id="app_detail_permission_table_header_permission_key"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
@@ -189,7 +229,7 @@
               id="app_detail_permission_table_header_permission_filter_product"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
-              <div *ngIf="currentApp.isProduct">{{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</div>
+              <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
               <div *ngIf="!currentApp.isProduct" class="flex">
                 <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
@@ -199,12 +239,12 @@
                     [showClear]="true"
                     [options]="filterProductItems"
                     [(ngModel)]="filterProductValue"
-                    (onChange)="permissionTable.filter($event.value, 'productName', 'equals')"
+                    (onChange)="onFilterItemChangeProduct($event)"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                    [title]="'PERMISSION.SEARCH.FILTER.PRODUCT.TOOLTIP' | translate"
+                    [title]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   ></p-dropdown>
                   <label for="app_detail_permission_table_filter_product_name">
-                    {{ 'PERMISSION.SEARCH.FILTER.PRODUCT' | translate }}</label
+                    {{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</label
                   >
                 </span>
                 <button
@@ -237,7 +277,7 @@
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
                   ></p-dropdown>
                   <label for="app_detail_permission_table_filter_app_id">
-                    {{ 'PERMISSION.SEARCH.FILTER.APPS' | translate }}</label
+                    {{ 'DIALOG.DETAIL.FILTER.APPS' | translate }}</label
                   >
                 </span>
                 <button
@@ -264,7 +304,7 @@
                   <button
                     pbutton
                     type="button"
-                    *ngIf="myPermissions.includes('ROLE#DELETE')"
+                    *ngIf="myPermissions.includes('ROLE#DELETE') && showRoleTools"
                     [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                     (click)="onDeleteRole($event, role)"
                     [title]="'ACTIONS.DELETE.ROLE' | translate"
@@ -275,7 +315,7 @@
                   <button
                     pbutton
                     type="button"
-                    *ngIf="myPermissions.includes('ROLE#EDIT')"
+                    *ngIf="myPermissions.includes('ROLE#EDIT') && showRoleTools"
                     [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                     (click)="onEditRole($event, role)"
                     [title]="'ACTIONS.EDIT.ROLE' | translate"
@@ -316,6 +356,45 @@
 
         <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
           <tr [id]="'app_detail_permission_table_row_' + row">
+            <td
+              *ngIf="showPermissionTools"
+              id="app_detail_permission_table_header_actions"
+              class="pt-2 pb-1 px-2 white-space-nowrap"
+            >
+              <button
+                pbutton
+                type="button"
+                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
+                [id]="'app_detail_permission_table_row_' + row + '_edit_action'"
+                (click)="onEditPermission($event, rowData)"
+                [title]="'ACTIONS.EDIT.PERMISSION' | translate"
+                class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              >
+                <span class="text-primary font-medium p-button-icon pi pi-pencil" aria-hidden="true"></span>
+              </button>
+              <button
+                pbutton
+                type="button"
+                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
+                [id]="'app_detail_permission_table_row_' + row + '_copy_action'"
+                (click)="onCopyPermission($event, rowData)"
+                [title]="'ACTIONS.COPY.PERMISSION' | translate"
+                class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              >
+                <span class="text-primary font-medium p-button-icon pi pi-copy" aria-hidden="true"></span>
+              </button>
+              <button
+                pbutton
+                type="button"
+                *ngIf="myPermissions.includes('PERMISSION#DELETE')"
+                [id]="'app_detail_permission_table_row_' + row + '_delete_action'"
+                (click)="onDeletePermission($event, rowData)"
+                [title]="'ACTIONS.DELETE.PERMISSION' | translate"
+                class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              >
+                <span class="danger-action-text font-medium p-button-icon pi pi-trash" aria-hidden="true"></span>
+              </button>
+            </td>
             <td
               id="app_detail_permission_table_data_permission_key"
               class="text-left p-2 white-space-nowrap sm:white-space-normal"
@@ -398,5 +477,15 @@
   [changeMode]="changeMode"
   [displayDetailDialog]="showRoleDetailDialog"
   [displayDeleteDialog]="showRoleDeleteDialog"
-  (dataChanged)="onRoleChanged($event)"
+  (dataChanged)="onDetailChanged($event)"
 ></app-role-detail>
+
+<app-permission-detail
+  [currentApp]="currentApp"
+  [permissions]="permissions"
+  [permission]="permission"
+  [changeMode]="changeMode"
+  [displayDetailDialog]="showPermissionDetailDialog"
+  [displayDeleteDialog]="showPermissionDeleteDialog"
+  (dataChanged)="onDetailChanged($event)"
+></app-permission-detail>

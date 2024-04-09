@@ -13,6 +13,7 @@
 
 export interface RevokeAssignmentRequest { 
     roleId: string;
+    appId?: string;
     permissionId?: string;
     productNames?: Array<string>;
 }

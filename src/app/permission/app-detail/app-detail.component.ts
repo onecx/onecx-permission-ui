@@ -2,7 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
@@ -87,24 +86,29 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // permission filter
   public filterProductItems!: SelectItem[]
   public filterProductValue: string | undefined = undefined
-  public filterAppItems: SelectItem[] = new Array<SelectItem>()
+  public filterAppItems!: SelectItem[]
   public filterAppValue: string | undefined = undefined
   private productApps: App[] = []
 
   // permission management
   private permissions$!: Observable<PermissionPageResult>
   public permissions!: Permission[]
+  public permission: PermissionViewRow | undefined
   public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
+  public showPermissionDetailDialog = false
+  public showPermissionDeleteDialog = false
+  public showPermissionTools = false
+
   // role management
   private roles$!: Observable<RolePageResult>
   public roles!: PermissionRole[]
   public role: Role | undefined
   public missingWorkspaceRoles = false
-  public formGroupRole: FormGroup
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
+  public showRoleTools = false
 
   constructor(
     private appApi: ApplicationAPIService,
@@ -123,20 +127,31 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
+    if (userService.hasPermission('ROLE#CREATE')) this.myPermissions.push('ROLE#CREATE')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
+    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
+    if (userService.hasPermission('PERMISSION#CREATE')) this.myPermissions.push('PERMISSION#CREATE')
+    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
     if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
+    if (
+      userService.hasPermission('ROLE#EDIT') ||
+      userService.hasPermission('ROLE#CREATE') ||
+      userService.hasPermission('ROLE#DELETE')
+    )
+      this.myPermissions.push('ROLE#MANAGE')
+    if (
+      userService.hasPermission('PERMISSION#EDIT') ||
+      userService.hasPermission('PERMISSION#CREATE') ||
+      userService.hasPermission('PERMISSION#DELETE')
+    )
+      this.myPermissions.push('PERMISSION#MANAGE')
 
-    this.formGroupRole = new FormGroup({
-      id: new FormControl(null),
-      name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      description: new FormControl(null)
-    })
     this.filterMode = FilterMatchMode.CONTAINS
     this.quickFilterItems = [
-      { label: 'PERMISSION.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'PERMISSION.SEARCH.FILTER.DELETE', value: 'DELETE' },
-      { label: 'PERMISSION.SEARCH.FILTER.EDIT', value: 'EDIT' },
-      { label: 'PERMISSION.SEARCH.FILTER.VIEW', value: 'VIEW' }
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.ALL', value: 'ALL' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.DELETE', value: 'DELETE' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.EDIT', value: 'EDIT' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' }
     ]
   }
 
@@ -305,9 +320,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return this.permissions$.pipe(
       map((result) => {
         return result.stream
-          ? result.stream?.map((permission) => {
-              this.permissions.push(permission)
-              return permission
+          ? result.stream?.map((perm) => {
+              this.permissions.push(perm)
+              return perm
             })
           : []
       })
@@ -328,6 +343,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     )
   }
+  // does the workspace have roles which are not exist in permission product?
   private checkWorkspaceRoles() {
     if (this.currentApp.isProduct) return
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
@@ -385,19 +401,27 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  private prepareFilterApps() {
+  private prepareFilterApps(selectedProductName?: string) {
+    console.log('prepareFilterApps')
     this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
-    if (this.permissions.length > 0 && this.productApps.length > 0)
-      this.permissions.map((p) => {
-        // get the app name from product apps - needed for label
-        const app = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
-        if (app.length > 0)
-          if (
-            app.length === 1 &&
-            this.filterAppItems.filter((item) => item.label === app[0].name && item.value === app[0].appId).length === 0
-          ) {
-            this.filterAppItems.push({ label: app[0].name, value: app[0].appId } as SelectItem)
-          }
+    // 1. load from permisions
+    this.permissions
+      .filter((p) => p.productName === (selectedProductName ? selectedProductName : p.productName))
+      .map((p) => {
+        if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
+          const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
+          this.filterAppItems.push({
+            label: productApp.length > 0 ? productApp[0].name : p.appId,
+            value: p.appId
+          } as SelectItem)
+        }
+      })
+    // 2. add missing apps from product
+    this.productApps
+      .filter((a) => a.productName === (selectedProductName ? selectedProductName : a.productName))
+      .map((app) => {
+        if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
+          this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
   }
 
@@ -411,18 +435,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     }
     this.permissionRows = []
-    for (const permission of this.permissions) {
-      const products = this.filterProductItems.filter((p) => p.value === permission.productName)
-      const apps = this.filterAppItems.filter((p) => p.value === permission.appId)
+    for (const perm of this.permissions) {
+      const products = this.filterProductItems.filter((p) => p.value === perm.productName)
+      const apps = this.filterAppItems.filter((p) => p.value === perm.appId)
       this.permissionRows.push({
-        ...permission,
-        key: permission.resource + '#' + permission.action,
+        ...perm,
+        key: perm.resource + '#' + perm.action,
         productDisplayName: this.currentApp.isProduct
-          ? permission.productName
+          ? perm.productName
           : products.length > 0
           ? products[0].label
-          : permission.productName,
-        appDisplayName: apps.length > 0 ? apps[0].label : permission.appId,
+          : perm.productName,
+        appDisplayName: apps.length > 0 ? apps[0].label : perm.appId,
         roles: {}
       } as PermissionViewRow)
     }
@@ -432,22 +456,28 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.loadRoleAssignments(false)
   }
 
-  private loadRoleAssignments(clear: boolean) {
+  // case 1: all apps
+  // case 2: the filtered app
+  // roleId is set only on role action: grant/revoke all
+  private loadRoleAssignments(clear: boolean, roleId?: string) {
     const appList: string[] = []
-    if (this.productApps.length === 0) {
+    if (this.filterAppValue) appList.push(this.filterAppValue)
+    else if (this.productApps.length === 0) {
       console.warn('No apps found - stop loading assignments')
       return
     } else
       this.productApps.map((app) => {
         appList.push(app.appId ?? '')
       })
+
     if (clear) {
       this.permissionRows.forEach((p) => {
-        p.roles = {}
+        if (roleId) p.roles[roleId] = undefined
+        else p.roles = {}
       })
     }
     this.assApi
-      .searchAssignments({ assignmentSearchCriteria: { appIds: appList, pageSize: this.pageSize } })
+      .searchAssignments({ assignmentSearchCriteria: { appIds: appList, roleId: roleId, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
@@ -459,8 +489,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           // Permission (row): id, appId, resource, action
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
-            permissions.map((permission) => {
-              permission.roles[assignment.roleId!] = assignment.id
+            permissions.map((perm) => {
+              perm.roles[assignment.roleId!] = assignment.id
             })
           })
           this.loading = false
@@ -543,14 +573,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
   public onFilterItemClearAppId() {
-    this.filterAppValue = this.currentApp.appId
-    if (this.permissionTable) {
-      this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
-    }
+    this.filterAppValue = undefined
+    this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+  }
+
+  // if product name selected then reload app id filter
+  public onFilterItemChangeProduct(ev: any) {
+    this.filterProductValue = ev.value
+    this.filterAppValue = undefined
+    this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+    this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
+    this.prepareFilterApps(this.filterProductValue)
   }
 
   /****************************************************************************
-   *  ROLE    => if currentApp is workspace
+   *  ROLE
    ****************************************************************************
    */
   public onCreateRole(ev?: MouseEvent): void {
@@ -571,12 +608,42 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'DELETE'
     this.showRoleDeleteDialog = true
   }
-  public onRoleChanged(changed: boolean) {
+  public onDetailChanged(changed: boolean) {
     this.role = undefined
+    this.permission = undefined
     this.changeMode = 'VIEW'
+    this.showPermissionDetailDialog = false
+    this.showPermissionDeleteDialog = false
     this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
     if (changed) this.loadData()
+  }
+
+  /****************************************************************************
+   *  PERMISSION
+   ****************************************************************************
+   */
+  public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    this.onEditPermission(ev, perm)
+    this.changeMode = 'CREATE'
+  }
+  public onCreatePermission(ev?: MouseEvent): void {
+    ev?.stopPropagation()
+    this.role = undefined
+    this.changeMode = 'CREATE'
+    this.showPermissionDetailDialog = true
+  }
+  public onEditPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    ev.stopPropagation()
+    this.permission = perm
+    this.changeMode = 'EDIT'
+    this.showPermissionDetailDialog = true
+  }
+  public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    ev.stopPropagation()
+    this.permission = perm
+    this.changeMode = 'DELETE'
+    this.showPermissionDeleteDialog = true
   }
 
   /****************************************************************************
@@ -619,15 +686,20 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // 2. Workspace App  => a) selected product  b) all products
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const pList = this.prepareProductList()
+    //const appId = this.filterAppValue
     if (pList.length === 0) return // products are required
     this.assApi
-      .createProductAssignments({
-        createProductAssignmentsRequest: { roleId: role.id, productNames: pList } as CreateProductAssignmentsRequest
+      .grantAssignment({
+        createProductAssignmentsRequest: {
+          roleId: role.id,
+          productNames: pList,
+          appId: this.filterAppValue
+        } as CreateProductAssignmentsRequest
       })
       .subscribe({
         next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
-          this.loadRoleAssignments(true)
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+          this.loadRoleAssignments(true, role.id)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
@@ -644,8 +716,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
       .subscribe({
         next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
-          this.loadRoleAssignments(true)
+          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+          this.loadRoleAssignments(true, role.id)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
