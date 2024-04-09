@@ -402,12 +402,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps(selectedProductName?: string) {
-    console.log('prepareFilterApps')
     this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
     // 1. load from permisions
     this.permissions
-      .filter((p) => p.productName === (selectedProductName ? selectedProductName : p.productName))
+      .filter((p) => p.productName === (selectedProductName ?? p.productName))
       .map((p) => {
+        console.log('prepareFilterApps ' + this.filterAppItems.filter((item) => item.value === p.appId).length, p)
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -418,11 +418,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
     // 2. add missing apps from product
     this.productApps
-      .filter((a) => a.productName === (selectedProductName ? selectedProductName : a.productName))
+      .filter((a) => a.productName === (selectedProductName ?? a.productName))
       .map((app) => {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
+    this.filterAppItems.sort(dropDownSortItemsByLabel)
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map
@@ -437,15 +438,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissionRows = []
     for (const perm of this.permissions) {
       const products = this.filterProductItems.filter((p) => p.value === perm.productName)
+      const label = products.length > 0 ? products[0].label : perm.productName
       const apps = this.filterAppItems.filter((p) => p.value === perm.appId)
+
       this.permissionRows.push({
         ...perm,
         key: perm.resource + '#' + perm.action,
-        productDisplayName: this.currentApp.isProduct
-          ? perm.productName
-          : products.length > 0
-          ? products[0].label
-          : perm.productName,
+        productDisplayName: this.currentApp.isProduct ? perm.productName : label,
         appDisplayName: apps.length > 0 ? apps[0].label : perm.appId,
         roles: {}
       } as PermissionViewRow)
@@ -461,15 +460,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // roleId is set only on role action: grant/revoke all
   private loadRoleAssignments(clear: boolean, roleId?: string) {
     const appList: string[] = []
-    if (this.filterAppValue) appList.push(this.filterAppValue)
-    else if (this.productApps.length === 0) {
+    if (this.productApps.length === 0) {
       console.warn('No apps found - stop loading assignments')
       return
-    } else
-      this.productApps.map((app) => {
-        appList.push(app.appId ?? '')
+    } else if (this.filterAppValue) appList.push(this.filterAppValue)
+    else
+      this.permissions.map((perm) => {
+        if (!appList.includes(perm.appId ?? '')) appList.push(perm.appId ?? '')
       })
-
     if (clear) {
       this.permissionRows.forEach((p) => {
         if (roleId) p.roles[roleId] = undefined
@@ -682,11 +680,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  // 1. Permission App => the own product (TODO: existing mismatch, due to only one app of the product is displayed)
+  // 1. Permission App => the own product
   // 2. Workspace App  => a) selected product  b) all products
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const pList = this.prepareProductList()
-    //const appId = this.filterAppValue
     if (pList.length === 0) return // products are required
     this.assApi
       .grantAssignment({

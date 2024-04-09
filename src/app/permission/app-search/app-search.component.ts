@@ -181,9 +181,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     }
   }
   private sortAppsByAppId(a: App, b: App): number {
-    return (a.appId ? (a.appId as string).toUpperCase() : '').localeCompare(
-      b.appId ? (b.appId as string).toUpperCase() : ''
-    )
+    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
 
   /**

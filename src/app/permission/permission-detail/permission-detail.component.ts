@@ -66,21 +66,25 @@ export class PermissionDetailComponent implements OnChanges {
       console.info('form not valid')
       return
     }
-    let permissionExists = false
     if (this.permissions.length > 0) {
-      let permissions = this.permissions.filter((p) => p.resource === this.formGroup.controls['resource'].value)
-      if (this.changeMode !== 'CREATE') permissions = permissions.filter((r) => r.id !== this.permission?.id)
-      permissionExists = permissions.length > 0
+      let permExist = this.permissions.filter(
+        (p) =>
+          p.productName === this.formGroup.controls['productName'].value &&
+          p.appId === this.formGroup.controls['appId'].value &&
+          p.resource === this.formGroup.controls['resource'].value &&
+          p.action === this.formGroup.controls['action'].value
+      )
+      if (this.changeMode !== 'CREATE') permExist = permExist.filter((r) => r.id !== this.permission?.id)
+      if (permExist.length > 0) {
+        this.msgService.error({
+          summaryKey: 'ACTIONS.' + this.changeMode + '.PERMISSION',
+          detailKey: 'VALIDATION.ERRORS.PERMISSION.' + this.changeMode + '_ALREADY_EXISTS'
+        })
+        return
+      }
     }
-    if (permissionExists) {
-      this.msgService.error({
-        summaryKey: 'ACTIONS.' + this.changeMode + '.PERMISSION',
-        detailKey: 'VALIDATION.ERRORS.PERMISSION.' + this.changeMode + '_ALREADY_EXISTS'
-      })
-      return
-    }
+    console.info('form valid ' + this.formGroup.valid)
     if (this.changeMode === 'CREATE') {
-      console.info('form valid ' + this.formGroup.valid)
       /*       const permission = {
         appId: this.formGroup.controls['appId'].value,
         productName: this.formGroup.controls['productName'].value,
