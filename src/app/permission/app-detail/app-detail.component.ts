@@ -402,12 +402,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps(selectedProductName?: string) {
-    console.log('prepareFilterApps')
     this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
     // 1. load from permisions
     this.permissions
-      .filter((p) => p.productName === selectedProductName ?? p.productName)
+      .filter((p) => p.productName === (selectedProductName ?? p.productName))
       .map((p) => {
+        console.log('prepareFilterApps ' + this.filterAppItems.filter((item) => item.value === p.appId).length, p)
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -418,7 +418,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
     // 2. add missing apps from product
     this.productApps
-      .filter((a) => a.productName === selectedProductName ?? a.productName)
+      .filter((a) => a.productName === (selectedProductName ?? a.productName))
       .map((app) => {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
@@ -460,15 +460,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // roleId is set only on role action: grant/revoke all
   private loadRoleAssignments(clear: boolean, roleId?: string) {
     const appList: string[] = []
-    if (this.filterAppValue) appList.push(this.filterAppValue)
-    else if (this.productApps.length === 0) {
+    if (this.productApps.length === 0) {
       console.warn('No apps found - stop loading assignments')
       return
-    } else
-      this.productApps.map((app) => {
-        appList.push(app.appId ?? '')
+    } else if (this.filterAppValue) appList.push(this.filterAppValue)
+    else
+      this.permissions.map((perm) => {
+        if (!appList.includes(perm.appId ?? '')) appList.push(perm.appId ?? '')
       })
-
     if (clear) {
       this.permissionRows.forEach((p) => {
         if (roleId) p.roles[roleId] = undefined
