@@ -50,7 +50,7 @@ export interface GetAssignmentRequestParams {
     id: string;
 }
 
-export interface GrantAssignmentRequestParams {
+export interface GrantAssignmentsRequestParams {
     createProductAssignmentsRequest: CreateProductAssignmentsRequest;
 }
 
@@ -314,18 +314,18 @@ export class AssignmentAPIService {
     }
 
     /**
-     * Create new assignments for products
+     * Create new assignments by criteria
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public grantAssignment(requestParameters: GrantAssignmentRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public grantAssignment(requestParameters: GrantAssignmentRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public grantAssignment(requestParameters: GrantAssignmentRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public grantAssignment(requestParameters: GrantAssignmentRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const createProductAssignmentsRequest = requestParameters.createProductAssignmentsRequest;
         if (createProductAssignmentsRequest === null || createProductAssignmentsRequest === undefined) {
-            throw new Error('Required parameter createProductAssignmentsRequest was null or undefined when calling grantAssignment.');
+            throw new Error('Required parameter createProductAssignmentsRequest was null or undefined when calling grantAssignments.');
         }
 
         let localVarHeaders = this.defaultHeaders;

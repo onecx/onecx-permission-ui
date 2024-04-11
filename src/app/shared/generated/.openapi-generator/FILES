@@ -19,6 +19,7 @@ model/assignment.ts
 model/assignmentPageResult.ts
 model/assignmentSearchCriteria.ts
 model/createAssignmentRequest.ts
+model/createPermissionRequest.ts
 model/createProductAssignmentsRequest.ts
 model/createRoleRequest.ts
 model/createRolesRequest.ts
@@ -40,6 +41,7 @@ model/revokeAssignmentRequest.ts
 model/role.ts
 model/rolePageResult.ts
 model/roleSearchCriteria.ts
+model/updatePermissionRequest.ts
 model/updateRoleRequest.ts
 model/workspaceAbstract.ts
 model/workspaceDetails.ts

@@ -686,7 +686,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     const pList = this.prepareProductList()
     if (pList.length === 0) return // products are required
     this.assApi
-      .grantAssignment({
+      .grantAssignments({
         createProductAssignmentsRequest: {
           roleId: role.id,
           productNames: pList,
