@@ -179,6 +179,120 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /permissions:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - write
+      tags:
+        - permission
+      description: Create permission
+      operationId: createPermission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePermissionRequest'
+      responses:
+        201:
+          description: New permission created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /permissions/{id}:
+    get:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - permission
+      description: Get permission
+      operationId: getPermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get permission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        404:
+          description: Permission not found
+    delete:
+      x-onecx:
+        permissions:
+          permission:
+            - delete
+      tags:
+        - permission
+      description: Delete permission
+      operationId: deletePermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Permission deleted
+    put:
+      x-onecx:
+        permissions:
+          permission:
+            - write
+      tags:
+        - permission
+      description: Update permission by ID
+      operationId: updatePermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePermissionRequest'
+      responses:
+        200:
+          description: Permission updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        404:
+          description: Permission not found
   /permissions/search:
     post:
       x-onecx:
@@ -282,8 +396,8 @@ paths:
             - write
       tags:
         - assignment
-      description: Create new assignments for products
-      operationId: grantAssignment
+      description: Create new assignments by criteria
+      operationId: grantAssignments
       requestBody:
         required: true
         content:
@@ -292,7 +406,7 @@ paths:
               $ref: '#/components/schemas/CreateProductAssignmentsRequest'
       responses:
         201:
-          description: New assignment created
+          description: New assignments created
         400:
           description: Bad request
           content:
@@ -651,6 +765,36 @@ components:
           type: string
         id:
           type: string
+        appId:
+          type: string
+        productName:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+    CreatePermissionRequest:
+      type: object
+      properties:
+        appId:
+          type: string
+        productName:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+    UpdatePermissionRequest:
+      required:
+        - modificationCount
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
         appId:
           type: string
         productName:

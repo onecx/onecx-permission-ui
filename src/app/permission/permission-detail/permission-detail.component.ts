@@ -4,7 +4,12 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 
-import { /* CreateRoleRequest, UpdateRoleRequest, */ PermissionAPIService, Permission } from 'src/app/shared/generated'
+import {
+  CreatePermissionRequest,
+  UpdatePermissionRequest,
+  PermissionAPIService,
+  Permission
+} from 'src/app/shared/generated'
 import { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-detail/app-detail.component'
 
 @Component({
@@ -52,6 +57,10 @@ export class PermissionDetailComponent implements OnChanges {
     if (this.userService.hasPermission('PERMISSION#EDIT') || this.userService.hasPermission('PERMISSION#CREATE'))
       this.formGroup.enable()
     else this.formGroup.disable()
+    if (this.changeMode === 'EDIT') {
+      this.formGroup.controls['appId'].disable()
+      this.formGroup.controls['productName'].disable()
+    }
   }
 
   public onClose(): void {
@@ -83,59 +92,52 @@ export class PermissionDetailComponent implements OnChanges {
         return
       }
     }
-    console.info('form valid ' + this.formGroup.valid)
     if (this.changeMode === 'CREATE') {
-      /*       const permission = {
+      const permission = {
         appId: this.formGroup.controls['appId'].value,
         productName: this.formGroup.controls['productName'].value,
         resource: this.formGroup.controls['resource'].value,
         action: this.formGroup.controls['action'].value,
         description: this.formGroup.controls['description'].value
-      } as CreateRoleRequest
+      } as CreatePermissionRequest
 
-      this.permApi.createPermission({
-          createRolesRequest: { permissions: [permission] }
-        })
-        .subscribe({
-          next: () => {
-            this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.PERMISSION_OK' })
-            this.dataChanged.emit(true)
-          },
-          error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.PERMISSION_NOK' })
-            console.error(err)
-          }
-        })
- */
+      this.permApi.createPermission({ createPermissionRequest: permission }).subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.PERMISSION_OK' })
+          this.dataChanged.emit(true)
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.PERMISSION_NOK' })
+          console.error(err)
+        }
+      })
     } else {
       console.info('form valid ' + this.formGroup.valid)
       //const roleNameChanged = this.formGroup.controls['name'].value !== this.permission?.name
-      /*       const permission = {
+      const permission = {
         modificationCount: this.permission?.modificationCount,
         appId: this.formGroup.controls['appId'].value,
         productName: this.formGroup.controls['productName'].value,
         resource: this.formGroup.controls['resource'].value,
         action: this.formGroup.controls['action'].value,
         description: this.formGroup.controls['description'].value
-      } as UpdateRoleRequest
- */
-      /* this.permApi.updatePermission({ id: this.permission?.id ?? '', updateRoleRequest: permission }).subscribe({
+      } as UpdatePermissionRequest
+
+      this.permApi.updatePermission({ id: this.permission?.id ?? '', updatePermissionRequest: permission }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_OK' })
-          this.dataChanged.emit(roleNameChanged)
+          this.dataChanged.emit(true)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
           console.error(err)
         }
       })
- */
     }
   }
 
   public onDeleteConfirmation() {
-    console.info('form valid ' + this.formGroup.valid)
-    /*     this.permApi.deletePermission({ id: this.permission?.id ?? '' }).subscribe({
+    this.permApi.deletePermission({ id: this.permission?.id ?? '' }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
         this.dataChanged.emit(true)
@@ -145,6 +147,5 @@ export class PermissionDetailComponent implements OnChanges {
         console.error(err.error)
       }
     })
- */
   }
 }
