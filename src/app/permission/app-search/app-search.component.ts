@@ -109,7 +109,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .pipe(
         catchError((err) => {
           this.dataAccessIssue = true
-          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE'
           console.error('getAllWorkspaceNames():', err)
           return of({} as WorkspacePageResult)
         }),
