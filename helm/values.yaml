@@ -10,10 +10,12 @@ app:
     # Microfrontend
     microfrontend:
       enabled: true
-      spec:
-        exposedModule: "./OneCXPermissionModule"
-        description: "OneCX Permission UI"
-        note: "OneCX Permission UI module auto import via MF operator"
+      specs:
+        main:
+          exposedModule: "./OneCXPermissionModule"
+          description: "OneCX Permission UI"
+          note: "OneCX Permission UI module auto import via MF operator"
+          type: MODULE
     # Permission
     permission:
       enabled: true
