@@ -212,6 +212,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           }
         })
       )
+      .subscribe()
   }
 
   /**

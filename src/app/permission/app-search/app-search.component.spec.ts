@@ -3,10 +3,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Router } from '@angular/router'
 import { ActivatedRoute } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
-import { of } from 'rxjs'
+import { of, throwError } from 'rxjs'
 
 import {
   ApplicationAPIService,
@@ -15,7 +16,6 @@ import {
   WorkspacePageResult
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
-import { HttpResponse } from '@angular/common/http'
 
 const wsAbstract: WorkspaceAbstract = {
   name: 'wsName'
@@ -63,12 +63,146 @@ describe('AppSearchComponent', () => {
     fixture = TestBed.createComponent(AppSearchComponent)
     component = fixture.componentInstance
     appApiSpy.searchApplications.and.returnValue(of({}) as any)
-    wsApiSpy.searchWorkspaces.and.returnValue(of(new HttpResponse({ body: wsPageRes })))
+    wsApiSpy.searchWorkspaces.and.returnValue(of(wsPageRes) as any)
     fixture.detectChanges()
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  /**
+   * SEARCH
+   */
+  it('should search workspaces', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+    component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('WORKSPACE')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search workspaces: empty', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+    wsApiSpy.searchWorkspaces.and.returnValue(of({}) as any)
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(0)
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should catch error on searchApps: ws', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+    const err = { status: 404 }
+    wsApiSpy.searchWorkspaces.and.returnValue(throwError(() => err))
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (result) => {
+        expect(result.length).toBe(0)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.WORKSPACE')
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  xit('should search products', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products: empty', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    appApiSpy.searchApplications.and.returnValue(of({}) as any)
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(0)
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should catch error on searchApps: products', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    const err = { status: 404 }
+    appApiSpy.searchApplications.and.returnValue(throwError(() => err))
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (result) => {
+        expect(result.length).toBe(0)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.APPS')
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  /**
+   * Dialog preparation
+   */
+
+  it('should prepare translations', () => {
+    const translateService = TestBed.inject(TranslateService)
+    const generalTranslations = {
+      'APP.ID': 'App ID',
+      'APP.TYPE': 'App type',
+      'ACTIONS.SEARCH.SORT_BY': 'Sort by',
+      'ACTIONS.SEARCH.FILTER.LABEL': 'Filter',
+      'ACTIONS.SEARCH.FILTER.OF': 'Search filter of',
+      'ACTIONS.SEARCH.SORT_DIRECTION_ASC': 'Ascending',
+      'ACTIONS.SEARCH.SORT_DIRECTION_DESC': 'Descending'
+    }
+    spyOn(translateService, 'get').and.returnValues(of(generalTranslations))
+
+    component.ngOnInit()
+
+    expect(component.dataViewControlsTranslations).toEqual({
+      sortDropdownPlaceholder: 'Sort by',
+      filterInputPlaceholder: 'Filter',
+      filterInputTooltip: 'Search filter ofApp ID, App type',
+      sortOrderTooltips: {
+        ascending: 'Ascending',
+        descending: 'Descending'
+      },
+      sortDropdownTooltip: 'Sort by'
+    })
   })
 
   /**
