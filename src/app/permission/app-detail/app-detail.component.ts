@@ -687,6 +687,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const pList = this.prepareProductList()
     if (pList.length === 0) return // products are required
+
+    //console.log('this.filterAppValue ' + this.filterAppValue)
+    //console.log('this.filterProductValue ' + this.filterProductValue)
     this.assApi
       .grantAssignments({
         createProductAssignmentsRequest: {
