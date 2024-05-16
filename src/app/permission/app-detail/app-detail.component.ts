@@ -760,8 +760,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       ) || a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return this.sortPermissionRowByProductAsc(a, b)
+  private sortPermissionRowByProductDesc(bP: PermissionViewRow, aP: PermissionViewRow): number {
+    return (
+      (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
+        bP.productName ? bP.productName.toUpperCase() : ''
+      ) || aP.key.localeCompare(bP.key)
+    )
   }
 
   private sortRoleByName(a: Role, b: Role): number {
