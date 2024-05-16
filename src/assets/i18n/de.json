@@ -260,7 +260,7 @@
       "ROLES": "Es konnten keine Rollen gefunden werden.",
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
-      "WORKSPACE": "Der Workspace konnte nicht gefunden werden."
+      "WORKSPACE": "Workspace Daten konnten nicht gefunden werden."
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
@@ -268,8 +268,7 @@
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es erneut.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
-      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut.",
-      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - Bitte versuchen sie es erneut."
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut."
     }
   }
 }

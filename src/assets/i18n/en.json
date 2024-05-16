@@ -260,7 +260,7 @@
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
       "ASSIGNMENTS": "No Permissions could be found.",
-      "WORKSPACE": "Workspace could not be found."
+      "WORKSPACE": "Workspace data could not be found."
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving App/Product data - please try again.",
@@ -268,8 +268,7 @@
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
-      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again.",
-      "WORKSPACES": "Unknown problem retrieving Workspaces - please try again."
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
     }
   }
 }
