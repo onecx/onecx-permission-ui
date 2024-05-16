@@ -194,7 +194,7 @@
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
     "MANDATORY.COLUMN": "Ob diese Berechtigung geschützt ist.",
-    "MANDATORY": "Diese Berechtigung ist notwendig für den Betrieb und kann somit nicht gelöscht werden.",
+    "MANDATORY": "Diese Berechtigung ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",

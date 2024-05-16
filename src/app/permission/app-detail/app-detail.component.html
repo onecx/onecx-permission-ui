@@ -218,7 +218,7 @@
               {{ 'PERMISSION.ACTIONS' | translate }}
             </th>
             <th class="pt-2 pb-1 vertical-align-bottom border-bottom-primary">
-              <span class="pi pi-shield" aria-hidden="true" [title]="'PERMISSION.MANDATORY.COLUMN' | translate"></span>
+              <span class="pi pi-lock" aria-hidden="true" [title]="'PERMISSION.MANDATORY.COLUMN' | translate"></span>
             </th>
             <th
               pSortableColumn="key"
@@ -291,7 +291,7 @@
                   [title]="'PERMISSION.SORT.APP_ID' | translate"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
-                  <span #sortIconAppId class="pi pi-fw pi-sort-alt"></span>
+                  <span #sortIconAppId class="pi pi-fw pi-sort-amount-down-alt"></span>
                 </button>
               </div>
             </th>
@@ -306,7 +306,7 @@
                 <div class="flex flex-row gap-1 justify-content-center align-items-center white-space-nowrap">
                   <span
                     *ngIf="role.mandatory"
-                    class="danger-action-text pi pi-shield"
+                    class="danger-action-text pi pi-lock"
                     aria-hidden="true"
                     [title]="'ROLE.MANDATORY' | translate"
                   ></span>
@@ -409,7 +409,7 @@
             <td>
               <span
                 *ngIf="rowData.mandatory"
-                class="danger-action-text pi pi-shield"
+                class="danger-action-text pi pi-lock"
                 aria-hidden="true"
                 [title]="'PERMISSION.MANDATORY' | translate"
               ></span>
@@ -438,21 +438,24 @@
               [id]="'app_detail_permission_table_data_' + role.name + '_' + rowData.key"
             >
               <!-- display only -->
+              <div *ngIf="protectedAssignments.includes(rowData.roles[role.id])">
+                <span
+                  *ngIf="rowData.roles[role.id] && protectedAssignments.includes(rowData.roles[role.id])"
+                  class="text-primary pi pi-lock"
+                  [title]="'PERMISSION.ASSIGNMENTS.ROLE_IS_ASSIGNED_1' | translate"
+                >
+                </span>
+              </div>
+
               <div
                 *ngIf="
-                  protectedAssignments.includes(rowData.roles[role.id]) || !myPermissions.includes('PERMISSION#GRANT')
+                  !protectedAssignments.includes(rowData.roles[role.id]) && !myPermissions.includes('PERMISSION#GRANT')
                 "
               >
                 <span
                   *ngIf="rowData.roles[role.id]"
-                  class="pi pi-circle-fill text-primary text-lg"
+                  class="text-primary text-lg pi pi-circle-fill"
                   [title]="'PERMISSION.ASSIGNMENTS.ROLE_IS_ASSIGNED_1' | translate"
-                >
-                </span>
-                <span
-                  *ngIf="!rowData.roles[role.id]"
-                  class="pi pi-circle text-primary text-lg"
-                  [title]="'PERMISSION.ASSIGNMENTS.ROLE_IS_ASSIGNED_0' | translate"
                 >
                 </span>
               </div>

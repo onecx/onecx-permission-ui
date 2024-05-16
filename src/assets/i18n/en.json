@@ -194,7 +194,7 @@
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
     "MANDATORY.COLUMN": "Whether this permission is protected.",
-    "MANDATORY": "This Permission is necessary for operation and cannot therefore be deleted.",
+    "MANDATORY": "This Permission is necessary for operation and cannot therefore be changed or deleted.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
