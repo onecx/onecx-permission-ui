@@ -7,6 +7,8 @@ export * from './assignmentSearchCriteria';
 export * from './createAssignmentRequest';
 export * from './createPermissionRequest';
 export * from './createProductAssignmentsRequest';
+export * from './createRoleProductAssignmentRequest';
+export * from './createRoleProductsAssignmentRequest';
 export * from './createRoleRequest';
 export * from './createRolesRequest';
 export * from './iAMRole';

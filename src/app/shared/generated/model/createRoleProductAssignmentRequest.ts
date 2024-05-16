@@ -11,16 +11,8 @@
  */
 
 
-export interface Assignment { 
-    modificationCount?: number;
-    creationDate?: string;
-    creationUser?: string;
-    modificationDate?: string;
-    modificationUser?: string;
-    roleId?: string;
-    permissionId?: string;
-    appId?: string;
-    id?: string;
-    mandatory?: boolean;
+export interface CreateRoleProductAssignmentRequest { 
+    appId: string;
+    productName: string;
 }
 

@@ -193,6 +193,8 @@
     "ACTION": "Aktion",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
+    "MANDATORY.COLUMN": "Ob diese Berechtigung geschützt ist.",
+    "MANDATORY": "Diese Berechtigung ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
@@ -215,7 +217,8 @@
     "LABEL": "Rollen",
     "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
     "NAME": "Name",
-    "DESCRIPTION": "Beschreibung"
+    "DESCRIPTION": "Beschreibung",
+    "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden."
   },
   "VALIDATION": {
     "HINTS": {

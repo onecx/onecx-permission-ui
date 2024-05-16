@@ -23,5 +23,6 @@ export interface Permission {
     resource?: string;
     action?: string;
     description?: string;
+    mandatory?: boolean;
 }
 

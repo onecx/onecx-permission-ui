@@ -100,6 +100,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public showPermissionDetailDialog = false
   public showPermissionDeleteDialog = false
   public showPermissionTools = false
+  public protectedAssignments: Array<string> = []
 
   // role management
   private roles$!: Observable<RolePageResult>
@@ -407,7 +408,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissions
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
       .map((p) => {
-        console.log('prepareFilterApps ' + this.filterAppItems.filter((item) => item.value === p.appId).length, p)
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -482,11 +482,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object) {
+          this.protectedAssignments = [] // ids of mandatory assignments
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
           // Permission (row): id, appId, resource, action
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
+            if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
             permissions.map((perm) => {
               perm.roles[assignment.roleId!] = assignment.id
             })
@@ -553,19 +555,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev.stopPropagation()
     this.permissionTable?.clear()
     switch (icon.className) {
-      case 'pi pi-fw pi-sort-alt': // init
-        icon.className = 'pi pi-fw pi-sort-amount-down'
-        break
-      case 'pi pi-fw pi-sort-amount-down':
+      //case 'pi pi-fw pi-sort-alt': // init
+      //  icon.className = 'pi pi-fw pi-sort-amount-down'
+      //  break
+      case 'pi pi-fw pi-sort-amount-down-alt':
         icon.className = 'pi pi-fw pi-sort-amount-up-alt'
         this.permissionTable?._value.sort(
-          field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
+          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductAsc
         )
         break
       case 'pi pi-fw pi-sort-amount-up-alt':
-        icon.className = 'pi pi-fw pi-sort-amount-down'
+        icon.className = 'pi pi-fw pi-sort-amount-down-alt'
         this.permissionTable?._value.sort(
-          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
+          field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductDesc
         )
         break
     }
@@ -685,6 +687,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const pList = this.prepareProductList()
     if (pList.length === 0) return // products are required
+
+    //console.log('this.filterAppValue ' + this.filterAppValue)
+    //console.log('this.filterProductValue ' + this.filterProductValue)
     this.assApi
       .grantAssignments({
         createProductAssignmentsRequest: {
@@ -745,8 +750,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return this.sortPermissionRowByAppIdAsc(a, b)
+  private sortPermissionRowByAppIdDesc(bPerm: PermissionViewRow, aPerm: PermissionViewRow): number {
+    return (
+      (aPerm.appId ? aPerm.appId.toUpperCase() : '').localeCompare(bPerm.appId ? bPerm.appId.toUpperCase() : '') ||
+      aPerm.key.localeCompare(bPerm.key)
+    )
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (
@@ -755,8 +763,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       ) || a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return this.sortPermissionRowByProductAsc(a, b)
+  private sortPermissionRowByProductDesc(bP: PermissionViewRow, aP: PermissionViewRow): number {
+    return (
+      (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
+        bP.productName ? bP.productName.toUpperCase() : ''
+      ) || aP.key.localeCompare(bP.key)
+    )
   }
 
   private sortRoleByName(a: Role, b: Role): number {
