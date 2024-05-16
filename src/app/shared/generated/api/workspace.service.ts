@@ -19,8 +19,6 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { Product } from '../model/product';
-// @ts-ignore
 import { WorkspaceDetails } from '../model/workspaceDetails';
 // @ts-ignore
 import { WorkspacePageResult } from '../model/workspacePageResult';
@@ -31,10 +29,6 @@ import { WorkspaceSearchCriteria } from '../model/workspaceSearchCriteria';
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
 
-
-export interface GetAllProductsByWorkspaceNameRequestParams {
-    workspaceName: string;
-}
 
 export interface GetDetailsByWorkspaceNameRequestParams {
     workspaceName: string;
@@ -107,65 +101,6 @@ export class WorkspaceAPIService {
             throw Error("key may not be null if value is not object or array");
         }
         return httpParams;
-    }
-
-    /**
-     * get all products by workspace name
-     * @param requestParameters
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public getAllProductsByWorkspaceName(requestParameters: GetAllProductsByWorkspaceNameRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<Product>>;
-    public getAllProductsByWorkspaceName(requestParameters: GetAllProductsByWorkspaceNameRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<Product>>>;
-    public getAllProductsByWorkspaceName(requestParameters: GetAllProductsByWorkspaceNameRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<Product>>>;
-    public getAllProductsByWorkspaceName(requestParameters: GetAllProductsByWorkspaceNameRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const workspaceName = requestParameters.workspaceName;
-        if (workspaceName === null || workspaceName === undefined) {
-            throw new Error('Required parameter workspaceName was null or undefined when calling getAllProductsByWorkspaceName.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (localVarHttpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                'application/json'
-            ];
-            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        let localVarHttpContext: HttpContext | undefined = options && options.context;
-        if (localVarHttpContext === undefined) {
-            localVarHttpContext = new HttpContext();
-        }
-
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/workspaces/${this.configuration.encodeParam({name: "workspaceName", value: workspaceName, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/products`;
-        return this.httpClient.request<Array<Product>>('get', `${this.configuration.basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                responseType: <any>responseType_,
-                withCredentials: this.configuration.withCredentials,
-                headers: localVarHeaders,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
     }
 
     /**

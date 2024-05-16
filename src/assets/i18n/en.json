@@ -193,6 +193,8 @@
     "ACTION": "Action",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
+    "MANDATORY.COLUMN": "Whether this permission is protected.",
+    "MANDATORY": "This Permission is necessary for operation and cannot therefore be deleted.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
@@ -215,7 +217,8 @@
     "LABEL": "Roles",
     "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
     "NAME": "Name",
-    "DESCRIPTION": "Description"
+    "DESCRIPTION": "Description",
+    "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted."
   },
   "VALIDATION": {
     "HINTS": {

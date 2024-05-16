@@ -29,6 +29,10 @@ import { CreateAssignmentRequest } from '../model/createAssignmentRequest';
 // @ts-ignore
 import { CreateProductAssignmentsRequest } from '../model/createProductAssignmentsRequest';
 // @ts-ignore
+import { CreateRoleProductAssignmentRequest } from '../model/createRoleProductAssignmentRequest';
+// @ts-ignore
+import { CreateRoleProductsAssignmentRequest } from '../model/createRoleProductsAssignmentRequest';
+// @ts-ignore
 import { ProblemDetailResponse } from '../model/problemDetailResponse';
 // @ts-ignore
 import { RevokeAssignmentRequest } from '../model/revokeAssignmentRequest';
@@ -52,6 +56,20 @@ export interface GetAssignmentRequestParams {
 
 export interface GrantAssignmentsRequestParams {
     createProductAssignmentsRequest: CreateProductAssignmentsRequest;
+}
+
+export interface GrantRoleAssignmentsRequestParams {
+    roleId: string;
+}
+
+export interface GrantRoleProductAssignmentsRequestParams {
+    roleId: string;
+    createRoleProductAssignmentRequest: CreateRoleProductAssignmentRequest;
+}
+
+export interface GrantRoleProductsAssignmentsRequestParams {
+    roleId: string;
+    createRoleProductsAssignmentRequest: CreateRoleProductsAssignmentRequest;
 }
 
 export interface RevokeAssignmentsRequestParams {
@@ -373,6 +391,210 @@ export class AssignmentAPIService {
             {
                 context: localVarHttpContext,
                 body: createProductAssignmentsRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Create new assignments for role
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public grantRoleAssignments(requestParameters: GrantRoleAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public grantRoleAssignments(requestParameters: GrantRoleAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public grantRoleAssignments(requestParameters: GrantRoleAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public grantRoleAssignments(requestParameters: GrantRoleAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling grantRoleAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/grant/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Create new assignments for role and product
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling grantRoleProductAssignments.');
+        }
+        const createRoleProductAssignmentRequest = requestParameters.createRoleProductAssignmentRequest;
+        if (createRoleProductAssignmentRequest === null || createRoleProductAssignmentRequest === undefined) {
+            throw new Error('Required parameter createRoleProductAssignmentRequest was null or undefined when calling grantRoleProductAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/grant/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/product`;
+        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: createRoleProductAssignmentRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Create new assignments for role and products
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public grantRoleProductsAssignments(requestParameters: GrantRoleProductsAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public grantRoleProductsAssignments(requestParameters: GrantRoleProductsAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public grantRoleProductsAssignments(requestParameters: GrantRoleProductsAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public grantRoleProductsAssignments(requestParameters: GrantRoleProductsAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling grantRoleProductsAssignments.');
+        }
+        const createRoleProductsAssignmentRequest = requestParameters.createRoleProductsAssignmentRequest;
+        if (createRoleProductsAssignmentRequest === null || createRoleProductsAssignmentRequest === undefined) {
+            throw new Error('Required parameter createRoleProductsAssignmentRequest was null or undefined when calling grantRoleProductsAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/grant/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/products`;
+        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: createRoleProductsAssignmentRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

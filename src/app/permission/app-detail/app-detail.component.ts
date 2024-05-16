@@ -100,6 +100,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public showPermissionDetailDialog = false
   public showPermissionDeleteDialog = false
   public showPermissionTools = false
+  public assignmentMap: Map<string, boolean> = new Map()
+  public protectedAssignments: Array<string> = []
 
   // role management
   private roles$!: Observable<RolePageResult>
@@ -482,15 +484,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object) {
+          //this.assignmentMap = new Map()
+          this.protectedAssignments = []
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
           // Permission (row): id, appId, resource, action
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
+            if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
             permissions.map((perm) => {
               perm.roles[assignment.roleId!] = assignment.id
             })
           })
+          console.log(this.protectedAssignments)
           this.loading = false
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
