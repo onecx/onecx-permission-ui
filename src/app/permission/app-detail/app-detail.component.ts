@@ -210,6 +210,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     this.loading = true
+    this.showRoleTools = false
+    this.showPermissionTools = false
     this.loadingExceptionKey = ''
     this.currentApp = {
       id: this.urlParamAppId,

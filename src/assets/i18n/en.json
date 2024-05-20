@@ -193,11 +193,12 @@
     "ACTION": "Action",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
-    "MANDATORY.COLUMN": "Whether this permission is protected.",
+    "MANDATORY.COLUMN": "Can the permission be edited?",
     "MANDATORY": "This Permission is necessary for operation and cannot therefore be changed or deleted.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
+      "ROLE_IS_ASSIGNED_1.MANDATORY": "Permission granted, cannot be changed",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
       "GRANT_ALL_FOR_ROLE": "Grant all Permissions for the selected or all products",
       "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
