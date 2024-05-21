@@ -21,6 +21,8 @@ model/assignmentSearchCriteria.ts
 model/createAssignmentRequest.ts
 model/createPermissionRequest.ts
 model/createProductAssignmentsRequest.ts
+model/createRoleProductAssignmentRequest.ts
+model/createRoleProductsAssignmentRequest.ts
 model/createRoleRequest.ts
 model/createRolesRequest.ts
 model/iAMRole.ts

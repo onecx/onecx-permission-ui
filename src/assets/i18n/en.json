@@ -193,9 +193,15 @@
     "ACTION": "Action",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
+    "MANDATORY": "Mandatory required",
+    "MANDATORY.COLUMN": "Can the permission be edited?",
+    "MANDATORY.TOOLTIP": "This Permission is necessary for operation and cannot therefore be changed or deleted.",
+    "OPERATOR": "Created by Operator",
+    "OPERATOR.TOOLTIP": "If set then this Permission was created by the operator.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
+      "ROLE_IS_ASSIGNED_1.MANDATORY": "Permission granted, cannot be changed",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
       "GRANT_ALL_FOR_ROLE": "Grant all Permissions for the selected or all products",
       "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions for the selected or all products",
@@ -215,7 +221,8 @@
     "LABEL": "Roles",
     "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
     "NAME": "Name",
-    "DESCRIPTION": "Description"
+    "DESCRIPTION": "Description",
+    "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted."
   },
   "VALIDATION": {
     "HINTS": {
@@ -260,7 +267,7 @@
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
       "ASSIGNMENTS": "No Permissions could be found.",
-      "WORKSPACE": "Workspace could not be found."
+      "WORKSPACE": "Workspace data could not be found."
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving App/Product data - please try again.",
@@ -268,8 +275,7 @@
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
-      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again.",
-      "WORKSPACES": "Unknown problem retrieving Workspaces - please try again."
+      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
     }
   }
 }

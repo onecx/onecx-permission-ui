@@ -193,9 +193,15 @@
     "ACTION": "Aktion",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
+    "MANDATORY": "Unbedingt erforderlich",
+    "MANDATORY.COLUMN": "Kann die Berechtigung bearbeitet werden?",
+    "MANDATORY.TOOLTIP": "Diese Berechtigung ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
+    "OPERATOR": "Durch Operator erstellt",
+    "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung durch den Oprator erzeugt.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
+      "ROLE_IS_ASSIGNED_1.MANDATORY": "Berechtigung erteilt, kann nicht geändert werden",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
       "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte erteilen",
       "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen für das ausgewählte oder alle Produkte entziehen",
@@ -215,7 +221,8 @@
     "LABEL": "Rollen",
     "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
     "NAME": "Name",
-    "DESCRIPTION": "Beschreibung"
+    "DESCRIPTION": "Beschreibung",
+    "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden."
   },
   "VALIDATION": {
     "HINTS": {
@@ -260,7 +267,7 @@
       "ROLES": "Es konnten keine Rollen gefunden werden.",
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
-      "WORKSPACE": "Der Workspace konnte nicht gefunden werden."
+      "WORKSPACE": "Workspace Daten konnten nicht gefunden werden."
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
@@ -268,8 +275,7 @@
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es erneut.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
-      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut.",
-      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - Bitte versuchen sie es erneut."
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut."
     }
   }
 }
