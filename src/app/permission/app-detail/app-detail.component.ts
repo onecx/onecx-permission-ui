@@ -18,7 +18,11 @@ import {
   Assignment,
   RevokeAssignmentRequest,
   CreateAssignmentRequestParams,
-  CreateProductAssignmentsRequest,
+  GrantRoleAssignmentsRequestParams,
+  CreateRoleProductAssignmentRequest,
+  GrantRoleProductAssignmentsRequestParams,
+  CreateRoleProductsAssignmentRequest,
+  GrantRoleProductsAssignmentsRequestParams,
   DeleteAssignmentRequestParams,
   Application,
   ApplicationAPIService,
@@ -100,6 +104,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public showPermissionDetailDialog = false
   public showPermissionDeleteDialog = false
   public showPermissionTools = false
+  public protectedAssignments: Array<string> = []
 
   // role management
   private roles$!: Observable<RolePageResult>
@@ -178,7 +183,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         'APP.TYPE'
       ])
       .pipe(
-        map((data) => {
+        map((data: any) => {
           return [
             {
               label: data['ACTIONS.NAVIGATION.BACK'],
@@ -209,6 +214,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     this.loading = true
+    this.showRoleTools = false
+    this.showPermissionTools = false
     this.loadingExceptionKey = ''
     this.currentApp = {
       id: this.urlParamAppId,
@@ -285,10 +292,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       finalize(() => (this.loading = false))
     )
     return this.roles$.pipe(
-      map((result) => {
+      map((result: any) => {
         return result.stream
-          ? result.stream?.map((role) => {
-              this.roles.push(role as PermissionRole)
+          ? result.stream?.map((role: PermissionRole) => {
+              this.roles.push(role)
               return role
             })
           : []
@@ -318,9 +325,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         })
       )
     return this.permissions$.pipe(
-      map((result) => {
+      map((result: any) => {
         return result.stream
-          ? result.stream?.map((perm) => {
+          ? result.stream?.map((perm: Permission) => {
               this.permissions.push(perm)
               return perm
             })
@@ -407,7 +414,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissions
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
       .map((p) => {
-        console.log('prepareFilterApps ' + this.filterAppItems.filter((item) => item.value === p.appId).length, p)
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -452,13 +458,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissionRows.sort(
       this.currentApp.isProduct ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
     )
-    this.loadRoleAssignments(false)
+    this.loadRoleAssignments(true)
   }
 
-  // case 1: all apps
-  // case 2: the filtered app
+  // case 1: all apps on init
+  // case 2: the filtered app on reload after change
   // roleId is set only on role action: grant/revoke all
-  private loadRoleAssignments(clear: boolean, roleId?: string) {
+  private loadRoleAssignments(init: boolean, roleId?: string) {
     const appList: string[] = []
     if (this.productApps.length === 0) {
       console.warn('No apps found - stop loading assignments')
@@ -466,12 +472,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     } else if (this.filterAppValue) appList.push(this.filterAppValue)
     else
       this.permissions.map((perm) => {
-        if (!appList.includes(perm.appId ?? '')) appList.push(perm.appId ?? '')
+        if (!appList.includes(perm.appId!)) appList.push(perm.appId!)
       })
-    if (clear) {
+    if (appList.length > 0 && roleId) {
       this.permissionRows.forEach((p) => {
-        if (roleId) p.roles[roleId] = undefined
-        else p.roles = {}
+        if (appList.includes(p.appId!)) p.roles[roleId] = undefined
       })
     }
     this.assApi
@@ -482,11 +487,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object) {
+          if (init) this.protectedAssignments = [] // ids of mandatory assignments
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
           // Permission (row): id, appId, resource, action
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
+            if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
             permissions.map((perm) => {
               perm.roles[assignment.roleId!] = assignment.id
             })
@@ -555,6 +562,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     switch (icon.className) {
       case 'pi pi-fw pi-sort-alt': // init
         icon.className = 'pi pi-fw pi-sort-amount-down'
+        this.permissionTable?._value.sort(
+          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
+        )
         break
       case 'pi pi-fw pi-sort-amount-down':
         icon.className = 'pi pi-fw pi-sort-amount-up-alt'
@@ -622,7 +632,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    ****************************************************************************
    */
   public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    this.onEditPermission(ev, perm)
+    this.onDetailPermission(ev, perm)
     this.changeMode = 'CREATE'
   }
   public onCreatePermission(ev?: MouseEvent): void {
@@ -631,10 +641,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'CREATE'
     this.showPermissionDetailDialog = true
   }
-  public onEditPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+  public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    console.log('onDetailPermission')
     ev.stopPropagation()
     this.permission = perm
-    this.changeMode = 'EDIT'
+    this.changeMode = this.permission.mandatory || this.permission.operator ? 'VIEW' : 'EDIT'
     this.showPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
@@ -680,30 +691,45 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  // 1. Permission App => the own product
-  // 2. Workspace App  => a) selected product  b) all products
+  // GRANT ALL depends on what ALL means:
+  // 1. Value in App filter     => assign all permissions of this app to the role
+  // 2. Value in Product filter => assign all permissions of all Apps of this product to the role
+  // 3. No filter               => assign all permissions to the role
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
-    const pList = this.prepareProductList()
-    if (pList.length === 0) return // products are required
-    this.assApi
-      .grantAssignments({
-        createProductAssignmentsRequest: {
+    const response: any = {
+      next: () => {
+        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+        this.loadRoleAssignments(false, role.id)
+      },
+      error: (err: any) => {
+        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+        console.error(err)
+      }
+    }
+    if (this.filterAppValue) {
+      this.assApi
+        .grantRoleProductAssignments({
           roleId: role.id,
-          productNames: pList,
-          appId: this.filterAppValue
-        } as CreateProductAssignmentsRequest
-      })
-      .subscribe({
-        next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
-          this.loadRoleAssignments(true, role.id)
-        },
-        error: (err) => {
-          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-          console.error(err)
-        }
-      })
+          createRoleProductAssignmentRequest: {
+            appId: this.filterAppValue,
+            productName: this.getProductNameForApp(this.filterAppValue)
+          } as CreateRoleProductAssignmentRequest
+        } as GrantRoleProductAssignmentsRequestParams)
+        .subscribe(response)
+    } else if (this.filterProductValue) {
+      this.assApi
+        .grantRoleProductsAssignments({
+          roleId: role.id,
+          createRoleProductsAssignmentRequest: {
+            productNames: this.prepareProductList()
+          } as CreateRoleProductsAssignmentRequest
+        } as GrantRoleProductsAssignmentsRequestParams)
+        .subscribe(response)
+    } else {
+      this.assApi.grantRoleAssignments({ roleId: role.id } as GrantRoleAssignmentsRequestParams).subscribe(response)
+    }
   }
+
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     const pList = this.prepareProductList()
     if (pList.length === 0) return // products are required
@@ -714,7 +740,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-          this.loadRoleAssignments(true, role.id)
+          this.loadRoleAssignments(false, role.id)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
@@ -723,15 +749,25 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
   }
 
+  // Not perfect: apps are uinique only within the product
+  private getProductNameForApp(appId: string | undefined): string | undefined {
+    let pList: App[] = []
+    if (this.productApps.length > 1) {
+      pList = this.productApps.filter((p) => p.appId === appId)
+    }
+    return pList.length === 1 ? pList[0].productName : undefined
+  }
   private prepareProductList(): string[] {
     const pList: string[] = []
-    // => case 1
+    // => case 1: Product
     if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
-    // => case 2
+    // => case 2: Workspace
+    //         a) selected product
     else if (this.filterProductValue) pList.push(this.filterProductValue)
+    //         b) all products
     else if (this.filterProductItems.length > 1)
       this.filterProductItems.map((p) => {
-        if (p.value) pList.push(p.value ?? '') // ignore empty entry
+        if (p.value) pList.push(p.value!) // ignore empty entry
       })
     return pList
   }
@@ -745,18 +781,29 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByAppIdDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return this.sortPermissionRowByAppIdAsc(a, b)
+  private sortPermissionRowByAppIdDesc(bPerm: PermissionViewRow, aPerm: PermissionViewRow): number {
+    return (
+      (aPerm.appId ? aPerm.appId.toUpperCase() : '').localeCompare(bPerm.appId ? bPerm.appId.toUpperCase() : '') ||
+      aPerm.key.localeCompare(bPerm.key)
+    )
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (
       (a.productName ? a.productName.toUpperCase() : '').localeCompare(
         b.productName ? b.productName.toUpperCase() : ''
-      ) || a.key.localeCompare(b.key)
+      ) ||
+      a.appId?.localeCompare(b!.appId!) ||
+      a.key.localeCompare(b.key)
     )
   }
-  private sortPermissionRowByProductDesc(b: PermissionViewRow, a: PermissionViewRow): number {
-    return this.sortPermissionRowByProductAsc(a, b)
+  private sortPermissionRowByProductDesc(bP: PermissionViewRow, aP: PermissionViewRow): number {
+    return (
+      (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
+        bP.productName ? bP.productName.toUpperCase() : ''
+      ) ||
+      aP.appId?.localeCompare(bP!.appId!) ||
+      aP.key.localeCompare(bP.key)
+    )
   }
 
   private sortRoleByName(a: Role, b: Role): number {
