@@ -13,7 +13,9 @@ import {
   ApplicationAPIService,
   WorkspaceAPIService,
   WorkspaceAbstract,
-  WorkspacePageResult
+  WorkspacePageResult,
+  ApplicationPageResult,
+  Application
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
 
@@ -26,6 +28,22 @@ const wsAbstract2: WorkspaceAbstract = {
 
 const wsPageRes: WorkspacePageResult = {
   stream: [wsAbstract, wsAbstract2]
+}
+
+const app: Application = {
+  name: 'appName',
+  appId: 'appId',
+  productName: 'product'
+}
+
+const app2: Application = {
+  name: 'appName2',
+  appId: 'appId2',
+  productName: 'product2'
+}
+
+const appPageRes: ApplicationPageResult = {
+  stream: [app, app2]
 }
 
 describe('AppSearchComponent', () => {
@@ -62,7 +80,7 @@ describe('AppSearchComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AppSearchComponent)
     component = fixture.componentInstance
-    appApiSpy.searchApplications.and.returnValue(of({}) as any)
+    appApiSpy.searchApplications.and.returnValue(of(appPageRes) as any)
     wsApiSpy.searchWorkspaces.and.returnValue(of(wsPageRes) as any)
     fixture.detectChanges()
   })
@@ -124,9 +142,39 @@ describe('AppSearchComponent', () => {
     })
   })
 
-  xit('should search products', (done) => {
+  it('should search products', (done) => {
     component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products with empty appIds', (done) => {
+    const app3: Application = {
+      name: 'appName3',
+      productName: 'product3'
+    }
+    const app4: Application = {
+      name: 'appName4',
+      productName: 'product4'
+    }
+    const appPageRes2: ApplicationPageResult = {
+      stream: [app3, app4]
+    }
+    appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
 
     component.searchApps()
 
