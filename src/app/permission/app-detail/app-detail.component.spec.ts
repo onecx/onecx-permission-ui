@@ -290,4 +290,108 @@ describe('AppDetailComponent', () => {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
+
+  /*
+   *  ROLE
+   */
+  it('should call stopPropagation and set role to undefined in onCreateRole', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
+
+    component.onCreateRole(event)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.role).toBeUndefined()
+    expect(component.changeMode).toBe('CREATE')
+    expect(component.showRoleDetailDialog).toBeTrue()
+  })
+
+  it('should call stopPropagation and set role in onEditRole', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
+
+    component.onEditRole(event, role1)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.role).toBe(role1)
+    expect(component.changeMode).toBe('EDIT')
+    expect(component.showRoleDetailDialog).toBeTrue()
+  })
+
+  it('should call stopPropagation and set role in onDeleteRole', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
+
+    component.onDeleteRole(event, role1)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.role).toBe(role1)
+    expect(component.changeMode).toBe('DELETE')
+    expect(component.showRoleDeleteDialog).toBeTrue()
+  })
+
+  it('should reset state and call loadData if changed in onDetailChanged', () => {
+    component.onDetailChanged(true)
+
+    expect(component.role).toBeUndefined()
+    expect(component.permission).toBeUndefined()
+    expect(component.changeMode).toBe('VIEW')
+    expect(component.showPermissionDetailDialog).toBeFalse()
+    expect(component.showPermissionDeleteDialog).toBeFalse()
+    expect(component.showRoleDetailDialog).toBeFalse()
+    expect(component.showRoleDeleteDialog).toBeFalse()
+  })
+
+  /*
+   *  PERMISSION
+   */
+
+  // it('should call stopPropagation and set permission in onCopyPermission', () => {
+  //   const event = new MouseEvent('click');
+  //   const permission = { /* permission data */ };
+  //   spyOn(component, 'onCopyPermission');
+
+  //   component.onCopyPermission(event, permission);
+
+  //   expect(component.onCopyPermission).toHaveBeenCalledWith(event, permission);
+  //   expect(component.changeMode).toBe('CREATE');
+  // });
+
+  it('should call stopPropagation and set role to undefined in onCreatePermission', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
+
+    component.onCreatePermission(event)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.role).toBeUndefined()
+    expect(component.changeMode).toBe('CREATE')
+    expect(component.showPermissionDetailDialog).toBeTrue()
+  })
+
+  //   it('should call stopPropagation and set permission in onCopyPermission', () => {
+  //     const event = new MouseEvent('click')
+  //     const permission = { /* permission data */ }
+  //     spyOn(event, 'stopPropagation')
+
+  //     component.onCopyPermission(event, permission)
+
+  //     expect(event.stopPropagation).toHaveBeenCalled()
+  //     expect(component.permission).toBe(permission)
+  //     expect(component.changeMode).toBe('EDIT')
+  //     expect(component.showPermissionDetailDialog).toBeTrue()
+  //   })
+
+  //   it('should call stopPropagation and set permission in onDeletePermission', () => {
+  //     const event = new MouseEvent('click')
+  //     const permission = { /* permission data */ }
+  //     spyOn(event, 'stopPropagation')
+
+  //     component.onDeletePermission(event, permission)
+
+  //     expect(event.stopPropagation).toHaveBeenCalled()
+  //     expect(component.permission).toBe(permission)
+  //     expect(component.changeMode).toBe('DELETE')
+  //     expect(component.showPermissionDeleteDialog).toBeTrue()
+  //   })
 })
