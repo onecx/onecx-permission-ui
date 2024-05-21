@@ -27,15 +27,15 @@ import { AssignmentSearchCriteria } from '../model/assignmentSearchCriteria';
 // @ts-ignore
 import { CreateAssignmentRequest } from '../model/createAssignmentRequest';
 // @ts-ignore
-import { CreateProductAssignmentsRequest } from '../model/createProductAssignmentsRequest';
-// @ts-ignore
-import { CreateRoleProductAssignmentRequest } from '../model/createRoleProductAssignmentRequest';
+import { CreateRoleApplicationAssignmentRequest } from '../model/createRoleApplicationAssignmentRequest';
 // @ts-ignore
 import { CreateRoleProductsAssignmentRequest } from '../model/createRoleProductsAssignmentRequest';
 // @ts-ignore
 import { ProblemDetailResponse } from '../model/problemDetailResponse';
 // @ts-ignore
-import { RevokeAssignmentRequest } from '../model/revokeAssignmentRequest';
+import { RevokeRoleApplicationAssignmentRequest } from '../model/revokeRoleApplicationAssignmentRequest';
+// @ts-ignore
+import { RevokeRoleProductsAssignmentRequest } from '../model/revokeRoleProductsAssignmentRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -54,17 +54,13 @@ export interface GetAssignmentRequestParams {
     id: string;
 }
 
-export interface GrantAssignmentsRequestParams {
-    createProductAssignmentsRequest: CreateProductAssignmentsRequest;
+export interface GrantRoleApplicationAssignmentsRequestParams {
+    roleId: string;
+    createRoleApplicationAssignmentRequest: CreateRoleApplicationAssignmentRequest;
 }
 
 export interface GrantRoleAssignmentsRequestParams {
     roleId: string;
-}
-
-export interface GrantRoleProductAssignmentsRequestParams {
-    roleId: string;
-    createRoleProductAssignmentRequest: CreateRoleProductAssignmentRequest;
 }
 
 export interface GrantRoleProductsAssignmentsRequestParams {
@@ -72,8 +68,18 @@ export interface GrantRoleProductsAssignmentsRequestParams {
     createRoleProductsAssignmentRequest: CreateRoleProductsAssignmentRequest;
 }
 
-export interface RevokeAssignmentsRequestParams {
-    revokeAssignmentRequest: RevokeAssignmentRequest;
+export interface RevokeRoleApplicationAssignmentsRequestParams {
+    roleId: string;
+    revokeRoleApplicationAssignmentRequest: RevokeRoleApplicationAssignmentRequest;
+}
+
+export interface RevokeRoleAssignmentsRequestParams {
+    roleId: string;
+}
+
+export interface RevokeRoleProductsAssignmentsRequestParams {
+    roleId: string;
+    revokeRoleProductsAssignmentRequest: RevokeRoleProductsAssignmentRequest;
 }
 
 export interface SearchAssignmentsRequestParams {
@@ -332,18 +338,22 @@ export class AssignmentAPIService {
     }
 
     /**
-     * Create new assignments by criteria
+     * Create new assignments for role and application
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public grantAssignments(requestParameters: GrantAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const createProductAssignmentsRequest = requestParameters.createProductAssignmentsRequest;
-        if (createProductAssignmentsRequest === null || createProductAssignmentsRequest === undefined) {
-            throw new Error('Required parameter createProductAssignmentsRequest was null or undefined when calling grantAssignments.');
+    public grantRoleApplicationAssignments(requestParameters: GrantRoleApplicationAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public grantRoleApplicationAssignments(requestParameters: GrantRoleApplicationAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public grantRoleApplicationAssignments(requestParameters: GrantRoleApplicationAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public grantRoleApplicationAssignments(requestParameters: GrantRoleApplicationAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling grantRoleApplicationAssignments.');
+        }
+        const createRoleApplicationAssignmentRequest = requestParameters.createRoleApplicationAssignmentRequest;
+        if (createRoleApplicationAssignmentRequest === null || createRoleApplicationAssignmentRequest === undefined) {
+            throw new Error('Required parameter createRoleApplicationAssignmentRequest was null or undefined when calling grantRoleApplicationAssignments.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -386,11 +396,11 @@ export class AssignmentAPIService {
             }
         }
 
-        let localVarPath = `/assignments/grant`;
+        let localVarPath = `/assignments/grant/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/application`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: createProductAssignmentsRequest,
+                body: createRoleApplicationAssignmentRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -449,79 +459,6 @@ export class AssignmentAPIService {
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
-                withCredentials: this.configuration.withCredentials,
-                headers: localVarHeaders,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Create new assignments for role and product
-     * @param requestParameters
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public grantRoleProductAssignments(requestParameters: GrantRoleProductAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const roleId = requestParameters.roleId;
-        if (roleId === null || roleId === undefined) {
-            throw new Error('Required parameter roleId was null or undefined when calling grantRoleProductAssignments.');
-        }
-        const createRoleProductAssignmentRequest = requestParameters.createRoleProductAssignmentRequest;
-        if (createRoleProductAssignmentRequest === null || createRoleProductAssignmentRequest === undefined) {
-            throw new Error('Required parameter createRoleProductAssignmentRequest was null or undefined when calling grantRoleProductAssignments.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (localVarHttpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                'application/json'
-            ];
-            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        let localVarHttpContext: HttpContext | undefined = options && options.context;
-        if (localVarHttpContext === undefined) {
-            localVarHttpContext = new HttpContext();
-        }
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/assignments/grant/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/product`;
-        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: createRoleProductAssignmentRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -605,18 +542,22 @@ export class AssignmentAPIService {
     }
 
     /**
-     * delete assignments by criteria
+     * Revoke assignments for role and application
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public revokeAssignments(requestParameters: RevokeAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public revokeAssignments(requestParameters: RevokeAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public revokeAssignments(requestParameters: RevokeAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public revokeAssignments(requestParameters: RevokeAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const revokeAssignmentRequest = requestParameters.revokeAssignmentRequest;
-        if (revokeAssignmentRequest === null || revokeAssignmentRequest === undefined) {
-            throw new Error('Required parameter revokeAssignmentRequest was null or undefined when calling revokeAssignments.');
+    public revokeRoleApplicationAssignments(requestParameters: RevokeRoleApplicationAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public revokeRoleApplicationAssignments(requestParameters: RevokeRoleApplicationAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public revokeRoleApplicationAssignments(requestParameters: RevokeRoleApplicationAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public revokeRoleApplicationAssignments(requestParameters: RevokeRoleApplicationAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling revokeRoleApplicationAssignments.');
+        }
+        const revokeRoleApplicationAssignmentRequest = requestParameters.revokeRoleApplicationAssignmentRequest;
+        if (revokeRoleApplicationAssignmentRequest === null || revokeRoleApplicationAssignmentRequest === undefined) {
+            throw new Error('Required parameter revokeRoleApplicationAssignmentRequest was null or undefined when calling revokeRoleApplicationAssignments.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -659,11 +600,142 @@ export class AssignmentAPIService {
             }
         }
 
-        let localVarPath = `/assignments/revoke`;
+        let localVarPath = `/assignments/revoke/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/application`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: revokeAssignmentRequest,
+                body: revokeRoleApplicationAssignmentRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Revoke assignments for role
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public revokeRoleAssignments(requestParameters: RevokeRoleAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public revokeRoleAssignments(requestParameters: RevokeRoleAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public revokeRoleAssignments(requestParameters: RevokeRoleAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public revokeRoleAssignments(requestParameters: RevokeRoleAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling revokeRoleAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/revoke/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Revoke assignments for role and products
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public revokeRoleProductsAssignments(requestParameters: RevokeRoleProductsAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public revokeRoleProductsAssignments(requestParameters: RevokeRoleProductsAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public revokeRoleProductsAssignments(requestParameters: RevokeRoleProductsAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public revokeRoleProductsAssignments(requestParameters: RevokeRoleProductsAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const roleId = requestParameters.roleId;
+        if (roleId === null || roleId === undefined) {
+            throw new Error('Required parameter roleId was null or undefined when calling revokeRoleProductsAssignments.');
+        }
+        const revokeRoleProductsAssignmentRequest = requestParameters.revokeRoleProductsAssignmentRequest;
+        if (revokeRoleProductsAssignmentRequest === null || revokeRoleProductsAssignmentRequest === undefined) {
+            throw new Error('Required parameter revokeRoleProductsAssignmentRequest was null or undefined when calling revokeRoleProductsAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/revoke/${this.configuration.encodeParam({name: "roleId", value: roleId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/products`;
+        return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: revokeRoleProductsAssignmentRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

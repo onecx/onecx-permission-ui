@@ -16,13 +16,13 @@ import {
   PermissionPageResult,
   Permission,
   Assignment,
-  RevokeAssignmentRequest,
   CreateAssignmentRequestParams,
   GrantRoleAssignmentsRequestParams,
-  CreateRoleProductAssignmentRequest,
-  GrantRoleProductAssignmentsRequestParams,
-  CreateRoleProductsAssignmentRequest,
+  GrantRoleApplicationAssignmentsRequestParams,
   GrantRoleProductsAssignmentsRequestParams,
+  RevokeRoleAssignmentsRequestParams,
+  RevokeRoleProductsAssignmentsRequestParams,
+  RevokeRoleApplicationAssignmentsRequestParams,
   DeleteAssignmentRequestParams,
   Application,
   ApplicationAPIService,
@@ -263,6 +263,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               if (product.mfe)
                 product.mfe.map((a) => {
                   this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+                  console.log('app: ' + a.appId)
                 })
               if (product.ms)
                 product.ms.map((a) => {
@@ -702,21 +703,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     if (this.filterAppValue) {
       this.assApi
-        .grantRoleProductAssignments({
+        .grantRoleApplicationAssignments({
           roleId: role.id,
-          createRoleProductAssignmentRequest: {
+          createRoleApplicationAssignmentRequest: {
             appId: this.filterAppValue,
             productName: this.getProductNameForApp(this.filterAppValue)
-          } as CreateRoleProductAssignmentRequest
-        } as GrantRoleProductAssignmentsRequestParams)
+          }
+        } as GrantRoleApplicationAssignmentsRequestParams)
         .subscribe(response)
     } else if (this.filterProductValue) {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
-          createRoleProductsAssignmentRequest: {
-            productNames: this.prepareProductList()
-          } as CreateRoleProductsAssignmentRequest
+          createRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
         } as GrantRoleProductsAssignmentsRequestParams)
         .subscribe(response)
     } else {
@@ -724,33 +723,53 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  // REVOKE ALL depends on what ALL means:
+  // 1. Value in App filter     => remove all assignments of this app to the role
+  // 2. Value in Product filter => remove all assignments of all Apps of this product to the role
+  // 3. No filter               => remove all assignments of the role
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
-    const pList = this.prepareProductList()
-    if (pList.length === 0) return // products are required
-    this.assApi
-      .revokeAssignments({
-        revokeAssignmentRequest: { roleId: role.id, productNames: pList } as RevokeAssignmentRequest
-      })
-      .subscribe({
-        next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-          this.loadRoleAssignments(false, role.id)
-        },
-        error: (err) => {
-          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-          console.error(err)
-        }
-      })
+    const response: any = {
+      next: () => {
+        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+        this.loadRoleAssignments(false, role.id)
+      },
+      error: (err: any) => {
+        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+        console.error(err)
+      }
+    }
+    if (this.filterAppValue) {
+      this.assApi
+        .revokeRoleApplicationAssignments({
+          roleId: role.id,
+          revokeRoleApplicationAssignmentRequest: {
+            appId: this.filterAppValue,
+            productName: this.getProductNameForApp(this.filterAppValue)
+          }
+        } as RevokeRoleApplicationAssignmentsRequestParams)
+        .subscribe(response)
+    } else if (this.filterProductValue) {
+      this.assApi
+        .revokeRoleProductsAssignments({
+          roleId: role.id,
+          revokeRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
+        } as RevokeRoleProductsAssignmentsRequestParams)
+        .subscribe(response)
+    } else {
+      this.assApi.revokeRoleAssignments({ roleId: role.id } as RevokeRoleAssignmentsRequestParams).subscribe(response)
+    }
   }
 
   // Not perfect: apps are uinique only within the product
   private getProductNameForApp(appId: string | undefined): string | undefined {
     let pList: App[] = []
+    console.log('this.productApps', this.productApps)
     if (this.productApps.length > 1) {
       pList = this.productApps.filter((p) => p.appId === appId)
     }
     return pList.length === 1 ? pList[0].productName : undefined
   }
+
   private prepareProductList(): string[] {
     const pList: string[] = []
     // => case 1: Product
