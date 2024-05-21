@@ -6,19 +6,11 @@
   [closable]="true"
   [resizable]="true"
   [dismissableMask]="true"
-  [style]="{ width: '400px' }"
+  [style]="{ width: '450px' }"
 >
   <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
-        <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="permission_detail_app_id" formControlName="appId" />
-          <label class="ocx-required-label" for="permission_detail_app_id">
-            {{ 'PERMISSION.APP_ID' | translate }}
-          </label>
-        </span>
-      </div>
-      <div>
         <span class="p-float-label" controlErrorAnchor>
           <input
             pInputText
@@ -31,6 +23,34 @@
             {{ 'PERMISSION.PRODUCT_NAME' | translate }}
           </label>
         </span>
+      </div>
+      <div>
+        <span class="p-float-label" controlErrorAnchor>
+          <input pInputText type="text" class="w-full" id="permission_detail_app_id" formControlName="appId" />
+          <label class="ocx-required-label" for="permission_detail_app_id">
+            {{ 'PERMISSION.APP_ID' | translate }}
+          </label>
+        </span>
+      </div>
+      <div class="flex flex-row justify-content-between align-items-center column-gap-3">
+        <p-checkbox
+          type="text"
+          inputId="permission_detail_operator"
+          formControlName="operator"
+          [binary]="true"
+          [styleClass]="'cursor-auto shadow-none'"
+          [label]="'PERMISSION.OPERATOR' | translate"
+          [title]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
+        ></p-checkbox>
+        <p-checkbox
+          type="text"
+          inputId="permission_detail_mandatory"
+          formControlName="mandatory"
+          [binary]="true"
+          [styleClass]="'cursor-auto shadow-none'"
+          [label]="'PERMISSION.MANDATORY' | translate"
+          [title]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
+        ></p-checkbox>
       </div>
       <div>
         <span class="p-float-label" controlErrorAnchor>
@@ -65,6 +85,20 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <button
+        *ngIf="changeMode === 'VIEW'"
+        pButton
+        autofocus
+        type="button"
+        class="m-0"
+        id="permission_detail_button_close"
+        icon="pi pi-times"
+        iconPos="left"
+        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [title]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
+        (click)="onClose()"
+      ></button>
+      <button
+        *ngIf="changeMode !== 'VIEW'"
         pButton
         autofocus
         type="button"
@@ -73,9 +107,11 @@
         icon="pi pi-times"
         iconPos="left"
         [label]="'ACTIONS.CANCEL' | translate"
+        [title]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
         (click)="onClose()"
       ></button>
       <button
+        *ngIf="changeMode !== 'VIEW'"
         pButton
         type="button"
         class="m-0"
@@ -83,6 +119,7 @@
         icon="pi pi-save"
         iconPos="left"
         [label]="'ACTIONS.SAVE' | translate"
+        [title]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         [disabled]="!formGroup.valid"
         (click)="onSave()"
       ></button>

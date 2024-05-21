@@ -41,7 +41,9 @@ export class PermissionDetailComponent implements OnChanges {
       productName: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       description: new FormControl(null),
       resource: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-      action: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)])
+      action: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+      mandatory: new FormControl(false),
+      operator: new FormControl(false)
     })
   }
 
@@ -53,13 +55,21 @@ export class PermissionDetailComponent implements OnChanges {
       this.formGroup.controls['resource'].patchValue(this.permission.resource)
       this.formGroup.controls['action'].patchValue(this.permission.action)
       this.formGroup.controls['description'].patchValue(this.permission.description)
+      this.formGroup.controls['mandatory'].patchValue(this.permission.mandatory ?? false)
+      this.formGroup.controls['operator'].patchValue(this.permission.operator ?? false)
     }
-    if (this.userService.hasPermission('PERMISSION#EDIT') || this.userService.hasPermission('PERMISSION#CREATE'))
+    this.formGroup.disable()
+    if (
+      (this.userService.hasPermission('PERMISSION#EDIT') || this.userService.hasPermission('PERMISSION#CREATE')) &&
+      !(this.permission?.operator || this.permission?.mandatory)
+    ) {
       this.formGroup.enable()
-    else this.formGroup.disable()
-    if (this.changeMode === 'EDIT') {
-      this.formGroup.controls['appId'].disable()
-      this.formGroup.controls['productName'].disable()
+      if (this.changeMode === 'EDIT') {
+        this.formGroup.controls['appId'].disable()
+        this.formGroup.controls['productName'].disable()
+      }
+      this.formGroup.controls['mandatory'].disable()
+      this.formGroup.controls['operator'].disable()
     }
   }
 
