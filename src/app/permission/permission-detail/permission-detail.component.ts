@@ -55,8 +55,13 @@ export class PermissionDetailComponent implements OnChanges {
       this.formGroup.controls['resource'].patchValue(this.permission.resource)
       this.formGroup.controls['action'].patchValue(this.permission.action)
       this.formGroup.controls['description'].patchValue(this.permission.description)
-      this.formGroup.controls['mandatory'].patchValue(this.permission.mandatory ?? false)
-      this.formGroup.controls['operator'].patchValue(this.permission.operator ?? false)
+      if (this.changeMode === 'CREATE') {
+        this.formGroup.controls['mandatory'].patchValue(false)
+        this.formGroup.controls['operator'].patchValue(false)
+      } else {
+        this.formGroup.controls['mandatory'].patchValue(this.permission.mandatory ?? false)
+        this.formGroup.controls['operator'].patchValue(this.permission.operator ?? false)
+      }
     }
     this.formGroup.disable()
     if (
@@ -122,8 +127,6 @@ export class PermissionDetailComponent implements OnChanges {
         }
       })
     } else {
-      console.info('form valid ' + this.formGroup.valid)
-      //const roleNameChanged = this.formGroup.controls['name'].value !== this.permission?.name
       const permission = {
         modificationCount: this.permission?.modificationCount,
         appId: this.formGroup.controls['appId'].value,

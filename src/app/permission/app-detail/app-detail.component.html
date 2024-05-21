@@ -376,7 +376,10 @@
                   *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                   [id]="'app_detail_permission_table_row_' + row + '_edit_action'"
                   (click)="onDetailPermission($event, rowData)"
-                  [title]="'ACTIONS.EDIT.PERMISSION' | translate"
+                  [title]="
+                    (rowData?.mandatory || rowData?.operator ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION'
+                      | translate
+                  "
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
                   <span
@@ -403,7 +406,7 @@
                   *ngIf="myPermissions.includes('PERMISSION#DELETE')"
                   [id]="'app_detail_permission_table_row_' + row + '_delete_action'"
                   (click)="onDeletePermission($event, rowData)"
-                  [disabled]="rowData.mandatory"
+                  [disabled]="rowData.mandatory || rowData?.operator"
                   [title]="'ACTIONS.DELETE.PERMISSION' | translate"
                   class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >

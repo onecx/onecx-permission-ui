@@ -560,18 +560,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev.stopPropagation()
     this.permissionTable?.clear()
     switch (icon.className) {
-      case 'pi pi-fw pi-sort-alt': // init
-        icon.className = 'pi pi-fw pi-sort-amount-down'
-        this.permissionTable?._value.sort(
-          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
-        )
-        break
       case 'pi pi-fw pi-sort-amount-down':
         icon.className = 'pi pi-fw pi-sort-amount-up-alt'
         this.permissionTable?._value.sort(
           field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
         )
         break
+      case 'pi pi-fw pi-sort-alt': // init
       case 'pi pi-fw pi-sort-amount-up-alt':
         icon.className = 'pi pi-fw pi-sort-amount-down'
         this.permissionTable?._value.sort(
@@ -642,7 +637,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.showPermissionDetailDialog = true
   }
   public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    console.log('onDetailPermission')
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = this.permission.mandatory || this.permission.operator ? 'VIEW' : 'EDIT'
@@ -767,7 +761,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     //         b) all products
     else if (this.filterProductItems.length > 1)
       this.filterProductItems.map((p) => {
-        if (p.value) pList.push(p.value!) // ignore empty entry
+        if (p.value) pList.push(p.value) // ignore empty entry
       })
     return pList
   }
@@ -792,7 +786,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       (a.productName ? a.productName.toUpperCase() : '').localeCompare(
         b.productName ? b.productName.toUpperCase() : ''
       ) ||
-      a.appId?.localeCompare(b!.appId!) ||
+      a.appId?.localeCompare(b.appId!) ||
       a.key.localeCompare(b.key)
     )
   }
@@ -801,7 +795,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
         bP.productName ? bP.productName.toUpperCase() : ''
       ) ||
-      aP.appId?.localeCompare(bP!.appId!) ||
+      aP.appId?.localeCompare(bP.appId!) ||
       aP.key.localeCompare(bP.key)
     )
   }
