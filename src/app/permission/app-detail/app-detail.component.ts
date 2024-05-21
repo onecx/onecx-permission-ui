@@ -24,13 +24,15 @@ import {
   RevokeRoleProductsAssignmentsRequestParams,
   RevokeRoleApplicationAssignmentsRequestParams,
   DeleteAssignmentRequestParams,
+  MfeMsAbstract,
   Application,
   ApplicationAPIService,
   AssignmentAPIService,
   PermissionAPIService,
   RoleAPIService,
   WorkspaceAPIService,
-  WorkspaceDetails
+  WorkspaceDetails,
+  ProductDetails
 } from 'src/app/shared/generated'
 import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 
@@ -258,19 +260,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
-          if (this.currentApp.workspaceDetails?.products && this.currentApp.workspaceDetails?.products.length > 0) {
-            this.currentApp.workspaceDetails?.products.map((product) => {
-              if (product.mfe)
-                product.mfe.map((a) => {
-                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-                })
-              if (product.ms)
-                product.ms.map((a) => {
-                  if (this.productApps.filter((aa) => aa.appId === a.appId).length === 0)
-                    this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-                })
-            })
-          }
+          this.currentApp.workspaceDetails?.products?.map((product) => this.fillProductApps(product))
+          console.log(this.productApps)
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         } else {
@@ -278,6 +269,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
+  }
+  private fillProductApps(product: ProductDetails) {
+    if (product.mfe) product.mfe.map((app) => this.pushProductApps(product.productName!, app))
+    if (product.ms) product.ms.map((app) => this.pushProductApps(product.productName!, app))
+  }
+  private pushProductApps(productName: string, app: MfeMsAbstract) {
+    if (this.productApps.filter((aa) => aa.appId === app.appId).length === 0)
+      this.productApps.push({ appId: app.appId, name: app.appName, productName: productName } as App)
   }
 
   /**
@@ -801,19 +800,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (
-      (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+      ((a.productName ? a.productName.toUpperCase() : '').localeCompare(
         b.productName ? b.productName.toUpperCase() : ''
       ) ||
-      a.appId?.localeCompare(b.appId!) ||
+        a.appId?.localeCompare(b.appId!)) ??
       a.key.localeCompare(b.key)
     )
   }
   private sortPermissionRowByProductDesc(bP: PermissionViewRow, aP: PermissionViewRow): number {
     return (
-      (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
+      ((aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
         bP.productName ? bP.productName.toUpperCase() : ''
       ) ||
-      aP.appId?.localeCompare(bP.appId!) ||
+        aP.appId?.localeCompare(bP.appId!)) ??
       aP.key.localeCompare(bP.key)
     )
   }
