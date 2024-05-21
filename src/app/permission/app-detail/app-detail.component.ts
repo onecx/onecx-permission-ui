@@ -632,7 +632,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    ****************************************************************************
    */
   public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    this.onEditPermission(ev, perm)
+    this.onDetailPermission(ev, perm)
     this.changeMode = 'CREATE'
   }
   public onCreatePermission(ev?: MouseEvent): void {
@@ -641,10 +641,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'CREATE'
     this.showPermissionDetailDialog = true
   }
-  public onEditPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+  public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    console.log('onDetailPermission')
     ev.stopPropagation()
     this.permission = perm
-    this.changeMode = 'EDIT'
+    this.changeMode = this.permission.mandatory || this.permission.operator ? 'VIEW' : 'EDIT'
     this.showPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {

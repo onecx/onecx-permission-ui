@@ -193,8 +193,11 @@
     "ACTION": "Action",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
+    "MANDATORY": "Mandatory required",
     "MANDATORY.COLUMN": "Can the permission be edited?",
-    "MANDATORY": "This Permission is necessary for operation and cannot therefore be changed or deleted.",
+    "MANDATORY.TOOLTIP": "This Permission is necessary for operation and cannot therefore be changed or deleted.",
+    "OPERATOR": "Created by Operator",
+    "OPERATOR.TOOLTIP": "If set then this Permission was created by the operator.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",

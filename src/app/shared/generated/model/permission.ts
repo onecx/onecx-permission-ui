@@ -24,5 +24,6 @@ export interface Permission {
     action?: string;
     description?: string;
     mandatory?: boolean;
+    operator?: boolean;
 }
 

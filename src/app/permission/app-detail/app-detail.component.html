@@ -375,12 +375,16 @@
                   type="button"
                   *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                   [id]="'app_detail_permission_table_row_' + row + '_edit_action'"
-                  (click)="onEditPermission($event, rowData)"
-                  [disabled]="rowData.mandatory"
+                  (click)="onDetailPermission($event, rowData)"
                   [title]="'ACTIONS.EDIT.PERMISSION' | translate"
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
-                  <span class="text-primary font-medium p-button-icon pi pi-pencil" aria-hidden="true"></span>
+                  <span
+                    class="text-primary font-medium p-button-icon pi"
+                    [class.pi-eye]="rowData?.mandatory || rowData?.operator"
+                    [class.pi-pencil]="!(rowData?.mandatory || rowData?.operator)"
+                    aria-hidden="true"
+                  ></span>
                 </button>
                 <button
                   pbutton
@@ -411,7 +415,7 @@
                   *ngIf="rowData.mandatory"
                   class="pi pi-lock"
                   aria-hidden="true"
-                  [title]="'PERMISSION.MANDATORY' | translate"
+                  [title]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
                 ></span>
               </td>
             </ng-container>
