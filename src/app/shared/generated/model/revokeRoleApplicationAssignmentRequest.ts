@@ -11,7 +11,7 @@
  */
 
 
-export interface CreateRoleProductAssignmentRequest { 
+export interface RevokeRoleApplicationAssignmentRequest { 
     appId: string;
     productName: string;
 }
