@@ -228,7 +228,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (result instanceof HttpErrorResponse) {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
           console.error('searchApplications() result:', result)
-        } else if (result instanceof Object) {
+        } else if (result instanceof Object && result.stream) {
           this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
           this.currentApp.name = this.currentApp.productName
           result.stream.map((app: Application) => this.productApps.push(app as App))

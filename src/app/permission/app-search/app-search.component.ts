@@ -47,7 +47,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterItems: SelectItem[]
   public filterValue: string | undefined
   public filterValueDefault = 'appType,appId'
-  public filterBy = this.filterValueDefault || 'appType'
+  public filterBy = this.filterValueDefault
   public filter: string | undefined
   public sortField = 'appType'
   public sortOrder = 1

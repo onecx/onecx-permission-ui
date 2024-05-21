@@ -38,8 +38,7 @@ const app: Application = {
 
 const app2: Application = {
   name: 'appName2',
-  appId: 'appId2',
-  productName: 'product2'
+  appId: 'appId2'
 }
 
 const appPageRes: ApplicationPageResult = {
@@ -145,6 +144,60 @@ describe('AppSearchComponent', () => {
   it('should search products', (done) => {
     component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
     component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products without search criteria', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue(null)
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search apps', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(2)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search apps without criteria', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
+    component.appSearchCriteriaGroup.controls['name'].setValue(null)
 
     component.searchApps()
 
