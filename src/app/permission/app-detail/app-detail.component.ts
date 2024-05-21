@@ -263,11 +263,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               if (product.mfe)
                 product.mfe.map((a) => {
                   this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-                  console.log('app: ' + a.appId)
                 })
               if (product.ms)
                 product.ms.map((a) => {
-                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
+                  if (this.productApps.filter((aa) => aa.appId === a.appId).length === 0)
+                    this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
                 })
             })
           }
@@ -763,7 +763,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   // Not perfect: apps are uinique only within the product
   private getProductNameForApp(appId: string | undefined): string | undefined {
     let pList: App[] = []
-    console.log('this.productApps', this.productApps)
     if (this.productApps.length > 1) {
       pList = this.productApps.filter((p) => p.appId === appId)
     }
