@@ -527,7 +527,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.filterValue = ''
     } else {
       this.filterBy = ['action']
-      this.filterValue = ev.value === 'OTHERS' ? ['DELETE', 'EDIT', 'VIEW'] : ev.value
+      this.filterValue = ev.value
     }
     if (this.permissionTableFilterInput && this.permissionTable) {
       this.permissionTableFilterInput.nativeElement.value = this.filterValue
