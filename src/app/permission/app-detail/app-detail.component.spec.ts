@@ -2,8 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRouteSnapshot, ParamMap, Router } from '@angular/router'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router } from '@angular/router'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
@@ -186,6 +185,7 @@ describe('AppDetailComponent', () => {
       providers: [
         { provide: ApplicationAPIService, useValue: appApiSpy },
         { provide: AssignmentAPIService, useValue: assApiSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
@@ -341,6 +341,44 @@ describe('AppDetailComponent', () => {
     component.ngOnInit()
 
     expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+  })
+
+  /**
+   * CREATE
+   */
+  it('should return if there are no missing ws roles', () => {
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = false
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+  })
+
+  it('should create a role', () => {
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = true
+    component.currentApp.workspaceDetails = wsDetails
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+  })
+
+  it('should display error msg if create role fails', () => {
+    roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = true
+    component.currentApp.workspaceDetails = wsDetails
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
   })
 
   /**
@@ -590,7 +628,7 @@ describe('AppDetailComponent', () => {
   })
 
   /*
-   *  ROLE
+   * ROLE
    */
   it('should call stopPropagation and set role to undefined in onCreateRole', () => {
     const event = new MouseEvent('click')
@@ -641,7 +679,7 @@ describe('AppDetailComponent', () => {
   })
 
   /*
-   *  PERMISSION
+   * PERMISSION
    */
 
   it('should call onDetailPermission in create mode onCopyPermission', () => {
@@ -701,4 +739,9 @@ describe('AppDetailComponent', () => {
     expect(component.changeMode).toBe('DELETE')
     expect(component.showPermissionDeleteDialog).toBeTrue()
   })
+
+  /****************************************************************************
+   *  ASSIGNMENTS    => grant + revoke permissions => assign roles
+   ****************************************************************************
+   */
 })
