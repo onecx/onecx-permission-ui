@@ -217,8 +217,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /**
    * UI Events
    */
-  public onAppClick(ev: any, app: App): void {
-    ev.stopPropagation()
+  public onAppClick(app: App): void {
     this.router.navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
       relativeTo: this.route
     })
