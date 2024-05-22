@@ -12,6 +12,7 @@ import { limitText } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
+  WorkspaceAbstract,
   WorkspaceAPIService,
   WorkspacePageResult,
   ApplicationPageResult
@@ -116,10 +117,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         finalize(() => (this.searchInProgress = false))
       )
     return this.workspaces$.pipe(
-      map((result) => {
+      map((result: any) => {
         return result.stream
           ? result.stream
-              ?.map((w) => {
+              ?.map((w: WorkspaceAbstract) => {
                 return { appId: w.name, appType: 'WORKSPACE', description: w.description } as App
               })
               .sort(this.sortAppsByAppId)
@@ -147,28 +148,26 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         finalize(() => (this.searchInProgress = false))
       )
     return this.papps$.pipe(
-      map((result) => {
+      map((result: any) => {
         if (!result.stream) return []
         const productNames: string[] = []
         const apps: App[] = []
-        result.stream?.map((app) => {
+        result.stream?.map((app: Application) => {
           if (!productNames.includes(app.productName ?? '')) {
             productNames.push(app.productName ?? '')
             apps.push({ ...app, appType: 'PRODUCT' } as App)
           }
-          //}
         })
         return apps.sort(this.sortAppsByAppId)
       })
     )
   }
   public searchApps(): void {
-    console.log('searchApps: ' + this.appSearchCriteriaGroup.controls['appType'].value)
     this.searchInProgress = true
     switch (this.appSearchCriteriaGroup.controls['appType'].value) {
       case 'ALL':
         this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
-          map(([w, a]) => w.concat(a).sort(this.sortAppsByAppId))
+          map(([w, a]: [App[], App[]]) => w.concat(a).sort(this.sortAppsByAppId))
         )
         break
       case 'WORKSPACE':
@@ -199,7 +198,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         'ACTIONS.SEARCH.SORT_DIRECTION_DESC'
       ])
       .pipe(
-        map((data) => {
+        map((data: any) => {
           this.dataViewControlsTranslations = {
             sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
             filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
@@ -218,7 +217,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /**
    * UI Events
    */
-  public onAppClick(app: App): void {
+  public onAppClick(ev: any, app: App): void {
+    ev.stopPropagation()
     this.router.navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
       relativeTo: this.route
     })
