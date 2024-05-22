@@ -16,21 +16,23 @@ import {
   PermissionPageResult,
   Permission,
   Assignment,
-  RevokeAssignmentRequest,
   CreateAssignmentRequestParams,
   GrantRoleAssignmentsRequestParams,
-  CreateRoleProductAssignmentRequest,
-  GrantRoleProductAssignmentsRequestParams,
-  CreateRoleProductsAssignmentRequest,
+  GrantRoleApplicationAssignmentsRequestParams,
   GrantRoleProductsAssignmentsRequestParams,
+  RevokeRoleAssignmentsRequestParams,
+  RevokeRoleProductsAssignmentsRequestParams,
+  RevokeRoleApplicationAssignmentsRequestParams,
   DeleteAssignmentRequestParams,
+  MfeMsAbstract,
   Application,
   ApplicationAPIService,
   AssignmentAPIService,
   PermissionAPIService,
   RoleAPIService,
   WorkspaceAPIService,
-  WorkspaceDetails
+  WorkspaceDetails,
+  ProductDetails
 } from 'src/app/shared/generated'
 import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
 
@@ -258,18 +260,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
-          if (this.currentApp.workspaceDetails?.products && this.currentApp.workspaceDetails?.products.length > 0) {
-            this.currentApp.workspaceDetails?.products.map((product) => {
-              if (product.mfe)
-                product.mfe.map((a) => {
-                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-                })
-              if (product.ms)
-                product.ms.map((a) => {
-                  this.productApps.push({ appId: a.appId, name: a.appName, productName: product.productName } as App)
-                })
-            })
-          }
+          this.currentApp.workspaceDetails?.products?.map((product) => this.fillProductApps(product))
+          console.log(this.productApps)
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         } else {
@@ -277,6 +269,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
+  }
+  private fillProductApps(product: ProductDetails) {
+    if (product.mfe) product.mfe.forEach((app) => this.pushProductApps(product.productName!, app))
+    if (product.ms) product.ms.forEach((app) => this.pushProductApps(product.productName!, app))
+  }
+  private pushProductApps(productName: string, app: MfeMsAbstract) {
+    if (this.productApps.filter((aa) => aa.appId === app.appId).length === 0)
+      this.productApps.push({ appId: app.appId, name: app.appName, productName: productName } as App)
   }
 
   /**
@@ -413,7 +413,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // 1. load from permisions
     this.permissions
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
-      .map((p) => {
+      .forEach((p) => {
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -425,7 +425,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // 2. add missing apps from product
     this.productApps
       .filter((a) => a.productName === (selectedProductName ?? a.productName))
-      .map((app) => {
+      .forEach((app) => {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
@@ -471,7 +471,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     } else if (this.filterAppValue) appList.push(this.filterAppValue)
     else
-      this.permissions.map((perm) => {
+      this.permissions.forEach((perm) => {
         if (!appList.includes(perm.appId!)) appList.push(perm.appId!)
       })
     if (appList.length > 0 && roleId) {
@@ -479,6 +479,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (appList.includes(p.appId!)) p.roles[roleId] = undefined
       })
     }
+    this.searchAssignments(init, appList, roleId)
+  }
+
+  private searchAssignments(init: boolean, appList: string[], roleId?: string) {
     this.assApi
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, roleId: roleId, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
@@ -494,9 +498,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
             if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
-            permissions.map((perm) => {
-              perm.roles[assignment.roleId!] = assignment.id
-            })
+            permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
           this.loading = false
         } else {
@@ -560,18 +562,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev.stopPropagation()
     this.permissionTable?.clear()
     switch (icon.className) {
-      case 'pi pi-fw pi-sort-alt': // init
-        icon.className = 'pi pi-fw pi-sort-amount-down'
-        this.permissionTable?._value.sort(
-          field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
-        )
-        break
       case 'pi pi-fw pi-sort-amount-down':
         icon.className = 'pi pi-fw pi-sort-amount-up-alt'
         this.permissionTable?._value.sort(
           field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
         )
         break
+      case 'pi pi-fw pi-sort-alt': // init
       case 'pi pi-fw pi-sort-amount-up-alt':
         icon.className = 'pi pi-fw pi-sort-amount-down'
         this.permissionTable?._value.sort(
@@ -642,7 +639,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.showPermissionDetailDialog = true
   }
   public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    console.log('onDetailPermission')
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = this.permission.mandatory || this.permission.operator ? 'VIEW' : 'EDIT'
@@ -708,21 +704,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     if (this.filterAppValue) {
       this.assApi
-        .grantRoleProductAssignments({
+        .grantRoleApplicationAssignments({
           roleId: role.id,
-          createRoleProductAssignmentRequest: {
+          createRoleApplicationAssignmentRequest: {
             appId: this.filterAppValue,
             productName: this.getProductNameForApp(this.filterAppValue)
-          } as CreateRoleProductAssignmentRequest
-        } as GrantRoleProductAssignmentsRequestParams)
+          }
+        } as GrantRoleApplicationAssignmentsRequestParams)
         .subscribe(response)
     } else if (this.filterProductValue) {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
-          createRoleProductsAssignmentRequest: {
-            productNames: this.prepareProductList()
-          } as CreateRoleProductsAssignmentRequest
+          createRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
         } as GrantRoleProductsAssignmentsRequestParams)
         .subscribe(response)
     } else {
@@ -730,23 +724,41 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  // REVOKE ALL depends on what ALL means:
+  // 1. Value in App filter     => remove all assignments of this app to the role
+  // 2. Value in Product filter => remove all assignments of all Apps of this product to the role
+  // 3. No filter               => remove all assignments of the role
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
-    const pList = this.prepareProductList()
-    if (pList.length === 0) return // products are required
-    this.assApi
-      .revokeAssignments({
-        revokeAssignmentRequest: { roleId: role.id, productNames: pList } as RevokeAssignmentRequest
-      })
-      .subscribe({
-        next: () => {
-          this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-          this.loadRoleAssignments(false, role.id)
-        },
-        error: (err) => {
-          this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-          console.error(err)
-        }
-      })
+    const response: any = {
+      next: () => {
+        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+        this.loadRoleAssignments(false, role.id)
+      },
+      error: (err: any) => {
+        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+        console.error(err)
+      }
+    }
+    if (this.filterAppValue) {
+      this.assApi
+        .revokeRoleApplicationAssignments({
+          roleId: role.id,
+          revokeRoleApplicationAssignmentRequest: {
+            appId: this.filterAppValue,
+            productName: this.getProductNameForApp(this.filterAppValue)
+          }
+        } as RevokeRoleApplicationAssignmentsRequestParams)
+        .subscribe(response)
+    } else if (this.filterProductValue) {
+      this.assApi
+        .revokeRoleProductsAssignments({
+          roleId: role.id,
+          revokeRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
+        } as RevokeRoleProductsAssignmentsRequestParams)
+        .subscribe(response)
+    } else {
+      this.assApi.revokeRoleAssignments({ roleId: role.id } as RevokeRoleAssignmentsRequestParams).subscribe(response)
+    }
   }
 
   // Not perfect: apps are uinique only within the product
@@ -757,6 +769,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     return pList.length === 1 ? pList[0].productName : undefined
   }
+
   private prepareProductList(): string[] {
     const pList: string[] = []
     // => case 1: Product
@@ -766,8 +779,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     else if (this.filterProductValue) pList.push(this.filterProductValue)
     //         b) all products
     else if (this.filterProductItems.length > 1)
-      this.filterProductItems.map((p) => {
-        if (p.value) pList.push(p.value!) // ignore empty entry
+      this.filterProductItems.forEach((p) => {
+        if (p.value) pList.push(p.value) // ignore empty entry
       })
     return pList
   }
@@ -789,19 +802,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   private sortPermissionRowByProductAsc(a: PermissionViewRow, b: PermissionViewRow): number {
     return (
-      (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+      ((a.productName ? a.productName.toUpperCase() : '').localeCompare(
         b.productName ? b.productName.toUpperCase() : ''
       ) ||
-      a.appId?.localeCompare(b!.appId!) ||
+        a.appId?.localeCompare(b.appId!)) ??
       a.key.localeCompare(b.key)
     )
   }
   private sortPermissionRowByProductDesc(bP: PermissionViewRow, aP: PermissionViewRow): number {
     return (
-      (aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
+      ((aP.productName ? aP.productName.toUpperCase() : '').localeCompare(
         bP.productName ? bP.productName.toUpperCase() : ''
       ) ||
-      aP.appId?.localeCompare(bP!.appId!) ||
+        aP.appId?.localeCompare(bP.appId!)) ??
       aP.key.localeCompare(bP.key)
     )
   }

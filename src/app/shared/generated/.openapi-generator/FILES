@@ -21,7 +21,7 @@ model/assignmentSearchCriteria.ts
 model/createAssignmentRequest.ts
 model/createPermissionRequest.ts
 model/createProductAssignmentsRequest.ts
-model/createRoleProductAssignmentRequest.ts
+model/createRoleApplicationAssignmentRequest.ts
 model/createRoleProductsAssignmentRequest.ts
 model/createRoleRequest.ts
 model/createRolesRequest.ts
@@ -39,7 +39,8 @@ model/problemDetailParam.ts
 model/problemDetailResponse.ts
 model/product.ts
 model/productDetails.ts
-model/revokeAssignmentRequest.ts
+model/revokeRoleApplicationAssignmentRequest.ts
+model/revokeRoleProductsAssignmentRequest.ts
 model/role.ts
 model/rolePageResult.ts
 model/roleSearchCriteria.ts

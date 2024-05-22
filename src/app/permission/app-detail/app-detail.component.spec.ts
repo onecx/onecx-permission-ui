@@ -138,7 +138,9 @@ describe('AppDetailComponent', () => {
     'searchAssignments',
     'createAssignment',
     'deleteAssignment',
-    'grantAssignments'
+    'grantRoleAssignments',
+    'grantRoleApplicationAssignments',
+    'grantRoleProductsAssignments'
   ])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', ['searchPermissions'])
@@ -198,7 +200,9 @@ describe('AppDetailComponent', () => {
     appApiSpy.searchApplications.and.returnValue(of(appPageRes) as any)
     assApiSpy.createAssignment.and.returnValue(of(assgmt1) as any)
     assApiSpy.deleteAssignment.and.returnValue(of({}) as any)
-    assApiSpy.grantAssignments.and.returnValue(of({}) as any)
+    assApiSpy.grantRoleAssignments.and.returnValue(of({}) as any)
+    assApiSpy.grantRoleApplicationAssignments.and.returnValue(of({}) as any)
+    assApiSpy.grantRoleProductsAssignments.and.returnValue(of({}) as any)
     assApiSpy.searchAssignments.and.returnValue(of(assgmtPageRes) as any)
     permApiSpy.searchPermissions.and.returnValue(of(permPageRes) as any)
     roleApiSpy.searchRoles.and.returnValue(of(rolePageRes) as any)
