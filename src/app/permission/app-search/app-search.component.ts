@@ -48,7 +48,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterItems: SelectItem[]
   public filterValue: string | undefined
   public filterValueDefault = 'appType,appId'
-  public filterBy = this.filterValueDefault || 'appType'
+  public filterBy = this.filterValueDefault
   public filter: string | undefined
   public sortField = 'appType'
   public sortOrder = 1
@@ -211,13 +211,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           }
         })
       )
+      .subscribe()
   }
 
   /**
    * UI Events
    */
-  public onAppClick(ev: any, app: App): void {
-    ev.stopPropagation()
+  public onAppClick(app: App): void {
     this.router.navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
       relativeTo: this.route
     })
