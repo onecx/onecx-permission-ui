@@ -340,7 +340,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissions = []
     combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(
       () => {}, // next
-      () => {}, // error
+      // () => {}, // error (search functions catch errors, not needed here)
       () => {
         this.checkWorkspaceRoles()
         this.roles.sort(this.sortRoleByName)

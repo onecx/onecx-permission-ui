@@ -29,6 +29,7 @@ import { App, AppDetailComponent, PermissionViewRow } from './app-detail.compone
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Table } from 'primeng/table'
+import { FilterMatchMode } from 'primeng/api'
 
 const app: Application = {
   name: 'appName',
@@ -103,7 +104,7 @@ const permRow: PermissionViewRow = {
 }
 
 const permRow2: PermissionViewRow = {
-  ...perm1,
+  ...perm2,
   key: 'key',
   roles: { undefined },
   appType: 'MFE',
@@ -184,6 +185,9 @@ describe('AppDetailComponent', () => {
       ],
       providers: [
         { provide: ApplicationAPIService, useValue: appApiSpy },
+        { provide: AssignmentAPIService, useValue: assApiSpy },
+        { provide: PermissionAPIService, useValue: permApiSpy },
+        { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
@@ -310,6 +314,35 @@ describe('AppDetailComponent', () => {
     expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
   })
 
+  it('should load roles and permissions', () => {
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.roles.length).toBe(2)
+    expect(component.permissions.length).toBe(2)
+  })
+
+  it('should display error when loading roles fails', () => {
+    const err = { status: '404' }
+    roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+  })
+
+  it('should display error when loading permissions fails', () => {
+    const err = { status: '404' }
+    permApiSpy.searchPermissions.and.returnValue(throwError(() => err))
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+  })
+
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
@@ -317,22 +350,61 @@ describe('AppDetailComponent', () => {
   /*
    * Table Filter
    */
+  it('should set filterMode to CONTAINS when mode is "="', () => {
+    component.onFilterModeChange('=')
 
-  it('should set filterBy to ["action", "resource"] and filterValue to an empty string when "ALL" is selected', () => {
+    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+  })
+
+  it('should set filterMode to NOT_CONTAINS when mode is "!="', () => {
+    component.onFilterModeChange('!=')
+
+    expect(component.filterMode).toBe(FilterMatchMode.NOT_CONTAINS)
+  })
+
+  it('should not change filterMode when mode is undefined', () => {
+    component.filterMode = FilterMatchMode.CONTAINS
+
+    component.onFilterModeChange(undefined)
+
+    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+  })
+
+  it('should call tableFilter with the input value', () => {
+    spyOn(component, 'tableFilter')
+    component.permissionTableFilterInput = { nativeElement: { value: 'test' } }
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterModeChange('=')
+
+    expect(component.filterValue).toBe('test')
+    expect(component.tableFilter).toHaveBeenCalledWith('test')
+  })
+
+  it('should not call tableFilter when permissionTableFilterInput is not present', () => {
+    spyOn(component, 'tableFilter')
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterModeChange('=')
+
+    expect(component.tableFilter).not.toHaveBeenCalled()
+  })
+
+  it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {
     component.onQuickFilterChange({ value: 'ALL' })
 
     expect(component.filterBy).toEqual(['action', 'resource'])
     expect(component.filterValue).toBe('')
   })
 
-  it('should set filterBy to ["action"] and filterValue to quick filter value ', () => {
+  it('should set filterBy correctly and filterValue to quick filter value ', () => {
     component.onQuickFilterChange({ value: 'VIEW' })
 
     expect(component.filterBy).toEqual(['action'])
     expect(component.filterValue).toBe('VIEW')
   })
 
-  it('should set the permissionTableFilterInput value and call tableFilter when permissionTableFilterInput and permissionTable are present', () => {
+  it('should set the permissionTableFilterInput value and call tableFilter', () => {
     spyOn(component, 'tableFilter')
     component.permissionTableFilterInput = { nativeElement: { value: '' } }
     component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
@@ -436,6 +508,85 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permissionTable.clear).toHaveBeenCalled()
     expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  /* same tests for sortByProduct */
+  it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-down'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+  })
+
+  it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  it('should clear filter', () => {
+    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterItemClearAppId()
+
+    expect(component.filterAppValue).toBeUndefined()
+    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+  })
+
+  it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
+    const event = { value: 'someProduct' }
+    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterItemChangeProduct(event)
+
+    expect(component.filterProductValue).toBe('someProduct')
+    expect(component.filterAppValue).toBeUndefined()
+    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+    expect(component.permissionTable.filter).toHaveBeenCalledWith('someProduct', 'productName', 'equals')
   })
 
   /*
