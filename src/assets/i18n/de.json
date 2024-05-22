@@ -195,7 +195,7 @@
     "ACTIONS": "Aktionen",
     "MANDATORY": "Unbedingt erforderlich",
     "MANDATORY.COLUMN": "Kann die Berechtigung bearbeitet werden?",
-    "MANDATORY.TOOLTIP": "Diese Berechtigung ist notwendig für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
+    "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung notwendig für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
     "OPERATOR": "Durch Operator erstellt",
     "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung durch den Oprator erzeugt.",
     "ASSIGNMENTS": {

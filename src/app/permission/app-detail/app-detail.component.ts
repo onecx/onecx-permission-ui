@@ -271,8 +271,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
   }
   private fillProductApps(product: ProductDetails) {
-    if (product.mfe) product.mfe.map((app) => this.pushProductApps(product.productName!, app))
-    if (product.ms) product.ms.map((app) => this.pushProductApps(product.productName!, app))
+    if (product.mfe) product.mfe.forEach((app) => this.pushProductApps(product.productName!, app))
+    if (product.ms) product.ms.forEach((app) => this.pushProductApps(product.productName!, app))
   }
   private pushProductApps(productName: string, app: MfeMsAbstract) {
     if (this.productApps.filter((aa) => aa.appId === app.appId).length === 0)
@@ -413,7 +413,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // 1. load from permisions
     this.permissions
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
-      .map((p) => {
+      .forEach((p) => {
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
           const productApp = this.productApps.filter((a) => a.productName === p.productName && a.appId === p.appId)
           this.filterAppItems.push({
@@ -425,7 +425,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // 2. add missing apps from product
     this.productApps
       .filter((a) => a.productName === (selectedProductName ?? a.productName))
-      .map((app) => {
+      .forEach((app) => {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
@@ -471,7 +471,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     } else if (this.filterAppValue) appList.push(this.filterAppValue)
     else
-      this.permissions.map((perm) => {
+      this.permissions.forEach((perm) => {
         if (!appList.includes(perm.appId!)) appList.push(perm.appId!)
       })
     if (appList.length > 0 && roleId) {
@@ -479,6 +479,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (appList.includes(p.appId!)) p.roles[roleId] = undefined
       })
     }
+    this.searchAssignments(init, appList, roleId)
+  }
+
+  private searchAssignments(init: boolean, appList: string[], roleId?: string) {
     this.assApi
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, roleId: roleId, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
@@ -494,9 +498,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
             if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
-            permissions.map((perm) => {
-              perm.roles[assignment.roleId!] = assignment.id
-            })
+            permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
           this.loading = false
         } else {
@@ -777,7 +779,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     else if (this.filterProductValue) pList.push(this.filterProductValue)
     //         b) all products
     else if (this.filterProductItems.length > 1)
-      this.filterProductItems.map((p) => {
+      this.filterProductItems.forEach((p) => {
         if (p.value) pList.push(p.value) // ignore empty entry
       })
     return pList
