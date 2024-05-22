@@ -761,7 +761,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Not perfect: apps are uinique only within the product
+  // Not perfect: apps are unique only within the product
   private getProductNameForApp(appId: string | undefined): string | undefined {
     let pList: App[] = []
     if (this.productApps.length > 1) {

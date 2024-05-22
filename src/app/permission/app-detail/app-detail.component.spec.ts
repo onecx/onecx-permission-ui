@@ -140,7 +140,10 @@ describe('AppDetailComponent', () => {
     'deleteAssignment',
     'grantRoleAssignments',
     'grantRoleApplicationAssignments',
-    'grantRoleProductsAssignments'
+    'grantRoleProductsAssignments',
+    'revokeRoleApplicationAssignments',
+    'revokeRoleProductsAssignments',
+    'revokeRoleAssignments'
   ])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', ['searchPermissions'])
@@ -207,6 +210,9 @@ describe('AppDetailComponent', () => {
     assApiSpy.grantRoleAssignments.and.returnValue(of({}) as any)
     assApiSpy.grantRoleApplicationAssignments.and.returnValue(of({}) as any)
     assApiSpy.grantRoleProductsAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleProductsAssignments.and.returnValue(of({}) as any)
     assApiSpy.searchAssignments.and.returnValue(of(assgmtPageRes) as any)
     permApiSpy.searchPermissions.and.returnValue(of(permPageRes) as any)
     roleApiSpy.searchRoles.and.returnValue(of(rolePageRes) as any)
@@ -744,4 +750,139 @@ describe('AppDetailComponent', () => {
    *  ASSIGNMENTS    => grant + revoke permissions => assign roles
    ****************************************************************************
    */
+  it('should create an assignment', () => {
+    const ev = new MouseEvent('click')
+
+    component.onAssignPermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+  })
+
+  it('should display error if assignment fails', () => {
+    assApiSpy.createAssignment.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+
+    component.onAssignPermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should delete an assignment', () => {
+    const ev = new MouseEvent('click')
+
+    component.onRemovePermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+  })
+
+  it('should display error if assignment creation fails', () => {
+    assApiSpy.deleteAssignment.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+
+    component.onRemovePermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of an app to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
+    assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
+    assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+    const ev = new MouseEvent('click')
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all perms of an app to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
+    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
+    assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should revoke all permissions: remove all assgmts of a role', () => {
+    const ev = new MouseEvent('click')
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
 })
