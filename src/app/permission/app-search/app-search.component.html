@@ -108,7 +108,7 @@
               [id]="'app_search_data_idx_' + idx"
               class="card relative p-2 cursor-pointer hover:bg-gray-200 hover:text-color"
               [class.bg-primary]="app.appType === 'WORKSPACE'"
-              (click)="onAppClick(app)"
+              (click)="onAppClick($event, app)"
             >
               <div
                 *ngIf="app.appType === 'WORKSPACE'"
