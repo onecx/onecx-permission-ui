@@ -1,20 +1,23 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+
 import { Permission, PermissionAPIService } from 'src/app/shared/generated'
 import { PermissionDetailComponent } from './permission-detail.component'
 import { PermissionViewRow } from '../app-detail/app-detail.component'
-import { FormGroup, FormControl } from '@angular/forms'
 
 const perm1: Permission = {
   id: 'permId1',
-  appId: 'appId1',
-  productName: 'prodName1'
+  appId: 'appId',
+  productName: 'prodName',
+  resource: 'resource',
+  action: 'action'
 }
 const permRow: PermissionViewRow = {
   ...perm1,
@@ -25,7 +28,17 @@ const permRow: PermissionViewRow = {
   productDisplayName: 'prodName'
 }
 
-fdescribe('PermissionDetailComponent', () => {
+const formGroup = new FormGroup({
+  appId: new FormControl('appId', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+  productName: new FormControl('prodName', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+  resource: new FormControl('resource', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+  action: new FormControl('action', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+  description: new FormControl(''),
+  mandatory: new FormControl(false),
+  operator: new FormControl(false)
+})
+
+describe('PermissionDetailComponent', () => {
   let component: PermissionDetailComponent
   let fixture: ComponentFixture<PermissionDetailComponent>
 
@@ -130,17 +143,35 @@ fdescribe('PermissionDetailComponent', () => {
     expect(console.info).toHaveBeenCalledWith('form not valid')
   })
 
+  it('should check for duplicates in permissions - edit', () => {
+    component.permissions = [perm1]
+    component.changeMode = 'EDIT'
+    component.formGroup = formGroup
+
+    component.onSave()
+
+    expect(msgServiceSpy.error).not.toHaveBeenCalledWith({
+      summaryKey: 'ACTIONS.' + component.changeMode + '.PERMISSION',
+      detailKey: 'VALIDATION.ERRORS.PERMISSION.' + component.changeMode + '_ALREADY_EXISTS'
+    })
+  })
+
+  it('should check for duplicates in permissions - create', () => {
+    component.permissions = [perm1]
+    component.changeMode = 'CREATE'
+    component.formGroup = formGroup
+
+    component.onSave()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'ACTIONS.' + component.changeMode + '.PERMISSION',
+      detailKey: 'VALIDATION.ERRORS.PERMISSION.' + component.changeMode + '_ALREADY_EXISTS'
+    })
+  })
+
   it('should create a permission', () => {
     component.changeMode = 'CREATE'
-    component.formGroup = new FormGroup({
-      appId: new FormControl({ value: '', disabled: true }),
-      productName: new FormControl({ value: '', disabled: true }),
-      resource: new FormControl({ value: '', disabled: true }),
-      action: new FormControl({ value: '', disabled: true }),
-      description: new FormControl({ value: '', disabled: true }),
-      mandatory: new FormControl({ value: false, disabled: true }),
-      operator: new FormControl({ value: false, disabled: true })
-    })
+    component.formGroup = formGroup
 
     component.onSave()
 
@@ -148,10 +179,35 @@ fdescribe('PermissionDetailComponent', () => {
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_OK' })
   })
 
-  it('should delete a permission', () => {
-    component.onDeleteConfirmation()
+  it('should display error when trying to create a permission failed', () => {
+    permApiSpy.createPermission.and.returnValue(throwError(() => new Error()))
+    component.changeMode = 'CREATE'
+    component.formGroup = formGroup
+    component.permission!.id = undefined
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
+    component.onSave()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_NOK' })
+  })
+
+  it('should update a permission', () => {
+    component.changeMode = 'EDIT'
+    component.formGroup = formGroup
+
+    component.onSave()
+
+    expect(component.formGroup.valid).toBeTrue()
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_OK' })
+  })
+
+  it('should display error when trying to update a permission failed', () => {
+    permApiSpy.updatePermission.and.returnValue(throwError(() => new Error()))
+    component.changeMode = 'EDIT'
+    component.formGroup = formGroup
+
+    component.onSave()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
   })
 
   it('should delete a permission', () => {
