@@ -139,7 +139,7 @@ const assgmtPageRes: AssignmentPageResult = {
   stream: [assgmt1, assgmt2]
 }
 
-fdescribe('AppDetailComponent', () => {
+describe('AppDetailComponent', () => {
   let component: AppDetailComponent
   let fixture: ComponentFixture<AppDetailComponent>
   let mockActivatedRoute: ActivatedRoute = {
