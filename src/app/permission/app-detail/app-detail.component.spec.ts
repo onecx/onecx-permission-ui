@@ -118,7 +118,6 @@ const permRow: PermissionViewRow = {
   appDisplayName: 'appName',
   productDisplayName: 'prodName'
 }
-
 const permRow2: PermissionViewRow = {
   ...perm2,
   key: 'key',
