@@ -261,7 +261,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
           this.currentApp.workspaceDetails?.products?.map((product) => this.fillProductApps(product))
-          console.log(this.productApps)
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         } else {
@@ -490,7 +489,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (result instanceof HttpErrorResponse) {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
-        } else if (result instanceof Object) {
+        } else if (result instanceof Object && result.stream) {
           if (init) this.protectedAssignments = [] // ids of mandatory assignments
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles

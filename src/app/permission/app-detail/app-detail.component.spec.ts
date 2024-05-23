@@ -22,7 +22,8 @@ import {
   WorkspaceDetails,
   Role,
   RolePageResult,
-  AssignmentPageResult
+  AssignmentPageResult,
+  Assignment
 } from 'src/app/shared/generated'
 import { App, AppDetailComponent, PermissionViewRow } from './app-detail.component'
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
@@ -62,9 +63,25 @@ const prodDetails: ProductDetails = {
     }
   ]
 }
+const prodDetails2: ProductDetails = {
+  productName: 'prodName2',
+  displayName: 'displayName2',
+  mfe: [
+    {
+      appId: 'prodDetailMfeAppId',
+      appName: 'prodDetailMfeAppName'
+    }
+  ],
+  ms: [
+    {
+      appId: 'prodDetailMsAppId',
+      appName: 'prodDetailMsAppName'
+    }
+  ]
+}
 const wsDetails: WorkspaceDetails = {
   workspaceRoles: ['role1', 'role2'],
-  products: [prodDetails]
+  products: [prodDetails, prodDetails2]
 }
 
 const role1: Role = {
@@ -111,10 +128,12 @@ const permRow2: PermissionViewRow = {
   productDisplayName: 'prodName'
 }
 
-const assgmt1 = {
-  appId: 'appId1'
+const assgmt1: Assignment = {
+  appId: 'appId1',
+  mandatory: true,
+  permissionId: 'permId1'
 }
-const assgmt2 = {
+const assgmt2: Assignment = {
   appId: 'appId2'
 }
 const assgmtPageRes: AssignmentPageResult = {
@@ -390,6 +409,43 @@ describe('AppDetailComponent', () => {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
+  it('should handle loading role assignments without apps', () => {
+    component.urlParamAppType = 'WORKSPACE'
+    spyOn(console, 'warn')
+    component['productApps'] = []
+
+    component['loadRoleAssignments'](true)
+
+    expect(console.warn).toHaveBeenCalledWith('No apps found - stop loading assignments')
+  })
+
+  it('should search assigments', () => {
+    component['searchAssignments'](true, ['appId'])
+
+    expect(component.protectedAssignments.length).toBe(1)
+  })
+
+  it('should display error if search assigments fails', () => {
+    const err = new HttpErrorResponse({
+      error: 'test 404 error',
+      status: 404,
+      statusText: 'Not Found'
+    })
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => err))
+
+    component['searchAssignments'](true, ['appId'])
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
+  })
+
+  it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
+    const nonHttpError = { message: 'non-HTTP error' }
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => nonHttpError))
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+  })
 
   /*
    * Table Filter
@@ -856,7 +912,7 @@ describe('AppDetailComponent', () => {
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
   })
 
-  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role', () => {
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
     const ev = new MouseEvent('click')
     component.filterProductValue = 'productAppId'
 
@@ -864,6 +920,28 @@ describe('AppDetailComponent', () => {
     component.onRevokeAllPermissions(ev, role1)
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2a) in a workspace for a selected product', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
+    component.filterProductItems = [
+      { label: 'prodName', value: 'prodName' },
+      { label: 'prodName2', value: 'prodName2' }
+    ]
+
+    const res = component['prepareProductList']()
+
+    expect(res).toBe(['prodName', 'prodName2'])
   })
 
   it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
