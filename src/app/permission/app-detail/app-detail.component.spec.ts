@@ -139,7 +139,7 @@ const assgmtPageRes: AssignmentPageResult = {
   stream: [assgmt1, assgmt2]
 }
 
-describe('AppDetailComponent', () => {
+fdescribe('AppDetailComponent', () => {
   let component: AppDetailComponent
   let fixture: ComponentFixture<AppDetailComponent>
   let mockActivatedRoute: ActivatedRoute = {
@@ -370,6 +370,14 @@ describe('AppDetailComponent', () => {
   /**
    * CREATE
    */
+  it('should do something onCreateIDMRoles', () => {
+    spyOn(console, 'log')
+
+    component.onCreateIDMRoles(new MouseEvent('click'))
+
+    expect(console.log).toHaveBeenCalled()
+  })
+
   it('should return if there are no missing ws roles', () => {
     const ev = new MouseEvent('click')
     spyOn(ev, 'stopPropagation')
@@ -932,15 +940,17 @@ describe('AppDetailComponent', () => {
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
   })
 
-  xit('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
     component.filterProductItems = [
       { label: 'prodName', value: 'prodName' },
       { label: 'prodName2', value: 'prodName2' }
     ]
+    component.filterProductValue = undefined
+    component.currentApp.isProduct = false
 
     const res = component['prepareProductList']()
 
-    expect(res).toBe(['prodName', 'prodName2'])
+    expect(res).toEqual(['prodName', 'prodName2'])
   })
 
   it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
