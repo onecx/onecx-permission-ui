@@ -70,7 +70,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterBy = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
-  public filterMode = FilterMatchMode.CONTAINS || FilterMatchMode.NOT_CONTAINS
+  public filterMode: FilterMatchMode
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
   public quickFilterItems: SelectItem[]
 
@@ -83,8 +83,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   // data
   private pageSize = 1000
-  public urlParamAppId = ''
-  public urlParamAppType = ''
+  public urlParamAppId: string | null
+  public urlParamAppType: string | undefined
   public currentApp: App = { appId: 'dummy', appType: 'PRODUCT', isProduct: true } as App
   public dateFormat = 'medium'
   public changeMode: ChangeMode = 'VIEW'
@@ -129,8 +129,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     private msgService: PortalMessageService,
     private userService: UserService
   ) {
-    this.urlParamAppId = this.route.snapshot.paramMap.get('appId') || ''
-    this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase() || ''
+    this.urlParamAppId = this.route.snapshot.paramMap.get('appId')
+    this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     // simplify permission checks
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
@@ -215,6 +215,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private loadData(): void {
+    if (!this.urlParamAppId || !this.urlParamAppType) {
+      this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
+      return
+    }
     this.loading = true
     this.showRoleTools = false
     this.showPermissionTools = false
@@ -231,7 +235,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   private loadProductDetails() {
     this.appApi
-      .searchApplications({ applicationSearchCriteria: { productName: this.urlParamAppId ?? '' } })
+      .searchApplications({ applicationSearchCriteria: { productName: this.urlParamAppId! } })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
@@ -252,7 +256,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   private loadWorkspaceDetails() {
     this.workspaceApi
-      .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId ?? '' })
+      .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId! })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
@@ -354,10 +358,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (this.currentApp.isProduct) return
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
       this.roles.forEach(
-        (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name ?? ''))
+        (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name!))
       )
       this.missingWorkspaceRoles =
-        this.roles.filter((r) => r.isWorkspaceRole === true).length !=
+        this.roles.filter((r) => r.isWorkspaceRole === true).length !==
         this.currentApp.workspaceDetails?.workspaceRoles.length
     }
   }

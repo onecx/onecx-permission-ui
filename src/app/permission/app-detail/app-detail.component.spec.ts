@@ -274,6 +274,15 @@ describe('AppDetailComponent', () => {
   /**
    * loadData
    */
+  it('should not loadData if the url does not provide app id or app type', () => {
+    component.urlParamAppId = null
+    component.urlParamAppType = undefined
+
+    const res = (component as any).loadData()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+    expect(res).toBeUndefined()
+  })
 
   it('should loadProductDetails successfully', () => {
     const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
@@ -971,5 +980,62 @@ describe('AppDetailComponent', () => {
     component.onRevokeAllPermissions(ev, role1)
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  /*
+   * EDGE CASES
+   */
+  it('should return 0 when sorting permissions without appIds or prod names', () => {
+    const perm3: Permission = {
+      id: 'permId3'
+    }
+    const permRow3: PermissionViewRow = {
+      ...perm3,
+      key: 'key',
+      roles: { undefined },
+      appType: 'MFE',
+      appDisplayName: 'appName',
+      productDisplayName: 'prodName'
+    }
+    const permRow4: PermissionViewRow = {
+      ...perm3,
+      key: 'key',
+      roles: { undefined },
+      appType: 'MFE',
+      appDisplayName: 'appName',
+      productDisplayName: 'prodName'
+    }
+    const resultAppAsc = (component as any).sortPermissionRowByAppIdAsc(permRow3, permRow4)
+    expect(resultAppAsc).toBe(0)
+
+    const resultAppDesc = (component as any).sortPermissionRowByAppIdDesc(permRow3, permRow4)
+    expect(resultAppDesc).toBe(0)
+
+    const resultProdAsc = (component as any).sortPermissionRowByProductAsc(permRow3, permRow4)
+    expect(resultProdAsc).toBe(0)
+
+    const resultProdDesc = (component as any).sortPermissionRowByProductDesc(permRow3, permRow4)
+    expect(resultProdDesc).toBe(0)
+  })
+
+  it('should return 0 when sorting permissions without appIds or prod names', () => {
+    const role3: Role = {
+      id: 'roleId1'
+    }
+    const role4: Role = {
+      id: 'roleId1'
+    }
+
+    const result = (component as any).sortRoleByName(role3, role4)
+
+    expect(result).toBe(0)
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
+    mockUserService.lang$.getValue.and.returnValue('de')
+    fixture = TestBed.createComponent(AppDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 })
