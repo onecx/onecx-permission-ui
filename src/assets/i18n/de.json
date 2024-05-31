@@ -129,7 +129,7 @@
         "TOOLTIP": "Quickfilter für App-Typ",
         "ALL": "Alle",
         "APP": "Apps",
-        "PRODUCT": "Produkte",
+        "PRODUCT": "Applikationen",
         "WORKSPACE": "Workspaces"
       },
       "FILTER": {
@@ -137,16 +137,16 @@
         "TOOLTIP": "Filter für App-Typ",
         "ALL": "Alle",
         "APP": "Apps",
-        "PRODUCT": "Produkte",
+        "PRODUCT": "Applikationen",
         "WORKSPACE": "Workspaces"
       }
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
-      "HEADER_PRODUCT": "Produkt: ",
+      "HEADER_PRODUCT": "Applikation: ",
       "HEADER_APP": "App: ",
-      "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Produkte",
-      "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für das Produkt und dessen Apps",
+      "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Applikationen",
+      "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für die Applikation und deren Apps",
       "SUBHEADER_APP": "Verwalten von Berechtigungen für die App",
       "QUICK_FILTER": {
         "LABEL": "Action",
@@ -161,8 +161,8 @@
         "APPS": "App",
         "APP_TYPE": "Typ",
         "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Produkt",
-        "PRODUCT.TOOLTIP": "Registrierte Produkte im Workspace",
+        "PRODUCT": "Applikation",
+        "PRODUCT.TOOLTIP": "Registrierte Applikationen im Workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
       }
@@ -173,7 +173,7 @@
     "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_APP": "App",
-    "TYPE_PRODUCT": "Produkt",
+    "TYPE_PRODUCT": "Applikation",
     "TYPE_WORKSPACE": "Workspace",
     "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
     "DELETE_HEADER": "App löschen",
@@ -187,7 +187,7 @@
   "PERMISSION": {
     "LABEL": "Berechtigungen",
     "APP_ID": "App ID",
-    "PRODUCT_NAME": "Produktname",
+    "PRODUCT_NAME": "Applikationsname",
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
     "ACTION": "Aktion",
@@ -203,8 +203,8 @@
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Berechtigung erteilt - Kann nicht geändert werden",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
-      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Produkt, App) erteilen",
-      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Produkt, App) entziehen",
+      "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) erteilen",
+      "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
       "GRANT_SUCCESS": "Berechtigung erteilt",
       "GRANT_ALL_SUCCESS": "Berechtigungen erteilt",
@@ -214,7 +214,7 @@
     },
     "SORT": {
       "APP_ID": "Sortierung nach App IDs",
-      "PRODUCT": "Sortierung nach Produkt und App IDs"
+      "PRODUCT": "Sortierung nach Applikation und App IDs"
     }
   },
   "ROLE": {
@@ -242,7 +242,7 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APP": "Unbekanntes Problem beim Abrufen von Apps/Produkten - Bitte versuchen sie es noch einmal.",
+      "APP": "Unbekanntes Problem beim Abrufen von Apps/Applikationen - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
@@ -253,8 +253,8 @@
       "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
     "HTTP_STATUS_403": {
-      "APP": "Sie haben keine Rechte um App/Produkt Daten zu sehen.",
-      "APPS": "Sie haben keine Rechte um Apps/Produkte zu sehen.",
+      "APP": "Sie haben keine Rechte um App/Applikation Daten zu sehen.",
+      "APPS": "Sie haben keine Rechte um Apps/Applikationen zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
       "ASSIGNMENTS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
