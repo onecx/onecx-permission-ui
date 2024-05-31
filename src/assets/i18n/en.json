@@ -241,6 +241,7 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_MISSING_PARAMETER": "Parameters could not be loaded from URL",
     "HTTP_STATUS_0": {
       "APP": "Unknown problem retrieving App/Product data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",

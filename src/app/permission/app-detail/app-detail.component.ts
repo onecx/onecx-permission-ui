@@ -216,7 +216,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
-      this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
+      this.loadingExceptionKey = 'EXCEPTIONS.HTTP_MISSING_PARAMETER'
       return
     }
     this.loading = true
