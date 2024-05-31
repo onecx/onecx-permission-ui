@@ -280,7 +280,7 @@ describe('AppDetailComponent', () => {
 
     const res = (component as any).loadData()
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
     expect(res).toBeUndefined()
   })
 
