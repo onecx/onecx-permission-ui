@@ -129,7 +129,7 @@
         "TOOLTIP": "Quick Filter for App type",
         "ALL": "All",
         "APP": "Apps",
-        "PRODUCT": "Products",
+        "PRODUCT": "Applications",
         "WORKSPACE": "Workspaces"
       },
       "FILTER": {
@@ -137,16 +137,16 @@
         "TOOLTIP": "Filter for App Type",
         "ALL": "All",
         "APP": "Apps",
-        "PRODUCT": "Products",
+        "PRODUCT": "Applications",
         "WORKSPACE": "Workspaces"
       }
     },
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
-      "HEADER_PRODUCT": "Product: ",
+      "HEADER_PRODUCT": "Application: ",
       "HEADER_APP": "App: ",
-      "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Products",
-      "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Product including all of its Apps",
+      "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Applications",
+      "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application including all of its Apps",
       "SUBHEADER_APP": "Managing Business Roles and Permissions of the App",
       "QUICK_FILTER": {
         "LABEL": "Type",
@@ -161,8 +161,8 @@
         "APPS": "App",
         "APP_TYPE": "Type",
         "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
-        "PRODUCT": "Product",
-        "PRODUCT.TOOLTIP": "The products registered in the workspace",
+        "PRODUCT": "Application",
+        "PRODUCT.TOOLTIP": "The Applications registered in the workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
       }
@@ -173,7 +173,7 @@
     "NAME": "Name",
     "TYPE": "Type",
     "TYPE_APP": "App",
-    "TYPE_PRODUCT": "Product",
+    "TYPE_PRODUCT": "Application",
     "TYPE_WORKSPACE": "Workspace",
     "DELETE": "Delete App including all permissions and roles",
     "DELETE_HEADER": "Delete App",
@@ -187,7 +187,7 @@
   "PERMISSION": {
     "LABEL": "Permissions",
     "APP_ID": "App ID",
-    "PRODUCT_NAME": "Product Name",
+    "PRODUCT_NAME": "Application Name",
     "DESCRIPTION": "Description",
     "RESOURCE": "Resource",
     "ACTION": "Action",
@@ -203,8 +203,8 @@
       "ROLE_IS_ASSIGNED_1": "Permission granted",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Permission granted, cannot be changed",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
-      "GRANT_ALL_FOR_ROLE": "Grant all permissions according to the filters (product, app).",
-      "REVOKE_ALL_FOR_ROLE": "Revoke all permissions according to the filters (product, app).",
+      "GRANT_ALL_FOR_ROLE": "Grant all permissions according to the filters (Application, App).",
+      "REVOKE_ALL_FOR_ROLE": "Revoke all permissions according to the filters (Application, App).",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
       "GRANT_ALL_SUCCESS": "Permissions granted",
@@ -214,7 +214,7 @@
     },
     "SORT": {
       "APP_ID": "Sorting by App IDs",
-      "PRODUCT": "Sorting by Product und App IDs"
+      "PRODUCT": "Sorting by Application und App IDs"
     }
   },
   "ROLE": {
@@ -242,7 +242,7 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "APP": "Unknown problem retrieving App/Product data - please try again.",
+      "APP": "Unknown problem retrieving App/Application data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
@@ -254,7 +254,7 @@
     },
     "HTTP_STATUS_403": {
       "APP": "You have no permissions to see App data.",
-      "APPS": "You have no permissions to see Apps/Products.",
+      "APPS": "You have no permissions to see Apps/Applications.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
       "ASSIGNMENTS": "You have no permissions to see Assignments.",
@@ -262,7 +262,7 @@
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
-      "APPS": "No Apps/Products could be found.",
+      "APPS": "No Apps/Applications could be found.",
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
@@ -270,8 +270,8 @@
       "WORKSPACE": "Workspace data could not be found."
     },
     "HTTP_STATUS_500": {
-      "APP": "Unknown problem retrieving App/Product data - please try again.",
-      "APPS": "Unknown problem retrieving App/Products data - please try again.",
+      "APP": "Unknown problem retrieving App/Application data - please try again.",
+      "APPS": "Unknown problem retrieving App/Applications data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
