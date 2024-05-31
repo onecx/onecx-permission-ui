@@ -2,8 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRouteSnapshot, ParamMap, Router } from '@angular/router'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router } from '@angular/router'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
@@ -23,11 +22,14 @@ import {
   WorkspaceDetails,
   Role,
   RolePageResult,
-  AssignmentPageResult
+  AssignmentPageResult,
+  Assignment
 } from 'src/app/shared/generated'
-import { App, AppDetailComponent } from './app-detail.component'
+import { App, AppDetailComponent, PermissionViewRow } from './app-detail.component'
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import { HttpErrorResponse } from '@angular/common/http'
+import { Table } from 'primeng/table'
+import { FilterMatchMode } from 'primeng/api'
 
 const app: Application = {
   name: 'appName',
@@ -61,9 +63,25 @@ const prodDetails: ProductDetails = {
     }
   ]
 }
+const prodDetails2: ProductDetails = {
+  productName: 'prodName2',
+  displayName: 'displayName2',
+  mfe: [
+    {
+      appId: 'prodDetailMfeAppId',
+      appName: 'prodDetailMfeAppName'
+    }
+  ],
+  ms: [
+    {
+      appId: 'prodDetailMsAppId',
+      appName: 'prodDetailMsAppName'
+    }
+  ]
+}
 const wsDetails: WorkspaceDetails = {
   workspaceRoles: ['role1', 'role2'],
-  products: [prodDetails]
+  products: [prodDetails, prodDetails2]
 }
 
 const role1: Role = {
@@ -92,10 +110,29 @@ const permPageRes: PermissionPageResult = {
   stream: [perm1, perm2]
 }
 
-const assgmt1 = {
-  appId: 'appId1'
+const permRow: PermissionViewRow = {
+  ...perm1,
+  key: 'key',
+  roles: { undefined },
+  appType: 'MFE',
+  appDisplayName: 'appName',
+  productDisplayName: 'prodName'
 }
-const assgmt2 = {
+const permRow2: PermissionViewRow = {
+  ...perm2,
+  key: 'key',
+  roles: { undefined },
+  appType: 'MFE',
+  appDisplayName: 'appName',
+  productDisplayName: 'prodName'
+}
+
+const assgmt1: Assignment = {
+  appId: 'appId1',
+  mandatory: true,
+  permissionId: 'permId1'
+}
+const assgmt2: Assignment = {
   appId: 'appId2'
 }
 const assgmtPageRes: AssignmentPageResult = {
@@ -121,7 +158,10 @@ describe('AppDetailComponent', () => {
     'deleteAssignment',
     'grantRoleAssignments',
     'grantRoleApplicationAssignments',
-    'grantRoleProductsAssignments'
+    'grantRoleProductsAssignments',
+    'revokeRoleApplicationAssignments',
+    'revokeRoleProductsAssignments',
+    'revokeRoleAssignments'
   ])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', ['searchPermissions'])
@@ -165,6 +205,10 @@ describe('AppDetailComponent', () => {
       ],
       providers: [
         { provide: ApplicationAPIService, useValue: appApiSpy },
+        { provide: AssignmentAPIService, useValue: assApiSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: PermissionAPIService, useValue: permApiSpy },
+        { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
@@ -184,6 +228,9 @@ describe('AppDetailComponent', () => {
     assApiSpy.grantRoleAssignments.and.returnValue(of({}) as any)
     assApiSpy.grantRoleApplicationAssignments.and.returnValue(of({}) as any)
     assApiSpy.grantRoleProductsAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleAssignments.and.returnValue(of({}) as any)
+    assApiSpy.revokeRoleProductsAssignments.and.returnValue(of({}) as any)
     assApiSpy.searchAssignments.and.returnValue(of(assgmtPageRes) as any)
     permApiSpy.searchPermissions.and.returnValue(of(permPageRes) as any)
     roleApiSpy.searchRoles.and.returnValue(of(rolePageRes) as any)
@@ -227,6 +274,15 @@ describe('AppDetailComponent', () => {
   /**
    * loadData
    */
+  it('should not loadData if the url does not provide app id or app type', () => {
+    component.urlParamAppId = null
+    component.urlParamAppType = undefined
+
+    const res = (component as any).loadData()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
+    expect(res).toBeUndefined()
+  })
 
   it('should loadProductDetails successfully', () => {
     const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
@@ -291,12 +347,366 @@ describe('AppDetailComponent', () => {
     expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
   })
 
+  it('should load roles and permissions', () => {
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.roles.length).toBe(2)
+    expect(component.permissions.length).toBe(2)
+  })
+
+  it('should display error when loading roles fails', () => {
+    const err = { status: '404' }
+    roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+  })
+
+  it('should display error when loading permissions fails', () => {
+    const err = { status: '404' }
+    permApiSpy.searchPermissions.and.returnValue(throwError(() => err))
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+  })
+
+  /**
+   * CREATE
+   */
+  it('should do something onCreateIDMRoles', () => {
+    spyOn(console, 'log')
+
+    component.onCreateIDMRoles(new MouseEvent('click'))
+
+    expect(console.log).toHaveBeenCalled()
+  })
+
+  it('should return if there are no missing ws roles', () => {
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = false
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+  })
+
+  it('should create a role', () => {
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = true
+    component.currentApp.workspaceDetails = wsDetails
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+  })
+
+  it('should display error msg if create role fails', () => {
+    roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    spyOn(ev, 'stopPropagation')
+    component.missingWorkspaceRoles = true
+    component.currentApp.workspaceDetails = wsDetails
+
+    component.onCreateWorkspaceRoles(ev)
+
+    expect(ev.stopPropagation).toHaveBeenCalled()
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+  })
+
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
+  it('should handle loading role assignments without apps', () => {
+    component.urlParamAppType = 'WORKSPACE'
+    spyOn(console, 'warn')
+    component['productApps'] = []
+
+    component['loadRoleAssignments'](true)
+
+    expect(console.warn).toHaveBeenCalledWith('No apps found - stop loading assignments')
+  })
+
+  it('should search assigments', () => {
+    component['searchAssignments'](true, ['appId'])
+
+    expect(component.protectedAssignments.length).toBe(1)
+  })
+
+  it('should display error if search assigments fails', () => {
+    const err = new HttpErrorResponse({
+      error: 'test 404 error',
+      status: 404,
+      statusText: 'Not Found'
+    })
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => err))
+
+    component['searchAssignments'](true, ['appId'])
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
+  })
+
+  it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
+    const nonHttpError = { message: 'non-HTTP error' }
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => nonHttpError))
+
+    component.ngOnInit()
+
+    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+  })
 
   /*
-   *  ROLE
+   * Table Filter
+   */
+  it('should set filterMode to CONTAINS when mode is "="', () => {
+    component.onFilterModeChange('=')
+
+    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+  })
+
+  it('should set filterMode to NOT_CONTAINS when mode is "!="', () => {
+    component.onFilterModeChange('!=')
+
+    expect(component.filterMode).toBe(FilterMatchMode.NOT_CONTAINS)
+  })
+
+  it('should not change filterMode when mode is undefined', () => {
+    component.filterMode = FilterMatchMode.CONTAINS
+
+    component.onFilterModeChange(undefined)
+
+    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+  })
+
+  it('should call tableFilter with the input value', () => {
+    spyOn(component, 'tableFilter')
+    component.permissionTableFilterInput = { nativeElement: { value: 'test' } }
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterModeChange('=')
+
+    expect(component.filterValue).toBe('test')
+    expect(component.tableFilter).toHaveBeenCalledWith('test')
+  })
+
+  it('should not call tableFilter when permissionTableFilterInput is not present', () => {
+    spyOn(component, 'tableFilter')
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterModeChange('=')
+
+    expect(component.tableFilter).not.toHaveBeenCalled()
+  })
+
+  it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {
+    component.onQuickFilterChange({ value: 'ALL' })
+
+    expect(component.filterBy).toEqual(['action', 'resource'])
+    expect(component.filterValue).toBe('')
+  })
+
+  it('should set filterBy correctly and filterValue to quick filter value ', () => {
+    component.onQuickFilterChange({ value: 'VIEW' })
+
+    expect(component.filterBy).toEqual(['action'])
+    expect(component.filterValue).toBe('VIEW')
+  })
+
+  it('should set the permissionTableFilterInput value and call tableFilter', () => {
+    spyOn(component, 'tableFilter')
+    component.permissionTableFilterInput = { nativeElement: { value: '' } }
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+
+    component.onQuickFilterChange({ value: 'ALL' })
+
+    expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+    expect(component.tableFilter).toHaveBeenCalledWith('')
+  })
+
+  it('should call filterGlobal on permissionTable with the provided value and filterMode', () => {
+    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+    component.filterMode = 'mode'
+
+    component.tableFilter('testValue')
+
+    expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('testValue', 'mode')
+  })
+
+  it('should clear all clear all values onClearTableFilter', () => {
+    component.permissionTableFilterInput = { nativeElement: { value: 'value' } }
+    component.quickFilterValue = 'ALL'
+    component.filterAppValue = 'value'
+    component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
+    spyOn(component, 'onSortPermissionTable')
+
+    component.onClearTableFilter()
+
+    expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+    expect(component.quickFilterValue).toBe('ALL')
+    expect(component.filterAppValue).toBeUndefined()
+    expect(component.onSortPermissionTable).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+  })
+
+  it('should reset icons onSortPermissionTables', () => {
+    component.sortIconAppId = { nativeElement: { className: 'oldClassName' } }
+    component.sortIconProduct = { nativeElement: { className: 'oldClassName' } }
+
+    component.onSortPermissionTable()
+
+    expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+    expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+  })
+
+  /**
+   * Filter: Product, AppId
+   */
+  it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'appId')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-down'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'appId')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+  })
+
+  it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'appId')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  /* same tests for sortByProduct */
+  it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-down'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+  })
+
+  it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
+    const event = new MouseEvent('click')
+    const icon = document.createElement('span')
+    icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+
+    spyOn(event, 'stopPropagation')
+    component.permissionTable = {
+      clear: jasmine.createSpy(),
+      _value: [permRow, permRow2],
+      filterGlobal: jasmine.createSpy()
+    } as unknown as Table
+
+    component.onFilterItemSortIcon(event, icon, 'product')
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permissionTable.clear).toHaveBeenCalled()
+    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+  })
+
+  it('should clear filter', () => {
+    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterItemClearAppId()
+
+    expect(component.filterAppValue).toBeUndefined()
+    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+  })
+
+  it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
+    const event = { value: 'someProduct' }
+    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
+
+    component.onFilterItemChangeProduct(event)
+
+    expect(component.filterProductValue).toBe('someProduct')
+    expect(component.filterAppValue).toBeUndefined()
+    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+    expect(component.permissionTable.filter).toHaveBeenCalledWith('someProduct', 'productName', 'equals')
+  })
+
+  /*
+   * ROLE
    */
   it('should call stopPropagation and set role to undefined in onCreateRole', () => {
     const event = new MouseEvent('click')
@@ -347,19 +757,18 @@ describe('AppDetailComponent', () => {
   })
 
   /*
-   *  PERMISSION
+   * PERMISSION
    */
 
-  // it('should call stopPropagation and set permission in onCopyPermission', () => {
-  //   const event = new MouseEvent('click');
-  //   const permission = { /* permission data */ };
-  //   spyOn(component, 'onCopyPermission');
+  it('should call onDetailPermission in create mode onCopyPermission', () => {
+    const event = new MouseEvent('click')
+    spyOn(component, 'onDetailPermission')
 
-  //   component.onCopyPermission(event, permission);
+    component.onCopyPermission(event, permRow)
 
-  //   expect(component.onCopyPermission).toHaveBeenCalledWith(event, permission);
-  //   expect(component.changeMode).toBe('CREATE');
-  // });
+    expect(component.onDetailPermission).toHaveBeenCalledWith(event, permRow)
+    expect(component.changeMode).toBe('CREATE')
+  })
 
   it('should call stopPropagation and set role to undefined in onCreatePermission', () => {
     const event = new MouseEvent('click')
@@ -373,29 +782,260 @@ describe('AppDetailComponent', () => {
     expect(component.showPermissionDetailDialog).toBeTrue()
   })
 
-  //   it('should call stopPropagation and set permission in onCopyPermission', () => {
-  //     const event = new MouseEvent('click')
-  //     const permission = { /* permission data */ }
-  //     spyOn(event, 'stopPropagation')
+  it('should call stopPropagation and set permission onDetailPermission', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
 
-  //     component.onCopyPermission(event, permission)
+    component.onDetailPermission(event, permRow)
 
-  //     expect(event.stopPropagation).toHaveBeenCalled()
-  //     expect(component.permission).toBe(permission)
-  //     expect(component.changeMode).toBe('EDIT')
-  //     expect(component.showPermissionDetailDialog).toBeTrue()
-  //   })
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permission).toBe(permRow)
+    expect(component.changeMode).toBe('EDIT')
+    expect(component.showPermissionDetailDialog).toBeTrue()
+  })
 
-  //   it('should call stopPropagation and set permission in onDeletePermission', () => {
-  //     const event = new MouseEvent('click')
-  //     const permission = { /* permission data */ }
-  //     spyOn(event, 'stopPropagation')
+  it('should set changeMode according to operator onDetailPermission', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
 
-  //     component.onDeletePermission(event, permission)
+    component.onDetailPermission(event, permRow)
 
-  //     expect(event.stopPropagation).toHaveBeenCalled()
-  //     expect(component.permission).toBe(permission)
-  //     expect(component.changeMode).toBe('DELETE')
-  //     expect(component.showPermissionDeleteDialog).toBeTrue()
-  //   })
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permission).toBe(permRow)
+    expect(component.changeMode).toBe('EDIT')
+    expect(component.showPermissionDetailDialog).toBeTrue()
+  })
+
+  it('should call stopPropagation and set permission in onDeletePermission', () => {
+    const event = new MouseEvent('click')
+    spyOn(event, 'stopPropagation')
+
+    component.onDeletePermission(event, permRow)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(component.permission).toBe(permRow)
+    expect(component.changeMode).toBe('DELETE')
+    expect(component.showPermissionDeleteDialog).toBeTrue()
+  })
+
+  /****************************************************************************
+   *  ASSIGNMENTS    => grant + revoke permissions => assign roles
+   ****************************************************************************
+   */
+  it('should create an assignment', () => {
+    const ev = new MouseEvent('click')
+
+    component.onAssignPermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+  })
+
+  it('should display error if assignment fails', () => {
+    assApiSpy.createAssignment.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+
+    component.onAssignPermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should delete an assignment', () => {
+    const ev = new MouseEvent('click')
+
+    component.onRemovePermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+  })
+
+  it('should display error if assignment creation fails', () => {
+    assApiSpy.deleteAssignment.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+
+    component.onRemovePermission(ev, permRow, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of an app to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
+    assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
+    assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+  })
+
+  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+    const ev = new MouseEvent('click')
+
+    component.ngOnInit()
+    component.onGrantAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all perms of an app to a role', () => {
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
+    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterAppValue = 'appId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2a) in a workspace for a selected product', () => {
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+    component.urlParamAppType = 'WORKSPACE'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
+    component.filterProductItems = [
+      { label: 'prodName', value: 'prodName' },
+      { label: 'prodName2', value: 'prodName2' }
+    ]
+    component.filterProductValue = undefined
+    component.currentApp.isProduct = false
+
+    const res = component['prepareProductList']()
+
+    expect(res).toEqual(['prodName', 'prodName2'])
+  })
+
+  it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
+    assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const ev = new MouseEvent('click')
+    component.filterProductValue = 'productAppId'
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+  })
+
+  it('should revoke all permissions: remove all assgmts of a role', () => {
+    const ev = new MouseEvent('click')
+
+    component.ngOnInit()
+    component.onRevokeAllPermissions(ev, role1)
+
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+  })
+
+  /*
+   * EDGE CASES
+   */
+  it('should return 0 when sorting permissions without appIds or prod names', () => {
+    const perm3: Permission = {
+      id: 'permId3'
+    }
+    const permRow3: PermissionViewRow = {
+      ...perm3,
+      key: 'key',
+      roles: { undefined },
+      appType: 'MFE',
+      appDisplayName: 'appName',
+      productDisplayName: 'prodName'
+    }
+    const permRow4: PermissionViewRow = {
+      ...perm3,
+      key: 'key',
+      roles: { undefined },
+      appType: 'MFE',
+      appDisplayName: 'appName',
+      productDisplayName: 'prodName'
+    }
+    const resultAppAsc = (component as any).sortPermissionRowByAppIdAsc(permRow3, permRow4)
+    expect(resultAppAsc).toBe(0)
+
+    const resultAppDesc = (component as any).sortPermissionRowByAppIdDesc(permRow3, permRow4)
+    expect(resultAppDesc).toBe(0)
+
+    const resultProdAsc = (component as any).sortPermissionRowByProductAsc(permRow3, permRow4)
+    expect(resultProdAsc).toBe(0)
+
+    const resultProdDesc = (component as any).sortPermissionRowByProductDesc(permRow3, permRow4)
+    expect(resultProdDesc).toBe(0)
+  })
+
+  it('should return 0 when sorting permissions without appIds or prod names', () => {
+    const role3: Role = {
+      id: 'roleId1'
+    }
+    const role4: Role = {
+      id: 'roleId1'
+    }
+
+    const result = (component as any).sortRoleByName(role3, role4)
+
+    expect(result).toBe(0)
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
+    mockUserService.lang$.getValue.and.returnValue('de')
+    fixture = TestBed.createComponent(AppDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+  })
 })

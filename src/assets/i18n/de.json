@@ -241,6 +241,7 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht abgerufen werden",
     "HTTP_STATUS_0": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps/Applikationen - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
