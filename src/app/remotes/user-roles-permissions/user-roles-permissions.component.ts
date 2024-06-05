@@ -14,7 +14,7 @@ import {
   UserService,
   createRemoteComponentTranslateLoader
 } from '@onecx/portal-integration-angular'
-import { RoleAPIService, PermissionAPIService, Configuration, Permission } from 'src/app/shared/generated'
+import { RoleAPIService, PermissionAPIService, Configuration, Permission, Role } from 'src/app/shared/generated'
 import { PermissionRowitem } from './models/permissionRowItem'
 import { environment } from '../../../environments/environment'
 import {
@@ -73,7 +73,7 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
     private readonly router: Router,
     private userService: UserService,
     private msgService: PortalMessageService,
-    private readonly roleService: RoleAPIService,
+    private readonly roleApi: RoleAPIService,
     private permApi: PermissionAPIService
   ) {
     if (userService.hasPermission('ROLES_PERMISSIONS#VIEW')) this.myPermissions.push('ROLES_PERMISSIONS#VIEW')
@@ -81,7 +81,7 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
 
   ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
     this.baseUrl.next(remoteComponentConfig.baseUrl)
-    this.roleService.configuration = new Configuration({
+    this.roleApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
   }
@@ -106,8 +106,7 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
 
   public loadProfileData(): void {
     this.searchPermissions()
-    this.roles = []
-    // = this.authService.getUserRoles().sort()
+    this.searchRoles()
   }
 
   public createPermissionData(): void {
@@ -122,7 +121,6 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
         application: item.appId
       })
     })
-
     //   this.memberships.forEach((m) => {
     //     m.roleMemberships &&
     //       m.roleMemberships.forEach((r) => {
@@ -139,7 +137,6 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
     //       })
     //   })
     this.sortedPermissionItems = result.sort(this.sortPermissionRowitemByName)
-    console.log('SORTED ITEMS', this.sortedPermissionItems)
   }
 
   private searchPermissions(): void {
@@ -156,7 +153,6 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
           result.stream?.map((perm: Permission) => {
             this.permissionItems.push(perm)
           })
-          console.log('ITEMS', this.permissionItems)
           this.createPermissionData()
         },
         error: (err) => {
@@ -164,6 +160,20 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
           console.error('searchPermissions():', err)
         }
       })
+  }
+  private searchRoles(): void {
+    this.roleApi.searchRoles({ roleSearchCriteria: {} }).subscribe({
+      next: (result) => {
+        result.stream?.map((role: Role) => {
+          this.roles.push(role.name ?? '')
+        })
+        this.createPermissionData()
+      },
+      error: (err) => {
+        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        console.error('searchPermissions():', err)
+      }
+    })
   }
 
   private sortPermissionRowitemByName(a: PermissionRowitem, b: PermissionRowitem): number {
