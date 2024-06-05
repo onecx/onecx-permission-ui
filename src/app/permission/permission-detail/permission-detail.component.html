@@ -32,7 +32,10 @@
           </label>
         </span>
       </div>
-      <div class="px-2 flex flex-row justify-content-between align-items-center column-gap-3">
+      <div
+        *ngIf="changeMode !== 'CREATE'"
+        class="px-2 flex flex-row justify-content-between align-items-center column-gap-3"
+      >
         <p-checkbox
           type="text"
           inputId="permission_detail_operator"

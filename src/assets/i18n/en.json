@@ -175,6 +175,7 @@
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Application",
     "TYPE_WORKSPACE": "Workspace",
+    "APPS": "Number of Apps",
     "DELETE": "Delete App including all permissions and roles",
     "DELETE_HEADER": "Delete App",
     "EDIT": "Edit App",

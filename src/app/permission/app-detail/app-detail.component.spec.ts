@@ -116,7 +116,8 @@ const permRow: PermissionViewRow = {
   roles: { undefined },
   appType: 'MFE',
   appDisplayName: 'appName',
-  productDisplayName: 'prodName'
+  productDisplayName: 'prodName',
+  operator: false
 }
 const permRow2: PermissionViewRow = {
   ...perm2,
