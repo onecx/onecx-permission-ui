@@ -632,7 +632,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    ****************************************************************************
    */
   public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    this.onDetailPermission(ev, perm)
+    this.onDetailPermission(ev, { ...perm, operator: false })
     this.changeMode = 'CREATE'
   }
   public onCreatePermission(ev?: MouseEvent): void {
