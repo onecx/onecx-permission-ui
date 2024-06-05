@@ -21,6 +21,7 @@ import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
+import { TabViewModule } from 'primeng/tabview'
 import { ToastModule } from 'primeng/toast'
 
 import {
@@ -59,6 +60,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TabViewModule,
     ToastModule,
     TranslateModule,
     ErrorTailorModule.forRoot({
@@ -103,6 +105,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TabViewModule,
     ToastModule,
     TranslateModule
   ],
