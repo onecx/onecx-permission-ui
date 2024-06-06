@@ -5,14 +5,6 @@
 @include search-criteria-select-button;
 @include card-badges;
 
-:host ::ng-deep {
-  .card-badge-left,
-  .card-badge-right {
-    &.badge-2-1 {
-      top: 32px;
-    }
-  }
-}
 @media screen and (min-width: 768px) {
   .md\:h-2-5rem {
     height: 2.5rem !important;
