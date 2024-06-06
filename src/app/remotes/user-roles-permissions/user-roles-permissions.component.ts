@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 import { ReplaySubject } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import {
@@ -14,7 +14,14 @@ import {
   UserService,
   createRemoteComponentTranslateLoader
 } from '@onecx/portal-integration-angular'
-import { RoleAPIService, PermissionAPIService, Configuration, Permission, Role } from 'src/app/shared/generated'
+import {
+  RoleAPIService,
+  PermissionAPIService,
+  Configuration,
+  Permission,
+  Role,
+  AssignmentAPIService
+} from 'src/app/shared/generated'
 import { PermissionRowitem } from './models/permissionRowItem'
 import { environment } from '../../../environments/environment'
 import {
@@ -47,7 +54,7 @@ import {
     })
   ]
 })
-export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent {
+export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComponent {
   public roles: string[] = []
   environment = environment
   public myPermissions = new Array<string>() // permissions of the user
@@ -74,8 +81,11 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
     private userService: UserService,
     private msgService: PortalMessageService,
     private readonly roleApi: RoleAPIService,
-    private permApi: PermissionAPIService
+    private permApi: PermissionAPIService,
+    private assgnmtApi: AssignmentAPIService,
+    private translateService: TranslateService
   ) {
+    this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     if (userService.hasPermission('ROLES_PERMISSIONS#VIEW')) this.myPermissions.push('ROLES_PERMISSIONS#VIEW')
   }
 
@@ -84,17 +94,20 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
     this.roleApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
+    this.permApi.configuration = new Configuration({
+      basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
+    })
   }
 
   public ngOnInit(): void {
     this.loadProfileData()
-    this.sortValue = 'ROLE_PERMISSIONS.APPLICATION'
+    this.sortValue = 'USER_ROLE_PERMISSIONS.APPLICATION'
     this.cols = [
-      { field: 'name', header: 'ROLE_PERMISSIONS.NAME' },
-      { field: 'resource', header: 'ROLE_PERMISSIONS.RESOURCE' },
-      { field: 'action', header: 'ROLE_PERMISSIONS.ACTION' },
-      { field: 'role', header: 'ROLE_PERMISSIONS.ROLE' },
-      { field: 'application', header: 'ROLE_PERMISSIONS.APPLICATION' }
+      { field: 'name', header: 'USER_ROLE_PERMISSIONS.NAME' },
+      { field: 'resource', header: 'USER_ROLE_PERMISSIONS.RESOURCE' },
+      { field: 'action', header: 'USER_ROLE_PERMISSIONS.ACTION' },
+      { field: 'role', header: 'USER_ROLE_PERMISSIONS.ROLE' },
+      { field: 'application', header: 'USER_ROLE_PERMISSIONS.APPLICATION' }
     ]
     this.items = [
       { label: 'ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
@@ -113,29 +126,14 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
     const result: PermissionRowitem[] = []
     this.permissionItems.forEach((item) => {
       result.push({
-        name: item.productName,
-        key: 'key',
+        name: item.description,
+        key: undefined,
         resource: item.resource,
         action: item.action,
         role: 'role',
         application: item.appId
       })
     })
-    //   this.memberships.forEach((m) => {
-    //     m.roleMemberships &&
-    //       m.roleMemberships.forEach((r) => {
-    //         r.permissions?.forEach((p) => {
-    //           result.push({
-    //             name: p.name,
-    //             key: p.key,
-    //             resource: p.resource,
-    //             action: p.action,
-    //             role: r.role,
-    //             application: m.application
-    //           })
-    //         })
-    //       })
-    //   })
     this.sortedPermissionItems = result.sort(this.sortPermissionRowitemByName)
   }
 
@@ -167,11 +165,10 @@ export class UserRolesPermissionsComponent implements OnInit, ocxRemoteComponent
         result.stream?.map((role: Role) => {
           this.roles.push(role.name ?? '')
         })
-        this.createPermissionData()
       },
       error: (err) => {
         this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-        console.error('searchPermissions():', err)
+        console.error('searchRoles():', err)
       }
     })
   }

@@ -12,7 +12,7 @@ import { AppSearchComponent } from './app-search/app-search.component'
 import { AppDetailComponent } from './app-detail/app-detail.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
 import { PermissionDetailComponent } from './permission-detail/permission-detail.component'
-import { UserRolesPermissionsComponent } from '../remotes/user-roles-permissions/user-roles-permissions.component'
+import { OneCXUserRolesPermissionsComponent } from '../remotes/user-roles-permissions/user-roles-permissions.component'
 
 const routes: Routes = [
   {
@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    component: UserRolesPermissionsComponent,
+    component: OneCXUserRolesPermissionsComponent,
     pathMatch: 'full'
   },
   {
