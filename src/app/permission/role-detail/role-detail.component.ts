@@ -4,12 +4,13 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 
-import { Role, CreateRoleRequest, UpdateRoleRequest, RoleAPIService } from 'src/app/shared/generated'
+import { Role, CreateRoleRequest, IAMRole, UpdateRoleRequest, RoleAPIService } from 'src/app/shared/generated'
 import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
 @Component({
   selector: 'app-role-detail',
-  templateUrl: './role-detail.component.html'
+  templateUrl: './role-detail.component.html',
+  styleUrls: ['./role-detail.component.scss']
 })
 export class RoleDetailComponent implements OnChanges {
   @Input() currentApp!: App
@@ -18,10 +19,13 @@ export class RoleDetailComponent implements OnChanges {
   @Input() changeMode: ChangeMode = 'VIEW'
   @Input() displayDetailDialog = false
   @Input() displayDeleteDialog = false
+  @Input() showIamRolesDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   public myPermissions = new Array<string>() // permissions of the user
   public formGroupRole: FormGroup
+  public iamRoles!: IAMRole[]
+  public selectedIamRoles: IAMRole[] | undefined
 
   constructor(
     private roleApi: RoleAPIService,
@@ -44,6 +48,7 @@ export class RoleDetailComponent implements OnChanges {
       this.formGroupRole.controls['name'].patchValue(this.role.name)
       this.formGroupRole.controls['description'].patchValue(this.role.description)
     }
+    if (this.showIamRolesDialog) this.getIamRoles()
   }
 
   public onClose(): void {
@@ -111,6 +116,9 @@ export class RoleDetailComponent implements OnChanges {
     }
   }
 
+  /**
+   * Delete a ROLE
+   */
   public onDeleteConfirmation() {
     this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
       next: () => {
@@ -122,5 +130,34 @@ export class RoleDetailComponent implements OnChanges {
         console.error(err.error)
       }
     })
+  }
+
+  /**
+   * Select IAM Roles to be added
+   */
+  public getIamRoles() {
+    this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).subscribe({
+      next: (data) => {
+        this.iamRoles = data.stream ?? []
+      },
+      error: (err) => {
+        console.error(err.error)
+      }
+    })
+  }
+  public onAddIamRoles() {
+    console.log('onAddIamRoles', this.selectedIamRoles)
+    if (this.selectedIamRoles && this.selectedIamRoles.length > 0)
+      this.roleApi.createRole({ createRolesRequest: { roles: this.selectedIamRoles! } }).subscribe({
+        next: () => {
+          this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
+          this.dataChanged.emit(true)
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
+          console.error(err)
+        }
+      })
+    else this.dataChanged.emit(false)
   }
 }

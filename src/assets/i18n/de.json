@@ -17,7 +17,7 @@
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
-      "IDM_ROLES.TOOLTIP": "IDM Rollen auswählen damit sie hier verwendet werden können",
+      "IAM_ROLES.TOOLTIP": "IAM Rollen auswählen damit sie hier verwendet werden können",
       "WORKSPACE_ROLES.TOOLTIP": "Fehlende Workspace Rollen übernehmen damit sie hier verwendet werden können",
       "MESSAGE": {
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
@@ -223,7 +223,13 @@
     "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
-    "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden."
+    "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
+    "IAM": {
+      "HEADER": "IAM Rollen auswählen",
+      "INFO": "Liste der fehlenden IAM Rollen",
+      "Filter": "Filter",
+      "SAVE": "Auswahl übernehmen"
+    }
   },
   "VALIDATION": {
     "HINTS": {
@@ -242,9 +248,9 @@
     }
   },
   "EXCEPTIONS": {
-    "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht abgerufen werden",
+    "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
     "HTTP_STATUS_0": {
-      "APP": "Unbekanntes Problem beim Abrufen von Apps/Applikationen - Bitte versuchen sie es noch einmal.",
+      "APP": "Unbekanntes Problem beim Abrufen von Applikationen - Bitte versuchen sie es noch einmal.",
       "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
       "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
@@ -254,9 +260,13 @@
       "ROLES": "Die Rolle konnte nicht verarbeitet werden.",
       "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
+    "HTTP_STATUS_401": {
+      "APPS": "Sie haben keine Rechte um Applikationen zu sehen.",
+      "WORKSPACE": "Sie haben keine Rechte um Workspace Daten zu sehen."
+    },
     "HTTP_STATUS_403": {
-      "APP": "Sie haben keine Rechte um App/Applikation Daten zu sehen.",
-      "APPS": "Sie haben keine Rechte um Apps/Applikationen zu sehen.",
+      "APP": "Sie haben keine Rechte um Applikation Daten zu sehen.",
+      "APPS": "Sie haben keine Rechte um Applikationen zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
       "ASSIGNMENTS": "Sie haben keine Rechte um Berechtigungen zu sehen.",

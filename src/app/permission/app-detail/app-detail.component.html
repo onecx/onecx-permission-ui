@@ -183,10 +183,9 @@
                   pbutton
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
-                  [id]="'app_detail_permission_table_header_add_idm_roles_action'"
-                  (click)="onCreateIDMRoles($event)"
-                  [disabled]="true"
-                  [title]="'ACTIONS.CREATE.IDM_ROLES.TOOLTIP' | translate"
+                  [id]="'app_detail_permission_table_header_add_iam_roles_action'"
+                  (click)="onAddIAMRoles($event)"
+                  [title]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-bolt" aria-hidden="true"></span>
@@ -512,6 +511,7 @@
   [roles]="roles"
   [role]="role"
   [changeMode]="changeMode"
+  [showIamRolesDialog]="showIamRolesDialog"
   [displayDetailDialog]="showRoleDetailDialog"
   [displayDeleteDialog]="showRoleDeleteDialog"
   (dataChanged)="onDetailChanged($event)"
