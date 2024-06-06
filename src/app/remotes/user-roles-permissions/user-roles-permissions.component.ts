@@ -100,7 +100,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   }
 
   public ngOnInit(): void {
-    this.loadProfileData()
+    this.loadData()
     this.sortValue = 'USER_ROLE_PERMISSIONS.APPLICATION'
     this.cols = [
       { field: 'name', header: 'USER_ROLE_PERMISSIONS.NAME' },
@@ -117,7 +117,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.selectedColumns = this.cols
   }
 
-  public loadProfileData(): void {
+  public loadData(): void {
     this.searchPermissions()
     this.searchRoles()
   }
@@ -193,7 +193,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
       //     // ;(this.authService as KeycloakAuthService)['updateUserFromUserProfile'](
       //     //   (this.authService as KeycloakAuthService).userProfile
       //     // )
-      //     this.loadProfileData()
+      //     this.loadData()
       //     this.msgService.info({ summaryKey: 'ROLE_PERMISSIONS.MSG.PERMISSIONS_REFRESH_INFO' })
       //   },
       //   (err: any) => {
@@ -215,6 +215,14 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
       this.permissionTableFilter.nativeElement.value = ''
     }
     this.permissionTable?.clear()
-    this.loadProfileData()
+    this.loadData()
+  }
+
+  public onReload() {
+    this.permissionItems = []
+    this.roles = []
+    // this.workspaceRolesLoaded = false
+    // this.iamRolesLoaded = false
+    this.loadData()
   }
 }
