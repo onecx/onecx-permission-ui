@@ -226,7 +226,8 @@
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
     "IAM": {
       "HEADER": "Select IAM Roles",
-      "INFO": "List of missing IAM Roles",
+      "LIST": "List of missing Roles",
+      "INFO": "(IAM: Identity Access Management = User & Roles)",
       "Filter": "Filter",
       "SAVE": "Add selection"
     }

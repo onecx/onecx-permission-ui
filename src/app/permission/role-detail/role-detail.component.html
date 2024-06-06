@@ -110,7 +110,7 @@
   [dismissableMask]="true"
 >
   <div class="flex flex-column row-gap-2">
-    <div>{{ 'ROLE.IAM.INFO' | translate }}</div>
+    <div>{{ 'ROLE.IAM.LIST' | translate }}</div>
     <p-listbox
       [options]="iamRoles"
       [(ngModel)]="selectedIamRoles"
@@ -120,9 +120,11 @@
       [multiple]="true"
       [metaKeySelection]="false"
       [showToggleAll]="false"
+      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
       [listStyle]="{ 'max-height': '300px' }"
     />
   </div>
+  <div class="mt-2 text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <button

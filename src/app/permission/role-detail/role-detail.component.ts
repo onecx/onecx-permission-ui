@@ -138,7 +138,10 @@ export class RoleDetailComponent implements OnChanges {
   public getIamRoles() {
     this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).subscribe({
       next: (data) => {
-        this.iamRoles = data.stream ?? []
+        this.iamRoles = []
+        data.stream?.forEach((iamRole) => {
+          if (this.roles.filter((r) => r.name === iamRole.name).length === 0) this.iamRoles.push(iamRole)
+        })
       },
       error: (err) => {
         console.error(err.error)
