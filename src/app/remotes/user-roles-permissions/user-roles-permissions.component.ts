@@ -14,15 +14,7 @@ import {
   UserService,
   createRemoteComponentTranslateLoader
 } from '@onecx/portal-integration-angular'
-import {
-  RoleAPIService,
-  PermissionAPIService,
-  Configuration,
-  Permission,
-  Role,
-  AssignmentAPIService
-} from 'src/app/shared/generated'
-import { PermissionRowitem } from './models/permissionRowItem'
+import { Configuration, RoleAPIService, Role, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import { environment } from '../../../environments/environment'
 import {
   AngularRemoteComponentsModule,
@@ -59,8 +51,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   environment = environment
   public myPermissions = new Array<string>() // permissions of the user
 
-  public permissionItems: Permission[] = []
-  public sortedPermissionItems: PermissionRowitem[] = []
+  public userAssignmentItems: UserAssignment[] = []
   public items: MenuItem[] = []
   private pageSize = 1000
   public cols = [{}]
@@ -72,8 +63,8 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   public infoMessage: string | undefined
   public errorMessage: string | undefined
   public loadingExceptionKey = ''
-  @ViewChild('permissionTable') permissionTable: Table | undefined
-  @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
+  @ViewChild('userAssignmentTable') userAssignmentTable: Table | undefined
+  @ViewChild('userAssignmentTableFilterInput') userAssignmentTableFilter: ElementRef | undefined
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -81,8 +72,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     private userService: UserService,
     private msgService: PortalMessageService,
     private readonly roleApi: RoleAPIService,
-    private permApi: PermissionAPIService,
-    private assgnmtApi: AssignmentAPIService,
+    private userApi: UserAPIService,
     private translateService: TranslateService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
@@ -94,7 +84,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.roleApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
-    this.permApi.configuration = new Configuration({
+    this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
   }
@@ -103,11 +93,11 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.loadData()
     this.sortValue = 'USER_ROLE_PERMISSIONS.APPLICATION'
     this.cols = [
-      { field: 'name', header: 'USER_ROLE_PERMISSIONS.NAME' },
+      { field: 'productName', header: 'USER_ROLE_PERMISSIONS.NAME' },
       { field: 'resource', header: 'USER_ROLE_PERMISSIONS.RESOURCE' },
       { field: 'action', header: 'USER_ROLE_PERMISSIONS.ACTION' },
-      { field: 'role', header: 'USER_ROLE_PERMISSIONS.ROLE' },
-      { field: 'application', header: 'USER_ROLE_PERMISSIONS.APPLICATION' }
+      { field: 'roleName', header: 'USER_ROLE_PERMISSIONS.ROLE' },
+      { field: 'applicationId', header: 'USER_ROLE_PERMISSIONS.APPLICATION' }
     ]
     this.items = [
       { label: 'ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
@@ -118,46 +108,37 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   }
 
   public loadData(): void {
-    this.searchPermissions()
+    this.searchUserAssignments()
     this.searchRoles()
   }
 
-  public createPermissionData(): void {
-    const result: PermissionRowitem[] = []
-    this.permissionItems.forEach((item) => {
+  public createAssignmentData(): void {
+    const result: UserAssignment[] = []
+    this.userAssignmentItems.forEach((item) => {
       result.push({
-        name: item.description,
-        key: undefined,
+        productName: item.productName,
         resource: item.resource,
         action: item.action,
-        role: 'role',
-        application: item.appId
+        roleName: item.roleName,
+        applicationId: item.applicationId
       })
     })
-    this.sortedPermissionItems = result.sort(this.sortPermissionRowitemByName)
+    this.userAssignmentItems = result.sort(this.sortUserAssignmentsByName)
   }
 
-  private searchPermissions(): void {
-    const productNames: string[] = []
-    this.permApi
-      .searchPermissions({
-        permissionSearchCriteria: {
-          productNames: productNames,
-          pageSize: this.pageSize
-        }
-      })
-      .subscribe({
-        next: (result) => {
-          result.stream?.map((perm: Permission) => {
-            this.permissionItems.push(perm)
-          })
-          this.createPermissionData()
-        },
-        error: (err) => {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-          console.error('searchPermissions():', err)
-        }
-      })
+  private searchUserAssignments(): void {
+    this.userApi.getUserAssignments({ userCriteria: { pageSize: this.pageSize } }).subscribe({
+      next: (result) => {
+        result.stream?.map((assgmt: UserAssignment) => {
+          this.userAssignmentItems.push(assgmt)
+        })
+        this.createAssignmentData()
+      },
+      error: (err) => {
+        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+        console.error('searchAssignments():', err)
+      }
+    })
   }
   private searchRoles(): void {
     this.roleApi.searchRoles({ roleSearchCriteria: {} }).subscribe({
@@ -173,9 +154,9 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     })
   }
 
-  private sortPermissionRowitemByName(a: PermissionRowitem, b: PermissionRowitem): number {
-    return (a.name ? (a.name as string).toUpperCase() : '').localeCompare(
-      b.name ? (b.name as string).toUpperCase() : ''
+  private sortUserAssignmentsByName(a: UserAssignment, b: UserAssignment): number {
+    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+      b.productName ? (b.productName as string).toUpperCase() : ''
     )
   }
 
@@ -183,46 +164,17 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     primengTable.filterGlobal(($event.target as HTMLInputElement).value, 'contains')
   }
 
-  public refresh(): void {
-    if (this.environment.production) {
-      // this.userProfileService.getCurrentUserFromBE().subscribe(
-      //   () => {
-      //     //TODO what is this ?
-      //     // ;(this.authService as KeycloakAuthService).userProfile = profileData
-      //     // localStorage.setItem('tkit_user_profile', JSON.stringify(profileData))
-      //     // ;(this.authService as KeycloakAuthService)['updateUserFromUserProfile'](
-      //     //   (this.authService as KeycloakAuthService).userProfile
-      //     // )
-      //     this.loadData()
-      //     this.msgService.info({ summaryKey: 'ROLE_PERMISSIONS.MSG.PERMISSIONS_REFRESH_INFO' })
-      //   },
-      //   (err: any) => {
-      //     this.msgService.error({ summaryKey: 'ROLE_PERMISSIONS.MSG.PERMISSIONS_REFRESH_ERROR' })
-      //     console.error(err)
-      //   }
-      // )
-    } else {
-      console.error('Cannot refresh in non production mode')
+  public onClearFilterUserAssignmentTable(): void {
+    if (this.userAssignmentTableFilter) {
+      this.userAssignmentTableFilter.nativeElement.value = ''
     }
-  }
-
-  public close(): void {
-    void this.router.navigateByUrl('/')
-  }
-
-  public onClearFilterPermissionTable(): void {
-    if (this.permissionTableFilter) {
-      this.permissionTableFilter.nativeElement.value = ''
-    }
-    this.permissionTable?.clear()
+    this.userAssignmentTable?.clear()
     this.loadData()
   }
 
   public onReload() {
-    this.permissionItems = []
+    this.userAssignmentItems = []
     this.roles = []
-    // this.workspaceRolesLoaded = false
-    // this.iamRolesLoaded = false
     this.loadData()
   }
 }
