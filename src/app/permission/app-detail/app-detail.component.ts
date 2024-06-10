@@ -115,6 +115,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public missingWorkspaceRoles = false
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
+  public showIamRolesDialog = false
   public showRoleTools = false
 
   constructor(
@@ -364,10 +365,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.roles.filter((r) => r.isWorkspaceRole === true).length !==
         this.currentApp.workspaceDetails?.workspaceRoles.length
     }
-  }
-
-  public onCreateIDMRoles(ev: MouseEvent) {
-    console.log('TODO: select IDM roles to take over into permissions')
   }
 
   public onCreateWorkspaceRoles(ev: MouseEvent) {
@@ -624,7 +621,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.showPermissionDeleteDialog = false
     this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
+    this.showIamRolesDialog = false
     if (changed) this.loadData()
+  }
+  public onAddIAMRoles(ev: MouseEvent) {
+    this.showIamRolesDialog = true
   }
 
   /****************************************************************************
@@ -632,7 +633,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    ****************************************************************************
    */
   public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    this.onDetailPermission(ev, perm)
+    this.onDetailPermission(ev, { ...perm, operator: false })
     this.changeMode = 'CREATE'
   }
   public onCreatePermission(ev?: MouseEvent): void {
