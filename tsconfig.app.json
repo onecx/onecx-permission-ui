@@ -7,7 +7,12 @@
     "inlineSources": true,
     "target": "ES2022"
   },
-  "files": ["src/main.ts", "src/polyfills.ts", "src/app/onecx-permission-remote.module.ts"],
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/app/onecx-permission-remote.module.ts",
+    "src/app/remotes/user-roles-permissions/user-roles-permissions.component.ts"
+  ],
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["src/test.ts", "src/test-setup.ts", "src/**/*.spec.ts", "src/**/*.stories.ts", "src/**/*.stories.js"]
 }

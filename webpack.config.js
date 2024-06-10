@@ -5,7 +5,8 @@ const config = withModuleFederationPlugin({
   name: 'onecx-permission-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXPermissionModule': 'src/app/onecx-permission-remote.module.ts'
+    './OneCXPermissionModule': 'src/app/onecx-permission-remote.module.ts',
+    './OneCXUserRolesPermissionsComponent': 'src/app/remotes/user-roles-permissions/user-roles-permissions.component.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, requiredVersion: 'auto' },
@@ -33,7 +34,8 @@ const config = withModuleFederationPlugin({
     '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
-    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true }
+    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-remote-components': { requiredVersion: 'auto', includeSecondaries: true }
   }),
   sharedMappings: ['@onecx/portal-integration-angular']
 })
