@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { Router, RouterModule } from '@angular/router'
+import { RouterModule } from '@angular/router'
 import { MenuItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 import { ReplaySubject } from 'rxjs'
@@ -68,7 +68,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
-    private readonly router: Router,
     private userService: UserService,
     private msgService: PortalMessageService,
     private readonly roleApi: RoleAPIService,
@@ -100,8 +99,8 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
       { field: 'applicationId', header: 'USER_ROLE_PERMISSIONS.APPLICATION' }
     ]
     this.items = [
-      { label: 'ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
-      { label: 'ROLE_PERMISSIONS.TABS.ROLES', icon: 'fa-bar-chart', id: 'tabRole' }
+      { label: 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
+      { label: 'USER_ROLE_PERMISSIONS.TABS.ROLES', icon: 'fa-bar-chart', id: 'tabRole' }
     ]
     this.activeItem = this.items[0]
     this.selectedColumns = this.cols
