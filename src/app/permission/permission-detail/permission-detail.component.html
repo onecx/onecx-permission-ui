@@ -32,7 +32,10 @@
           </label>
         </span>
       </div>
-      <div class="px-2 flex flex-row justify-content-between align-items-center column-gap-3">
+      <div
+        *ngIf="changeMode !== 'CREATE'"
+        class="px-2 flex flex-row justify-content-between align-items-center column-gap-3"
+      >
         <p-checkbox
           type="text"
           inputId="permission_detail_operator"
@@ -138,14 +141,14 @@
   [dismissableMask]="true"
   [style]="{ 'max-width': '425px' }"
 >
-  <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
+  <div class="mr-2 flex column-gap-4 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
     <div>
-      <div id="permission_delete_button_message">
+      <div id="permission_delete_message" class="font-bold">
         {{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', permission?.resource + '#' +
         permission?.action) }}
       </div>
-      <div class="mt-2">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+      <div class="mt-3">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">

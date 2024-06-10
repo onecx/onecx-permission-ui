@@ -9,7 +9,7 @@
   [style]="{ width: '400px' }"
 >
   <form [formGroup]="formGroupRole" errorTailor>
-    <div class="flex flex-wrap flex-column gap-4 justify-content-between">
+    <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
           <input pInputText type="text" class="w-full" id="role_detail_name" formControlName="name" />
@@ -63,11 +63,13 @@
   [dismissableMask]="true"
   [style]="{ 'max-width': '425px' }"
 >
-  <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
+  <div class="mr-2 flex column-gap-4 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
     <div>
-      <div>{{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', role?.name) }}</div>
-      <div class="mt-2">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+      <div id="role_delete_message" class="font-bold">
+        {{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', role?.name) }}
+      </div>
+      <div class="mt-3">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">
@@ -92,6 +94,59 @@
         iconPos="left"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
         (click)="onDeleteConfirmation()"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- SELECT IAM ROLES -->
+<p-dialog
+  [(visible)]="showIamRolesDialog"
+  [header]="'ROLE.IAM.HEADER' | translate"
+  (onHide)="onClose()"
+  [modal]="true"
+  [closable]="true"
+  [resizable]="true"
+  [dismissableMask]="true"
+>
+  <div class="flex flex-column row-gap-2">
+    <div>{{ 'ROLE.IAM.LIST' | translate }}</div>
+    <p-listbox
+      [options]="iamRoles"
+      [(ngModel)]="selectedIamRoles"
+      optionLabel="name"
+      [filter]="true"
+      [checkbox]="true"
+      [multiple]="true"
+      [metaKeySelection]="false"
+      [showToggleAll]="false"
+      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+      [listStyle]="{ 'max-height': '300px' }"
+    />
+  </div>
+  <div class="mt-2 text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
+      <button
+        pButton
+        type="button"
+        id="role_select_button_cancel"
+        class="m-0"
+        icon="pi pi-times"
+        iconPos="left"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [title]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        (click)="onClose()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        id="role_select_button_save"
+        class="m-0"
+        icon="pi pi-check"
+        iconPos="left"
+        [label]="'ROLE.IAM.SAVE' | translate"
+        (click)="onAddIamRoles()"
       ></button>
     </div>
   </ng-template>

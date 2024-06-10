@@ -23,7 +23,7 @@ export interface AppSearchCriteria {
   appType: FormControl<AppFilterType | null>
   name: FormControl<string | null>
 }
-export type App = Application & { isApp: boolean; appType: AppType }
+export type App = Application & { apps?: number; appType: AppType }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
 
@@ -153,9 +153,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         const productNames: string[] = []
         const apps: App[] = []
         result.stream?.map((app: Application) => {
-          if (!productNames.includes(app.productName ?? '')) {
-            productNames.push(app.productName ?? '')
-            apps.push({ ...app, appType: 'PRODUCT' } as App)
+          if (!productNames.includes(app.productName!)) {
+            productNames.push(app.productName!)
+            apps.push({ ...app, appType: 'PRODUCT', apps: 1 } as App)
+          } else {
+            const ap: App[] = apps.filter((a) => a.productName === app.productName)
+            if (ap.length === 1 && ap[0].apps) ap[0].apps++
           }
         })
         return apps.sort(this.sortAppsByAppId)

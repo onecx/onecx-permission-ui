@@ -57,8 +57,8 @@
         [value]="(apps$ | async) ?? []"
         [paginator]="true"
         [alwaysShowPaginator]="true"
-        [rowsPerPageOptions]="[16, 32, 64]"
-        [rows]="16"
+        [rowsPerPageOptions]="[20, 60, 100]"
+        [rows]="20"
         [layout]="viewMode"
         [filterBy]="filterValueDefault"
         [sortField]="sortField"
@@ -110,26 +110,20 @@
               [class.bg-primary]="app.appType === 'WORKSPACE'"
               (click)="onAppClick(app)"
             >
-              <div
-                *ngIf="app.appType === 'WORKSPACE'"
-                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center"
+              <span
+                *ngIf="app.apps"
+                [id]="'app_search_data_idx_' + idx + '_apps'"
+                [title]="'APP.APPS' | translate"
+                class="card-badge-right badge-2 p-1 text-xs"
+                >{{ app.apps }}</span
               >
-                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
-                <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
-              </div>
-              <div
-                *ngIf="app.appType === 'PRODUCT'"
-                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center"
-              >
-                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.productName, 20) }}</div>
-                <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
-              </div>
-              <div
-                *ngIf="app.appType === 'APP'"
-                class="h-2rem md:h-3rem lg:h-4rem flex flex-column justify-content-between text-center"
-              >
-                <div class="font-bold text-base md:text-lg lg:text-xl">{{ limitText(app.appId, 20) }}</div>
-                <div class="font-bold text-xs">{{ limitText(app.productName, 20) }}</div>
+              <div class="h-2rem md:h-3rem flex flex-column justify-content-between gap-1 lg:gap-2 lg:py-1 text-center">
+                <div *ngIf="app.appType === 'WORKSPACE'" class="font-bold text-base md:text-lg">
+                  {{ limitText(app.appId, 20) }}
+                </div>
+                <div *ngIf="app.appType === 'PRODUCT'" class="font-bold text-base md:text-lg">
+                  {{ limitText(app.productName, 20) }}
+                </div>
                 <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
             </div>

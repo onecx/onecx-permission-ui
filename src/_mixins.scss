@@ -229,3 +229,13 @@
     }
   }
 }
+
+@mixin listbox-zebra-rows {
+  :host ::ng-deep {
+    .p-listbox:not(.p-disabled) .p-listbox-item:not(.p-highlight):not(.p-disabled) {
+      &:nth-child(odd) {
+        background-color: #f8f9fa;
+      }
+    }
+  }
+}
