@@ -53,7 +53,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
 
   public userAssignmentItems: UserAssignment[] = []
   public items: MenuItem[] = []
-  private pageSize = 10
   public cols = [{}]
   public selectedColumns = [{}]
   public selectedTab = 0
@@ -125,7 +124,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   }
 
   private searchUserAssignments(): void {
-    this.userApi.getUserAssignments({ userCriteria: { pageSize: this.pageSize } }).subscribe({
+    this.userApi.getUserAssignments({ userCriteria: {} }).subscribe({
       next: (result) => {
         result.stream?.map((assgmt: UserAssignment) => {
           this.userAssignmentItems.push(assgmt)
