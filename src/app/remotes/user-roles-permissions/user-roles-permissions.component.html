@@ -17,10 +17,10 @@
         styleClass="p-datatable-striped"
         [sortField]="sortValue"
         [autoLayout]="true"
-        [globalFilterFields]="['name', 'application', 'key', 'resource', 'action', 'role']"
+        [globalFilterFields]="['application', 'key', 'resource', 'action', 'role']"
         [paginator]="true"
         [rows]="10"
-        [rowsPerPageOptions]="[25, 50, 100]"
+        [rowsPerPageOptions]="[10, 25, 100, 1000]"
         [alwaysShowPaginator]="true"
         paginatorPosition="bottom"
       >
