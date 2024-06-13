@@ -464,7 +464,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  #
   /assignments/revoke/{roleId}:
     post:
       tags:
@@ -658,8 +657,164 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkspaceDetails'
+  /user/permissions:
+    post:
+      x-onecx:
+        permissions:
+          permission:
+            - read
+      tags:
+        - user
+      description: get user permissions
+      operationId: getUserPermissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPermissionsPageResult'
+  /user/roles:
+    post:
+      x-onecx:
+        permissions:
+          role:
+            - read
+      tags:
+        - user
+      description: get user roles
+      operationId: getUserRoles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRolesPageResult'
+  /user/assignments:
+    post:
+      x-onecx:
+        permissions:
+          assignment:
+            - read
+      tags:
+        - user
+      description: get user assignments
+      operationId: getUserAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAssignmentPageResult'
 components:
   schemas:
+    UserCriteria:
+      type: object
+      properties:
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          maximum: 1000
+          type: integer
+    UserAssignmentPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignment'
+    UserAssignment:
+      type: object
+      properties:
+        roleName:
+          type: string
+        productName:
+          type: string
+        applicationId:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+    UserPermissionsPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+    UserRolesPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
     CreateRolesRequest:
       type: object
       properties:
@@ -725,6 +880,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     IAMRolePageResult:
       type: object
@@ -769,6 +925,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     PermissionSearchCriteria:
       type: object
@@ -788,6 +945,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     RolePageResult:
       type: object
@@ -909,6 +1067,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     AssignmentPageResult:
       type: object
@@ -996,6 +1155,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     ApplicationPageResult:
       type: object
@@ -1086,25 +1246,8 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
-    Product:
-      type: object
-      properties:
-        microfrontends:
-          type: array
-          items:
-            $ref: '#/components/schemas/Microfrontend'
-        productName:
-          type: string
-        baseUrl:
-          type: string
-    Microfrontend:
-      type: object
-      properties:
-        mfeId:
-          type: string
-        basePath:
-          type: string
     WorkspaceDetails:
       type: object
       properties:

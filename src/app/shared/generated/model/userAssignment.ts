@@ -11,8 +11,11 @@
  */
 
 
-export interface Microfrontend { 
-    mfeId?: string;
-    basePath?: string;
+export interface UserAssignment { 
+    roleName?: string;
+    productName?: string;
+    applicationId?: string;
+    resource?: string;
+    action?: string;
 }
 

@@ -7,6 +7,7 @@ api/application.service.ts
 api/assignment.service.ts
 api/permission.service.ts
 api/role.service.ts
+api/user.service.ts
 api/workspace.service.ts
 configuration.ts
 encoder.ts
@@ -29,7 +30,6 @@ model/iAMRole.ts
 model/iAMRolePageResult.ts
 model/iAMRoleSearchCriteria.ts
 model/mfeMsAbstract.ts
-model/microfrontend.ts
 model/models.ts
 model/permission.ts
 model/permissionPageResult.ts
@@ -37,7 +37,6 @@ model/permissionSearchCriteria.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
-model/product.ts
 model/productDetails.ts
 model/revokeRoleApplicationAssignmentRequest.ts
 model/revokeRoleProductsAssignmentRequest.ts
@@ -46,6 +45,11 @@ model/rolePageResult.ts
 model/roleSearchCriteria.ts
 model/updatePermissionRequest.ts
 model/updateRoleRequest.ts
+model/userAssignment.ts
+model/userAssignmentPageResult.ts
+model/userCriteria.ts
+model/userPermissionsPageResult.ts
+model/userRolesPageResult.ts
 model/workspaceAbstract.ts
 model/workspaceDetails.ts
 model/workspacePageResult.ts

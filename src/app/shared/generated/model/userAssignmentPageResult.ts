@@ -9,12 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Microfrontend } from './microfrontend';
+import { UserAssignment } from './userAssignment';
 
 
-export interface Product { 
-    microfrontends?: Array<Microfrontend>;
-    productName?: string;
-    baseUrl?: string;
+export interface UserAssignmentPageResult { 
+    /**
+     * The total elements in the resource.
+     */
+    totalElements?: number;
+    number?: number;
+    size?: number;
+    totalPages?: number;
+    stream?: Array<UserAssignment>;
 }
 
