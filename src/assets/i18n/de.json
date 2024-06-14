@@ -251,9 +251,9 @@
   "USER_ROLE_PERMISSIONS": {
     "HEADLINE": "Rollen und Zugriffsrechte",
     "TAB_NAME_ROLES": "Rollen",
-    "TAB_NAME_ROLES.TOOLTIP": "Rollen des Nutzers",
+    "TAB_NAME_ROLES.TOOLTIP": "Meine Rollen",
     "TAB_NAME_PERMISSIONS": "Zugriffsrechte",
-    "TAB_NAME_PERMISSIONS.TOOLTIP": "Zugriffsrechte des Nutzers",
+    "TAB_NAME_PERMISSIONS.TOOLTIP": "Meine Zugriffsrechte",
     "TITLE_ROLES": "Meine Rollen",
     "TITLE_PERMISSIONS": "Meine Zugriffsrechte",
     "NO_RESULTS": "Keine Daten",

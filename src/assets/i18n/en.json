@@ -251,9 +251,9 @@
   "USER_ROLE_PERMISSIONS": {
     "HEADLINE": "Roles and Permissions granted",
     "TAB_NAME_ROLES": "Roles",
-    "TAB_NAME_ROLES.TOOLTIP": "The current user's roles",
+    "TAB_NAME_ROLES.TOOLTIP": "My roles",
     "TAB_NAME_PERMISSIONS": "Permissions",
-    "TAB_NAME_PERMISSIONS.TOOLTIP": "The current user's permissions",
+    "TAB_NAME_PERMISSIONS.TOOLTIP": "My permissions",
     "TITLE_ROLES": "My Roles",
     "TITLE_PERMISSIONS": "My Permissions",
     "NO_RESULTS": "No data",
