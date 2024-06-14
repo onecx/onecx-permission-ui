@@ -249,27 +249,27 @@
     }
   },
   "USER_ROLE_PERMISSIONS": {
-    "HEADLINE": "Roles and Permissions granted",
-    "TAB_NAME_ROLES": "Roles",
-    "TAB_NAME_ROLES.TOOLTIP": "The current user's roles",
-    "TAB_NAME_PERMISSIONS": "Permissions",
-    "TAB_NAME_PERMISSIONS.TOOLTIP": "The current user's permissions",
-    "TITLE_ROLES": "My Roles",
-    "TITLE_PERMISSIONS": "My Permissions",
-    "NO_RESULTS": "No data",
-    "PERMISSION": "Permission",
-    "APPLICATION": "Application",
+    "HEADLINE": "Rollen und Zugriffsrechte",
+    "TAB_NAME_ROLES": "Rollen",
+    "TAB_NAME_ROLES.TOOLTIP": "Rollen des Nutzers",
+    "TAB_NAME_PERMISSIONS": "Zugriffsrechte",
+    "TAB_NAME_PERMISSIONS.TOOLTIP": "Zugriffsrechte des Nutzers",
+    "TITLE_ROLES": "Meine Rollen",
+    "TITLE_PERMISSIONS": "Meine Zugriffsrechte",
+    "NO_RESULTS": "Keine Daten",
+    "PERMISSION": "Zugriffsrecht",
+    "APPLICATION": "Applikation",
     "NAME": "Name",
-    "ACTION": "Action",
-    "RESOURCE": "Resource",
-    "ROLE": "Role",
+    "ACTION": "Aktion",
+    "RESOURCE": "Ressource",
+    "ROLE": "Rolle",
     "TABS": {
-      "ROLES": "Roles",
-      "PERMISSIONS": "Permissions"
+      "ROLES": "Rollen",
+      "PERMISSIONS": "Zugriffsrechte"
     },
     "MSG": {
-      "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
-      "PERMISSIONS_REFRESH_ERROR": "Error while upating permissions"
+      "PERMISSIONS_REFRESH_INFO": "Zugriffsrechte wurden aktualisiert",
+      "PERMISSIONS_REFRESH_ERROR": "Unbekanntes Problem beim Aktualisieren von Zugriffsrechten"
     }
   },
   "EXCEPTIONS": {
