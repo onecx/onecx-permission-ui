@@ -311,12 +311,10 @@ describe('AppSearchComponent', () => {
   it('should navigate to detail page when a tile is clicked', () => {
     const app: App = {
       appId: 'appId',
-      isApp: true,
       appType: 'APP'
     }
     const product: App = {
       appId: 'appId',
-      isApp: true,
       appType: 'PRODUCT'
     }
 

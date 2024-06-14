@@ -1,0 +1,122 @@
+<div>
+  <ng-template #loading>
+    <ocx-loading></ocx-loading>
+  </ng-template>
+
+  <p-tabView *ngIf="userAssignmentItems; else loading" [(activeIndex)]="selectedTab">
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <span title="{{ 'USER_ROLE_PERMISSIONS.TAB_NAME_PERMISSIONS.TOOLTIP' | translate }}">
+          {{ 'USER_ROLE_PERMISSIONS.TAB_NAME_PERMISSIONS' | translate }}
+        </span>
+      </ng-template>
+      <p-table
+        #userAssignmentTable
+        [columns]="cols"
+        [value]="userAssignmentItems"
+        styleClass="p-datatable-striped"
+        [sortField]="sortValue"
+        [autoLayout]="true"
+        [globalFilterFields]="['application', 'key', 'resource', 'action', 'role']"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 100, 1000]"
+        [alwaysShowPaginator]="true"
+        paginatorPosition="bottom"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="font-bold">{{ 'USER_ROLE_PERMISSIONS.TITLE_PERMISSIONS' | translate }}</div>
+            <div class="p-inputgroup w-auto">
+              <span class="p-inputgroup-addon data-view-control-border">
+                <span class="pi pi-filter"></span>
+              </span>
+              <span class="p-float-label">
+                <input
+                  #userAssignmentTableFilterInput
+                  pInputText
+                  type="text"
+                  id="data-view-control-filter"
+                  (input)="applyGlobalFilter($event, userAssignmentTable)"
+                />
+                <label for="data-view-control-filter">Filter</label>
+              </span>
+              <span
+                id="up_role_permission_table_filter_clear"
+                class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
+                (click)="onClearFilterUserAssignmentTable()"
+                [title]="'GENERAL.FILTER_CLEAR' | translate"
+              >
+              </span>
+            </div>
+            <div class="ml-3 flex column-gap-2">
+              <p-button
+                type="button"
+                id="user_roles_permissions_header_reload"
+                styleClass="h-full"
+                [title]="'ACTIONS.SEARCH.RELOAD' | translate"
+                (onClick)="onReload()"
+                icon="pi pi-refresh"
+              >
+              </p-button>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th class="border-none"></th>
+            <th colspan="2" class="text-center border-permission-group p-1">
+              {{ 'USER_ROLE_PERMISSIONS.PERMISSION' | translate }}
+            </th>
+            <th colspan="2" class="border-none"></th>
+          </tr>
+          <tr>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="white-space-nowrap">
+              {{ col.header | translate }}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">{{ item[col.field] }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="cols.length">{{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <span title="{{ 'USER_ROLE_PERMISSIONS.TAB_NAME_ROLES.TOOLTIP' | translate }}">
+          {{ 'USER_ROLE_PERMISSIONS.TAB_NAME_ROLES' | translate }}
+        </span>
+      </ng-template>
+      <p-table [value]="roles">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="font-bold" pSortableColumn="role">
+              {{ 'USER_ROLE_PERMISSIONS.TITLE_ROLES' | translate }}
+              <p-sortIcon field="role"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-role>
+          <tr>
+            <td>{{ role }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td>{{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+  </p-tabView>
+</div>

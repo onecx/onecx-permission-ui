@@ -116,7 +116,8 @@ const permRow: PermissionViewRow = {
   roles: { undefined },
   appType: 'MFE',
   appDisplayName: 'appName',
-  productDisplayName: 'prodName'
+  productDisplayName: 'prodName',
+  operator: false
 }
 const permRow2: PermissionViewRow = {
   ...perm2,
@@ -379,12 +380,10 @@ describe('AppDetailComponent', () => {
   /**
    * CREATE
    */
-  it('should do something onCreateIDMRoles', () => {
-    spyOn(console, 'log')
+  it('should do something onAddIAMRoles', () => {
+    component.onAddIAMRoles(new MouseEvent('click'))
 
-    component.onCreateIDMRoles(new MouseEvent('click'))
-
-    expect(console.log).toHaveBeenCalled()
+    expect(component.showIamRolesDialog).toBeTrue()
   })
 
   it('should return if there are no missing ws roles', () => {

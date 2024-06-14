@@ -16,6 +16,10 @@ app:
           description: "OneCX Permission UI"
           note: "OneCX Permission UI module auto import via MF operator"
           type: MODULE
+        user-roles-permissions:
+          exposedModule: "./OneCXUserRolesPermissionsComponent"
+          description: "Show current user's roles and permissions"
+          type: COMPONENT
     # Permission
     permission:
       enabled: true

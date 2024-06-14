@@ -21,13 +21,15 @@ import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
+import { TabViewModule } from 'primeng/tabview'
 import { ToastModule } from 'primeng/toast'
 
 import {
   AppStateService,
   ConfigurationService,
   PortalDialogService,
-  PortalApiConfiguration
+  PortalApiConfiguration,
+  PortalCoreModule
 } from '@onecx/portal-integration-angular'
 
 import { Configuration } from 'src/app/shared/generated'
@@ -41,6 +43,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
 @NgModule({
   declarations: [],
   imports: [
+    PortalCoreModule.forMicroFrontend(),
     AutoCompleteModule,
     CalendarModule,
     ColorSketchModule,
@@ -59,6 +62,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TabViewModule,
     ToastModule,
     TranslateModule,
     ErrorTailorModule.forRoot({
@@ -103,6 +107,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TabViewModule,
     ToastModule,
     TranslateModule
   ],

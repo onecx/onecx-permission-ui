@@ -17,7 +17,7 @@
       "PERMISSION.TOOLTIP": "Create a new Permission",
       "ROLE": "Create Role",
       "ROLE.TOOLTIP": "Create a new Role",
-      "IDM_ROLES.TOOLTIP": "Select IDM Roles to be used here",
+      "IAM_ROLES.TOOLTIP": "Select IAM Roles to be used here",
       "WORKSPACE_ROLES.TOOLTIP": "Create missing Workspace Roles to be used here",
       "MESSAGE": {
         "APPLICATION_OK": "The App was created successfully",
@@ -175,6 +175,7 @@
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Application",
     "TYPE_WORKSPACE": "Workspace",
+    "APPS": "Number of Apps",
     "DELETE": "Delete App including all permissions and roles",
     "DELETE_HEADER": "Delete App",
     "EDIT": "Edit App",
@@ -222,7 +223,14 @@
     "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
     "NAME": "Name",
     "DESCRIPTION": "Description",
-    "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted."
+    "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
+    "IAM": {
+      "HEADER": "Select IAM Roles",
+      "LIST": "List of missing Roles",
+      "INFO": "(IAM: Identity Access Management = User & Roles)",
+      "Filter": "Filter",
+      "SAVE": "Add selection"
+    }
   },
   "VALIDATION": {
     "HINTS": {
@@ -240,10 +248,34 @@
       "PATTERN_ERROR": "Your input does not match the required pattern"
     }
   },
+  "USER_ROLE_PERMISSIONS": {
+    "HEADLINE": "Roles and Permissions granted",
+    "TAB_NAME_ROLES": "Roles",
+    "TAB_NAME_ROLES.TOOLTIP": "The current user's roles",
+    "TAB_NAME_PERMISSIONS": "Permissions",
+    "TAB_NAME_PERMISSIONS.TOOLTIP": "The current user's permissions",
+    "TITLE_ROLES": "My Roles",
+    "TITLE_PERMISSIONS": "My Permissions",
+    "NO_RESULTS": "No data",
+    "PERMISSION": "Permission",
+    "APPLICATION": "Application",
+    "NAME": "Name",
+    "ACTION": "Action",
+    "RESOURCE": "Resource",
+    "ROLE": "Role",
+    "TABS": {
+      "ROLES": "Roles",
+      "PERMISSIONS": "Permissions"
+    },
+    "MSG": {
+      "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
+      "PERMISSIONS_REFRESH_ERROR": "Error while upating permissions"
+    }
+  },
   "EXCEPTIONS": {
-    "HTTP_MISSING_PARAMETER": "Parameters could not be loaded from URL",
+    "HTTP_MISSING_PARAMETER": "Parameters from the URL could not be determined",
     "HTTP_STATUS_0": {
-      "APP": "Unknown problem retrieving App/Application data - please try again.",
+      "APP": "Unknown problem retrieving Application data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
@@ -253,9 +285,13 @@
       "ROLES": "The Role could not be processed.",
       "PERMISSIONS": "The permission could not be processed."
     },
+    "HTTP_STATUS_401": {
+      "APPS": "You have no permissions to see Applications.",
+      "WORKSPACE": "You have no permissions to see Workspace Data."
+    },
     "HTTP_STATUS_403": {
-      "APP": "You have no permissions to see App data.",
-      "APPS": "You have no permissions to see Apps/Applications.",
+      "APP": "You have no permissions to see Application data.",
+      "APPS": "You have no permissions to see Applications.",
       "ROLES": "You have no permissions to see Roles.",
       "PERMISSIONS": "You have no permissions to see Permissions.",
       "ASSIGNMENTS": "You have no permissions to see Assignments.",
@@ -263,7 +299,7 @@
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
-      "APPS": "No Apps/Applications could be found.",
+      "APPS": "No Applications could be found.",
       "ROLE": "Role could not be found.",
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
@@ -271,8 +307,8 @@
       "WORKSPACE": "Workspace data could not be found."
     },
     "HTTP_STATUS_500": {
-      "APP": "Unknown problem retrieving App/Application data - please try again.",
-      "APPS": "Unknown problem retrieving App/Applications data - please try again.",
+      "APP": "Unknown problem retrieving Application data - please try again.",
+      "APPS": "Unknown problem retrieving Applications data - please try again.",
       "ROLES": "Unknown problem retrieving Role data - please try again.",
       "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
