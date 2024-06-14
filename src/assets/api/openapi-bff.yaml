@@ -739,6 +739,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     UserAssignmentPageResult:
       type: object
@@ -773,29 +774,6 @@ components:
           type: string
         action:
           type: string
-    UserRolesAndPermissionsCriteria:
-      type: object
-      properties:
-        rolesPageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        rolesPageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          type: integer
-        permissionsPageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        permissionsPageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          type: integer
     UserPermissionsPageResult:
       type: object
       properties:
@@ -901,6 +879,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     IAMRolePageResult:
       type: object
@@ -945,6 +924,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     PermissionSearchCriteria:
       type: object
@@ -964,6 +944,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     RolePageResult:
       type: object
@@ -1085,6 +1066,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     AssignmentPageResult:
       type: object
@@ -1172,6 +1154,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     ApplicationPageResult:
       type: object
@@ -1262,25 +1245,8 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
-    Product:
-      type: object
-      properties:
-        microfrontends:
-          type: array
-          items:
-            $ref: '#/components/schemas/Microfrontend'
-        productName:
-          type: string
-        baseUrl:
-          type: string
-    Microfrontend:
-      type: object
-      properties:
-        mfeId:
-          type: string
-        basePath:
-          type: string
     WorkspaceDetails:
       type: object
       properties:
