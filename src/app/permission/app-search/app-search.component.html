@@ -52,57 +52,53 @@
     </div>
 
     <ng-container *ngIf="!dataAccessIssue">
-      <p-dataView
-        id="app_search_dataview"
-        [value]="(apps$ | async) ?? []"
-        [paginator]="true"
-        [alwaysShowPaginator]="true"
-        [rowsPerPageOptions]="[20, 60, 100]"
-        [rows]="20"
-        [layout]="viewMode"
-        [filterBy]="filterValueDefault"
-        [sortField]="sortField"
-        [sortOrder]="sortOrder"
-      >
-        <ng-template pTemplate="header">
-          <div class="flex flex-wrap align-items-center mx-1">
-            <div class="flex flex-wrap align-items-center ml-1 gap-2">
-              <div class="data-view-control opacity-90 text-sm text-right">
-                {{ 'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate }}
-              </div>
-              <p-selectButton
-                inputid="app_search_quick_filter"
-                styleClass="data-view-control opacity-90"
-                [options]="quickFilterItems"
-                [(ngModel)]="quickFilterValue"
-                (onChange)="onQuickFilterChange($event)"
-                [title]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
-              >
-                <ng-template let-item>{{ item.label | translate }}</ng-template>
-              </p-selectButton>
-            </div>
-            <ocx-data-view-controls
-              class="flex-grow-1"
-              [supportedViews]="['grid']"
-              [initialViewMode]="viewMode"
-              [enableFiltering]="true"
-              (filterChange)="onFilterChange($event)"
-              [filterColumns]="['APP.ID' | translate, 'APP.TYPE' | translate]"
-              [enableSorting]="true"
-              [defaultSortOption]="sortField"
-              [defaultSortDirection]="sortOrder === 1"
-              [sortingOptions]="[
-                { label: 'APP.ID' | translate, value: 'appId' },
-                { label: 'APP.TYPE' | translate, value: 'appType' }
-              ]"
-              (sortChange)="onSortChange($event)"
-              (sortDirectionChange)="onSortDirChange($event)"
-              [translations]="dataViewControlsTranslations"
-            >
-            </ocx-data-view-controls>
+      <div class="flex flex-wrap align-items-center mx-1">
+        <div class="flex flex-wrap align-items-center ml-1 gap-2">
+          <div class="data-view-control opacity-90 text-sm text-right">
+            {{ 'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate }}
           </div>
-        </ng-template>
-        <ng-template let-app let-idx="rowIndex" pTemplate="gridItem">
+          <p-selectButton
+            inputid="app_search_quick_filter"
+            styleClass="data-view-control opacity-90"
+            [options]="quickFilterItems"
+            [(ngModel)]="quickFilterValue"
+            (onChange)="onQuickFilterChange($event)"
+            [title]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+          >
+            <ng-template let-item>{{ item.label | translate }}</ng-template>
+          </p-selectButton>
+        </div>
+      </div>
+      <ocx-data-view-controls
+        class="flex-grow-1"
+        [supportedViews]="['grid']"
+        [initialViewMode]="viewMode"
+        [enableFiltering]="true"
+        (filterChange)="onFilterChange($event)"
+        [filterColumns]="['APP.ID' | translate, 'APP.TYPE' | translate]"
+        [enableSorting]="true"
+        [defaultSortOption]="sortField"
+        [defaultSortDirection]="sortOrder === 1"
+        [sortingOptions]="[
+          { label: 'APP.ID' | translate, value: 'appId' },
+          { label: 'APP.TYPE' | translate, value: 'appType' }
+        ]"
+        (sortChange)="onSortChange($event)"
+        (sortDirectionChange)="onSortDirChange($event)"
+        [translations]="dataViewControlsTranslations"
+      >
+      </ocx-data-view-controls>
+      <ocx-data-list-grid
+        id="app_search_dataview"
+        [data]="(filteredApps$ | async) ?? []"
+        [paginator]="true"
+        [rows]="20"
+        [layout]="'grid'"
+        [columns]="columnTypes"
+        [sortDirection]="sortDirection"
+        [sortField]="sortField"
+      >
+        <ng-template let-app let-idx="rowIndex" #gridItem>
           <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-1 md:p-2 lg:p-3">
             <div
               [id]="'app_search_data_idx_' + idx"
@@ -129,7 +125,7 @@
             </div>
           </div>
         </ng-template>
-      </p-dataView>
+      </ocx-data-list-grid>
     </ng-container>
   </ocx-page-content>
 </ocx-portal-page>
