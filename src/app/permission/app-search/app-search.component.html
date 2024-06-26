@@ -68,26 +68,26 @@
             <ng-template let-item>{{ item.label | translate }}</ng-template>
           </p-selectButton>
         </div>
+        <ocx-data-view-controls
+          class="flex-grow-1"
+          [supportedViews]="['grid']"
+          [initialViewMode]="viewMode"
+          [enableFiltering]="true"
+          (filterChange)="onFilterChange($event)"
+          [filterColumns]="['APP.ID' | translate, 'APP.TYPE' | translate]"
+          [enableSorting]="true"
+          [defaultSortOption]="sortField"
+          [defaultSortDirection]="sortOrder === 1"
+          [sortingOptions]="[
+            { label: 'APP.ID' | translate, value: 'appId' },
+            { label: 'APP.TYPE' | translate, value: 'appType' }
+          ]"
+          (sortChange)="onSortChange($event)"
+          (sortDirectionChange)="onSortDirChange($event)"
+          [translations]="dataViewControlsTranslations"
+        >
+        </ocx-data-view-controls>
       </div>
-      <ocx-data-view-controls
-        class="flex-grow-1"
-        [supportedViews]="['grid']"
-        [initialViewMode]="viewMode"
-        [enableFiltering]="true"
-        (filterChange)="onFilterChange($event)"
-        [filterColumns]="['APP.ID' | translate, 'APP.TYPE' | translate]"
-        [enableSorting]="true"
-        [defaultSortOption]="sortField"
-        [defaultSortDirection]="sortOrder === 1"
-        [sortingOptions]="[
-          { label: 'APP.ID' | translate, value: 'appId' },
-          { label: 'APP.TYPE' | translate, value: 'appType' }
-        ]"
-        (sortChange)="onSortChange($event)"
-        (sortDirectionChange)="onSortDirChange($event)"
-        [translations]="dataViewControlsTranslations"
-      >
-      </ocx-data-view-controls>
       <ocx-data-list-grid
         id="app_search_dataview"
         [data]="(filteredApps$ | async) ?? []"
