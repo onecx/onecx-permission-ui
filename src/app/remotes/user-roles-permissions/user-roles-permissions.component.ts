@@ -88,7 +88,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   }
 
   public ngOnInit(): void {
-    this.loadData()
     this.sortValue = 'USER_ROLE_PERMISSIONS.APPLICATION'
     this.cols = [
       { field: 'resource', header: 'USER_ROLE_PERMISSIONS.RESOURCE' },
@@ -102,6 +101,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     ]
     this.activeItem = this.items[0]
     this.selectedColumns = this.cols
+    this.loadData()
   }
 
   public loadData(): void {
@@ -120,7 +120,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
         applicationId: item.applicationId
       })
     })
-    this.userAssignmentItems = result.sort(this.sortUserAssignmentsByName)
+    this.userAssignmentItems = result.sort(this.sortUserAssignments)
   }
 
   private searchUserAssignments(): void {
@@ -151,9 +151,13 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     })
   }
 
-  private sortUserAssignmentsByName(a: UserAssignment, b: UserAssignment): number {
-    return (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-      b.productName ? (b.productName as string).toUpperCase() : ''
+  private sortUserAssignments(a: UserAssignment, b: UserAssignment): number {
+    return (
+      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
+        b.productName ? (b.productName as string).toUpperCase() : ''
+      ) ||
+      (a.resource ? a.resource.toUpperCase() : '').localeCompare(b.resource ? b.resource.toUpperCase() : '') ||
+      (a.action ? a.action.toUpperCase() : '').localeCompare(b.action ? b.action.toUpperCase() : '')
     )
   }
 
