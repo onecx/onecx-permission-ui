@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, FormGroup } from '@angular/forms'
-import { combineLatest, finalize, map, of, Observable, Subject, catchError } from 'rxjs'
+import { combineLatest, finalize, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
+import { ColumnType, DataSortDirection, Filter, ObjectUtils, RowListGridData } from '@onecx/portal-integration-angular'
+import { DataTableColumn } from '@onecx/portal-integration-angular'
 
 import { DataViewControlTranslations } from '@onecx/portal-integration-angular'
 import { limitText } from 'src/app/shared/utils'
@@ -34,7 +36,8 @@ export type AppFilterType = 'ALL' | AppType
 export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
   // data
-  public apps$!: Observable<App[]>
+  public apps$!: Observable<(App & RowListGridData)[]>
+  public filteredApps$!: Observable<(App & RowListGridData)[]>
   private papps$!: Observable<ApplicationPageResult>
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
@@ -46,14 +49,20 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public appTypeItems: SelectItem[]
   public quickFilterValue: AppFilterType = 'ALL'
   public quickFilterItems: SelectItem[]
-  public filterValue: string | undefined
-  public filterValueDefault = 'appType,appId'
-  public filterBy = this.filterValueDefault
-  public filter: string | undefined
+  public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
+  public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public sortField = 'appType'
   public sortOrder = 1
   public searchInProgress = false
   public limitText = limitText
+
+  public columnTypes: DataTableColumn[] = [
+    { columnType: ColumnType.STRING, id: 'name', nameKey: '' },
+    { columnType: ColumnType.STRING, id: 'appType', nameKey: '' },
+    { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
+  ]
+  public filters$: Observable<(Filter & { mode: 'contains' | 'equals' })[]>
+  public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
 
   public dataViewControlsTranslations: DataViewControlTranslations = {}
   @ViewChild(DataView) dv: DataView | undefined
@@ -84,6 +93,18 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       { label: 'DIALOG.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' },
       { label: 'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
     ]
+    this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
+      map(([typeValue, textFilter]) => {
+        let filters: (Filter & { mode: 'contains' | 'equals' })[] = []
+        if (typeValue) {
+          filters.push({ columnId: 'appType', value: typeValue, mode: 'equals' })
+        }
+        if (textFilter) {
+          filters.push({ columnId: 'name', value: textFilter, mode: 'contains' })
+        }
+        return filters
+      })
+    )
   }
 
   ngOnInit(): void {
@@ -100,7 +121,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    *
    * Workspaces groups Products(Apps) by registration
    */
-  private searchWorkspaces(appType?: string): Observable<App[]> {
+  private searchWorkspaces(appType?: string): Observable<(App & RowListGridData)[]> {
     this.workspaces$ = this.workspaceApi
       .searchWorkspaces({
         workspaceSearchCriteria: {
@@ -121,7 +142,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         return result.stream
           ? result.stream
               ?.map((w: WorkspaceAbstract) => {
-                return { appId: w.name, appType: 'WORKSPACE', description: w.description } as App
+                return { appId: w.name, appType: 'WORKSPACE', description: w.description, imagePath: '' } as App &
+                  RowListGridData
               })
               .sort(this.sortAppsByAppId)
           : []
@@ -129,7 +151,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     )
   }
   // Product => Group of Permission Applications with same product name
-  private searchProducts(searchAppType?: string): Observable<App[]> {
+  private searchProducts(searchAppType?: string): Observable<(App & RowListGridData)[]> {
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
@@ -151,11 +173,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       map((result: any) => {
         if (!result.stream) return []
         const productNames: string[] = []
-        const apps: App[] = []
+        const apps: (App & RowListGridData)[] = []
         result.stream?.map((app: Application) => {
           if (!productNames.includes(app.productName!)) {
             productNames.push(app.productName!)
-            apps.push({ ...app, appType: 'PRODUCT', apps: 1 } as App)
+            apps.push({ ...app, appType: 'PRODUCT', apps: 1 } as App & RowListGridData)
           } else {
             const ap: App[] = apps.filter((a) => a.productName === app.productName)
             if (ap.length === 1 && ap[0].apps) ap[0].apps++
@@ -170,7 +192,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     switch (this.appSearchCriteriaGroup.controls['appType'].value) {
       case 'ALL':
         this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
-          map(([w, a]: [App[], App[]]) => w.concat(a).sort(this.sortAppsByAppId))
+          map(([w, a]: [(App & RowListGridData)[], (App & RowListGridData)[]]) =>
+            w.concat(a).sort(this.sortAppsByAppId)
+          )
         )
         break
       case 'WORKSPACE':
@@ -181,7 +205,19 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.apps$ = this.searchProducts(this.appSearchCriteriaGroup.controls['appType'].value)
         break
     }
+    this.filteredApps$ = combineLatest([this.apps$, this.filters$]).pipe(
+      map(([apps, filters]) => {
+        return apps.filter((app) => {
+          return filters.every((filter) => {
+            return filter.mode === 'equals'
+              ? ObjectUtils.resolveFieldData(app, filter.columnId) === filter.value
+              : ObjectUtils.resolveFieldData(app, filter.columnId)?.includes(filter.value) ?? false
+          })
+        })
+      })
+    )
   }
+
   private sortAppsByAppId(a: App, b: App): number {
     return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
   }
@@ -227,14 +263,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   public onQuickFilterChange(ev: any): void {
     if (ev.value === 'ALL') {
-      this.filterBy = this.filterValueDefault
-      this.filterValue = ''
-      this.dv?.filter(this.filterValue, 'contains')
+      this.typeFilterValue$.next('')
     } else {
-      this.filterBy = 'appType'
       if (ev.value) {
-        this.filterValue = ev.value
-        this.dv?.filter(ev.value, 'equals')
+        this.typeFilterValue$.next(ev.value)
       }
     }
   }
@@ -243,20 +275,21 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     else this.appSearchCriteriaGroup.controls['name'].enable()
   }
   public onFilterChange(filter: string): void {
-    this.filter = filter
-    this.dv?.filter(filter, 'contains')
+    this.textFilterValue$.next(filter)
   }
   public onSortChange(field: string): void {
     this.sortField = field
   }
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1
+    this.sortDirection = asc ? DataSortDirection.ASCENDING : DataSortDirection.DESCENDING
   }
   public onSearch() {
     this.searchApps()
   }
   public onSearchReset() {
     this.appSearchCriteriaGroup.reset({ appType: 'ALL' })
-    this.apps$ = of([] as App[])
+    this.apps$ = of([] as (App & RowListGridData)[])
+    this.filteredApps$ = of([] as (App & RowListGridData)[])
   }
 }
