@@ -93,8 +93,8 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.cols = [
       { field: 'resource', header: 'USER_ROLE_PERMISSIONS.RESOURCE' },
       { field: 'action', header: 'USER_ROLE_PERMISSIONS.ACTION' },
-      { field: 'roleName', header: 'USER_ROLE_PERMISSIONS.ROLE' },
-      { field: 'productName', header: 'USER_ROLE_PERMISSIONS.APPLICATION' }
+      { field: 'productName', header: 'USER_ROLE_PERMISSIONS.APPLICATION' },
+      { field: 'roleName', header: 'USER_ROLE_PERMISSIONS.ROLE' }
     ]
     this.items = [
       { label: 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
