@@ -7,7 +7,7 @@ const config = withModuleFederationPlugin({
   exposes: {
     './OneCXPermissionModule': 'src/bootstrap.ts',
     './OneCXUserRolesPermissionsComponent':
-      'src/app/remotes/user-roles-permissions/user-roles-permissions.component.ts'
+      'src/app/remotes/user-roles-permissions/user-roles-permissions.component.bootstrap.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, requiredVersion: 'auto' },
