@@ -12,7 +12,6 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
-import { DialogService } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
@@ -24,7 +23,7 @@ import { TableModule } from 'primeng/table'
 import { TabViewModule } from 'primeng/tabview'
 import { ToastModule } from 'primeng/toast'
 
-import { PortalDialogService, PortalCoreModule } from '@onecx/portal-integration-angular'
+import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
 import { LabelResolver } from './label.resolver'
 
@@ -100,7 +99,7 @@ import { LabelResolver } from './label.resolver'
     TranslateModule
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
-  providers: [ConfirmationService, LabelResolver, { provide: DialogService, useClass: PortalDialogService }],
+  providers: [ConfirmationService, LabelResolver],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}
