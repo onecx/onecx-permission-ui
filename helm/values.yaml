@@ -16,14 +16,14 @@ app:
           description: "OneCX Permission UI"
           note: "OneCX Permission UI module auto import via MF operator"
           type: MODULE
-          technology: WEB_COMPONENT_MODULE
+          technology: WEBCOMPONENTMODULE
           remoteName: onecx-permission
           tagName: ocx-permission-component
         user-roles-permissions:
           exposedModule: "./OneCXUserRolesPermissionsComponent"
           description: "Show current user's roles and permissions"
           type: COMPONENT
-          technology: WEB_COMPONENT_MODULE
+          technology: WEBCOMPONENTMODULE
           remoteName: onecx-permission
           tagName: ocx-user-roles-permissions-component
     # Permission
