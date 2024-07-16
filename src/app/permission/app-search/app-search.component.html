@@ -92,6 +92,7 @@
         id="app_search_dataview"
         [data]="(filteredApps$ | async) ?? []"
         [paginator]="true"
+        [pageSizes]="[12, 24, 36]"
         [rows]="20"
         [layout]="'grid'"
         [columns]="columnTypes"
