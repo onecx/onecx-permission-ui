@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { MenuItem } from 'primeng/api'
@@ -21,6 +21,7 @@ import {
   BASE_URL,
   RemoteComponentConfig,
   ocxRemoteComponent,
+  ocxRemoteWebcomponent,
   provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
 
@@ -46,7 +47,7 @@ import {
     })
   ]
 })
-export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComponent {
+export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComponent, ocxRemoteWebcomponent {
   public roles: string[] = []
   environment = environment
   public myPermissions = new Array<string>() // permissions of the user
@@ -75,6 +76,10 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     if (userService.hasPermission('ROLES_PERMISSIONS#VIEW')) this.myPermissions.push('ROLES_PERMISSIONS#VIEW')
+  }
+
+  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
+    this.ocxInitRemoteComponent(config)
   }
 
   ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
