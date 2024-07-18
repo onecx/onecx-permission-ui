@@ -101,11 +101,12 @@
       >
         <ng-template let-app let-idx="rowIndex" #gridItem>
           <div class="col-12 sm:col-6 md:col-4 lg:col-4 xl:col-3 p-1 md:p-2 lg:p-3">
-            <div
+            <a
               [id]="'app_search_data_idx_' + idx"
               class="card relative p-2 cursor-pointer hover:bg-gray-200 hover:text-color"
               [class.bg-primary]="app.appType === 'WORKSPACE'"
               (click)="onAppClick(app)"
+              tabindex="0"
             >
               <span
                 *ngIf="app.apps"
@@ -123,7 +124,7 @@
                 </div>
                 <div class="text-xs md:text-base lg:text-md">{{ 'APP.TYPE_'.concat(app.appType) | translate }}</div>
               </div>
-            </div>
+            </a>
           </div>
         </ng-template>
       </ocx-data-list-grid>

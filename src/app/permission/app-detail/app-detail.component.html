@@ -55,7 +55,8 @@
             </div>
 
             <div class="p-inputgroup p-inputgroup w-20rem sm:mx-3">
-              <span
+              <a
+                tabindex="0"
                 id="app_detail_permission_table_filter_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'contains'"
@@ -63,8 +64,9 @@
                 [title]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
               >
                 =
-              </span>
-              <span
+              </a>
+              <a
+                tabindex="0"
                 id="app_detail_permission_table_filter_not_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'notContains'"
@@ -72,7 +74,7 @@
                 [title]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
               >
                 !=
-              </span>
+              </a>
               <span class="p-float-label">
                 <input
                   #permissionTableFilterInput
@@ -90,13 +92,14 @@
                 />
                 <label for="app_detail_permission_table_filter">{{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label>
               </span>
-              <span
+              <a
                 id="app_detail_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
                 (click)="onClearTableFilter()"
                 [title]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                tabindex="0"
               >
-              </span>
+              </a>
             </div>
             <p-button
               id="app_detail_permission_table_reload_button"
