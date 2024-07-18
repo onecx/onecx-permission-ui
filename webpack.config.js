@@ -5,8 +5,9 @@ const config = withModuleFederationPlugin({
   name: 'onecx-permission-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXPermissionModule': 'src/app/onecx-permission-remote.module.ts',
-    './OneCXUserRolesPermissionsComponent': 'src/app/remotes/user-roles-permissions/user-roles-permissions.component.ts'
+    './OneCXPermissionModule': 'src/bootstrap.ts',
+    './OneCXUserRolesPermissionsComponent':
+      'src/app/remotes/user-roles-permissions/user-roles-permissions.component.bootstrap.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, requiredVersion: 'auto' },
@@ -47,5 +48,17 @@ const plugins = config.plugins.filter((plugin) => !(plugin instanceof ModifyEntr
 
 module.exports = {
   ...config,
-  plugins
+  plugins,
+  output: {
+    uniqueName: 'onecx-permission-ui',
+    publicPath: 'auto'
+  },
+  experiments: {
+    ...config.experiments,
+    topLevelAwait: true
+  },
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: false
+  }
 }

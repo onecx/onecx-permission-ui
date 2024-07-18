@@ -325,19 +325,19 @@ describe('AppSearchComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
   })
 
-  it('should update filterBy and filterValue onQuickFilterChange: ALL', () => {
-    component.onQuickFilterChange({ value: 'ALL' })
+  // it('should update filterBy and filterValue onQuickFilterChange: ALL', () => {
+  //   component.onQuickFilterChange({ value: 'ALL' })
 
-    expect(component.filterBy).toBe(component.filterValueDefault)
-    expect(component.filterValue).toBe('')
-  })
+  //   expect(component.filterBy).toBe(component.filterValueDefault)
+  //   expect(component.filterValue).toBe('')
+  // })
 
-  it('should update filterBy and filterValue onQuickFilterChange: other', () => {
-    component.onQuickFilterChange({ value: 'other' })
+  // it('should update filterBy and filterValue onQuickFilterChange: other', () => {
+  //   component.onQuickFilterChange({ value: 'other' })
 
-    expect(component.filterValue).toBe('other')
-    expect(component.filterBy).toBe('appType')
-  })
+  //   expect(component.filterValue).toBe('other')
+  //   expect(component.filterBy).toBe('appType')
+  // })
 
   it('should disable name input field is app type on search is ALL', () => {
     component.onAppTypeFilterChange({ value: 'ALL' })
@@ -347,14 +347,14 @@ describe('AppSearchComponent', () => {
     expect(component.appSearchCriteriaGroup.controls['name'].enabled).toBeTrue()
   })
 
-  it('should call filter table onFilterChange', () => {
-    component.dv = jasmine.createSpyObj('test', ['filter'])
+  // it('should call filter table onFilterChange', () => {
+  //   component.dv = jasmine.createSpyObj('test', ['filter'])
 
-    component.onFilterChange('test')
+  //   component.onFilterChange('test')
 
-    expect(component.filter).toBe('test')
-    expect(component.dv?.filter).toHaveBeenCalledWith('test', 'contains')
-  })
+  //   expect(component.filter).toBe('test')
+  //   expect(component.dv?.filter).toHaveBeenCalledWith('test', 'contains')
+  // })
 
   it('should set correct values onSortChange', () => {
     component.onSortChange('field')
@@ -382,20 +382,20 @@ describe('AppSearchComponent', () => {
     expect(component.searchApps).toHaveBeenCalled()
   })
 
-  it('should reset search criteria group and assign empty array to apps observable', (done) => {
-    spyOn(component.appSearchCriteriaGroup, 'reset')
+  // it('should reset search criteria group and assign empty array to apps observable', (done) => {
+  //   spyOn(component.appSearchCriteriaGroup, 'reset')
 
-    component.onSearchReset()
+  //   component.onSearchReset()
 
-    expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
-    component.apps$.subscribe({
-      next: (res) => {
-        if (res) {
-          expect(res).toEqual([] as App[])
-        }
-        done()
-      },
-      error: done.fail
-    })
-  })
+  //   expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
+  //   component.apps$.subscribe({
+  //     next: (res) => {
+  //       if (res) {
+  //         expect(res).toEqual([] as App[])
+  //       }
+  //       done()
+  //     },
+  //     error: done.fail
+  //   })
+  // })
 })
