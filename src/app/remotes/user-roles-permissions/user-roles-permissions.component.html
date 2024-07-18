@@ -36,13 +36,13 @@
                   #userAssignmentTableFilterInput
                   pInputText
                   type="text"
-                  id="data-view-control-filter"
+                  id="up_permission_table_filter"
                   (input)="applyGlobalFilter($event, userAssignmentTable)"
                 />
                 <label for="data-view-control-filter">Filter</label>
               </span>
               <a
-                id="up_role_permission_table_filter_clear"
+                id="up_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
                 (click)="onClearFilterUserAssignmentTable()"
                 [title]="'GENERAL.FILTER_CLEAR' | translate"
@@ -53,7 +53,7 @@
             <div class="ml-3 flex column-gap-2">
               <p-button
                 type="button"
-                id="user_roles_permissions_header_reload"
+                id="up_permissions_header_action_reload"
                 styleClass="h-full"
                 [title]="'ACTIONS.SEARCH.RELOAD' | translate"
                 (onClick)="onReload()"
@@ -66,15 +66,15 @@
 
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <th id="header_row_1_1" colspan="2" class="text-center border-permission-group p-1">
+            <th id="up_permissions_table_header_permission" colspan="2" class="text-center border-permission-group p-1">
               {{ 'USER_ROLE_PERMISSIONS.PERMISSION' | translate }}
             </th>
-            <th id="header_row_1_2" colspan="2" class="border-none"></th>
+            <th id="up_permissions_table_header_data" colspan="2" class="border-none"></th>
           </tr>
           <tr>
             <th
-              id="header_row_2_1"
               *ngFor="let col of columns"
+              [id]="'up_permissions_table_col_' + col.field"
               [pSortableColumn]="col.field"
               class="white-space-nowrap"
             >
@@ -85,12 +85,16 @@
         </ng-template>
         <ng-template pTemplate="body" let-item let-columns="columns">
           <tr>
-            <td *ngFor="let col of columns">{{ item[col.field] }}</td>
+            <td *ngFor="let col of columns" [id]="'up_permissions_table_col_' + col.field + '_value'">
+              {{ item[col.field] }}
+            </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td [attr.colspan]="cols.length">{{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}</td>
+            <td [attr.colspan]="cols.length" id="up_permissions_table_no_results">
+              {{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}
+            </td>
           </tr>
         </ng-template>
       </p-table>
@@ -105,7 +109,7 @@
       <p-table [value]="roles">
         <ng-template pTemplate="header">
           <tr>
-            <th id="header_roles_col_1" class="font-bold" pSortableColumn="role">
+            <th id="up_permissions_table_role" class="font-bold" pSortableColumn="role">
               {{ 'USER_ROLE_PERMISSIONS.TITLE_ROLES' | translate }}
               <p-sortIcon field="role"></p-sortIcon>
             </th>
