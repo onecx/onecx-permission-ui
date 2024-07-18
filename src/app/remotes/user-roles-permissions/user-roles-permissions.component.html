@@ -41,13 +41,14 @@
                 />
                 <label for="data-view-control-filter">Filter</label>
               </span>
-              <span
+              <a
                 id="up_role_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
                 (click)="onClearFilterUserAssignmentTable()"
                 [title]="'GENERAL.FILTER_CLEAR' | translate"
+                tabindex="0"
               >
-              </span>
+              </a>
             </div>
             <div class="ml-3 flex column-gap-2">
               <p-button
@@ -65,13 +66,18 @@
 
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <th colspan="2" class="text-center border-permission-group p-1">
+            <th id="header_row_1_1" colspan="2" class="text-center border-permission-group p-1">
               {{ 'USER_ROLE_PERMISSIONS.PERMISSION' | translate }}
             </th>
-            <th colspan="2" class="border-none"></th>
+            <th id="header_row_1_2" colspan="2" class="border-none"></th>
           </tr>
           <tr>
-            <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="white-space-nowrap">
+            <th
+              id="header_row_2_1"
+              *ngFor="let col of columns"
+              [pSortableColumn]="col.field"
+              class="white-space-nowrap"
+            >
               {{ col.header | translate }}
               <p-sortIcon [field]="col.field"></p-sortIcon>
             </th>
@@ -99,7 +105,7 @@
       <p-table [value]="roles">
         <ng-template pTemplate="header">
           <tr>
-            <th class="font-bold" pSortableColumn="role">
+            <th id="header_roles_col_1" class="font-bold" pSortableColumn="role">
               {{ 'USER_ROLE_PERMISSIONS.TITLE_ROLES' | translate }}
               <p-sortIcon field="role"></p-sortIcon>
             </th>
