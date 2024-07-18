@@ -15,7 +15,7 @@ import {
   createRemoteComponentTranslateLoader
 } from '@onecx/portal-integration-angular'
 import { Configuration, RoleAPIService, Role, UserAPIService, UserAssignment } from 'src/app/shared/generated'
-import { environment } from '../../../environments/environment'
+import { environment } from 'src/environments/environment'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,

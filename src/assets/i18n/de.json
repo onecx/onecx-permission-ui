@@ -182,7 +182,7 @@
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (ignoriert bei ALLE)"
+      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (wird ignoriert bei ALLE)"
     }
   },
   "PERMISSION": {
@@ -197,8 +197,8 @@
     "MANDATORY": "Unbedingt erforderlich",
     "MANDATORY.COLUMN": "Kann die Berechtigung bearbeitet werden?",
     "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung notwendig für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
-    "OPERATOR": "Durch Operator erstellt",
-    "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung durch den Oprator erzeugt.",
+    "OPERATOR": "Automatisiert erstellt",
+    "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung automatisiert erzeugt.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",

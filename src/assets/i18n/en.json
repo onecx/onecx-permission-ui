@@ -197,8 +197,8 @@
     "MANDATORY": "Mandatory required",
     "MANDATORY.COLUMN": "Can the permission be edited?",
     "MANDATORY.TOOLTIP": "If set then this Permission is necessary for operation and cannot therefore be changed or deleted.",
-    "OPERATOR": "Created by Operator",
-    "OPERATOR.TOOLTIP": "If set then this Permission was created by the operator.",
+    "OPERATOR": "Automated created",
+    "OPERATOR.TOOLTIP": "If set then this Permission was automated created.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
