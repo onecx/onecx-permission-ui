@@ -47,12 +47,5 @@ app:
             DELETE: Delete role
             EDIT: Edit role
             SAVE: Update and save role
-    # Keycloak
-    keycloak:
-      client:
-        enabled: true
-        spec:
-          kcConfig:
-            clientId: "onecx-permission-ui"
 
 # PIPE Config
