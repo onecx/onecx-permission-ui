@@ -645,7 +645,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
     ev.stopPropagation()
     this.permission = perm
-    this.changeMode = this.permission.mandatory || this.permission.operator ? 'VIEW' : 'EDIT'
+    this.changeMode = this.permission.mandatory ? 'VIEW' : 'EDIT'
     this.showPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {

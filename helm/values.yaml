@@ -33,7 +33,6 @@ app:
         permissions:
           APP:
             EDIT: Edit permission app details
-            SAVE: Update and save permission app details
             SEARCH: Search permission apps
             VIEW: View app details
           PERMISSION:
@@ -41,11 +40,7 @@ app:
             CREATE: Create permission
             DELETE: Delete permission
             EDIT: Edit permission
-            SAVE: Update and save permission
           ROLE:
             CREATE: Create role
             DELETE: Delete role
             EDIT: Edit role
-            SAVE: Update and save role
-
-# PIPE Config

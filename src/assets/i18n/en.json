@@ -38,6 +38,7 @@
       "MESSAGE": {
         "TEXT": "Do you want to delete \"{{ITEM}}\"?",
         "INFO": "This action cannot be undone!",
+        "OPERATOR_TEXT": "This permission was created automatically. If the application continues to offer this permission, it will be restored during the next deployment.",
         "APPLICATION_OK": "The App was deleted successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
         "PERMISSION_OK": "The permission was deleted successfully",
@@ -196,9 +197,10 @@
     "ACTIONS": "Actions",
     "MANDATORY": "Mandatory required",
     "MANDATORY.COLUMN": "Can the permission be edited?",
+    "MANDATORY.COLUMN.TOOLTIP": "This Permission is absolutely necessary for operation and therefore cannot be edited or deleted.",
     "MANDATORY.TOOLTIP": "If set then this Permission is necessary for operation and cannot therefore be changed or deleted.",
     "OPERATOR": "Automated created",
-    "OPERATOR.TOOLTIP": "If set then this Permission was automated created.",
+    "OPERATOR.TOOLTIP": "If set then this Permission was automated created. All changes will be lost on the next deployment.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "No permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",

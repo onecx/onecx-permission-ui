@@ -56,6 +56,8 @@ export class PermissionDetailComponent implements OnChanges {
       this.formGroup.controls['action'].patchValue(this.permission.action)
       this.formGroup.controls['description'].patchValue(this.permission.description)
       if (this.changeMode === 'CREATE') {
+        this.permission.mandatory = false
+        this.permission.operator = false
         this.formGroup.controls['mandatory'].patchValue(false)
         this.formGroup.controls['operator'].patchValue(false)
       } else {
@@ -63,18 +65,12 @@ export class PermissionDetailComponent implements OnChanges {
         this.formGroup.controls['operator'].patchValue(this.permission.operator ?? false)
       }
     }
-    this.formGroup.disable()
-    if (
-      (this.userService.hasPermission('PERMISSION#EDIT') || this.userService.hasPermission('PERMISSION#CREATE')) &&
-      !(this.permission?.operator || this.permission?.mandatory)
-    ) {
-      this.formGroup.enable()
-      if (this.changeMode === 'EDIT') {
-        this.formGroup.controls['appId'].disable()
-        this.formGroup.controls['productName'].disable()
-      }
-      this.formGroup.controls['mandatory'].disable()
-      this.formGroup.controls['operator'].disable()
+    this.formGroup.disable() // default: all fields are disabled
+    if (!this.permission?.mandatory) {
+      // editable if not mandatory
+      this.formGroup.controls['resource'].enable()
+      this.formGroup.controls['action'].enable()
+      this.formGroup.controls['description'].enable()
     }
   }
 
