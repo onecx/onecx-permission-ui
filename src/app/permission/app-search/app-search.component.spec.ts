@@ -281,11 +281,11 @@ describe('AppSearchComponent', () => {
   it('should prepare translations', () => {
     const translateService = TestBed.inject(TranslateService)
     const generalTranslations = {
-      'APP.ID': 'App ID',
+      'APP.DISPLAY_NAME': 'Display Name',
       'APP.TYPE': 'App type',
       'ACTIONS.SEARCH.SORT_BY': 'Sort by',
       'ACTIONS.SEARCH.FILTER.LABEL': 'Filter',
-      'ACTIONS.SEARCH.FILTER.OF': 'Search filter of',
+      'ACTIONS.SEARCH.FILTER.OF': 'Filter for ',
       'ACTIONS.SEARCH.SORT_DIRECTION_ASC': 'Ascending',
       'ACTIONS.SEARCH.SORT_DIRECTION_DESC': 'Descending'
     }
@@ -296,7 +296,7 @@ describe('AppSearchComponent', () => {
     expect(component.dataViewControlsTranslations).toEqual({
       sortDropdownPlaceholder: 'Sort by',
       filterInputPlaceholder: 'Filter',
-      filterInputTooltip: 'Search filter ofApp ID, App type',
+      filterInputTooltip: 'Filter for Display Name, App type',
       sortOrderTooltips: {
         ascending: 'Ascending',
         descending: 'Descending'
