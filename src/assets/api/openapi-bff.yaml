@@ -1,3 +1,4 @@
+---
 openapi: 3.0.3
 info:
   title: onecx-permission-bff
@@ -1224,6 +1225,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         description:
           type: string

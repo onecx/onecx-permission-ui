@@ -25,7 +25,7 @@ export interface AppSearchCriteria {
   appType: FormControl<AppFilterType | null>
   name: FormControl<string | null>
 }
-export type App = Application & { apps?: number; appType: AppType }
+export type App = Application & { apps?: number; appType: AppType; displayName?: string }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
 
@@ -52,7 +52,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public sortField = 'appType'
-  public sortOrder = 1
+  public sortOrder = -1
   public searchInProgress = false
   public limitText = limitText
 
@@ -100,7 +100,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           filters.push({ columnId: 'appType', value: typeValue, mode: 'equals' })
         }
         if (textFilter) {
-          filters.push({ columnId: 'name', value: textFilter, mode: 'contains' })
+          filters.push({ columnId: 'displayName', value: textFilter, mode: 'contains' })
         }
         return filters
       })
@@ -142,10 +142,15 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         return result.stream
           ? result.stream
               ?.map((w: WorkspaceAbstract) => {
-                return { appId: w.name, appType: 'WORKSPACE', description: w.description, imagePath: '' } as App &
-                  RowListGridData
+                return {
+                  appId: w.name,
+                  appType: 'WORKSPACE',
+                  description: w.description,
+                  displayName: w.displayName,
+                  imagePath: ''
+                } as App & RowListGridData
               })
-              .sort(this.sortAppsByAppId)
+              .sort(this.sortAppsByDisplayName)
           : []
       })
     )
@@ -177,13 +182,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         result.stream?.map((app: Application) => {
           if (!productNames.includes(app.productName!)) {
             productNames.push(app.productName!)
-            apps.push({ ...app, appType: 'PRODUCT', apps: 1 } as App & RowListGridData)
+            apps.push({ ...app, appType: 'PRODUCT', displayName: app.productName, apps: 1 } as App & RowListGridData)
           } else {
             const ap: App[] = apps.filter((a) => a.productName === app.productName)
             if (ap.length === 1 && ap[0].apps) ap[0].apps++
           }
         })
-        return apps.sort(this.sortAppsByAppId)
+        return apps.sort(this.sortAppsByDisplayName)
       })
     )
   }
@@ -193,7 +198,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       case 'ALL':
         this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
           map(([w, a]: [(App & RowListGridData)[], (App & RowListGridData)[]]) =>
-            w.concat(a).sort(this.sortAppsByAppId)
+            w.concat(a).sort(this.sortAppsByDisplayName)
           )
         )
         break
@@ -218,8 +223,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     )
   }
 
-  private sortAppsByAppId(a: App, b: App): number {
-    return (a.appId ? a.appId.toUpperCase() : '').localeCompare(b.appId ? b.appId.toUpperCase() : '')
+  private sortAppsByDisplayName(a: App, b: App): number {
+    //return (a.displayName ?? '').toUpperCase().localeCompare((b.displayName ?? '').toUpperCase())
+    return (
+      a.appType.toUpperCase().localeCompare(b.appType.toUpperCase()) ||
+      (a.displayName ?? '').toUpperCase().localeCompare((b.displayName ?? '').toUpperCase())
+    )
   }
 
   /**
@@ -228,7 +237,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private prepareDialogTranslations(): void {
     this.translate
       .get([
-        'APP.ID',
+        'APP.DISPLAY_NAME',
         'APP.TYPE',
         'ACTIONS.SEARCH.SORT_BY',
         'ACTIONS.SEARCH.FILTER.LABEL',
@@ -241,7 +250,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           this.dataViewControlsTranslations = {
             sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
             filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
-            filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.ID'] + ', ' + data['APP.TYPE'],
+            filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.DISPLAY_NAME'] + ', ' + data['APP.TYPE'],
             sortOrderTooltips: {
               ascending: data['ACTIONS.SEARCH.SORT_DIRECTION_ASC'],
               descending: data['ACTIONS.SEARCH.SORT_DIRECTION_DESC']

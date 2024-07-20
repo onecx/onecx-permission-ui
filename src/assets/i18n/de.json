@@ -37,6 +37,7 @@
       "ROLE": "Rolle löschen",
       "MESSAGE": {
         "TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
+        "OPERATOR_TEXT": "Diese Berechtgung wurde automatisiert erstellt. Wenn die Applikation diese Berechtigung weiterhin anbietet dann wird sie beim nächsten Deployment wiederhergestellt.",
         "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
@@ -170,6 +171,7 @@
   },
   "APP": {
     "ID": "App ID",
+    "DISPLAY_NAME": "Anzeigename",
     "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_APP": "App",
@@ -195,10 +197,11 @@
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
     "MANDATORY": "Unbedingt erforderlich",
-    "MANDATORY.COLUMN": "Kann die Berechtigung bearbeitet werden?",
-    "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung notwendig für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
+    "MANDATORY.COLUMN": "Ist die Berechtigung für den Betrieb unbedingt erforderlich?",
+    "MANDATORY.COLUMN.TOOLTIP": "Diese Berechtigung ist für den Betrieb unbedingt erforderlich und kann deshalb nicht bearbeitet oder gelöscht werden.",
+    "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung unbedingt erforderlich für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
     "OPERATOR": "Automatisiert erstellt",
-    "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung automatisiert erzeugt.",
+    "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung automatisiert erzeugt. Alle Änderungen gehen beim nächsten Deployment verloren.",
     "ASSIGNMENTS": {
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
