@@ -285,7 +285,7 @@ describe('AppSearchComponent', () => {
       'APP.TYPE': 'App type',
       'ACTIONS.SEARCH.SORT_BY': 'Sort by',
       'ACTIONS.SEARCH.FILTER.LABEL': 'Filter',
-      'ACTIONS.SEARCH.FILTER.OF': 'Filter for ',
+      'ACTIONS.SEARCH.FILTER.OF': 'Filter by ',
       'ACTIONS.SEARCH.SORT_DIRECTION_ASC': 'Ascending',
       'ACTIONS.SEARCH.SORT_DIRECTION_DESC': 'Descending'
     }
@@ -296,7 +296,7 @@ describe('AppSearchComponent', () => {
     expect(component.dataViewControlsTranslations).toEqual({
       sortDropdownPlaceholder: 'Sort by',
       filterInputPlaceholder: 'Filter',
-      filterInputTooltip: 'Filter for Display Name, App type',
+      filterInputTooltip: 'Filter by Display Name, App type',
       sortOrderTooltips: {
         ascending: 'Ascending',
         descending: 'Descending'

@@ -85,7 +85,7 @@
       "SORT_DIRECTION_DESC": "descending",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter for ",
+        "OF": "Filter by ",
         "CLEAR": "Clear Filter",
         "MODE_CONTAINS": "Filter value is contained",
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
