@@ -171,6 +171,7 @@
   },
   "APP": {
     "ID": "App ID",
+    "DISPLAY_NAME": "Anzeigename",
     "NAME": "Name",
     "TYPE": "Typ",
     "TYPE_APP": "App",

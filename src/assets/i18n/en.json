@@ -172,6 +172,7 @@
   "APP": {
     "ID": "App ID",
     "NAME": "Name",
+    "DISPLAY_NAME": "Display Name",
     "TYPE": "Type",
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Application",
