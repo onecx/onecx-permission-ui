@@ -48,7 +48,7 @@ describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
   let mockActivatedRoute: ActivatedRoute
-  let mockRouter = { navigate: jasmine.createSpy('navigate') }
+  const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])

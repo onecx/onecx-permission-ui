@@ -143,14 +143,14 @@ const assgmtPageRes: AssignmentPageResult = {
 describe('AppDetailComponent', () => {
   let component: AppDetailComponent
   let fixture: ComponentFixture<AppDetailComponent>
-  let mockActivatedRoute: ActivatedRoute = {
+  const mockActivatedRoute: ActivatedRoute = {
     snapshot: {
       paramMap: {
         get: (key: string) => 'product'
       } as ParamMap
     } as ActivatedRouteSnapshot
   } as ActivatedRoute
-  let mockRouter = { navigate: jasmine.createSpy('navigate') }
+  const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assApiSpy = jasmine.createSpyObj<AssignmentAPIService>('AssignmentAPIService', [

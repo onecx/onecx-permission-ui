@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { ColorSketchModule } from 'ngx-color/sketch'
-import { ErrorTailorModule } from '@ngneat/error-tailor'
+import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CalendarModule } from 'primeng/calendar'
@@ -51,8 +51,35 @@ import { LabelResolver } from './label.resolver'
     TableModule,
     TabViewModule,
     ToastModule,
-    TranslateModule,
-    ErrorTailorModule.forRoot({
+    TranslateModule
+  ],
+  exports: [
+    AutoCompleteModule,
+    CalendarModule,
+    CommonModule,
+    ConfirmDialogModule,
+    ConfirmPopupModule,
+    DataViewModule,
+    DialogModule,
+    DropdownModule,
+    FormsModule,
+    InputTextModule,
+    InputTextareaModule,
+    KeyFilterModule,
+    ListboxModule,
+    MultiSelectModule,
+    ReactiveFormsModule,
+    SelectButtonModule,
+    TableModule,
+    TabViewModule,
+    ToastModule,
+    TranslateModule
+  ],
+  //this is not elegant, for some reason the injection token from primeng does not work across federated module
+  providers: [
+    ConfirmationService,
+    LabelResolver,
+    provideErrorTailorConfig({
       controlErrorsOn: { async: true, blur: true, change: true },
       errors: {
         useFactory: (i18n: TranslateService) => {
@@ -75,31 +102,6 @@ import { LabelResolver } from './label.resolver'
       }
     })
   ],
-  exports: [
-    AutoCompleteModule,
-    CalendarModule,
-    CommonModule,
-    ConfirmDialogModule,
-    ConfirmPopupModule,
-    DataViewModule,
-    DialogModule,
-    DropdownModule,
-    ErrorTailorModule,
-    FormsModule,
-    InputTextModule,
-    InputTextareaModule,
-    KeyFilterModule,
-    ListboxModule,
-    MultiSelectModule,
-    ReactiveFormsModule,
-    SelectButtonModule,
-    TableModule,
-    TabViewModule,
-    ToastModule,
-    TranslateModule
-  ],
-  //this is not elegant, for some reason the injection token from primeng does not work across federated module
-  providers: [ConfirmationService, LabelResolver],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

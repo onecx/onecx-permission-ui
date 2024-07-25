@@ -95,7 +95,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     ]
     this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
       map(([typeValue, textFilter]) => {
-        let filters: (Filter & { mode: 'contains' | 'equals' })[] = []
+        const filters: (Filter & { mode: 'contains' | 'equals' })[] = []
         if (typeValue) {
           filters.push({ columnId: 'appType', value: typeValue, mode: 'equals' })
         }
@@ -125,7 +125,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.workspaces$ = this.workspaceApi
       .searchWorkspaces({
         workspaceSearchCriteria: {
-          workspaceName: appType === 'WORKSPACE' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined
+          workspaceName:
+            appType === 'WORKSPACE' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined
         }
       })
       .pipe(
@@ -160,9 +161,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
-          appId: searchAppType === 'APP' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined,
+          appId: searchAppType === 'APP' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined,
           productName:
-            searchAppType === 'PRODUCT' ? this.appSearchCriteriaGroup.controls['name'].value ?? '' : undefined
+            searchAppType === 'PRODUCT' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined
         }
       })
       .pipe(
@@ -216,7 +217,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           return filters.every((filter) => {
             return filter.mode === 'equals'
               ? ObjectUtils.resolveFieldData(app, filter.columnId) === filter.value
-              : ObjectUtils.resolveFieldData(app, filter.columnId)?.includes(filter.value) ?? false
+              : (ObjectUtils.resolveFieldData(app, filter.columnId)?.includes(filter.value) ?? false)
           })
         })
       })
