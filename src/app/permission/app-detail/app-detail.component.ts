@@ -70,7 +70,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterBy = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
-  public filterMode: FilterMatchMode
+  public filterMode: string
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
   public quickFilterItems: SelectItem[]
 

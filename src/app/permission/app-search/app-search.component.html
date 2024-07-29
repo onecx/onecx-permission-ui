@@ -19,7 +19,7 @@
             [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
             (onChange)="onAppTypeFilterChange($event)"
           >
-            <ng-template let-item>{{ item.label | translate }}</ng-template>
+            <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
           </p-selectButton>
         </div>
       </div>
@@ -65,7 +65,7 @@
             (onChange)="onQuickFilterChange($event)"
             [title]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
           >
-            <ng-template let-item>{{ item.label | translate }}</ng-template>
+            <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
           </p-selectButton>
         </div>
         <ocx-data-view-controls

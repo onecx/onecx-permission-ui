@@ -50,7 +50,7 @@
                 (onChange)="onQuickFilterChange($event)"
                 [title]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
               >
-                <ng-template let-item>{{ item.label | translate }}</ng-template>
+                <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
               </p-selectButton>
             </div>
 
