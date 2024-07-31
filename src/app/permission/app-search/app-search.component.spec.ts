@@ -17,6 +17,7 @@ import {
   Application
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
+import { RowListGridData } from '@onecx/angular-accelerator'
 
 const wsAbstract: WorkspaceAbstract = {
   name: 'wsName'
@@ -85,6 +86,23 @@ describe('AppSearchComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should add filters when component is initialized', (done) => {
+    component.typeFilterValue$.next('filterValue')
+    component.textFilterValue$.next('textFilterValue')
+
+    component.filters$.subscribe({
+      next: (filters) => {
+        expect(filters).toContain(
+          jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', mode: 'equals' })
+        )
+        expect(filters).toContain(
+          jasmine.objectContaining({ columnId: 'displayName', value: 'textFilterValue', mode: 'contains' })
+        )
+        done()
+      }
+    })
   })
 
   /**
@@ -325,19 +343,34 @@ describe('AppSearchComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
   })
 
-  // it('should update filterBy and filterValue onQuickFilterChange: ALL', () => {
-  //   component.onQuickFilterChange({ value: 'ALL' })
+  describe('onQuickFilterChange', () => {
+    it('should set typeFilterValue$ to an empty string when value is "ALL"', () => {
+      const event = { value: 'ALL' }
+      spyOn(component.typeFilterValue$, 'next')
 
-  //   expect(component.filterBy).toBe(component.filterValueDefault)
-  //   expect(component.filterValue).toBe('')
-  // })
+      component.onQuickFilterChange(event)
 
-  // it('should update filterBy and filterValue onQuickFilterChange: other', () => {
-  //   component.onQuickFilterChange({ value: 'other' })
+      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('')
+    })
 
-  //   expect(component.filterValue).toBe('other')
-  //   expect(component.filterBy).toBe('appType')
-  // })
+    it('should set typeFilterValue$ to given value when value is not "ALL" and is truthy', () => {
+      const event = { value: 'SOME_VALUE' }
+      spyOn(component.typeFilterValue$, 'next')
+
+      component.onQuickFilterChange(event)
+
+      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('SOME_VALUE')
+    })
+
+    it('should not call typeFilterValue$.next when value is falsy', () => {
+      const event = { value: '' }
+      spyOn(component.typeFilterValue$, 'next')
+
+      component.onQuickFilterChange(event)
+
+      expect(component.typeFilterValue$.next).not.toHaveBeenCalled()
+    })
+  })
 
   it('should disable name input field is app type on search is ALL', () => {
     component.onAppTypeFilterChange({ value: 'ALL' })
@@ -347,14 +380,14 @@ describe('AppSearchComponent', () => {
     expect(component.appSearchCriteriaGroup.controls['name'].enabled).toBeTrue()
   })
 
-  // it('should call filter table onFilterChange', () => {
-  //   component.dv = jasmine.createSpyObj('test', ['filter'])
+  it('should update textFilterValue$ when onFilterChange is called', () => {
+    const filterValue = 'newFilter'
+    spyOn(component.textFilterValue$, 'next')
 
-  //   component.onFilterChange('test')
+    component.onFilterChange(filterValue)
 
-  //   expect(component.filter).toBe('test')
-  //   expect(component.dv?.filter).toHaveBeenCalledWith('test', 'contains')
-  // })
+    expect(component.textFilterValue$.next).toHaveBeenCalledWith(filterValue)
+  })
 
   it('should set correct values onSortChange', () => {
     component.onSortChange('field')
@@ -362,16 +395,18 @@ describe('AppSearchComponent', () => {
     expect(component.sortField).toEqual('field')
   })
 
-  it('should set correct values onSortDirChange', () => {
-    component.onSortDirChange(true)
+  describe('onSortDirChange', () => {
+    it('should set correct values onSortDirChange', () => {
+      component.onSortDirChange(true)
 
-    expect(component.sortOrder).toEqual(-1)
-  })
+      expect(component.sortOrder).toEqual(-1)
+    })
 
-  it('should set correct values onSortDirChange', () => {
-    component.onSortDirChange(false)
+    it('should set correct values onSortDirChange', () => {
+      component.onSortDirChange(false)
 
-    expect(component.sortOrder).toEqual(1)
+      expect(component.sortOrder).toEqual(1)
+    })
   })
 
   it('should searchApps when search button is clicked', () => {
@@ -382,20 +417,20 @@ describe('AppSearchComponent', () => {
     expect(component.searchApps).toHaveBeenCalled()
   })
 
-  // it('should reset search criteria group and assign empty array to apps observable', (done) => {
-  //   spyOn(component.appSearchCriteriaGroup, 'reset')
+  it('should reset search criteria group and assign empty array to apps observable', (done) => {
+    spyOn(component.appSearchCriteriaGroup, 'reset')
 
-  //   component.onSearchReset()
+    component.onSearchReset()
 
-  //   expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
-  //   component.apps$.subscribe({
-  //     next: (res) => {
-  //       if (res) {
-  //         expect(res).toEqual([] as App[])
-  //       }
-  //       done()
-  //     },
-  //     error: done.fail
-  //   })
-  // })
+    expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
+    component.apps$.subscribe({
+      next: (res) => {
+        if (res) {
+          expect(res).toEqual([] as (App & RowListGridData)[])
+        }
+        done()
+      },
+      error: done.fail
+    })
+  })
 })
