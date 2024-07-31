@@ -139,7 +139,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         finalize(() => (this.searchInProgress = false))
       )
     return this.workspaces$.pipe(
-      map((result: any) => {
+      map((result) => {
         return result.stream
           ? result.stream
               ?.map((w: WorkspaceAbstract) => {
@@ -176,7 +176,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         finalize(() => (this.searchInProgress = false))
       )
     return this.papps$.pipe(
-      map((result: any) => {
+      map((result) => {
         if (!result.stream) return []
         const productNames: string[] = []
         const apps: (App & RowListGridData)[] = []
@@ -247,7 +247,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         'ACTIONS.SEARCH.SORT_DIRECTION_DESC'
       ])
       .pipe(
-        map((data: any) => {
+        map((data) => {
           this.dataViewControlsTranslations = {
             sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
             filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],

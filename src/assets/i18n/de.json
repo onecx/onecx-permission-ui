@@ -37,7 +37,7 @@
       "ROLE": "Rolle löschen",
       "MESSAGE": {
         "TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
-        "OPERATOR_TEXT": "Diese Berechtgung wurde automatisiert erstellt. Wenn die Applikation diese Berechtigung weiterhin anbietet dann wird sie beim nächsten Deployment wiederhergestellt.",
+        "OPERATOR_TEXT": "Diese Berechtigung wurde automatisiert erstellt. Wenn die Applikation diese Berechtigung weiterhin anbietet dann wird sie beim nächsten Deployment wiederhergestellt.",
         "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
