@@ -2,11 +2,9 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/cor
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { ColorSketchModule } from 'ngx-color/sketch'
 import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
-import { CalendarModule } from 'primeng/calendar'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
@@ -32,8 +30,6 @@ import { LabelResolver } from './label.resolver'
   imports: [
     PortalCoreModule.forMicroFrontend(),
     AutoCompleteModule,
-    CalendarModule,
-    ColorSketchModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
@@ -55,7 +51,6 @@ import { LabelResolver } from './label.resolver'
   ],
   exports: [
     AutoCompleteModule,
-    CalendarModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,

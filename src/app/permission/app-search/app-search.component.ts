@@ -5,12 +5,18 @@ import { combineLatest, finalize, map, of, Observable, Subject, catchError, Beha
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
-import { ColumnType, DataSortDirection, Filter, ObjectUtils, RowListGridData } from '@onecx/portal-integration-angular'
-import { DataTableColumn } from '@onecx/portal-integration-angular'
 
-import { DataViewControlTranslations } from '@onecx/portal-integration-angular'
+import {
+  ColumnType,
+  DataSortDirection,
+  DataTableColumn,
+  DataViewControlTranslations,
+  Filter,
+  ObjectUtils,
+  RowListGridData
+} from '@onecx/portal-integration-angular'
+
 import { limitText } from 'src/app/shared/utils'
-
 import {
   Application,
   ApplicationAPIService,
@@ -225,7 +231,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   private sortAppsByDisplayName(a: App, b: App): number {
-    //return (a.displayName ?? '').toUpperCase().localeCompare((b.displayName ?? '').toUpperCase())
     return (
       a.appType.toUpperCase().localeCompare(b.appType.toUpperCase()) ||
       (a.displayName ?? '').toUpperCase().localeCompare((b.displayName ?? '').toUpperCase())
@@ -272,13 +277,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
   }
   public onQuickFilterChange(ev: any): void {
-    if (ev.value === 'ALL') {
-      this.typeFilterValue$.next('')
-    } else {
-      if (ev.value) {
-        this.typeFilterValue$.next(ev.value)
-      }
-    }
+    if (ev.value === 'ALL') this.typeFilterValue$.next('')
+    else if (ev.value) this.typeFilterValue$.next(ev.value)
   }
   public onAppTypeFilterChange(ev: any): void {
     if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
