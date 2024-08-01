@@ -22,7 +22,7 @@ const formGroup = new FormGroup({
   description: new FormControl(null)
 })
 
-fdescribe('RoleDetailComponent', () => {
+describe('RoleDetailComponent', () => {
   let component: RoleDetailComponent
   let fixture: ComponentFixture<RoleDetailComponent>
 
