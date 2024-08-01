@@ -125,7 +125,8 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
         applicationId: item.applicationId
       })
     })
-    this.userAssignmentItems = result.sort(this.sortUserAssignments)
+    result.sort(this.sortUserAssignments)
+    this.userAssignmentItems = result
   }
 
   private searchUserAssignments(): void {
@@ -158,8 +159,8 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
 
   private sortUserAssignments(a: UserAssignment, b: UserAssignment): number {
     return (
-      (a.productName ? (a.productName as string).toUpperCase() : '').localeCompare(
-        b.productName ? (b.productName as string).toUpperCase() : ''
+      (a.productName ? a.productName.toUpperCase() : '').localeCompare(
+        b.productName ? b.productName.toUpperCase() : ''
       ) ||
       (a.resource ? a.resource.toUpperCase() : '').localeCompare(b.resource ? b.resource.toUpperCase() : '') ||
       (a.action ? a.action.toUpperCase() : '').localeCompare(b.action ? b.action.toUpperCase() : '')
