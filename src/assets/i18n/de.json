@@ -93,9 +93,9 @@
     },
     "VIEW": {
       "ROLE": "Rollendetails",
-      "ROLE.TOOLS": "Rollen verwalten",
+      "ROLE.TOOLS": "Rollen verwalten - ein/ausblenden",
       "PERMISSION": "Berechtigungsdetails",
-      "PERMISSION.TOOLS": "Berechtigungen verwalten"
+      "PERMISSION.TOOLS": "Berechtigungen verwalten - ein/ausblenden"
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
@@ -160,6 +160,7 @@
       },
       "FILTER": {
         "APPS": "App",
+        "APPS.TOOLTIP": "Liste von Apps entsprechend der Applikationsauswahl",
         "APP_TYPE": "Typ",
         "APP_TYPE.TOOLTIP": "App-Typ: MFE = Microfrontend, MS = Microservice",
         "PRODUCT": "Applikation",
@@ -223,7 +224,7 @@
   },
   "ROLE": {
     "LABEL": "Rollen",
-    "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn der Benutzer der Rolle zugeordnet wird.",
+    "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn dem Benutzer die Rolle zugeordnet wird.",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",

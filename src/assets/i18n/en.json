@@ -22,10 +22,10 @@
       "MESSAGE": {
         "APPLICATION_OK": "The App was created successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not created.",
-        "PERMISSION_OK": "The permission was created successfully",
-        "PERMISSION_NOK": "An error has occurred. The permission was not created.",
-        "ROLE_OK": "The role was created successfully",
-        "ROLE_NOK": "An error has occurred. The role was not created.",
+        "PERMISSION_OK": "The Permission was created successfully",
+        "PERMISSION_NOK": "An error has occurred. The Permission was not created.",
+        "ROLE_OK": "The Role was created successfully",
+        "ROLE_NOK": "An error has occurred. The Role was not created.",
         "WORKSPACE_ROLES_OK": "The workspace roles were created successfully",
         "WORKSPACE_ROLES_NOK": "An error has occurred. The workspace roles could not be created."
       }
@@ -38,13 +38,13 @@
       "MESSAGE": {
         "TEXT": "Do you want to delete \"{{ITEM}}\"?",
         "INFO": "This action cannot be undone!",
-        "OPERATOR_TEXT": "This permission was created automatically. If the application continues to offer this permission, it will be restored during the next deployment.",
+        "OPERATOR_TEXT": "This Permission was created automatically. If the application continues to offer this Permission, it will be restored during the next deployment.",
         "APPLICATION_OK": "The App was deleted successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
-        "PERMISSION_OK": "The permission was deleted successfully",
-        "PERMISSION_NOK": "An error has occurred. The permission was not deleted.",
-        "ROLE_OK": "The role was deleted successfully",
-        "ROLE_NOK": "An error has occurred. The role was not deleted."
+        "PERMISSION_OK": "The Permission was deleted successfully",
+        "PERMISSION_NOK": "An error has occurred. The Permission was not deleted.",
+        "ROLE_OK": "The Role was deleted successfully",
+        "ROLE_NOK": "An error has occurred. The Role was not deleted."
       }
     },
     "EDIT": {
@@ -55,10 +55,10 @@
       "DIRECT.TOOLTIP": "Edit the Permissions - Every change is saved immediately",
       "DIRECT.TICKER": "Grant/Revoke Permissions with single click",
       "MESSAGE": {
-        "PERMISSION_OK": "The permission was changed successfully",
-        "PERMISSION_NOK": "An error has occurred. The permission was not changed.",
-        "ROLE_OK": "The role was changed successfully",
-        "ROLE_NOK": "An error has occurred. The role was not changed."
+        "PERMISSION_OK": "The Permission was changed successfully",
+        "PERMISSION_NOK": "An error has occurred. The Permission was not changed.",
+        "ROLE_OK": "The Role was changed successfully",
+        "ROLE_NOK": "An error has occurred. The Role was not changed."
       }
     },
     "EXPORT": {
@@ -93,9 +93,9 @@
     },
     "VIEW": {
       "ROLE": "Role Details",
-      "ROLE.TOOLS": "Manage Roles",
+      "ROLE.TOOLS": "Manage Roles - on/off",
       "PERMISSION": "Permission Details",
-      "PERMISSION.TOOLS": "Manage Permissions"
+      "PERMISSION.TOOLS": "Manage Permissions - on/off"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
@@ -112,7 +112,7 @@
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "IMPORT": "Import permissions in JSON format",
+      "IMPORT": "Import Permissions in JSON format",
       "SAVE": "Save changes"
     }
   },
@@ -124,7 +124,7 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Permission Management",
-      "SUBHEADER": "Management of app and workspace permissions",
+      "SUBHEADER": "Management of App and Workspace Permissions",
       "QUICK_FILTER": {
         "LABEL": "Type",
         "TOOLTIP": "Quick Filter for App type",
@@ -160,6 +160,7 @@
       },
       "FILTER": {
         "APPS": "App",
+        "APPS.TOOLTIP": "List of Apps following the selection of Applications",
         "APP_TYPE": "Type",
         "APP_TYPE.TOOLTIP": "App type: MFE = Microfrontend, MS = Microservice",
         "PRODUCT": "Application",
@@ -178,7 +179,7 @@
     "TYPE_PRODUCT": "Application",
     "TYPE_WORKSPACE": "Workspace",
     "APPS": "Number of Apps",
-    "DELETE": "Delete App including all permissions and roles",
+    "DELETE": "Delete App including all Permissions and Roles",
     "DELETE_HEADER": "Delete App",
     "EDIT": "Edit App",
     "EDIT_HEADER": "Edit App",
@@ -197,18 +198,18 @@
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
     "MANDATORY": "Mandatory required",
-    "MANDATORY.COLUMN": "Can the permission be edited?",
+    "MANDATORY.COLUMN": "Can the Permission be edited?",
     "MANDATORY.COLUMN.TOOLTIP": "This Permission is absolutely necessary for operation and therefore cannot be edited or deleted.",
     "MANDATORY.TOOLTIP": "If set then this Permission is necessary for operation and cannot therefore be changed or deleted.",
     "OPERATOR": "Automated created",
     "OPERATOR.TOOLTIP": "If set then this Permission was automated created. All changes will be lost on the next deployment.",
     "ASSIGNMENTS": {
-      "ROLE_IS_ASSIGNED_0": "No permission",
+      "ROLE_IS_ASSIGNED_0": "No Permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Permission granted, cannot be changed",
       "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
-      "GRANT_ALL_FOR_ROLE": "Grant all permissions according to the filters (Application, App).",
-      "REVOKE_ALL_FOR_ROLE": "Revoke all permissions according to the filters (Application, App).",
+      "GRANT_ALL_FOR_ROLE": "Grant all Permissions according to the filters (Application, App).",
+      "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions according to the filters (Application, App).",
       "GRANT_ERROR": "Permission could not be granted",
       "GRANT_SUCCESS": "Permission granted",
       "GRANT_ALL_SUCCESS": "Permissions granted",
@@ -223,7 +224,7 @@
   },
   "ROLE": {
     "LABEL": "Roles",
-    "TOOLTIP": "List of roles to which permissions can be granted. Permissions for a user only become effective when the user is assigned to the role.",
+    "TOOLTIP": "List of Roles to which Permissions can be granted. Permissions for a user only become effective when the Role is assigned to the user.",
     "NAME": "Name",
     "DESCRIPTION": "Description",
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
@@ -240,10 +241,10 @@
       "FORMAT_URL": "Format: "
     },
     "ERRORS": {
-      "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create permission because it already exists",
-      "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change permission because it already exists",
-      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create permission because it already exists",
-      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change permission because it already exists",
+      "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
+      "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
+      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
+      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
       "INTERNAL_ERROR": "Internal error",
       "EMPTY_REQUIRED_FIELD": "This field is required.",
       "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
@@ -254,9 +255,9 @@
   "USER_ROLE_PERMISSIONS": {
     "HEADLINE": "Roles and Permissions granted",
     "TAB_NAME_ROLES": "Roles",
-    "TAB_NAME_ROLES.TOOLTIP": "My roles",
+    "TAB_NAME_ROLES.TOOLTIP": "My Roles",
     "TAB_NAME_PERMISSIONS": "Permissions",
-    "TAB_NAME_PERMISSIONS.TOOLTIP": "My permissions",
+    "TAB_NAME_PERMISSIONS.TOOLTIP": "My Permissions",
     "TITLE_ROLES": "My Roles",
     "TITLE_PERMISSIONS": "My Permissions",
     "NO_RESULTS": "No data",
@@ -272,7 +273,7 @@
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
-      "PERMISSIONS_REFRESH_ERROR": "Error while upating permissions"
+      "PERMISSIONS_REFRESH_ERROR": "Error while upating Permissions"
     }
   },
   "EXCEPTIONS": {
@@ -286,19 +287,19 @@
     },
     "HTTP_STATUS_400": {
       "ROLES": "The Role could not be processed.",
-      "PERMISSIONS": "The permission could not be processed."
+      "PERMISSIONS": "The Permission could not be processed."
     },
     "HTTP_STATUS_401": {
-      "APPS": "You have no permissions to see Applications.",
-      "WORKSPACE": "You have no permissions to see Workspace Data."
+      "APPS": "You have no Permissions to see Applications.",
+      "WORKSPACE": "You have no Permissions to see Workspace Data."
     },
     "HTTP_STATUS_403": {
-      "APP": "You have no permissions to see Application data.",
-      "APPS": "You have no permissions to see Applications.",
-      "ROLES": "You have no permissions to see Roles.",
-      "PERMISSIONS": "You have no permissions to see Permissions.",
-      "ASSIGNMENTS": "You have no permissions to see Assignments.",
-      "WORKSPACE": "You have no permissions to see Workspace Data."
+      "APP": "You have no Permissions to see Application data.",
+      "APPS": "You have no Permissions to see Applications.",
+      "ROLES": "You have no Permissions to see Roles.",
+      "PERMISSIONS": "You have no Permissions to see Permissions.",
+      "ASSIGNMENTS": "You have no Permissions to see Assignments.",
+      "WORKSPACE": "You have no Permissions to see Workspace Data."
     },
     "HTTP_STATUS_404": {
       "APP": "App could not be found.",
