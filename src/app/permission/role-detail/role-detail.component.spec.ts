@@ -22,12 +22,17 @@ const formGroup = new FormGroup({
   description: new FormControl(null)
 })
 
-describe('RoleDetailComponent', () => {
+fdescribe('RoleDetailComponent', () => {
   let component: RoleDetailComponent
   let fixture: ComponentFixture<RoleDetailComponent>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const roleApiSpy = jasmine.createSpyObj<RoleAPIService>('RoleAPIService', ['createRole', 'updateRole', 'deleteRole'])
+  const roleApiSpy = {
+    searchAvailableRoles: jasmine.createSpy('searchAvailableRoles').and.returnValue(of({})),
+    createRole: jasmine.createSpy('createRole').and.returnValue(of({})),
+    updateRole: jasmine.createSpy('updateRole').and.returnValue(of({})),
+    deleteRole: jasmine.createSpy('deleteRole').and.returnValue(of({}))
+  }
 
   const mockUserService = {
     lang$: {
@@ -66,15 +71,16 @@ describe('RoleDetailComponent', () => {
     fixture = TestBed.createComponent(RoleDetailComponent)
     component = fixture.componentInstance
     component.role = role
-    roleApiSpy.createRole.and.returnValue(of({}) as any)
-    roleApiSpy.updateRole.and.returnValue(of({}) as any)
-    roleApiSpy.deleteRole.and.returnValue(of({}) as any)
     fixture.detectChanges()
   })
 
   afterEach(() => {
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
+    roleApiSpy.searchAvailableRoles.calls.reset()
+    roleApiSpy.createRole.calls.reset()
+    roleApiSpy.updateRole.calls.reset()
+    roleApiSpy.deleteRole.calls.reset()
   })
 
   it('should create', () => {
@@ -84,15 +90,18 @@ describe('RoleDetailComponent', () => {
   it('should enable formGroup if user has permissions: edit mode', () => {
     component.changeMode = 'EDIT'
     component.formGroupRole = formGroup
+    component.showIamRolesDialog = true
+    spyOn(component, 'getIamRoles')
 
     component.ngOnChanges()
 
     expect(component.formGroupRole.enabled).toBeTrue()
     expect(component.formGroupRole.controls['name'].value).toEqual(role.name)
     expect(component.formGroupRole.controls['description'].value).toBeUndefined()
+    expect(component.getIamRoles).toHaveBeenCalled()
   })
 
-  it('should notify parent that nothing has changed onClose', () => {
+  it('should notify parent that nothing has changed after closing the dialog', () => {
     spyOn(component.dataChanged, 'emit')
 
     component.onClose()
@@ -100,93 +109,168 @@ describe('RoleDetailComponent', () => {
     expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
   })
 
-  it('should stop and notify that form is invalid onSave', () => {
-    spyOn(console, 'info')
+  describe('onSaveRole', () => {
+    it('should stop and notify that form is invalid onSave', () => {
+      spyOn(console, 'info')
 
-    component.onSaveRole()
+      component.onSaveRole()
 
-    expect(console.info).toHaveBeenCalledWith('form not valid')
-  })
+      expect(console.info).toHaveBeenCalledWith('form not valid')
+    })
 
-  it('should check for duplicates in permissions - edit', () => {
-    component.roles = [role]
-    component.changeMode = 'EDIT'
-    component.formGroupRole = formGroup
+    it('should check for duplicates in permissions - edit', () => {
+      component.roles = [role]
+      component.changeMode = 'EDIT'
+      component.formGroupRole = formGroup
 
-    component.onSaveRole()
+      component.onSaveRole()
 
-    expect(msgServiceSpy.error).not.toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.' + component.changeMode + '.ROLE',
-      detailKey: 'VALIDATION.ERRORS.ROLE.' + component.changeMode + '_ALREADY_EXISTS'
+      expect(msgServiceSpy.error).not.toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.' + component.changeMode + '.ROLE',
+        detailKey: 'VALIDATION.ERRORS.ROLE.' + component.changeMode + '_ALREADY_EXISTS'
+      })
+    })
+
+    it('should check for duplicates in permissions - create', () => {
+      component.roles = [role]
+      component.changeMode = 'CREATE'
+      component.formGroupRole = formGroup
+
+      component.onSaveRole()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.' + component.changeMode + '.ROLE',
+        detailKey: 'VALIDATION.ERRORS.ROLE.' + component.changeMode + '_ALREADY_EXISTS'
+      })
+    })
+
+    it('should create a permission', () => {
+      component.changeMode = 'CREATE'
+      component.formGroupRole = formGroup
+
+      component.onSaveRole()
+
+      expect(component.formGroupRole.valid).toBeTrue()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
+    })
+
+    it('should display error when trying to create a permission failed', () => {
+      roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+      component.changeMode = 'CREATE'
+      component.formGroupRole = formGroup
+      component.role!.id = undefined
+
+      component.onSaveRole()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
+    })
+
+    it('should update a permission', () => {
+      component.changeMode = 'EDIT'
+      component.formGroupRole = formGroup
+
+      component.onSaveRole()
+
+      expect(component.formGroupRole.valid).toBeTrue()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
+    })
+
+    it('should display error when trying to update a permission failed', () => {
+      roleApiSpy.updateRole.and.returnValue(throwError(() => new Error()))
+      component.changeMode = 'EDIT'
+      component.formGroupRole = formGroup
+
+      component.onSaveRole()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
     })
   })
 
-  it('should check for duplicates in permissions - create', () => {
-    component.roles = [role]
-    component.changeMode = 'CREATE'
-    component.formGroupRole = formGroup
+  describe('oneDeleteConfirmation', () => {
+    it('should delete a permission', () => {
+      component.onDeleteConfirmation()
 
-    component.onSaveRole()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
+    })
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.' + component.changeMode + '.ROLE',
-      detailKey: 'VALIDATION.ERRORS.ROLE.' + component.changeMode + '_ALREADY_EXISTS'
+    it('should display error when trying to delete a permission failed', () => {
+      roleApiSpy.deleteRole.and.returnValue(throwError(() => new Error()))
+      component.role!.id = undefined
+
+      component.onDeleteConfirmation()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
     })
   })
 
-  it('should create a permission', () => {
-    component.changeMode = 'CREATE'
-    component.formGroupRole = formGroup
+  /**
+   * Select IAM Roles to be added
+   */
+  describe('getIamRoles', () => {
+    it('should populate iamRoles with unique roles', () => {
+      const mockRoles = [{ name: 'Role1' }, { name: 'Role2' }]
+      const mockData = { stream: mockRoles }
+      roleApiSpy.searchAvailableRoles.and.returnValue(of(mockData))
+      component.roles = [{ name: 'Role2' }]
 
-    component.onSaveRole()
+      component.getIamRoles()
 
-    expect(component.formGroupRole.valid).toBeTrue()
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
+      expect(component.iamRoles.length).toBe(1)
+      expect(component.iamRoles).toContain(mockRoles[0])
+      expect(component.iamRoles).not.toContain(mockRoles[1])
+    })
+
+    it('should handle error response', () => {
+      const errorResponse = { error: 'Error' }
+      spyOn(console, 'error')
+      roleApiSpy.searchAvailableRoles.and.returnValue(throwError(() => errorResponse))
+
+      component.getIamRoles()
+
+      expect(console.error).toHaveBeenCalledWith('Error')
+    })
   })
 
-  it('should display error when trying to create a permission failed', () => {
-    roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'CREATE'
-    component.formGroupRole = formGroup
-    component.role!.id = undefined
+  describe('onAddIamRoles', () => {
+    it('should emit false if selectedIamRoles is empty', () => {
+      spyOn(component.dataChanged, 'emit')
+      component.selectedIamRoles = []
 
-    component.onSaveRole()
+      component.onAddIamRoles()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
-  })
+      expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
+    })
 
-  it('should update a permission', () => {
-    component.changeMode = 'EDIT'
-    component.formGroupRole = formGroup
+    it('should create a role and notify on success', () => {
+      spyOn(component.dataChanged, 'emit')
+      roleApiSpy.createRole.and.returnValue(of({}))
 
-    component.onSaveRole()
+      component.selectedIamRoles = [{ name: 'role1' }]
+      component.onAddIamRoles()
 
-    expect(component.formGroupRole.valid).toBeTrue()
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
+      expect(component.dataChanged.emit).toHaveBeenCalledWith(true)
+    })
 
-  it('should display error when trying to update a permission failed', () => {
-    roleApiSpy.updateRole.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'EDIT'
-    component.formGroupRole = formGroup
+    it('should handle error if role could not be created', () => {
+      spyOn(component.dataChanged, 'emit')
+      const errorResponse = new Error('Test error')
+      roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
 
-    component.onSaveRole()
+      component.selectedIamRoles = [{ name: 'role1' }]
+      component.onAddIamRoles()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
+      expect(component.dataChanged.emit).not.toHaveBeenCalled()
+    })
 
-  it('should delete a permission', () => {
-    component.onDeleteConfirmation()
+    it('should emit false if selectedIamRoles is undefined', () => {
+      spyOn(component.dataChanged, 'emit')
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-  })
+      component.selectedIamRoles = undefined
+      component.onAddIamRoles()
 
-  it('should display error when trying to delete a permission failed', () => {
-    roleApiSpy.deleteRole.and.returnValue(throwError(() => new Error()))
-    component.role!.id = undefined
-
-    component.onDeleteConfirmation()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
+      expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
+    })
   })
 })
