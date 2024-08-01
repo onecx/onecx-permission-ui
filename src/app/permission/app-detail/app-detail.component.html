@@ -130,11 +130,13 @@
                   <button
                     pbutton
                     type="button"
-                    *ngIf="myPermissions.includes('PERMISSION#MANAGE') && !showPermissionTools"
+                    *ngIf="myPermissions.includes('PERMISSION#MANAGE')"
                     [id]="'apm_application_detail_permission_table_header_permission_tools'"
-                    (click)="showPermissionTools = true"
-                    [title]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
                     class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                    (click)="showPermissionTools = !showPermissionTools"
+                    [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
                   >
                     <span class="text-primary font-medium p-button-icon pi pi-cog" aria-hidden="true"></span>
                   </button>
@@ -143,9 +145,11 @@
                     type="button"
                     *ngIf="showPermissionTools"
                     [id]="'apm_application_detail_permission_table_header_permission_create'"
-                    (click)="onCreatePermission()"
-                    [title]="'ACTIONS.CREATE.PERMISSION' | translate"
                     class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                    (click)="onCreatePermission()"
+                    [pTooltip]="'ACTIONS.CREATE.PERMISSION' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
                   >
                     <span class="text-primary font-medium p-button-icon pi pi-plus-circle" aria-hidden="true"></span>
                   </button>
@@ -163,11 +167,13 @@
                 <button
                   pbutton
                   type="button"
-                  *ngIf="myPermissions.includes('ROLE#MANAGE') && !showRoleTools"
+                  *ngIf="myPermissions.includes('ROLE#MANAGE')"
                   [id]="'apm_application_detail_permission_table_header_permission_tools'"
-                  (click)="showRoleTools = true"
-                  [title]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  (click)="showRoleTools = !showRoleTools"
+                  [pTooltip]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-cog" aria-hidden="true"></span>
                 </button>
@@ -176,9 +182,11 @@
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                   [id]="'app_detail_permission_table_header_add_role_action'"
-                  (click)="onCreateRole($event)"
-                  [title]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
                   class="pr-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  (click)="onCreateRole($event)"
+                  [pTooltip]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-plus-circle" aria-hidden="true"></span>
                 </button>
@@ -187,9 +195,11 @@
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                   [id]="'app_detail_permission_table_header_add_iam_roles_action'"
-                  (click)="onAddIAMRoles($event)"
-                  [title]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  (click)="onAddIAMRoles($event)"
+                  [pTooltip]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-bolt" aria-hidden="true"></span>
                 </button>
@@ -199,9 +209,11 @@
                     type="button"
                     *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
                     [id]="'app_detail_permission_table_header_add_workspace_roles_action'"
-                    (click)="onCreateWorkspaceRoles($event)"
-                    [title]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     class="p-button-rounded p-button p-component p-button-icon-only button-letter-icon"
+                    (click)="onCreateWorkspaceRoles($event)"
+                    [pTooltip]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
                   >
                     <span class="text-sm p-button-icon letter-icon" aria-hidden="true">w</span>
                   </button>

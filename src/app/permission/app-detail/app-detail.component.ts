@@ -221,8 +221,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     }
     this.loading = true
-    this.showRoleTools = false
-    this.showPermissionTools = false
     this.loadingExceptionKey = ''
     this.currentApp = {
       id: this.urlParamAppId,
