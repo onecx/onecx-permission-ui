@@ -332,10 +332,12 @@ describe('AppDetailComponent', () => {
       statusText: 'Not Found'
     })
     wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => err))
+    spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
+    expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
   })
 
   xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {

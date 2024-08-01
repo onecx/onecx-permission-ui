@@ -258,7 +258,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private loadWorkspaceDetails() {
     this.workspaceApi
       .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId! })
-      .pipe(catchError((error) => of(error)))
+      .pipe(
+        catchError((error) => {
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
+          console.error('getDetailsByWorkspaceName() => unknown response:', error)
+          return of(error)
+        })
+      )
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
@@ -268,9 +274,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.currentApp.workspaceDetails?.products?.map((product) => this.fillProductApps(product))
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
-        } else {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
-          console.error('getDetailsByWorkspaceName() => unknown response:', result)
         }
       })
   }

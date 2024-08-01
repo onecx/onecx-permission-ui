@@ -149,7 +149,6 @@ export class RoleDetailComponent implements OnChanges {
     })
   }
   public onAddIamRoles() {
-    console.log('onAddIamRoles', this.selectedIamRoles)
     if (this.selectedIamRoles && this.selectedIamRoles.length > 0)
       this.roleApi.createRole({ createRolesRequest: { roles: this.selectedIamRoles! } }).subscribe({
         next: () => {
