@@ -251,6 +251,13 @@
     }
   }
 }
+@mixin datatable-zebra-rows {
+  :host ::ng-deep {
+    .p-datatable .p-datatable-tbody tr:nth-child(odd) {
+      background-color: #f8f9fa;
+    }
+  }
+}
 
 @mixin listbox-zebra-rows {
   :host ::ng-deep {
