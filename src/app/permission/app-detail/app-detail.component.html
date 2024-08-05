@@ -116,6 +116,7 @@
               styleClass="h-full"
               icon="pi pi-refresh"
               (onClick)="onReload()"
+              ariaLabel="'ACTIONS.SEARCH.RELOAD' | translate"
               [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -147,6 +148,7 @@
                     [id]="'apm_application_detail_permission_table_header_permission_tools'"
                     class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="showPermissionTools = !showPermissionTools"
+                    aria-label="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
                     [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -160,6 +162,7 @@
                     [id]="'apm_application_detail_permission_table_header_permission_create'"
                     class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onCreatePermission()"
+                    aria-label="'ACTIONS.CREATE.PERMISSION' | translate"
                     [pTooltip]="'ACTIONS.CREATE.PERMISSION' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -177,6 +180,7 @@
               <div class="flex justify-content-center align-items-center">
                 <span
                   class="inline-block font-bold"
+                  aria-label="'ROLE.LABEL' | translate"
                   [pTooltip]="'ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -189,6 +193,7 @@
                   [id]="'apm_application_detail_permission_table_header_permission_tools'"
                   class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="showRoleTools = !showRoleTools"
+                  aria-label="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   [pTooltip]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -202,6 +207,7 @@
                   [id]="'app_detail_permission_table_header_add_role_action'"
                   class="pr-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onCreateRole($event)"
+                  aria-label="'ACTIONS.CREATE.ROLE' | translate"
                   [pTooltip]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -215,6 +221,7 @@
                   [id]="'app_detail_permission_table_header_add_iam_roles_action'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onAddIAMRoles($event)"
+                  aria-label="'ACTIONS.CREATE.IAM_ROLES' | translate"
                   [pTooltip]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -229,6 +236,7 @@
                     [id]="'app_detail_permission_table_header_add_workspace_roles_action'"
                     class="p-button-rounded p-button p-component p-button-icon-only button-letter-icon"
                     (click)="onCreateWorkspaceRoles($event)"
+                    aria-label="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     [pTooltip]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -246,7 +254,7 @@
               <th
                 pFrozenColumn
                 id="app_detail_permission_table_header_actions"
-                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary"
+                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary text-center"
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
               </th>
@@ -343,6 +351,7 @@
                   [id]="'app_detail_permission_table_sort_app_id'"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onFilterItemSortIcon($event, sortIconAppId, 'appId')"
+                  aria-label="'PERMISSION.SORT.APP_ID' | translate"
                   [pTooltip]="'PERMISSION.SORT.APP_ID' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -375,6 +384,7 @@
                     [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                     class="p-1 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onDeleteRole($event, role)"
+                    aria-label="'ACTIONS.DELETE.ROLE' | translate"
                     [pTooltip]="'ACTIONS.DELETE.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -388,6 +398,7 @@
                     [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                     class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onEditRole($event, role)"
+                    aria-label="'ACTIONS.EDIT.ROLE' | translate"
                     [pTooltip]="'ACTIONS.EDIT.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -402,6 +413,7 @@
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_grant_all'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onGrantAllPermissions($event, role)"
+                  aria-label="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                   [pTooltip]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -415,6 +427,7 @@
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onRevokeAllPermissions($event, role)"
+                  aria-label="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   [pTooltip]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -440,7 +453,7 @@
               <td
                 pFrozenColumn
                 id="app_detail_permission_table_header_actions"
-                class="pt-2 pb-1 px-2 white-space-nowrap"
+                class="pt-2 pb-1 px-2 white-space-nowrap text-center"
               >
                 <button
                   pbutton
@@ -449,6 +462,7 @@
                   [id]="'app_detail_permission_table_row_' + row + '_edit_action'"
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onDetailPermission($event, rowData)"
+                  aria-label="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                   [pTooltip]="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -467,6 +481,7 @@
                   [id]="'app_detail_permission_table_row_' + row + '_copy_action'"
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onCopyPermission($event, rowData)"
+                  aria-label="'ACTIONS.COPY.PERMISSION' | translate"
                   [pTooltip]="'ACTIONS.COPY.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -481,6 +496,7 @@
                   class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onDeletePermission($event, rowData)"
                   [disabled]="rowData.mandatory"
+                  aria-label="'ACTIONS.DELETE.PERMISSION' | translate"
                   [pTooltip]="'ACTIONS.DELETE.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -556,6 +572,7 @@
                     *ngIf="!rowData.roles[role.id]"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onAssignPermission($event, rowData, role)"
+                    aria-label="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -570,6 +587,7 @@
                     *ngIf="rowData.roles[role.id]"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onRemovePermission($event, rowData, role)"
+                    aria-label="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"

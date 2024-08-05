@@ -233,7 +233,8 @@
       "LIST": "List of missing Roles",
       "INFO": "(IAM: Identity Access Management = User & Roles)",
       "Filter": "Filter",
-      "SAVE": "Add selection"
+      "SAVE": "Add selection",
+      "SAVE.TOOLTIP": "Add selected roles"
     }
   },
   "VALIDATION": {
