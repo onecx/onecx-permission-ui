@@ -246,7 +246,7 @@
               <th
                 pFrozenColumn
                 id="app_detail_permission_table_header_actions"
-                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary white-space-nowrap"
+                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary"
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
               </th>
@@ -500,17 +500,15 @@
               </td>
             </ng-container>
             <td pFrozenColumn id="app_detail_permission_table_data_permission_key" class="p-2">
-              <div class="font-bold">{{ rowData.resource }} # {{ rowData.action }}</div>
-              <div class="mt-1 text-xs hidden sm:block atext-responsive white-space-normal">
-                {{ rowData.description }}
-              </div>
+              <div class="font-bold text-sm sm:text-base">{{ rowData.resource }} # {{ rowData.action }}</div>
+              <div class="mt-1 text-xs hidden sm:block">{{ rowData.description }}</div>
             </td>
             <td pFrozenColumn id="app_detail_permission_table_data_product_name" class="p-2">
-              <div class="text:sm sm:text-base">{{ rowData.productDisplayName }}</div>
+              <div class="text-sm sm:text-base">{{ rowData.productDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
             <td pFrozenColumn id="app_detail_permission_table_data_app_id" class="p-2 border-right-primary">
-              <div class="text:sm sm:text-base">{{ rowData.appDisplayName }}</div>
+              <div class="text-sm sm:text-base">{{ rowData.appDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
             <!-- ASSIGNMENTS -->
