@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "ng build",
-    "clean": "npm cache clean --force && ng cache clean && rm .eslintcache",
+    "clean": "npm cache clean --force && ng cache clean && rm -f .eslintcache && rm -f ./node_modules/.cache/prettier/.prettier-cache",
     "start": "ng serve --configuration=development --proxy-config=proxy.conf.js",
     "prepare": "husky",
     "lint": "ng lint --cache=true",
