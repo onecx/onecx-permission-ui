@@ -268,3 +268,33 @@
     }
   }
 }
+
+@mixin displaying-text-responsive {
+  :host ::ng-deep {
+    .text-responsive {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+@mixin media-queries {
+  :host ::ng-deep {
+    @media screen and (min-width: 768px) {
+      .md\:h-2-5rem {
+        height: 2.5rem !important;
+      }
+      .md\:h-3-5rem {
+        height: 3.5rem !important;
+      }
+    }
+    @media screen and (min-width: 576px) {
+      .card-badge-right {
+        &.sm\:badge-2-2 {
+          top: 33px !important;
+        }
+      }
+    }
+  }
+}
