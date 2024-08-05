@@ -103,7 +103,7 @@
           <div class="col-6 md:col-4 xl:col-3 p-2 md:p-3">
             <a
               tabindex="0"
-              [id]="'app_search_data_idx_' + idx"
+              [id]="'app_search_data_idx_app_id_' + app.appId"
               class="card block relative px-2 p-1 sm:p-2 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
               [class.bg-primary]="app.appType === 'WORKSPACE'"
               (click)="onAppClick(app)"
