@@ -12,13 +12,31 @@
     <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="role_detail_name" formControlName="name" />
+          <input
+            pInputText
+            type="text"
+            class="w-full"
+            id="role_detail_name"
+            formControlName="name"
+            [pTooltip]="'ROLE.NAME' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
           <label class="ocx-required-label" for="role_detail_name"> {{ 'ROLE.NAME' | translate }} </label>
         </span>
       </div>
       <div>
         <span class="p-float-label">
-          <input pInputText type="text" class="w-full" id="role_detail_description" formControlName="description" />
+          <input
+            pInputText
+            type="text"
+            class="w-full"
+            id="role_detail_description"
+            formControlName="description"
+            [pTooltip]="'ROLE.DESCRIPTION' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
           <label for="role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
         </span>
       </div>

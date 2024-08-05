@@ -45,8 +45,10 @@
                 id="up_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
                 (click)="onClearFilterUserAssignmentTable()"
-                [title]="'GENERAL.FILTER_CLEAR' | translate"
                 tabindex="0"
+                [pTooltip]="'GENERAL.FILTER_CLEAR' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
               >
               </a>
             </div>
@@ -55,9 +57,11 @@
                 type="button"
                 id="up_permissions_header_action_reload"
                 styleClass="h-full"
-                [title]="'ACTIONS.SEARCH.RELOAD' | translate"
-                (onClick)="onReload()"
                 icon="pi pi-refresh"
+                (onClick)="onReload()"
+                [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
               >
               </p-button>
             </div>

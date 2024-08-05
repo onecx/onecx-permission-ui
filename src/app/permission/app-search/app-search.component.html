@@ -16,8 +16,10 @@
             inputid="app_search_criteria_app_type"
             [options]="appTypeItems"
             formControlName="appType"
-            [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
             (onChange)="onAppTypeFilterChange($event)"
+            [pTooltip]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
           >
             <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
           </p-selectButton>
@@ -32,7 +34,9 @@
             formControlName="name"
             class="w-15rem"
             [clear]="true"
-            [title]="'APP.SEARCH.NAME.TOOLTIP' | translate"
+            [pTooltip]="'APP.SEARCH.NAME.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
           />
           <label for="app_search_criteria_name">{{ 'APP.SEARCH.NAME' | translate }}</label>
         </span>
@@ -45,9 +49,11 @@
       <p-message id="app_search_data_access_issue" severity="error" [text]="exceptionKey | translate"></p-message>
       <p-button
         id="app_search_reload_button"
-        [title]="'ACTIONS.SEARCH.RELOAD' | translate"
-        (onClick)="onSearch()"
         icon="pi pi-refresh"
+        (onClick)="onSearch()"
+        [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></p-button>
     </div>
 
@@ -63,7 +69,9 @@
             [options]="quickFilterItems"
             [(ngModel)]="quickFilterValue"
             (onChange)="onQuickFilterChange($event)"
-            [title]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+            [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
           >
             <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
           </p-selectButton>
