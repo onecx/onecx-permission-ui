@@ -233,7 +233,8 @@
       "LIST": "Liste der fehlenden Rollen",
       "INFO": "(IAM: Identity Access Management = Benutzer & Rollen)",
       "Filter": "Filter",
-      "SAVE": "Auswahl übernehmen"
+      "SAVE": "Auswahl übernehmen",
+      "SAVE.TOOLTIP": "Augewählte Rollen übernehmen"
     }
   },
   "VALIDATION": {

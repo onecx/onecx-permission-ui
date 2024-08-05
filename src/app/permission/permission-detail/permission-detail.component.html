@@ -107,8 +107,10 @@
         icon="pi pi-times"
         iconPos="left"
         [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [title]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         (click)="onClose()"
+        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></button>
       <button
         *ngIf="changeMode !== 'VIEW'"
@@ -120,8 +122,10 @@
         icon="pi pi-times"
         iconPos="left"
         [label]="'ACTIONS.CANCEL' | translate"
-        [title]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
         (click)="onClose()"
+        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></button>
       <button
         *ngIf="changeMode !== 'VIEW'"
@@ -132,9 +136,11 @@
         icon="pi pi-save"
         iconPos="left"
         [label]="'ACTIONS.SAVE' | translate"
-        [title]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         [disabled]="!formGroup.valid"
         (click)="onSave()"
+        [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></button>
     </div>
   </ng-template>

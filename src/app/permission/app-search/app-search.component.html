@@ -8,7 +8,12 @@
   >
     <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 px-2">
       <div class="flex flex-wrap flex-row align-items-center ml-1 gap-2">
-        <div class="p-selectbutton-title opacity-90 text-sm" [title]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate">
+        <div
+          class="p-selectbutton-title opacity-90 text-sm"
+          [pTooltip]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
           {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}
         </div>
         <div class="search-criteria-selectbutton">
@@ -119,8 +124,10 @@
               <span
                 *ngIf="app.apps"
                 [id]="'app_search_data_idx_' + idx + '_apps'"
-                [title]="'APP.APPS' | translate"
                 class="card-badge-right badge-2-1 sm:badge-2-2 p-1 text-sm"
+                [pTooltip]="'APP.APPS' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
                 >{{ app.apps }}</span
               >
               <div class="font-bold text-base md:text-lg text-responsive">

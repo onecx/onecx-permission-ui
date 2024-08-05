@@ -180,6 +180,7 @@
               <div class="flex justify-content-center align-items-center">
                 <span
                   class="inline-block font-bold"
+                  aria-label="'ROLE.LABEL' | translate"
                   [pTooltip]="'ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -206,6 +207,7 @@
                   [id]="'app_detail_permission_table_header_add_role_action'"
                   class="pr-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onCreateRole($event)"
+                  aria-label="'ACTIONS.CREATE.ROLE' | translate"
                   [pTooltip]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -219,6 +221,7 @@
                   [id]="'app_detail_permission_table_header_add_iam_roles_action'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onAddIAMRoles($event)"
+                  aria-label="'ACTIONS.CREATE.IAM_ROLES' | translate"
                   [pTooltip]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -233,6 +236,7 @@
                     [id]="'app_detail_permission_table_header_add_workspace_roles_action'"
                     class="p-button-rounded p-button p-component p-button-icon-only button-letter-icon"
                     (click)="onCreateWorkspaceRoles($event)"
+                    aria-label="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     [pTooltip]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -250,7 +254,7 @@
               <th
                 pFrozenColumn
                 id="app_detail_permission_table_header_actions"
-                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary"
+                class="pt-2 pb-1 vertical-align-bottom border-bottom-primary text-center"
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
               </th>
@@ -380,6 +384,7 @@
                     [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                     class="p-1 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onDeleteRole($event, role)"
+                    aria-label="'ACTIONS.DELETE.ROLE' | translate"
                     [pTooltip]="'ACTIONS.DELETE.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -393,6 +398,7 @@
                     [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                     class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onEditRole($event, role)"
+                    aria-label="'ACTIONS.EDIT.ROLE' | translate"
                     [pTooltip]="'ACTIONS.EDIT.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -447,7 +453,7 @@
               <td
                 pFrozenColumn
                 id="app_detail_permission_table_header_actions"
-                class="pt-2 pb-1 px-2 white-space-nowrap"
+                class="pt-2 pb-1 px-2 white-space-nowrap text-center"
               >
                 <button
                   pbutton

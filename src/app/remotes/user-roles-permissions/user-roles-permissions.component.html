@@ -6,7 +6,11 @@
   <p-tabView *ngIf="userAssignmentItems; else loading" [(activeIndex)]="selectedTab">
     <p-tabPanel>
       <ng-template pTemplate="header">
-        <span title="{{ 'USER_ROLE_PERMISSIONS.TAB_NAME_PERMISSIONS.TOOLTIP' | translate }}">
+        <span
+          [pTooltip]="'USER_ROLE_PERMISSIONS.TAB_NAME_PERMISSIONS.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
           {{ 'USER_ROLE_PERMISSIONS.TAB_NAME_PERMISSIONS' | translate }}
         </span>
       </ng-template>
@@ -106,7 +110,11 @@
 
     <p-tabPanel>
       <ng-template pTemplate="header">
-        <span title="{{ 'USER_ROLE_PERMISSIONS.TAB_NAME_ROLES.TOOLTIP' | translate }}">
+        <span
+          [pTooltip]="'USER_ROLE_PERMISSIONS.TAB_NAME_ROLES.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
           {{ 'USER_ROLE_PERMISSIONS.TAB_NAME_ROLES' | translate }}
         </span>
       </ng-template>
