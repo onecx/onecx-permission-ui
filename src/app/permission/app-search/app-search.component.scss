@@ -5,9 +5,11 @@
 @include correct-select-button;
 @include search-criteria-select-button;
 @include card-badges;
+@include displaying-text-responsive;
+@include media-queries;
 
-@media screen and (min-width: 768px) {
-  .md\:h-2-5rem {
-    height: 2.5rem !important;
+:host ::ng-deep {
+  .card-badge-right.badge-2-1 {
+    top: 20px;
   }
 }
