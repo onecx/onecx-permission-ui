@@ -8,12 +8,7 @@ import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 
 import { SharedModule } from 'src/app/shared/shared.module'
-import {
-  PortalCoreModule,
-  PortalMessageService,
-  UserService,
-  createRemoteComponentTranslateLoader
-} from '@onecx/portal-integration-angular'
+import { PortalCoreModule, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import { Configuration, RoleAPIService, Role, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import { environment } from 'src/environments/environment'
 import {
@@ -32,7 +27,6 @@ import {
   standalone: true,
   imports: [AngularRemoteComponentsModule, CommonModule, PortalCoreModule, RouterModule, TranslateModule, SharedModule],
   providers: [
-    PortalMessageService,
     {
       provide: BASE_URL,
       useValue: new ReplaySubject<string>(1)
@@ -69,7 +63,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
     private userService: UserService,
-    private msgService: PortalMessageService,
     private readonly roleApi: RoleAPIService,
     private userApi: UserAPIService,
     private translateService: TranslateService

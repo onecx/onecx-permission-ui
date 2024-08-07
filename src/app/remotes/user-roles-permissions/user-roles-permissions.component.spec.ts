@@ -1,15 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { TableModule } from 'primeng/table'
+import { Table, TableModule } from 'primeng/table'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
-import { of, ReplaySubject } from 'rxjs'
+import { of, ReplaySubject, throwError } from 'rxjs'
 
 import { AppConfigService } from '@onecx/portal-integration-angular'
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
-// import { environment } from 'src/environments/environment'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { RoleAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import { provideHttpClient } from '@angular/common/http'
@@ -18,16 +17,22 @@ const userAssgnmnts: UserAssignment[] = [
   {
     roleName: 'role1',
     productName: 'prod1',
-    applicationId: 'ocx-app1'
+    applicationId: 'ocx-app1',
+    resource: 'resource1'
   },
   {
     roleName: 'role2',
     productName: 'prod2',
-    applicationId: 'ocx-app2'
+    applicationId: 'ocx-app2',
+    resource: 'resource2'
   }
 ]
 
 const roles = ['role1', 'role2']
+
+class MockTable {
+  filterGlobal(value: string, mode: string) {}
+}
 
 describe('OneCXUserRolesPermissionsComponent', () => {
   let component: OneCXUserRolesPermissionsComponent
@@ -60,6 +65,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         { provide: UserAPIService, useValue: userServiceSpy },
         { provide: RoleAPIService, useValue: roleServiceSpy },
         { provide: Router, useValue: routerMock },
+        { provide: Table, useClass: MockTable },
         provideHttpClient(),
         provideHttpClientTesting(),
         {
@@ -86,10 +92,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     roleServiceSpy.searchRoles.calls.reset()
     routerMock.navigateByUrl.calls.reset()
   }))
-
-  beforeEach(() => {
-    // component.environment = environment
-  })
 
   function initializeComponent() {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
@@ -129,5 +131,53 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         done()
       })
     })
+  })
+
+  describe('loadData', () => {
+    beforeEach(() => {
+      initializeComponent()
+    })
+
+    // it('should load user assignments and roles', () => {
+    //   component.loadData()
+
+    //   expect(component.userAssignmentItems).toEqual(userAssgnmnts)
+    //   expect(component.roles).toEqual(roles)
+    // })
+
+    it('should display errors if api calls fail', () => {
+      const err = { status: '404' }
+      userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
+      roleServiceSpy.searchRoles.and.returnValue(throwError(() => err))
+      spyOn(console, 'error')
+
+      component.loadData()
+
+      expect(console.error).toHaveBeenCalledWith('searchAssignments():', err)
+      expect(console.error).toHaveBeenCalledWith('searchRoles():', err)
+    })
+  })
+
+  it('should apply global filter on the primeng table', () => {
+    const mockTable: MockTable = TestBed.inject(Table) as unknown as MockTable
+    const event = { target: { value: 'test' } } as unknown as Event
+    spyOn(mockTable, 'filterGlobal')
+
+    component.applyGlobalFilter(event, mockTable as unknown as Table)
+
+    expect(mockTable.filterGlobal).toHaveBeenCalledWith('test', 'contains')
+  })
+
+  it('should clear userAssignmentItems and roles, and reload the data on onReload', () => {
+    spyOn(component, 'loadData')
+
+    component.userAssignmentItems = userAssgnmnts
+    component.roles = roles
+
+    component.onReload()
+
+    expect(component.userAssignmentItems).toEqual([])
+    expect(component.roles).toEqual([])
+    expect(component.loadData).toHaveBeenCalled()
   })
 })
