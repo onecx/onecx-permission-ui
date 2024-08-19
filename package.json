@@ -54,7 +54,7 @@
     "@onecx/angular-accelerator": "^5.2.0",
     "@onecx/angular-auth": "^5.2.0",
     "@onecx/angular-integration-interface": "^5.2.0",
-    "@onecx/angular-remote-components": "^5.2.0",
+    "@onecx/angular-remote-components": "^5.4.0",
     "@onecx/angular-webcomponents": "^5.2.0",
     "@onecx/integration-interface": "^5.2.0",
     "@onecx/keycloak-auth": "^5.2.0",
