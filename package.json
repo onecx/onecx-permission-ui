@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "Apache-2.0",
   "contributors": [
-    "OneCX Development Team <onecx@tkit.org>"
+    "OneCX Development Team <onecx_dev@1000kit.org>"
   ],
   "config": {
     "openapiYaml": "src/assets/api/openapi-bff.yaml",
