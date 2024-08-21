@@ -4,6 +4,7 @@
 dist
 tmp
 out-tsc
+reports
 
 # dependencies
 node_modules
@@ -22,17 +23,21 @@ speed-measure-plugin*.json
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode
-.history
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
 # misc
-.angular/cache
+.angular
 .eslintcache
+.husky/_
 .sass-cache
 .gitlab*
 .scannerwork
 connect.lock
-reports
 typings
 *.log
 *.sh
