@@ -1,0 +1,3 @@
+== onecx-permission-ui
+
+include::onecx-permission-ui-userdocs.adoc[opts=optional]
