@@ -1,4 +1,3 @@
----
 openapi: 3.0.3
 info:
   title: onecx-permission-bff
@@ -582,6 +581,56 @@ paths:
       responses:
         204:
           description: Assignment deleted
+  /assignments/export:
+    x-onecx:
+      permissions:
+        assignment:
+          - read
+    post:
+      tags:
+        - assignment
+      description: Export assignments
+      operationId: exportAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportAssignmentsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: No themes founds
+  /assignments/import:
+    x-onecx:
+      permissions:
+        assignment:
+          - write
+    post:
+      tags:
+        - assignment
+      description: Import assignments
+      operationId: importAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Import successful
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /applications/search:
     post:
       x-onecx:
@@ -728,6 +777,14 @@ paths:
                 $ref: '#/components/schemas/UserAssignmentPageResult'
 components:
   schemas:
+    ExportAssignmentsRequest:
+      type: object
+      properties:
+        productNames:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
     UserCriteria:
       type: object
       properties:
