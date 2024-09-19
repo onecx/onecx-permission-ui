@@ -345,9 +345,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       this.assgnmtApi.importAssignments({ body: this.importAssignmentItem }).subscribe({
         next: () => {
           this.displayImportDialog = false
-          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.HELP_ITEM.IMPORT_OK' })
+          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_OK' })
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.HELP_ITEM.IMPORT_NOK' })
+        error: () => this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_NOK' })
       })
       this.searchApps()
     }
@@ -376,9 +376,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         }),
         map((data) => {
           if (data.stream) {
-            console.log('STREAM', data.stream)
             for (const assignment of data.stream) {
-              this.assignedProductNames.push(assignment.appId!)
+              this.assignedProductNames.push(assignment.productName!)
             }
           }
           this.assignedProductNames = [...new Set(this.assignedProductNames)].sort()
@@ -391,23 +390,22 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.displayExportDialog = true
   }
   public onExportConfirmation(): void {
-    console.log('SELECTED', this.selectedProductNames)
     if (this.selectedProductNames.length > 0) {
       this.assgnmtApi
         .exportAssignments({ exportAssignmentsRequest: { productNames: this.selectedProductNames } })
         .subscribe({
           next: (item) => {
-            const helpsJson = JSON.stringify(item, null, 2)
+            const permissionsJson = JSON.stringify(item, null, 2)
             FileSaver.saveAs(
-              new Blob([helpsJson], { type: 'text/json' }),
-              'onecx-help-items_' + getCurrentDateTime() + '.json'
+              new Blob([permissionsJson], { type: 'text/json' }),
+              'onecx-permissions_' + getCurrentDateTime() + '.json'
             )
-            this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_OK' })
+            this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
             this.displayExportDialog = false
             this.selectedProductNames = []
           },
           error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_NOK' })
+            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
             console.error(err)
           }
         })
