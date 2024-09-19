@@ -74,8 +74,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   importAssignmentItem: Permission | null = null
   public importError = false
   public validationErrorCause: string
-  public selectedProductNames: string[] = []
   public assignedProductNames: string[] = []
+  public selectedProductNames: string[] = []
 
   public limitText = limitText
 
@@ -136,6 +136,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.prepareDialogTranslations()
     this.searchApps()
+    this.getAllProductsWithAssignedPerms()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
@@ -328,7 +329,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       this.importError = false
       this.validationErrorCause = ''
 
-      this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe((data) => {
+      this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe(() => {
         try {
           const importPermission = JSON.parse(text)
           this.importAssignmentItem = importPermission
@@ -365,29 +366,51 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /****************************************************************************
    *  EXPORT
    */
+  private getAllProductsWithAssignedPerms() {
+    this.assgnmtApi
+      .searchAssignments({ assignmentSearchCriteria: {} })
+      .pipe(
+        catchError((err) => {
+          console.error('searchAssignments():', err)
+          return of([] as any)
+        }),
+        map((data) => {
+          if (data.stream) {
+            console.log('STREAM', data.stream)
+            for (const assignment of data.stream) {
+              this.assignedProductNames.push(assignment.appId!)
+            }
+          }
+          this.assignedProductNames = [...new Set(this.assignedProductNames)].sort()
+        })
+      )
+      .subscribe()
+  }
+
   public onExport(): void {
     this.displayExportDialog = true
-    // this.assignedProductNames = Array.from(new Set(this.resultsForDisplay.map((item) => item.productDisplayName!)))
   }
   public onExportConfirmation(): void {
+    console.log('SELECTED', this.selectedProductNames)
     if (this.selectedProductNames.length > 0) {
-      const names = this.selectedProductNames.map((item) => this.getProductNameFromDisplayName(item))
-      this.assgnmtApi.exportAssignments({ exportAssignmentsRequest: { productNames: names } }).subscribe({
-        next: (item) => {
-          const helpsJson = JSON.stringify(item, null, 2)
-          FileSaver.saveAs(
-            new Blob([helpsJson], { type: 'text/json' }),
-            'onecx-help-items_' + getCurrentDateTime() + '.json'
-          )
-          this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_OK' })
-          this.displayExportDialog = false
-          this.selectedProductNames = []
-        },
-        error: (err) => {
-          this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_NOK' })
-          console.error(err)
-        }
-      })
+      this.assgnmtApi
+        .exportAssignments({ exportAssignmentsRequest: { productNames: this.selectedProductNames } })
+        .subscribe({
+          next: (item) => {
+            const helpsJson = JSON.stringify(item, null, 2)
+            FileSaver.saveAs(
+              new Blob([helpsJson], { type: 'text/json' }),
+              'onecx-help-items_' + getCurrentDateTime() + '.json'
+            )
+            this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_OK' })
+            this.displayExportDialog = false
+            this.selectedProductNames = []
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.HELP_ITEM.EXPORT_NOK' })
+            console.error(err)
+          }
+        })
     }
   }
   public onCloseExportDialog(): void {
