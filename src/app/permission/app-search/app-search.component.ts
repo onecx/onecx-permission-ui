@@ -287,6 +287,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe()
+
     this.actions$ = this.translate
       .get([
         'ACTIONS.IMPORT.LABEL',
@@ -449,18 +450,5 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteriaGroup.reset({ appType: 'ALL' })
     this.apps$ = of([] as (App & RowListGridData)[])
     this.filteredApps$ = of([] as (App & RowListGridData)[])
-  }
-
-  private getProductNameFromDisplayName(displayName: string): string {
-    this.apps$
-      .pipe(
-        map((products) => {
-          const product = products.find((item) => item.displayName === displayName)
-          if (product) return product.name
-          else return displayName
-        })
-      )
-      .subscribe()
-    return displayName
   }
 }
