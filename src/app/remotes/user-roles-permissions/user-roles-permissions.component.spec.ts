@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core'
 import { Table, TableModule } from 'primeng/table'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
@@ -138,13 +138,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       initializeComponent()
     })
 
-    // it('should load user assignments and roles', () => {
-    //   component.loadData()
-
-    //   expect(component.userAssignmentItems).toEqual(userAssgnmnts)
-    //   expect(component.roles).toEqual(roles)
-    // })
-
     it('should display errors if api calls fail', () => {
       const err = { status: '404' }
       userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
@@ -179,5 +172,99 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     expect(component.userAssignmentItems).toEqual([])
     expect(component.roles).toEqual([])
     expect(component.loadData).toHaveBeenCalled()
+  })
+
+  describe('sortUserAssignments', () => {
+    it('should sort by productName when different', () => {
+      const a = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      const b = { productName: 'Banana', resource: 'R1', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
+      expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
+    })
+
+    it('should be case-insensitive for productName', () => {
+      const a = { productName: 'apple', resource: 'R1', action: 'A1' }
+      const b = { productName: 'APPLE', resource: 'R1', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBe(0)
+    })
+
+    it('should sort by resource when productName is the same', () => {
+      const a = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      const b = { productName: 'Apple', resource: 'R2', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
+      expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
+    })
+
+    it('should be case-insensitive for resource', () => {
+      const a = { productName: 'Apple', resource: 'r1', action: 'A1' }
+      const b = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBe(0)
+    })
+
+    it('should sort by action when productName and resource are the same', () => {
+      const a = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      const b = { productName: 'Apple', resource: 'R1', action: 'A2' }
+      expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
+      expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
+    })
+
+    it('should be case-insensitive for action', () => {
+      const a = { productName: 'Apple', resource: 'R1', action: 'a1' }
+      const b = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBe(0)
+    })
+
+    it('should handle undefined values', () => {
+      const a = { productName: undefined, resource: undefined, action: undefined }
+      const b = { productName: 'Apple', resource: 'R1', action: 'A1' }
+      expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
+      expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
+    })
+
+    it('should treat undefined as empty string', () => {
+      const a = { productName: '', resource: '', action: '' }
+      const b = { productName: undefined, resource: undefined, action: undefined }
+      expect(component['sortUserAssignments'](a, b)).toBe(0)
+    })
+  })
+
+  describe('onClearFilterUserAssignmentTable', () => {
+    it('should clear the userAssignmentTableFilter value if it exists', () => {
+      component.userAssignmentTableFilter = {
+        nativeElement: { value: 'test filter' }
+      } as ElementRef
+
+      component.onClearFilterUserAssignmentTable()
+
+      expect(component.userAssignmentTableFilter?.nativeElement.value).toBe('')
+    })
+
+    it('should not throw an error if userAssignmentTableFilter is undefined', () => {
+      component.userAssignmentTableFilter = undefined
+
+      expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
+    })
+
+    it('should call clear() on userAssignmentTable if it exists', () => {
+      component.userAssignmentTable = jasmine.createSpyObj('userAssignmentTable', ['clear'])
+
+      component.onClearFilterUserAssignmentTable()
+
+      expect(component.userAssignmentTable?.clear).toHaveBeenCalled()
+    })
+
+    it('should not throw an error if userAssignmentTable is undefined', () => {
+      component.userAssignmentTable = undefined
+
+      expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
+    })
+
+    it('should call loadData()', () => {
+      spyOn(component, 'loadData')
+
+      component.onClearFilterUserAssignmentTable()
+
+      expect(component.loadData).toHaveBeenCalled()
+    })
   })
 })
