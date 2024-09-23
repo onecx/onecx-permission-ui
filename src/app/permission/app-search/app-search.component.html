@@ -2,6 +2,7 @@
   <ocx-search-header
     [header]="'DIALOG.SEARCH.HEADER' | translate"
     [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
+    [actions]="(actions$ | async) ?? []"
     (searched)="onSearch()"
     (resetted)="onSearchReset()"
     [manualBreadcrumbs]="false"
@@ -141,3 +142,91 @@
     </ng-container>
   </ocx-page-content>
 </ocx-portal-page>
+
+<p-dialog
+  [(visible)]="displayImportDialog"
+  [header]="'ACTIONS.IMPORT.ASSIGNMENT' | translate"
+  [modal]="true"
+  [resizable]="false"
+  [dismissableMask]="true"
+>
+  <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
+    <p-fileUpload
+      #fileUploader
+      id="permission_import_file_upload"
+      mode="advanced"
+      name="file"
+      accept=".json"
+      [maxFileSize]="1000000"
+      [customUpload]="true"
+      (uploadHandler)="onImportConfirmation()"
+      (onClear)="onClear()"
+      (onRemove)="onClear()"
+      (onSelect)="onSelect($event)"
+      [showUploadButton]="isFileValid()"
+      [chooseLabel]="'ACTIONS.IMPORT.CHOOSE' | translate"
+      [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
+      [cancelLabel]="'ACTIONS.CANCEL' | translate"
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+      <p-button
+        id="permission_import_button_cancel"
+        icon="pi pi-times"
+        (onClick)="onCloseImportDialog()"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="displayExportDialog"
+  [header]="'ACTIONS.EXPORT.ASSIGNMENT' | translate"
+  [modal]="true"
+  [resizable]="true"
+  [dismissableMask]="true"
+  [style]="{ 'max-width': '500px' }"
+>
+  <div class="flex flex-column row-gap-2">
+    <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
+    <p-listbox
+      [options]="assignedProductNames"
+      [(ngModel)]="selectedProductNames"
+      [filter]="true"
+      [checkbox]="true"
+      [multiple]="true"
+      [metaKeySelection]="false"
+      [showToggleAll]="true"
+      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+      [listStyle]="{ 'max-height': '300px' }"
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+      <p-button
+        id="permission_export_button_cancel"
+        icon="pi pi-times"
+        (onClick)="onCloseExportDialog()"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+      <p-button
+        id="permission_export_button_export"
+        icon="pi pi-download"
+        (onClick)="onExportConfirmation()"
+        [disabled]="selectedProductNames.length === 0"
+        [label]="'ACTIONS.EXPORT.LABEL' | translate"
+        [pTooltip]="'ACTIONS.EXPORT.ITEMS_SELECTED.TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

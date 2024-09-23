@@ -63,7 +63,26 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "TOOLTIP": "Definition als JSON herunterladen"
+      "ASSIGNMENT": "Berechtigungen exportieren",
+      "ASSIGNMENT.TOOLTIP": "Berechtigungen exportieren",
+      "ITEMS_SELECTED.TOOLTIP": "Die ausgewählten Berechtigungen exportieren (lokal speichern)",
+      "MESSAGE": {
+        "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
+        "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
+      },
+      "APPLICATION_LIST": "Applikationen mit zugewiesenen Berechtigungen"
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "CHOOSE": "Datei auswählen",
+      "UPLOAD": "Datei hochladen",
+      "ASSIGNMENT": "Berechtigungen importieren",
+      "ASSIGNMENT.TOOLTIP": "Berechtigungen importieren",
+      "MESSAGE": {
+        "ASSIGNMENT.IMPORT_OK": "Die Berechtigungen wurden erfolgreich importiert",
+        "ASSIGNMENT.IMPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht importiert."
+      },
+      "VALIDATION_RESULT": "Die Datei wurde geprüft."
     },
     "NAVIGATION": {
       "CLOSE": "Schließen",
@@ -101,7 +120,6 @@
     "CHOOSE": "Auswählen",
     "CLEAR_CACHE": "Cache entfernen",
     "CONFIRM": "Bestätigen",
-    "IMPORT": "Import",
     "TODO.LOADING": "...wird geladen",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",

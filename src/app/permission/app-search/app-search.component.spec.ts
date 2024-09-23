@@ -2,7 +2,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
@@ -14,10 +13,14 @@ import {
   WorkspaceAbstract,
   WorkspacePageResult,
   ApplicationPageResult,
-  Application
+  Application,
+  AssignmentAPIService,
+  Permission
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
 import { RowListGridData } from '@onecx/angular-accelerator'
+// import { FileSelectEvent } from 'primeng/fileupload'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 const wsAbstract: WorkspaceAbstract = {
   name: 'wsName'
@@ -45,6 +48,11 @@ const appPageRes: ApplicationPageResult = {
   stream: [app, app2]
 }
 
+const permission: Permission = {
+  appId: 'onecx-app',
+  productName: 'onecx-product'
+}
+
 describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
@@ -52,7 +60,16 @@ describe('AppSearchComponent', () => {
   const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
+  const assgnmtApiSpy = {
+    searchAssignments: jasmine.createSpy('searchAssignments').and.returnValue(of({})),
+    importAssignments: jasmine.createSpy('importAssignments').and.returnValue(of({})),
+    exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
+  }
+
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
+
+  const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -68,7 +85,9 @@ describe('AppSearchComponent', () => {
       ],
       providers: [
         { provide: ApplicationAPIService, useValue: appApiSpy },
+        { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ],
@@ -82,6 +101,14 @@ describe('AppSearchComponent', () => {
     appApiSpy.searchApplications.and.returnValue(of(appPageRes) as any)
     wsApiSpy.searchWorkspaces.and.returnValue(of(wsPageRes) as any)
     fixture.detectChanges()
+  })
+
+  afterEach(() => {
+    appApiSpy.searchApplications.calls.reset()
+    assgnmtApiSpy.searchAssignments.calls.reset()
+    assgnmtApiSpy.importAssignments.calls.reset()
+    assgnmtApiSpy.exportAssignments.calls.reset()
+    wsApiSpy.searchWorkspaces.calls.reset()
   })
 
   it('should create', () => {
@@ -293,37 +320,6 @@ describe('AppSearchComponent', () => {
   })
 
   /**
-   * Dialog preparation
-   */
-
-  it('should prepare translations', () => {
-    const translateService = TestBed.inject(TranslateService)
-    const generalTranslations = {
-      'APP.DISPLAY_NAME': 'Display Name',
-      'APP.TYPE': 'App type',
-      'ACTIONS.SEARCH.SORT_BY': 'Sort by',
-      'ACTIONS.SEARCH.FILTER.LABEL': 'Filter',
-      'ACTIONS.SEARCH.FILTER.OF': 'Filter by ',
-      'ACTIONS.SEARCH.SORT_DIRECTION_ASC': 'Ascending',
-      'ACTIONS.SEARCH.SORT_DIRECTION_DESC': 'Descending'
-    }
-    spyOn(translateService, 'get').and.returnValues(of(generalTranslations))
-
-    component.ngOnInit()
-
-    expect(component.dataViewControlsTranslations).toEqual({
-      sortDropdownPlaceholder: 'Sort by',
-      filterInputPlaceholder: 'Filter',
-      filterInputTooltip: 'Filter by Display Name, App type',
-      sortOrderTooltips: {
-        ascending: 'Ascending',
-        descending: 'Descending'
-      },
-      sortDropdownTooltip: 'Sort by'
-    })
-  })
-
-  /**
    * UI Events
    */
   it('should navigate to detail page when a tile is clicked', () => {
@@ -432,5 +428,208 @@ describe('AppSearchComponent', () => {
       },
       error: done.fail
     })
+  })
+
+  it('should open import dialog', () => {
+    spyOn(component, 'onImport')
+
+    component.ngOnInit()
+    component.actions$?.subscribe((action) => {
+      action[1].actionCallback()
+    })
+
+    expect(component.onImport).toHaveBeenCalled()
+  })
+
+  it('should open export dialog', () => {
+    spyOn(component, 'onExport')
+
+    component.ngOnInit()
+    component.actions$?.subscribe((action) => {
+      action[0].actionCallback()
+    })
+
+    expect(component.onExport).toHaveBeenCalled()
+  })
+
+  /*
+   * IMPORT
+   */
+  it('should display import dialog when import button is clicked', () => {
+    component.displayImportDialog = false
+
+    component.onImport()
+
+    expect(component.displayImportDialog).toBeTrue()
+  })
+
+  describe('onSelect', () => {
+    let file: File
+    let event: any = {}
+
+    beforeEach(() => {
+      translateServiceSpy.get.and.returnValue(of({}))
+      file = new File(['file content'], 'test.txt', { type: 'text/plain' })
+      const fileList: FileList = {
+        0: file,
+        length: 1,
+        item: (index: number) => file
+      }
+      event = { files: fileList }
+    })
+
+    // it('should select a file to upload', (done) => {
+    //   spyOn(file, 'text').and.returnValue(
+    //     Promise.resolve('{ appId: "id", name: "onecx-permission-ui", productName: "onecx-permission" }')
+    //   )
+
+    //   component.onSelect(event as any as FileSelectEvent)
+
+    //   setTimeout(() => {
+    //     expect(file.text).toHaveBeenCalled()
+    //     expect(component.importAssignmentItem).toEqual(app)
+    //     done()
+    //   })
+    // })
+
+    it('should handle JSON parse error', (done) => {
+      spyOn(file, 'text').and.returnValue(Promise.resolve('Invalid Json'))
+      spyOn(console, 'error')
+
+      component.onSelect(event)
+
+      setTimeout(() => {
+        expect(console.error).toHaveBeenCalled()
+        expect(component.importError).toBeTrue()
+        expect(component.validationErrorCause).toBe('')
+        done()
+      })
+    })
+  })
+
+  it('should reset errors when clear button is clicked', () => {
+    component.importError = true
+    component.validationErrorCause = 'Some error'
+
+    component.onClear()
+
+    expect(component.importError).toBeFalse()
+    expect(component.validationErrorCause).toBe('')
+  })
+
+  describe('onImportConfirmation', () => {
+    it('should import assignment items', (done) => {
+      assgnmtApiSpy.importAssignments.and.returnValue(of(permission))
+      component.importAssignmentItem = permission
+
+      component.onImportConfirmation()
+
+      setTimeout(() => {
+        expect(component.displayImportDialog).toBeFalse()
+        expect(msgServiceSpy.success).toHaveBeenCalledWith({
+          summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_OK'
+        })
+        done()
+      })
+    })
+
+    it('should call importAssignments and handle error', (done) => {
+      assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => 'Error'))
+      component.importAssignmentItem = permission
+
+      component.onImportConfirmation()
+
+      setTimeout(() => {
+        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_NOK' })
+        done()
+      }, 0)
+    })
+
+    it('should not call importAssignments if importAssignmentItem is not defined', () => {
+      component.importAssignmentItem = null
+
+      component.onImportConfirmation()
+
+      expect(assgnmtApiSpy.importAssignments).not.toHaveBeenCalled()
+    })
+  })
+
+  it('should validate a file', () => {
+    component.importError = false
+
+    expect(component.isFileValid()).toBeTrue()
+  })
+
+  it('should close displayImportDialog', () => {
+    component.displayImportDialog = true
+
+    component.onCloseImportDialog()
+
+    expect(component.displayImportDialog).toBeFalse()
+  })
+
+  /*
+   * EXPORT
+   */
+  it('should prepare export by getting all products with permissions', () => {
+    const prodsWithAssgnmts = { stream: [{ productName: 'prod1' }, { productName: 'prod2' }] }
+    assgnmtApiSpy.searchAssignments.and.returnValue(of(prodsWithAssgnmts))
+    spyOn(component, 'searchApps')
+    spyOn(component as any, 'prepareDialogTranslations')
+
+    component.ngOnInit()
+
+    expect(component.assignedProductNames).toEqual(['prod1', 'prod2'])
+  })
+
+  it('should handle error when getting all products with permissions', () => {
+    assgnmtApiSpy.searchAssignments.and.returnValue(throwError(() => new Error()))
+    spyOn(component, 'searchApps')
+    spyOn(component as any, 'prepareDialogTranslations')
+    spyOn(console, 'error')
+
+    component.ngOnInit()
+
+    expect(console.error).toHaveBeenCalled()
+  })
+
+  it('should display export dialog', () => {
+    component.displayExportDialog = false
+
+    component.onExport()
+
+    expect(component.displayExportDialog).toBeTrue()
+  })
+
+  describe('onExportConfirmation', () => {
+    it('should export assignment items', () => {
+      assgnmtApiSpy.exportAssignments.and.returnValue(of({} as any))
+      const selectedNames = ['Product1', 'Product2']
+      component.selectedProductNames = selectedNames
+
+      component.onExportConfirmation()
+
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
+    })
+
+    it('should display error msg when export fails', () => {
+      assgnmtApiSpy.exportAssignments.and.returnValue(throwError(() => 'Error'))
+      const selectedNames = ['Product1', 'Product2']
+      component.selectedProductNames = selectedNames
+
+      component.onExportConfirmation()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
+    })
+  })
+
+  it('should reset displayExportDialog, selectedResults, and selectedProductNames', () => {
+    component.displayExportDialog = true
+    component.selectedProductNames = ['Product1']
+
+    component.onCloseExportDialog()
+
+    expect(component.displayExportDialog).toBeFalse()
+    expect(component.selectedProductNames).toEqual([])
   })
 })

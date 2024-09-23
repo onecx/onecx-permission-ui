@@ -63,7 +63,26 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "TOOLTIP": "Definition als JSON herunterladen"
+      "ASSIGNMENT": "Export Permissions",
+      "ASSIGNMENT.TOOLTIP": "Export of Permissions",
+      "ITEMS_SELECTED.TOOLTIP": "Export selected Permissions (store locally)",
+      "MESSAGE": {
+        "ASSIGNMENT.EXPORT_OK": "Permissions were exported successfully",
+        "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permissions were not exported."
+      },
+      "APPLICATION_LIST": "Applications with assigned Permissions"
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "CHOOSE": "Choose file",
+      "UPLOAD": "Upload file",
+      "ASSIGNMENT": "Import Permissions",
+      "ASSIGNMENT.TOOLTIP": "Import of Permissions",
+      "MESSAGE": {
+        "ASSIGNMENT.IMPORT_OK": "Permissions were imported successfully",
+        "ASSIGNMENT.IMPORT_NOK": "An error has occurred. Permissions were not imported."
+      },
+      "VALIDATION_RESULT": "The file has been checked."
     },
     "NAVIGATION": {
       "CLOSE": "Close",
@@ -101,7 +120,6 @@
     "CHOOSE": "Choose",
     "CLEAR_CACHE": "Clear Cache",
     "CONFIRM": "Confirm",
-    "IMPORT": "Import",
     "TODO.LOADING": "...is loading",
     "RELOAD": "Reload",
     "SAVE": "Save",

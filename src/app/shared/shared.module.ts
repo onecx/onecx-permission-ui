@@ -20,6 +20,7 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { TabViewModule } from 'primeng/tabview'
 import { ToastModule } from 'primeng/toast'
+import { FileUploadModule } from 'primeng/fileupload'
 
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
@@ -36,6 +37,7 @@ import { LabelResolver } from './label.resolver'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    FileUploadModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -57,6 +59,7 @@ import { LabelResolver } from './label.resolver'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    FileUploadModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,

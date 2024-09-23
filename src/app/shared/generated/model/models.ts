@@ -11,6 +11,7 @@ export * from './createRoleApplicationAssignmentRequest';
 export * from './createRoleProductsAssignmentRequest';
 export * from './createRoleRequest';
 export * from './createRolesRequest';
+export * from './exportAssignmentsRequest';
 export * from './iAMRole';
 export * from './iAMRolePageResult';
 export * from './iAMRoleSearchCriteria';

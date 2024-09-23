@@ -5,25 +5,31 @@ import { combineLatest, finalize, map, of, Observable, Subject, catchError, Beha
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
+import { FileSelectEvent } from 'primeng/fileupload'
+import FileSaver from 'file-saver'
 
 import {
+  Action,
   ColumnType,
   DataSortDirection,
   DataTableColumn,
   DataViewControlTranslations,
   Filter,
   ObjectUtils,
+  PortalMessageService,
   RowListGridData
 } from '@onecx/portal-integration-angular'
 
-import { limitText } from 'src/app/shared/utils'
+import { limitText, getCurrentDateTime } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
+  AssignmentAPIService,
   WorkspaceAbstract,
   WorkspaceAPIService,
   WorkspacePageResult,
-  ApplicationPageResult
+  ApplicationPageResult,
+  Permission
 } from 'src/app/shared/generated'
 
 export interface AppSearchCriteria {
@@ -41,6 +47,7 @@ export type AppFilterType = 'ALL' | AppType
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
+  public actions$: Observable<Action[]> | undefined
   // data
   public apps$!: Observable<(App & RowListGridData)[]>
   public filteredApps$!: Observable<(App & RowListGridData)[]>
@@ -60,6 +67,16 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public sortField = 'appType'
   public sortOrder = -1
   public searchInProgress = false
+
+  public displayImportDialog = false
+  public displayExportDialog = false
+
+  importAssignmentItem: Permission | null = null
+  public importError = false
+  public validationErrorCause: string
+  public assignedProductNames: string[] = []
+  public selectedProductNames: string[] = []
+
   public limitText = limitText
 
   public columnTypes: DataTableColumn[] = [
@@ -75,10 +92,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private appApi: ApplicationAPIService,
-    private workspaceApi: WorkspaceAPIService,
+    private assgnmtApi: AssignmentAPIService,
     private route: ActivatedRoute,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private msgService: PortalMessageService,
+    private workspaceApi: WorkspaceAPIService
   ) {
     // search criteria
     this.appSearchCriteriaGroup = new FormGroup<AppSearchCriteria>({
@@ -111,11 +130,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         return filters
       })
     )
+    this.validationErrorCause = ''
   }
 
   ngOnInit(): void {
     this.prepareDialogTranslations()
     this.searchApps()
+    this.getAllProductsWithAssignedPerms()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
@@ -266,6 +287,134 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe()
+
+    this.actions$ = this.translate
+      .get([
+        'ACTIONS.IMPORT.LABEL',
+        'ACTIONS.IMPORT.ASSIGNMENT.TOOLTIP',
+        'ACTIONS.EXPORT.LABEL',
+        'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            {
+              label: data['ACTIONS.EXPORT.LABEL'],
+              title: data['ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'],
+              actionCallback: () => this.onExport(),
+              icon: 'pi pi-download',
+              show: 'always',
+              permission: 'PERMISSION#EDIT'
+            },
+            {
+              label: data['ACTIONS.IMPORT.LABEL'],
+              title: data['ACTIONS.IMPORT.ASSIGNMENT.TOOLTIP'],
+              actionCallback: () => this.onImport(),
+              icon: 'pi pi-upload',
+              show: 'always',
+              permission: 'PERMISSION#EDIT'
+            }
+          ]
+        })
+      )
+  }
+
+  /****************************************************************************
+   *  IMPORT
+   */
+  public onImport(): void {
+    this.displayImportDialog = true
+  }
+  public onSelect(event: FileSelectEvent): void {
+    event.files[0].text().then((text) => {
+      this.importError = false
+      this.validationErrorCause = ''
+
+      this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe(() => {
+        try {
+          const importPermission = JSON.parse(text)
+          this.importAssignmentItem = importPermission
+        } catch (err) {
+          console.error('Import Error', err)
+          this.importError = true
+        }
+      })
+    })
+  }
+  public onImportConfirmation(): void {
+    if (this.importAssignmentItem) {
+      this.assgnmtApi.importAssignments({ body: this.importAssignmentItem }).subscribe({
+        next: () => {
+          this.displayImportDialog = false
+          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_OK' })
+        },
+        error: () => this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_NOK' })
+      })
+      this.searchApps()
+    }
+  }
+  public isFileValid(): boolean {
+    return !this.importError
+  }
+  public onCloseImportDialog(): void {
+    this.displayImportDialog = false
+  }
+  public onClear(): void {
+    this.importError = false
+    this.validationErrorCause = ''
+  }
+
+  /****************************************************************************
+   *  EXPORT
+   */
+  private getAllProductsWithAssignedPerms() {
+    this.assgnmtApi
+      .searchAssignments({ assignmentSearchCriteria: {} })
+      .pipe(
+        catchError((err) => {
+          console.error('searchAssignments():', err)
+          return of([] as any)
+        }),
+        map((data) => {
+          if (data.stream) {
+            for (const assignment of data.stream) {
+              this.assignedProductNames.push(assignment.productName!)
+            }
+          }
+          this.assignedProductNames = [...new Set(this.assignedProductNames)].sort()
+        })
+      )
+      .subscribe()
+  }
+
+  public onExport(): void {
+    this.displayExportDialog = true
+  }
+  public onExportConfirmation(): void {
+    if (this.selectedProductNames.length > 0) {
+      this.assgnmtApi
+        .exportAssignments({ exportAssignmentsRequest: { productNames: this.selectedProductNames } })
+        .subscribe({
+          next: (item) => {
+            const permissionsJson = JSON.stringify(item, null, 2)
+            FileSaver.saveAs(
+              new Blob([permissionsJson], { type: 'text/json' }),
+              'onecx-permissions_' + getCurrentDateTime() + '.json'
+            )
+            this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
+            this.displayExportDialog = false
+            this.selectedProductNames = []
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
+            console.error(err)
+          }
+        })
+    }
+  }
+  public onCloseExportDialog(): void {
+    this.displayExportDialog = false
+    this.selectedProductNames = []
   }
 
   /**
