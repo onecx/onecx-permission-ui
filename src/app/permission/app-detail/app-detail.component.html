@@ -1,8 +1,4 @@
-<ocx-portal-page
-  [applicationId]="'onecx-permission-ui'"
-  [permission]="'APP#VIEW'"
-  [helpArticleId]="'PAGE_PERMISSION_DETAIL'"
->
+<ocx-portal-page permission="APP#VIEW" helpArticleId="PAGE_PERMISSION_DETAIL">
   <ocx-page-header
     [loading]="loading"
     [actions]="(actions$ | async) ?? []"
@@ -15,7 +11,7 @@
   <ocx-page-content>
     <p-message
       *ngIf="loadingExceptionKey"
-      id="app_detail_permission_table_data_access_issue"
+      id="pm_app_detail_permission_table_data_access_issue"
       severity="error"
       styleClass="m-3"
       [text]="loadingExceptionKey | translate"
@@ -24,7 +20,7 @@
     <ng-container *ngIf="!loadingExceptionKey">
       <p-table
         #permissionTable
-        id="app_detail_permission_table"
+        id="pm_app_detail_permission_table"
         styleClass="px-3"
         [columns]="roles"
         [value]="permissionRows"
@@ -38,28 +34,36 @@
       >
         <ng-template pTemplate="caption">
           <div class="flex flex-wrap justify-content-between row-gap-1 p-1">
-            <div class="flex align-items-center ml-1 gap-2">
-              <div class="data-view-control opacity-90 text-sm">
-                {{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}
-              </div>
-              <p-selectButton
-                inputid="app_detail_permission_table_quick_filter"
-                styleClass="data-view-control opacity-90"
-                [options]="quickFilterItems"
-                [(ngModel)]="quickFilterValue"
-                (onChange)="onQuickFilterChange($event)"
+            <div class="flex align-items-center sm:ml-1 gap-1">
+              <div
+                class="slim-selectbutton align-items-start filter-selectbutton"
                 [pTooltip]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-                <ng-template let-item pTemplate>{{ item.label | translate }}</ng-template>
-              </p-selectButton>
+                <p-selectButton
+                  inputid="pm_app_detail_permission_table_quick_filter"
+                  styleClass="data-view-control"
+                  [options]="quickFilterItems"
+                  [(ngModel)]="quickFilterValue"
+                  (onChange)="onQuickFilterChange($event)"
+                >
+                  <ng-template let-item pTemplate
+                    ><span [id]="'pm_app_detail_quick_filter_' + item.value">
+                      {{ item.label | translate }}</span
+                    ></ng-template
+                  >
+                </p-selectButton>
+                <div class="p-selectbutton-subtitle opacity-80">
+                  {{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}
+                </div>
+              </div>
             </div>
 
             <div class="p-inputgroup p-inputgroup w-20rem sm:mx-3">
               <a
                 tabindex="0"
-                id="app_detail_permission_table_filter_contains"
+                id="pm_app_detail_permission_table_filter_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'contains'"
                 (click)="onFilterModeChange('=')"
@@ -71,7 +75,7 @@
               </a>
               <a
                 tabindex="0"
-                id="app_detail_permission_table_filter_not_contains"
+                id="pm_app_detail_permission_table_filter_not_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'notContains'"
                 (click)="onFilterModeChange('!=')"
@@ -84,7 +88,7 @@
               <span class="p-float-label">
                 <input
                   #permissionTableFilterInput
-                  id="app_detail_permission_table_filter"
+                  id="pm_app_detail_permission_table_filter"
                   pInputText
                   type="text"
                   class="py-0 data-view-control-border"
@@ -98,11 +102,13 @@
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 />
-                <label for="app_detail_permission_table_filter">{{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label>
+                <label for="pm_app_detail_permission_table_filter">
+                  {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label
+                >
               </span>
               <a
                 tabindex="0"
-                id="app_detail_permission_table_filter_clear"
+                id="pm_app_detail_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
                 (click)="onClearTableFilter()"
                 [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -112,7 +118,7 @@
               </a>
             </div>
             <p-button
-              id="app_detail_permission_table_reload_button"
+              id="pm_app_detail_permission_table_reload_button"
               styleClass="h-full"
               icon="pi pi-refresh"
               (onClick)="onReload()"
@@ -129,9 +135,9 @@
           <tr>
             <th
               pFrozenColumn
-              id="app_detail_permission_table_header_permissions"
+              id="pm_app_detail_permission_table_header_permissions"
               [attr.colspan]="!showPermissionTools ? 3 : protectedAssignments.length === 0 ? 4 : 5"
-              class="opacity-80 text-center border-right-primary"
+              class="text-center border-right-primary"
               [ngClass]="
                 myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE')
                   ? 'py-0'
@@ -139,16 +145,16 @@
               "
             >
               <div class="flex justify-content-evenly align-items-center">
-                <div class="flex justify-content-center align-items-center">
-                  <span class="inline-block font-bold">{{ 'PERMISSION.LABEL' | translate }} </span>
+                <div class="flex justify-content-center align-items-center column-gap-2 opacity-80">
+                  <span class="p-2 inline-block font-bold">{{ 'PERMISSION.LABEL' | translate }} </span>
                   <button
                     pbutton
                     type="button"
                     *ngIf="myPermissions.includes('PERMISSION#MANAGE')"
                     [id]="'apm_application_detail_permission_table_header_permission_tools'"
-                    class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                    class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="showPermissionTools = !showPermissionTools"
-                    aria-label="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
+                    [aria-label]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
                     [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -160,9 +166,9 @@
                     type="button"
                     *ngIf="showPermissionTools"
                     [id]="'apm_application_detail_permission_table_header_permission_create'"
-                    class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                    class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onCreatePermission()"
-                    aria-label="'ACTIONS.CREATE.PERMISSION' | translate"
+                    [aria-label]="'ACTIONS.CREATE.PERMISSION' | translate"
                     [pTooltip]="'ACTIONS.CREATE.PERMISSION' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -173,14 +179,14 @@
               </div>
             </th>
             <th
-              id="app_detail_permission_table_header_roles"
+              id="pm_app_detail_permission_table_header_roles"
               [attr.colspan]="roles ? roles.length : 0"
-              class="py-0 opacity-80 text-center"
+              class="py-0 text-center"
             >
-              <div class="flex justify-content-center align-items-center">
+              <div class="flex justify-content-center align-items-center column-gap-2 opacity-80">
                 <span
-                  class="inline-block font-bold"
-                  aria-label="'ROLE.LABEL' | translate"
+                  class="p-2 inline-block font-bold"
+                  [aria-label]="'ROLE.LABEL' | translate"
                   [pTooltip]="'ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -190,10 +196,10 @@
                   pbutton
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#MANAGE')"
-                  [id]="'apm_application_detail_permission_table_header_permission_tools'"
-                  class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  [id]="'pm_application_detail_permission_table_header_permission_tools'"
+                  class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="showRoleTools = !showRoleTools"
-                  aria-label="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
+                  [aria-label]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   [pTooltip]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -204,10 +210,10 @@
                   pbutton
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
-                  [id]="'app_detail_permission_table_header_add_role_action'"
-                  class="pr-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                  [id]="'pm_app_detail_permission_table_header_add_role_action'"
+                  class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onCreateRole($event)"
-                  aria-label="'ACTIONS.CREATE.ROLE' | translate"
+                  [aria-label]="'ACTIONS.CREATE.ROLE' | translate"
                   [pTooltip]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -218,25 +224,25 @@
                   pbutton
                   type="button"
                   *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
-                  [id]="'app_detail_permission_table_header_add_iam_roles_action'"
+                  [id]="'pm_app_detail_permission_table_header_add_iam_roles_action'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onAddIAMRoles($event)"
-                  aria-label="'ACTIONS.CREATE.IAM_ROLES' | translate"
+                  [aria-label]="'ACTIONS.CREATE.IAM_ROLES' | translate"
                   [pTooltip]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >
                   <span class="text-primary font-medium p-button-icon pi pi-bolt" aria-hidden="true"></span>
                 </button>
-                <div *ngIf="missingWorkspaceRoles" class="p-1">
+                <div *ngIf="missingWorkspaceRoles">
                   <button
                     pbutton
                     type="button"
                     *ngIf="myPermissions.includes('ROLE#CREATE') && showRoleTools"
-                    [id]="'app_detail_permission_table_header_add_workspace_roles_action'"
-                    class="p-button-rounded p-button p-component p-button-icon-only button-letter-icon"
+                    [id]="'pm_app_detail_permission_table_header_add_workspace_roles_action'"
+                    class="p-1 p-button-rounded p-button p-component p-button-icon-only button-letter-icon"
                     (click)="onCreateWorkspaceRoles($event)"
-                    aria-label="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
+                    [aria-label]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     [pTooltip]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -253,7 +259,7 @@
             <ng-container *ngIf="showPermissionTools">
               <th
                 pFrozenColumn
-                id="app_detail_permission_table_header_actions"
+                id="pm_app_detail_permission_table_header_actions"
                 class="pt-2 pb-1 vertical-align-bottom border-bottom-primary text-center"
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
@@ -264,7 +270,7 @@
                 class="pt-2 pb-1 vertical-align-bottom border-bottom-primary"
               >
                 <span
-                  class="pi pi-lock"
+                  class="pi pi-exclamation-circle"
                   aria-hidden="true"
                   [pTooltip]="'PERMISSION.MANDATORY.COLUMN' | translate"
                   tooltipPosition="top"
@@ -275,7 +281,7 @@
             <th
               pFrozenColumn
               pSortableColumn="key"
-              id="app_detail_permission_table_header_permission_key"
+              id="pm_app_detail_permission_table_header_permission_key"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
               {{ 'PERMISSION.KEY' | translate }}
@@ -283,14 +289,14 @@
             </th>
             <th
               pFrozenColumn
-              id="app_detail_permission_table_header_permission_filter_product"
+              id="pm_app_detail_permission_table_header_permission_filter_product"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
               <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
               <div *ngIf="!currentApp.isProduct" class="flex">
                 <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
-                    id="app_detail_permission_table_filter_product_name"
+                    id="pm_app_detail_permission_table_filter_product_name"
                     styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -302,7 +308,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   ></p-dropdown>
-                  <label for="app_detail_permission_table_filter_product_name">
+                  <label for="pm_app_detail_permission_table_filter_product_name">
                     {{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</label
                   >
                 </span>
@@ -322,13 +328,13 @@
             </th>
             <th
               pFrozenColumn
-              id="app_detail_permission_table_header_permission_filter_app_id"
+              id="pm_app_detail_permission_table_header_permission_filter_app_id"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
             >
               <div class="flex">
                 <span #filterApp class="p-float-label inline-block">
                   <p-dropdown
-                    id="app_detail_permission_table_filter_app_id"
+                    id="pm_app_detail_permission_table_filter_app_id"
                     styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -341,7 +347,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   ></p-dropdown>
-                  <label for="app_detail_permission_table_filter_app_id">
+                  <label for="pm_app_detail_permission_table_filter_app_id">
                     {{ 'DIALOG.DETAIL.FILTER.APPS' | translate }}</label
                   >
                 </span>
@@ -351,7 +357,7 @@
                   [id]="'app_detail_permission_table_sort_app_id'"
                   class="p-2 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onFilterItemSortIcon($event, sortIconAppId, 'appId')"
-                  aria-label="'PERMISSION.SORT.APP_ID' | translate"
+                  [aria-label]="'PERMISSION.SORT.APP_ID' | translate"
                   [pTooltip]="'PERMISSION.SORT.APP_ID' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -363,7 +369,7 @@
 
             <!-- ROLES (actually managed by IDM, duplicated to manage permission assignments) -->
             <th
-              id="app_detail_permission_table_header_roles"
+              id="pm_app_detail_permission_table_header_roles"
               *ngFor="let role of columns"
               class="pt-2 pb-1 px-2 text-center border-bottom-primary vertical-align-top"
             >
@@ -384,7 +390,7 @@
                     [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                     class="p-1 mr-0 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onDeleteRole($event, role)"
-                    aria-label="'ACTIONS.DELETE.ROLE' | translate"
+                    [aria-label]="'ACTIONS.DELETE.ROLE' | translate"
                     [pTooltip]="'ACTIONS.DELETE.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -398,7 +404,7 @@
                     [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                     class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onEditRole($event, role)"
-                    aria-label="'ACTIONS.EDIT.ROLE' | translate"
+                    [aria-label]="'ACTIONS.EDIT.ROLE' | translate"
                     [pTooltip]="'ACTIONS.EDIT.ROLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -413,7 +419,7 @@
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_grant_all'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onGrantAllPermissions($event, role)"
-                  aria-label="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
+                  [aria-label]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                   [pTooltip]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -427,7 +433,7 @@
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                   class="p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onRevokeAllPermissions($event, role)"
-                  aria-label="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
+                  [aria-label]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   [pTooltip]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -452,7 +458,7 @@
             <ng-container *ngIf="showPermissionTools">
               <td
                 pFrozenColumn
-                id="app_detail_permission_table_header_actions"
+                id="pm_app_detail_permission_table_header_actions"
                 class="pt-2 pb-1 px-2 white-space-nowrap text-center"
               >
                 <button
@@ -462,7 +468,7 @@
                   [id]="'app_detail_permission_table_row_' + row + '_edit_action'"
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onDetailPermission($event, rowData)"
-                  aria-label="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
+                  [aria-label]="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                   [pTooltip]="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -481,7 +487,7 @@
                   [id]="'app_detail_permission_table_row_' + row + '_copy_action'"
                   class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onCopyPermission($event, rowData)"
-                  aria-label="'ACTIONS.COPY.PERMISSION' | translate"
+                  [aria-label]="'ACTIONS.COPY.PERMISSION' | translate"
                   [pTooltip]="'ACTIONS.COPY.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -496,7 +502,7 @@
                   class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onDeletePermission($event, rowData)"
                   [disabled]="rowData.mandatory"
-                  aria-label="'ACTIONS.DELETE.PERMISSION' | translate"
+                  [aria-label]="'ACTIONS.DELETE.PERMISSION' | translate"
                   [pTooltip]="'ACTIONS.DELETE.PERMISSION' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -515,15 +521,15 @@
                 ></span>
               </td>
             </ng-container>
-            <td pFrozenColumn id="app_detail_permission_table_data_permission_key" class="p-2">
+            <td pFrozenColumn id="pm_app_detail_permission_table_data_permission_key" class="p-2">
               <div class="font-bold text-sm sm:text-base">{{ rowData.resource }} # {{ rowData.action }}</div>
               <div class="mt-1 text-xs hidden sm:block">{{ rowData.description }}</div>
             </td>
-            <td pFrozenColumn id="app_detail_permission_table_data_product_name" class="p-2">
+            <td pFrozenColumn id="pm_app_detail_permission_table_data_product_name" class="p-2">
               <div class="text-sm sm:text-base">{{ rowData.productDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
-            <td pFrozenColumn id="app_detail_permission_table_data_app_id" class="p-2 border-right-primary">
+            <td pFrozenColumn id="pm_app_detail_permission_table_data_app_id" class="p-2 border-right-primary">
               <div class="text-sm sm:text-base">{{ rowData.appDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.appId }}</div>
             </td>
@@ -572,7 +578,7 @@
                     *ngIf="!rowData.roles[role.id]"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onAssignPermission($event, rowData, role)"
-                    aria-label="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                    [aria-label]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -587,7 +593,7 @@
                     *ngIf="rowData.roles[role.id]"
                     class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                     (click)="onRemovePermission($event, rowData, role)"
-                    aria-label="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                    [aria-label]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"

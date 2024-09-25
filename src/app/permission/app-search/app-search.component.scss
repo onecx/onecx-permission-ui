@@ -1,9 +1,11 @@
-@import '/src/_mixins.scss';
+@import '/src/app/_apm-mixins.scss';
 
 @include correct-data-view-control;
 @include correct-search-criteria;
 @include correct-select-button;
 @include search-criteria-select-button;
+@include search-criteria-select-button-slim;
+@include search-criteria-select-button-filter;
 @include card-badges;
 @include displaying-text-responsive;
 @include media-queries;
