@@ -60,6 +60,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public loading = true
   public viewMode = 'grid'
   public appTypeItems: SelectItem[]
+  public appTypeFilterValue: string = 'ALL'
   public quickFilterValue: AppFilterType = 'ALL'
   public quickFilterItems: SelectItem[]
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
@@ -109,14 +110,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteriaGroup.controls['name'].disable()
     this.appTypeItems = [
       { label: 'DIALOG.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.SEARCH.FILTER.APP', value: 'APP' },
+      { label: 'DIALOG.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' },
       { label: 'DIALOG.SEARCH.FILTER.PRODUCT', value: 'PRODUCT' },
-      { label: 'DIALOG.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' }
+      { label: 'DIALOG.SEARCH.FILTER.APP', value: 'APP' }
     ]
     this.quickFilterItems = [
       { label: 'DIALOG.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' },
-      { label: 'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' }
+      { label: 'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' },
+      { label: 'DIALOG.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' }
     ]
     this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
       map(([typeValue, textFilter]) => {
@@ -431,6 +432,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     else if (ev.value) this.typeFilterValue$.next(ev.value)
   }
   public onAppTypeFilterChange(ev: any): void {
+    if (ev.value) this.appTypeFilterValue = ev.value
     if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
     else this.appSearchCriteriaGroup.controls['name'].enable()
   }

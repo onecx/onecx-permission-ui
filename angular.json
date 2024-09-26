@@ -57,8 +57,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "10kb"
                 }
               ],
               "fileReplacements": [
@@ -67,7 +67,6 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
               "extraWebpackConfig": "webpack.prod.config.js"
             }
           },

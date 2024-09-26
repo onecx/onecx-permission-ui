@@ -159,7 +159,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       { label: 'DIALOG.DETAIL.QUICK_FILTER.ALL', value: 'ALL' },
       { label: 'DIALOG.DETAIL.QUICK_FILTER.DELETE', value: 'DELETE' },
       { label: 'DIALOG.DETAIL.QUICK_FILTER.EDIT', value: 'EDIT' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' }
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.READ', value: 'READ' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' },
+      { label: 'DIALOG.DETAIL.QUICK_FILTER.WRITE', value: 'WRITE' }
     ]
   }
 

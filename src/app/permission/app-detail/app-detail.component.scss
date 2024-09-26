@@ -1,12 +1,15 @@
-@import '/src/_mixins.scss';
+@import '/src/app/_apm-mixins.scss';
 
 @include correct-data-view-control;
 @include correct-select-button;
+@include search-criteria-select-button;
+@include search-criteria-select-button-slim;
+@include search-criteria-select-button-filter;
 @include table-inline-buttons;
 @include compact-dropdown-list-items;
 @include danger-action;
 @include prepare-inputgroup;
-@include datatable-zebra-rows;
+@include dataview-list-zebra-rows;
 
 :host ::ng-deep {
   .word-break-all {
