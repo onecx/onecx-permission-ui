@@ -19,7 +19,7 @@ import {
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
 import { RowListGridData } from '@onecx/angular-accelerator'
-// import { FileSelectEvent } from 'primeng/fileupload'
+import { FileSelectEvent } from 'primeng/fileupload'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 const wsAbstract: WorkspaceAbstract = {
@@ -41,7 +41,8 @@ const app: Application = {
 
 const app2: Application = {
   name: 'appName2',
-  appId: 'appId2'
+  appId: 'appId2',
+  productName: 'product'
 }
 
 const appPageRes: ApplicationPageResult = {
@@ -193,7 +194,75 @@ describe('AppSearchComponent', () => {
 
     component.apps$.subscribe({
       next: (apps) => {
-        expect(apps.length).toBe(2)
+        expect(apps.length).toBe(1)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products with equals filter', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
+    component.typeFilterValue$.next('filterValue')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(1)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products with contains filter', (done) => {
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
+    component.textFilterValue$.next('textFilterValue')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(1)
+        apps.forEach((app) => {
+          expect(app.appType).toEqual('PRODUCT')
+        })
+        done()
+      },
+      error: done.fail
+    })
+  })
+
+  it('should search products with existing product name', (done) => {
+    appApiSpy.searchApplications.and.returnValue(
+      of({
+        stream: [
+          {
+            name: 'appName3',
+            appId: 'appId3',
+            productName: 'product2'
+          }
+        ]
+      } as any)
+    )
+
+    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+    component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+    component.searchApps()
+
+    component.apps$.subscribe({
+      next: (apps) => {
+        expect(apps.length).toBe(1)
         apps.forEach((app) => {
           expect(app.appType).toEqual('PRODUCT')
         })
@@ -211,7 +280,7 @@ describe('AppSearchComponent', () => {
 
     component.apps$.subscribe({
       next: (apps) => {
-        expect(apps.length).toBe(2)
+        expect(apps.length).toBe(1)
         apps.forEach((app) => {
           expect(app.appType).toEqual('PRODUCT')
         })
@@ -229,7 +298,7 @@ describe('AppSearchComponent', () => {
 
     component.apps$.subscribe({
       next: (apps) => {
-        expect(apps.length).toBe(2)
+        expect(apps.length).toBe(1)
         apps.forEach((app) => {
           expect(app.appType).toEqual('PRODUCT')
         })
@@ -247,7 +316,7 @@ describe('AppSearchComponent', () => {
 
     component.apps$.subscribe({
       next: (apps) => {
-        expect(apps.length).toBe(2)
+        expect(apps.length).toBe(1)
         apps.forEach((app) => {
           expect(app.appType).toEqual('PRODUCT')
         })
@@ -368,7 +437,7 @@ describe('AppSearchComponent', () => {
     })
   })
 
-  it('should disable name input field is app type on search is ALL', () => {
+  it('should disable name input field if app type on search is ALL', () => {
     component.onAppTypeFilterChange({ value: 'ALL' })
     expect(component.appSearchCriteriaGroup.controls['name'].disabled).toBeTrue()
 
@@ -478,32 +547,27 @@ describe('AppSearchComponent', () => {
       event = { files: fileList }
     })
 
-    // it('should select a file to upload', (done) => {
-    //   spyOn(file, 'text').and.returnValue(
-    //     Promise.resolve('{ appId: "id", name: "onecx-permission-ui", productName: "onecx-permission" }')
-    //   )
+    it('should select a file to upload', async () => {
+      const mockText = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
+      spyOn(file, 'text').and.returnValue(Promise.resolve(mockText))
+      translateServiceSpy.get.and.returnValue(of({}))
 
-    //   component.onSelect(event as any as FileSelectEvent)
+      await component.onSelect(event as any as FileSelectEvent)
 
-    //   setTimeout(() => {
-    //     expect(file.text).toHaveBeenCalled()
-    //     expect(component.importAssignmentItem).toEqual(app)
-    //     done()
-    //   })
-    // })
+      expect(file.text).toHaveBeenCalled()
+      expect(component.importAssignmentItem).toEqual(JSON.parse(mockText))
+    })
 
-    it('should handle JSON parse error', (done) => {
+    it('should handle JSON parse error', async () => {
       spyOn(file, 'text').and.returnValue(Promise.resolve('Invalid Json'))
       spyOn(console, 'error')
+      translateServiceSpy.get.and.returnValue(of({}))
 
-      component.onSelect(event)
+      await component.onSelect(event)
 
-      setTimeout(() => {
-        expect(console.error).toHaveBeenCalled()
-        expect(component.importError).toBeTrue()
-        expect(component.validationErrorCause).toBe('')
-        done()
-      })
+      expect(console.error).toHaveBeenCalled()
+      expect(component.importError).toBeTrue()
+      expect(component.validationErrorCause).toBe('')
     })
   })
 

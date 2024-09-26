@@ -20,7 +20,7 @@ import {
   RowListGridData
 } from '@onecx/portal-integration-angular'
 
-import { limitText, getCurrentDateTime } from 'src/app/shared/utils'
+import { limitText, getCurrentDateTime, sortByLocale } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
@@ -333,6 +333,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe(() => {
         try {
           const importPermission = JSON.parse(text)
+          console.log('IMPORT', importPermission)
           this.importAssignmentItem = importPermission
         } catch (err) {
           console.error('Import Error', err)
@@ -378,10 +379,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         map((data) => {
           if (data.stream) {
             for (const assignment of data.stream) {
-              this.assignedProductNames.push(assignment.productName!)
+              this.assignedProductNames.push(assignment.productName)
             }
           }
-          this.assignedProductNames = [...new Set(this.assignedProductNames)].sort()
+          this.assignedProductNames = [...new Set(this.assignedProductNames)].sort(sortByLocale)
         })
       )
       .subscribe()
