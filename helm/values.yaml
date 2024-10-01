@@ -19,6 +19,11 @@ app:
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-permission
           tagName: ocx-permission-component
+          endpoints:
+            - name: workspace
+              path: /workspace/{workspace-name}
+            - name: product
+              path: /product/{product-name}
         user-roles-permissions:
           exposedModule: "./OneCXUserRolesPermissionsComponent"
           description: "Show current user's roles and permissions"
