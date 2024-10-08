@@ -400,7 +400,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       } as SelectItem)
       return
     }
-    //this.filterProductItems.push({ label: '', value: null })
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.displayName, value: product.productName })
@@ -410,7 +409,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps(selectedProductName?: string) {
-    // this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
     this.filterAppItems = []
     // 1. load from permisions
     this.permissions
