@@ -97,7 +97,6 @@ export class RoleDetailComponent implements OnChanges {
           }
         })
     } else {
-      const roleNameChanged = this.formGroupRole.controls['name'].value !== this.role?.name
       const role = {
         modificationCount: this.role?.modificationCount,
         name: this.formGroupRole.controls['name'].value,
@@ -106,7 +105,7 @@ export class RoleDetailComponent implements OnChanges {
       this.roleApi.updateRole({ id: this.role?.id ?? '', updateRoleRequest: role }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
-          this.dataChanged.emit(roleNameChanged)
+          this.dataChanged.emit(true)
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })

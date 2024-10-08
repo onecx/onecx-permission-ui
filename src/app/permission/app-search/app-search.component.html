@@ -16,7 +16,7 @@
           tooltipEvent="hover"
         >
           <p-selectButton
-            inputid="pm_app_search_criteria_app_type"
+            inputid="apm_app_search_criteria_app_type"
             formControlName="appType"
             [options]="appTypeItems"
             (onChange)="onAppTypeFilterChange($event)"
@@ -36,7 +36,7 @@
       <div>
         <span class="p-float-label">
           <input
-            id="pm_app_search_criteria_name"
+            id="apm_app_search_criteria_name"
             pInputText
             type="text"
             formControlName="name"
@@ -46,7 +46,7 @@
             tooltipPosition="top"
             tooltipEvent="hover"
           />
-          <label for="pm_app_search_criteria_name">{{ 'APP.SEARCH.NAME' | translate }}</label>
+          <label for="apm_app_search_criteria_name">{{ 'APP.SEARCH.NAME' | translate }}</label>
         </span>
       </div>
     </div>
@@ -54,9 +54,9 @@
 
   <ocx-page-content styleClass="py-3 px-2">
     <div *ngIf="dataAccessIssue" class="m-3 flex flex-wrap justify-content-between align-items-center">
-      <p-message id="pm_app_search_data_access_issue" severity="error" [text]="exceptionKey | translate"></p-message>
+      <p-message id="apm_app_search_data_access_issue" severity="error" [text]="exceptionKey | translate"></p-message>
       <p-button
-        id="pm_app_search_reload_button"
+        id="apm_app_search_action_reload"
         icon="pi pi-refresh"
         (onClick)="onSearch()"
         [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
@@ -75,7 +75,7 @@
             tooltipEvent="hover"
           >
             <p-selectButton
-              inputid="pm_app_search_quick_filter"
+              inputid="apm_app_search_quick_filter"
               styleClass="data-view-control"
               [options]="quickFilterItems"
               [(ngModel)]="quickFilterValue"
@@ -114,7 +114,7 @@
         </ocx-data-view-controls>
       </div>
       <ocx-data-list-grid
-        id="pm_app_search_dataview"
+        id="apm_app_search_dataview"
         [data]="(filteredApps$ | async) ?? []"
         [paginator]="true"
         [pageSizes]="[20, 40, 100]"
@@ -169,7 +169,7 @@
   <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
     <p-fileUpload
       #fileUploader
-      id="permission_import_file_upload"
+      id="apm_import_file_upload"
       mode="advanced"
       name="file"
       accept=".json"
@@ -188,7 +188,7 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
       <p-button
-        id="permission_import_button_cancel"
+        id="apm_import_action_cancel"
         icon="pi pi-times"
         (onClick)="onCloseImportDialog()"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -211,6 +211,7 @@
   <div class="flex flex-column row-gap-2">
     <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
     <p-listbox
+      id="apm_export_assigned_product_list"
       [options]="assignedProductNames"
       [(ngModel)]="selectedProductNames"
       [filter]="true"
@@ -225,7 +226,7 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
       <p-button
-        id="permission_export_button_cancel"
+        id="apm_export_action_cancel"
         icon="pi pi-times"
         (onClick)="onCloseExportDialog()"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -234,7 +235,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="permission_export_button_export"
+        id="apm_export_action_export"
         icon="pi pi-download"
         (onClick)="onExportConfirmation()"
         [disabled]="selectedProductNames.length === 0"

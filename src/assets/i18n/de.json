@@ -17,6 +17,7 @@
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
+      "IAM_ROLES": "IAM Rollen auswählen",
       "IAM_ROLES.TOOLTIP": "IAM Rollen auswählen damit sie hier verwendet werden können",
       "WORKSPACE_ROLES.TOOLTIP": "Fehlende Workspace Rollen übernehmen damit sie hier verwendet werden können",
       "MESSAGE": {

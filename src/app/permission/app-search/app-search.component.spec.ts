@@ -642,6 +642,7 @@ describe('AppSearchComponent', () => {
     spyOn(component as any, 'prepareDialogTranslations')
 
     component.ngOnInit()
+    component.onExport()
 
     expect(component.assignedProductNames).toEqual(['prod1', 'prod2'])
   })
@@ -653,6 +654,7 @@ describe('AppSearchComponent', () => {
     spyOn(console, 'error')
 
     component.ngOnInit()
+    component.onExport()
 
     expect(console.error).toHaveBeenCalled()
   })
