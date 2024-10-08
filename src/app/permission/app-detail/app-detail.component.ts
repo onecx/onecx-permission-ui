@@ -17,10 +17,8 @@ import {
   Permission,
   Assignment,
   CreateAssignmentRequestParams,
-  GrantRoleAssignmentsRequestParams,
   GrantRoleApplicationAssignmentsRequestParams,
   GrantRoleProductsAssignmentsRequestParams,
-  RevokeRoleAssignmentsRequestParams,
   RevokeRoleProductsAssignmentsRequestParams,
   RevokeRoleApplicationAssignmentsRequestParams,
   DeleteAssignmentRequestParams,
@@ -402,7 +400,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       } as SelectItem)
       return
     }
-    this.filterProductItems.push({ label: '', value: null })
+    //this.filterProductItems.push({ label: '', value: null })
     if (this.currentApp.workspaceDetails?.products) {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.displayName, value: product.productName })
@@ -412,7 +410,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilterApps(selectedProductName?: string) {
-    this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
+    // this.filterAppItems = [{ label: '', value: null } as SelectItem] // empty item
+    this.filterAppItems = []
     // 1. load from permisions
     this.permissions
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
@@ -694,10 +693,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  // GRANT ALL depends on what ALL means:
-  // 1. Value in App filter     => assign all permissions of this app to the role
-  // 2. Value in Product filter => assign all permissions of all Apps of this product to the role
-  // 3. No filter               => assign all permissions to the role
+  /* GRANT ALL depends on what ALL means:
+   * 1. Value in App filter     => assign all permissions of this app to the role
+   * 2. Value in Product filter => assign all permissions of all Apps of this product to the role
+   * 3. No Product filter       => product list depends on currentApp/AppType:
+   * 3.1 If currentApp is PRODUCT then this product must be used
+   * 3.2 If currentApp is WORKSPACE then all product are used
+   */
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const response: any = {
       next: () => {
@@ -715,26 +717,23 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           roleId: role.id,
           createRoleApplicationAssignmentRequest: {
             appId: this.filterAppValue,
-            productName: this.getProductNameForApp(this.filterAppValue)
+            productName: this.prepareProductListForBulkOperation()[0]
           }
         } as GrantRoleApplicationAssignmentsRequestParams)
         .subscribe(response)
-    } else if (this.filterProductValue) {
+    } else {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
-          createRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
+          createRoleProductsAssignmentRequest: { productNames: this.prepareProductListForBulkOperation() }
         } as GrantRoleProductsAssignmentsRequestParams)
         .subscribe(response)
-    } else {
-      this.assApi.grantRoleAssignments({ roleId: role.id } as GrantRoleAssignmentsRequestParams).subscribe(response)
     }
   }
 
-  // REVOKE ALL depends on what ALL means:
-  // 1. Value in App filter     => remove all assignments of this app to the role
-  // 2. Value in Product filter => remove all assignments of all Apps of this product to the role
-  // 3. No filter               => remove all assignments of the role
+  /* REVOKE ALL depends on what ALL means:
+     ... see GRANT description above
+  */
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     const response: any = {
       next: () => {
@@ -752,39 +751,32 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           roleId: role.id,
           revokeRoleApplicationAssignmentRequest: {
             appId: this.filterAppValue,
-            productName: this.getProductNameForApp(this.filterAppValue)
+            productName: this.prepareProductListForBulkOperation()[0]
           }
         } as RevokeRoleApplicationAssignmentsRequestParams)
         .subscribe(response)
-    } else if (this.filterProductValue) {
+    } else {
       this.assApi
         .revokeRoleProductsAssignments({
           roleId: role.id,
-          revokeRoleProductsAssignmentRequest: { productNames: this.prepareProductList() }
+          revokeRoleProductsAssignmentRequest: { productNames: this.prepareProductListForBulkOperation() }
         } as RevokeRoleProductsAssignmentsRequestParams)
         .subscribe(response)
-    } else {
-      this.assApi.revokeRoleAssignments({ roleId: role.id } as RevokeRoleAssignmentsRequestParams).subscribe(response)
     }
   }
 
-  // Not perfect: apps are unique only within the product
-  private getProductNameForApp(appId: string | undefined): string | undefined {
-    let pList: App[] = []
-    if (this.productApps.length > 1) {
-      pList = this.productApps.filter((p) => p.appId === appId)
-    }
-    return pList.length === 1 ? pList[0].productName : undefined
-  }
-
-  private prepareProductList(): string[] {
+  private prepareProductListForBulkOperation(): string[] {
     const pList: string[] = []
-    // => case 1: Product
-    if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
-    // => case 2: Workspace
-    //         a) selected product
+    // case 1: APP filter value =>
+    if (this.filterAppValue) {
+      const apps = this.productApps.filter((p) => p.appId === this.filterAppValue)
+      apps.length === 1 ? pList.push(apps[0].productName ?? '') : undefined
+      // case 2: PRODUCT
+    } else if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
+    // case 3: WORKSPACE
+    //      a) selected product
     else if (this.filterProductValue) pList.push(this.filterProductValue)
-    //         b) all products
+    //      b) all products
     else if (this.filterProductItems.length > 1)
       this.filterProductItems.forEach((p) => {
         if (p.value) pList.push(p.value) // ignore empty entry
