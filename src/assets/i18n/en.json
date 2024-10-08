@@ -17,6 +17,7 @@
       "PERMISSION.TOOLTIP": "Create a new Permission",
       "ROLE": "Create Role",
       "ROLE.TOOLTIP": "Create a new Role",
+      "IAM_ROLES": "Select missing IAM Roles",
       "IAM_ROLES.TOOLTIP": "Select IAM Roles to be used here",
       "WORKSPACE_ROLES.TOOLTIP": "Create missing Workspace Roles to be used here",
       "MESSAGE": {

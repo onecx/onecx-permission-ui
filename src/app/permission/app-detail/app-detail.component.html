@@ -11,7 +11,7 @@
   <ocx-page-content>
     <p-message
       *ngIf="loadingExceptionKey"
-      id="pm_app_detail_permission_table_data_access_issue"
+      id="apm_app_detail_permission_table_data_access_issue"
       severity="error"
       styleClass="m-3"
       [text]="loadingExceptionKey | translate"
@@ -20,7 +20,7 @@
     <ng-container *ngIf="!loadingExceptionKey">
       <p-table
         #permissionTable
-        id="pm_app_detail_permission_table"
+        id="apm_app_detail_permission_table"
         styleClass="px-3"
         [columns]="roles"
         [value]="permissionRows"
@@ -42,7 +42,7 @@
                 tooltipEvent="hover"
               >
                 <p-selectButton
-                  inputid="pm_app_detail_permission_table_quick_filter"
+                  inputid="apm_app_detail_permission_table_quick_filter"
                   styleClass="data-view-control"
                   [options]="quickFilterItems"
                   [(ngModel)]="quickFilterValue"
@@ -63,7 +63,7 @@
             <div class="p-inputgroup p-inputgroup w-20rem sm:mx-3">
               <a
                 tabindex="0"
-                id="pm_app_detail_permission_table_filter_contains"
+                id="apm_app_detail_permission_table_filter_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'contains'"
                 (click)="onFilterModeChange('=')"
@@ -75,7 +75,7 @@
               </a>
               <a
                 tabindex="0"
-                id="pm_app_detail_permission_table_filter_not_contains"
+                id="apm_app_detail_permission_table_filter_not_contains"
                 class="p-inputgroup-addon text-lg font-bold text-center px-1 py-0 pseudo-selectbutton data-view-control-border"
                 [class.p-highlight]="this.filterMode === 'notContains'"
                 (click)="onFilterModeChange('!=')"
@@ -88,7 +88,7 @@
               <span class="p-float-label">
                 <input
                   #permissionTableFilterInput
-                  id="pm_app_detail_permission_table_filter"
+                  id="apm_app_detail_permission_table_filter"
                   pInputText
                   type="text"
                   class="py-0 data-view-control-border"
@@ -102,13 +102,13 @@
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 />
-                <label for="pm_app_detail_permission_table_filter">
+                <label for="apm_app_detail_permission_table_filter">
                   {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label
                 >
               </span>
               <a
                 tabindex="0"
-                id="pm_app_detail_permission_table_filter_clear"
+                id="apm_app_detail_permission_table_filter_clear"
                 class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
                 (click)="onClearTableFilter()"
                 [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -118,7 +118,7 @@
               </a>
             </div>
             <p-button
-              id="pm_app_detail_permission_table_reload_button"
+              id="apm_app_detail_permission_table_reload_button"
               styleClass="h-full"
               icon="pi pi-refresh"
               (onClick)="onReload()"
@@ -135,7 +135,7 @@
           <tr>
             <th
               pFrozenColumn
-              id="pm_app_detail_permission_table_header_permissions"
+              id="apm_app_detail_permission_table_header_permissions"
               [attr.colspan]="!showPermissionTools ? 3 : protectedAssignments.length === 0 ? 4 : 5"
               class="text-center border-right-primary"
               [ngClass]="
@@ -179,7 +179,7 @@
               </div>
             </th>
             <th
-              id="pm_app_detail_permission_table_header_roles"
+              id="apm_app_detail_permission_table_header_roles"
               [attr.colspan]="roles ? roles.length : 0"
               class="py-0 text-center"
             >
@@ -259,7 +259,7 @@
             <ng-container *ngIf="showPermissionTools">
               <th
                 pFrozenColumn
-                id="pm_app_detail_permission_table_header_actions"
+                id="apm_app_detail_permission_table_header_actions"
                 class="pt-2 pb-1 vertical-align-bottom border-bottom-primary text-center"
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
@@ -281,7 +281,7 @@
             <th
               pFrozenColumn
               pSortableColumn="key"
-              id="pm_app_detail_permission_table_header_permission_key"
+              id="apm_app_detail_permission_table_header_permission_key"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
               {{ 'PERMISSION.KEY' | translate }}
@@ -289,14 +289,14 @@
             </th>
             <th
               pFrozenColumn
-              id="pm_app_detail_permission_table_header_permission_filter_product"
+              id="apm_app_detail_permission_table_header_permission_filter_product"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
             >
               <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
               <div *ngIf="!currentApp.isProduct" class="flex">
                 <span #filterProduct class="p-float-label inline-block">
                   <p-dropdown
-                    id="pm_app_detail_permission_table_filter_product_name"
+                    id="apm_app_detail_permission_table_filter_product_name"
                     styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -308,7 +308,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   ></p-dropdown>
-                  <label for="pm_app_detail_permission_table_filter_product_name">
+                  <label for="apm_app_detail_permission_table_filter_product_name">
                     {{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</label
                   >
                 </span>
@@ -328,13 +328,13 @@
             </th>
             <th
               pFrozenColumn
-              id="pm_app_detail_permission_table_header_permission_filter_app_id"
+              id="apm_app_detail_permission_table_header_permission_filter_app_id"
               class="pt-2 pb-1 px-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
             >
               <div class="flex">
                 <span #filterApp class="p-float-label inline-block">
                   <p-dropdown
-                    id="pm_app_detail_permission_table_filter_app_id"
+                    id="apm_app_detail_permission_table_filter_app_id"
                     styleClass="w-full clear-icon-used"
                     [appendTo]="'body'"
                     [showClear]="true"
@@ -347,7 +347,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   ></p-dropdown>
-                  <label for="pm_app_detail_permission_table_filter_app_id">
+                  <label for="apm_app_detail_permission_table_filter_app_id">
                     {{ 'DIALOG.DETAIL.FILTER.APPS' | translate }}</label
                   >
                 </span>
@@ -369,7 +369,7 @@
 
             <!-- ROLES (actually managed by IDM, duplicated to manage permission assignments) -->
             <th
-              id="pm_app_detail_permission_table_header_roles"
+              id="apm_app_detail_permission_table_header_roles"
               *ngFor="let role of columns"
               class="pt-2 pb-1 px-2 text-center border-bottom-primary vertical-align-top"
             >
@@ -458,7 +458,7 @@
             <ng-container *ngIf="showPermissionTools">
               <td
                 pFrozenColumn
-                id="pm_app_detail_permission_table_header_actions"
+                id="apm_app_detail_permission_table_header_actions"
                 class="pt-2 pb-1 px-2 white-space-nowrap text-center"
               >
                 <button
@@ -521,15 +521,15 @@
                 ></span>
               </td>
             </ng-container>
-            <td pFrozenColumn id="pm_app_detail_permission_table_data_permission_key" class="p-2">
+            <td pFrozenColumn id="apm_app_detail_permission_table_data_permission_key" class="p-2">
               <div class="font-bold text-sm sm:text-base">{{ rowData.resource }} # {{ rowData.action }}</div>
               <div class="mt-1 text-xs hidden sm:block">{{ rowData.description }}</div>
             </td>
-            <td pFrozenColumn id="pm_app_detail_permission_table_data_product_name" class="p-2">
+            <td pFrozenColumn id="apm_app_detail_permission_table_data_product_name" class="p-2">
               <div class="text-sm sm:text-base">{{ rowData.productDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.productName }}</div>
             </td>
-            <td pFrozenColumn id="pm_app_detail_permission_table_data_app_id" class="p-2 border-right-primary">
+            <td pFrozenColumn id="apm_app_detail_permission_table_data_app_id" class="p-2 border-right-primary">
               <div class="text-sm sm:text-base">{{ rowData.appDisplayName }}</div>
               <div class="hidden sm:block mt-1 text-xs">{{ rowData.appId }}</div>
             </td>

@@ -137,7 +137,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.prepareDialogTranslations()
     this.searchApps()
-    this.getAllProductsWithAssignedPerms()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
@@ -379,11 +378,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         }),
         map((data) => {
           if (data.stream) {
+            const ap: string[] = []
             for (const assignment of data.stream) {
-              this.assignedProductNames.push(assignment.productName)
+              if (!ap.includes(assignment.productName)) ap.push(assignment.productName)
             }
+            ap.sort(sortByLocale)
+            this.assignedProductNames = ap
           }
-          this.assignedProductNames = [...new Set(this.assignedProductNames)].sort(sortByLocale)
         })
       )
       .subscribe()
@@ -391,6 +392,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public onExport(): void {
     this.displayExportDialog = true
+    this.getAllProductsWithAssignedPerms()
   }
   public onExportConfirmation(): void {
     if (this.selectedProductNames.length > 0) {
