@@ -958,7 +958,7 @@ describe('AppDetailComponent', () => {
     component.filterProductValue = undefined
     component.currentApp.isProduct = false
 
-    const res = component['prepareProductList']()
+    const res = component['prepareProductListForBulkOperation']()
 
     expect(res).toEqual(['prodName', 'prodName2'])
   })
