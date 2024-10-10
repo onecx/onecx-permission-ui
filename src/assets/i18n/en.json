@@ -121,7 +121,7 @@
     "CHOOSE": "Choose",
     "CLEAR_CACHE": "Clear Cache",
     "CONFIRM": "Confirm",
-    "TODO.LOADING": "...is loading",
+    "LOADING": "...is loading",
     "RELOAD": "Reload",
     "SAVE": "Save",
     "SAVE_AS": "Save as ...",

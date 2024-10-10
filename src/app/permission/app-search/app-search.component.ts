@@ -56,9 +56,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
+  public searchInProgress = false
   public exceptionKey = ''
   public dataAccessIssue = false
-  public loading = true
   public viewMode = 'grid'
   public appTypeItems: SelectItem[]
   public appTypeFilterValue: string = 'ALL'
@@ -68,7 +68,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public sortField = 'appType'
   public sortOrder = -1
-  public searchInProgress = false
 
   public displayImportDialog = false
   public displayExportDialog = false
@@ -185,6 +184,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   // Product => Group of Permission Applications with same product name
   private searchProducts(searchAppType?: string): Observable<(App & RowListGridData)[]> {
+    this.searchInProgress = true
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
