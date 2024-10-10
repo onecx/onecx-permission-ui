@@ -71,7 +71,7 @@
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
       },
-      "APPLICATION_LIST": "Applikationen mit zugewiesenen Berechtigungen"
+      "APPLICATION_LIST": "Liste der Applikationen"
     },
     "IMPORT": {
       "LABEL": "Import",
@@ -121,7 +121,7 @@
     "CHOOSE": "Auswählen",
     "CLEAR_CACHE": "Cache entfernen",
     "CONFIRM": "Bestätigen",
-    "TODO.LOADING": "...wird geladen",
+    "LOADING": "...wird geladen",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",
     "SAVE_AS": "Speichern als ...",

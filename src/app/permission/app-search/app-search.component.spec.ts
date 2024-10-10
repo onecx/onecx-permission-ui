@@ -327,17 +327,10 @@ describe('AppSearchComponent', () => {
   })
 
   it('should search products with empty appIds', (done) => {
-    const app3: Application = {
-      name: 'appName3',
-      productName: 'product3'
-    }
-    const app4: Application = {
-      name: 'appName4',
-      productName: 'product4'
-    }
-    const appPageRes2: ApplicationPageResult = {
-      stream: [app3, app4]
-    }
+    const app3: Application = { name: 'appName3', productName: 'product3' }
+    const app4: Application = { name: 'appName4', productName: 'product4' }
+    const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
+
     appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
     component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
     component.appSearchCriteriaGroup.controls['name'].setValue('app')
@@ -635,28 +628,41 @@ describe('AppSearchComponent', () => {
   /*
    * EXPORT
    */
-  it('should prepare export by getting all products with permissions', () => {
-    const prodsWithAssgnmts = { stream: [{ productName: 'prod1' }, { productName: 'prod2' }] }
-    assgnmtApiSpy.searchAssignments.and.returnValue(of(prodsWithAssgnmts))
-    spyOn(component, 'searchApps')
-    spyOn(component as any, 'prepareDialogTranslations')
+  it('should prepare export by getting all products for export', (done) => {
+    const app3: Application = { name: 'appName3', productName: 'product3' }
+    const app4: Application = { name: 'appName4', productName: 'product4' }
+    const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
+    appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
 
     component.ngOnInit()
     component.onExport()
 
-    expect(component.assignedProductNames).toEqual(['prod1', 'prod2'])
+    component.products$.subscribe({
+      next: (products) => {
+        expect(products.length).toBe(2)
+        expect(products[0].displayName).toEqual('product3')
+        expect(products[1].displayName).toEqual('product4')
+        done()
+      },
+      error: done.fail
+    })
   })
 
-  it('should handle error when getting all products with permissions', () => {
-    assgnmtApiSpy.searchAssignments.and.returnValue(throwError(() => new Error()))
-    spyOn(component, 'searchApps')
-    spyOn(component as any, 'prepareDialogTranslations')
-    spyOn(console, 'error')
+  it('should handle error when getting all products for export', (done) => {
+    const err = { status: 404 }
+    appApiSpy.searchApplications.and.returnValue(throwError(() => err))
 
     component.ngOnInit()
     component.onExport()
 
-    expect(console.error).toHaveBeenCalled()
+    component.products$.subscribe({
+      next: (products) => {
+        expect(products.length).toBe(0)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.APPS')
+        done()
+      },
+      error: done.fail
+    })
   })
 
   it('should display export dialog', () => {

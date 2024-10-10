@@ -208,20 +208,27 @@
   [dismissableMask]="true"
   [style]="{ 'max-width': '500px' }"
 >
-  <div class="flex flex-column row-gap-2">
-    <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
-    <p-listbox
-      id="apm_export_assigned_product_list"
-      [options]="assignedProductNames"
-      [(ngModel)]="selectedProductNames"
-      [filter]="true"
-      [checkbox]="true"
-      [multiple]="true"
-      [metaKeySelection]="false"
-      [showToggleAll]="true"
-      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-      [listStyle]="{ 'max-height': '300px' }"
-    />
+  <div *ngIf="products$ | async as products" class="flex flex-column row-gap-2">
+    <!-- Loading -->
+    <div *ngIf="searchInProgress">
+      <p-message severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
+    </div>
+    <!-- Loaded -->
+    <div *ngIf="!searchInProgress">
+      <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
+      <p-listbox
+        id="apm_export_assigned_product_list"
+        [options]="extractProductNames(products)"
+        [(ngModel)]="selectedProductNames"
+        [filter]="true"
+        [checkbox]="true"
+        [multiple]="true"
+        [metaKeySelection]="false"
+        [showToggleAll]="true"
+        [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+        [listStyle]="{ 'max-height': '300px' }"
+      />
+    </div>
   </div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">

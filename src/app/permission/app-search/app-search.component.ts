@@ -52,12 +52,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public apps$!: Observable<(App & RowListGridData)[]>
   public filteredApps$!: Observable<(App & RowListGridData)[]>
   private papps$!: Observable<ApplicationPageResult>
+  public products$!: Observable<(App & RowListGridData)[]>
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
+  public searchInProgress = false
   public exceptionKey = ''
   public dataAccessIssue = false
-  public loading = true
   public viewMode = 'grid'
   public appTypeItems: SelectItem[]
   public appTypeFilterValue: string = 'ALL'
@@ -67,7 +68,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public sortField = 'appType'
   public sortOrder = -1
-  public searchInProgress = false
 
   public displayImportDialog = false
   public displayExportDialog = false
@@ -75,7 +75,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   importAssignmentItem: Permission | null = null
   public importError = false
   public validationErrorCause: string
-  public assignedProductNames: string[] = []
   public selectedProductNames: string[] = []
 
   public limitText = limitText
@@ -185,12 +184,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   // Product => Group of Permission Applications with same product name
   private searchProducts(searchAppType?: string): Observable<(App & RowListGridData)[]> {
+    this.searchInProgress = true
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
           appId: searchAppType === 'APP' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined,
           productName:
-            searchAppType === 'PRODUCT' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined
+            searchAppType === 'PRODUCT' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined,
+          pageSize: 1000
         }
       })
       .pipe(
@@ -368,31 +369,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /****************************************************************************
    *  EXPORT
    */
-  private getAllProductsWithAssignedPerms() {
-    this.assgnmtApi
-      .searchAssignments({ assignmentSearchCriteria: {} })
-      .pipe(
-        catchError((err) => {
-          console.error('searchAssignments():', err)
-          return of([] as any)
-        }),
-        map((data) => {
-          if (data.stream) {
-            const ap: string[] = []
-            for (const assignment of data.stream) {
-              if (!ap.includes(assignment.productName)) ap.push(assignment.productName)
-            }
-            ap.sort(sortByLocale)
-            this.assignedProductNames = ap
-          }
-        })
-      )
-      .subscribe()
-  }
-
   public onExport(): void {
+    this.products$ = this.searchProducts() // search with max page size
     this.displayExportDialog = true
-    this.getAllProductsWithAssignedPerms()
+  }
+  public extractProductNames(products: (App & RowListGridData)[]): string[] {
+    return Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
   }
   public onExportConfirmation(): void {
     if (this.selectedProductNames.length > 0) {
