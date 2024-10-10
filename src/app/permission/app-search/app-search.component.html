@@ -208,11 +208,11 @@
   [dismissableMask]="true"
   [style]="{ 'max-width': '500px' }"
 >
-  <div class="flex flex-column row-gap-2">
+  <div *ngIf="products$ | async as products" class="flex flex-column row-gap-2">
     <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
     <p-listbox
       id="apm_export_assigned_product_list"
-      [options]="assignedProductNames"
+      [options]="extractProductNames(products)"
       [(ngModel)]="selectedProductNames"
       [filter]="true"
       [checkbox]="true"

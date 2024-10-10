@@ -71,7 +71,7 @@
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
       },
-      "APPLICATION_LIST": "Applikationen mit zugewiesenen Berechtigungen"
+      "APPLICATION_LIST": "List der Applikationen"
     },
     "IMPORT": {
       "LABEL": "Import",
