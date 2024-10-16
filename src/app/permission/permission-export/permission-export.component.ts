@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import FileSaver from 'file-saver'
 
 import { getCurrentDateTime, sortByLocale } from 'src/app/shared/utils'
@@ -12,7 +12,7 @@ import { RowListGridData } from '@onecx/angular-accelerator'
   templateUrl: './permission-export.component.html',
   styleUrls: ['./permission-export.component.scss']
 })
-export class PermissionExportComponent implements OnChanges {
+export class PermissionExportComponent {
   @Input() products: any
   @Input() displayExportDialog = false
   @Output() displayExportDialogChange = new EventEmitter()
@@ -22,12 +22,6 @@ export class PermissionExportComponent implements OnChanges {
     private assgnmtApi: AssignmentAPIService,
     private msgService: PortalMessageService
   ) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['displayExportDialog'] && !changes['displayExportDialog'].currentValue) {
-      this.selectedProductNames = []
-    }
-  }
 
   public extractProductNames(products: (App & RowListGridData)[]): string[] {
     return Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
