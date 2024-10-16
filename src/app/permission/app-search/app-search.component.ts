@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
 import { FileSelectEvent } from 'primeng/fileupload'
-import FileSaver from 'file-saver'
 
 import {
   Action,
@@ -20,7 +19,7 @@ import {
   RowListGridData
 } from '@onecx/portal-integration-angular'
 
-import { limitText, getCurrentDateTime, sortByLocale } from 'src/app/shared/utils'
+import { limitText } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
@@ -366,43 +365,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.validationErrorCause = ''
   }
 
-  /****************************************************************************
-   *  EXPORT
-   */
-  public onExport(): void {
-    this.products$ = this.searchProducts() // search with max page size
-    this.displayExportDialog = true
-  }
-  public extractProductNames(products: (App & RowListGridData)[]): string[] {
-    return Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
-  }
-  public onExportConfirmation(): void {
-    if (this.selectedProductNames.length > 0) {
-      this.assgnmtApi
-        .exportAssignments({ exportAssignmentsRequest: { productNames: this.selectedProductNames } })
-        .subscribe({
-          next: (item) => {
-            const permissionsJson = JSON.stringify(item, null, 2)
-            FileSaver.saveAs(
-              new Blob([permissionsJson], { type: 'text/json' }),
-              'onecx-permissions_' + getCurrentDateTime() + '.json'
-            )
-            this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
-            this.displayExportDialog = false
-            this.selectedProductNames = []
-          },
-          error: (err) => {
-            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
-            console.error(err)
-          }
-        })
-    }
-  }
-  public onCloseExportDialog(): void {
-    this.displayExportDialog = false
-    this.selectedProductNames = []
-  }
-
   /**
    * UI Events
    */
@@ -437,5 +399,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteriaGroup.reset({ appType: 'ALL' })
     this.apps$ = of([] as (App & RowListGridData)[])
     this.filteredApps$ = of([] as (App & RowListGridData)[])
+  }
+
+  public onExport(): void {
+    this.products$ = this.searchProducts() // search with max page size
+    this.displayExportDialog = true
   }
 }
