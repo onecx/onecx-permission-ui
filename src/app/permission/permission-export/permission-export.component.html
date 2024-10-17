@@ -3,7 +3,8 @@
   [header]="'ACTIONS.EXPORT.ASSIGNMENT' | translate"
   [modal]="true"
   [resizable]="true"
-  [dismissableMask]="true"
+  [closable]="false"
+  [dismissableMask]="false"
   [style]="{ 'max-width': '500px' }"
 >
   <div *ngIf="products" class="flex flex-column row-gap-2">

@@ -15,7 +15,7 @@ import { RowListGridData } from '@onecx/angular-accelerator'
 export class PermissionExportComponent {
   @Input() products: any
   @Input() displayExportDialog = false
-  @Output() displayExportDialogChange = new EventEmitter()
+  @Output() displayExportDialogChange = new EventEmitter<boolean>()
   public selectedProductNames: string[] = []
 
   constructor(
@@ -38,7 +38,6 @@ export class PermissionExportComponent {
               'onecx-permissions_' + getCurrentDateTime() + '.json'
             )
             this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
-            this.displayExportDialogChange.emit(false)
             this.selectedProductNames = []
           },
           error: (err) => {
@@ -46,6 +45,7 @@ export class PermissionExportComponent {
             console.error(err)
           }
         })
+      this.displayExportDialogChange.emit(false)
     }
   }
   public onCloseExportDialog(): void {
