@@ -1,8 +1,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRoute, Router } from '@angular/router'
-import { RouterTestingModule } from '@angular/router/testing'
+import { ActivatedRoute, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 import { of, throwError } from 'rxjs'
@@ -76,8 +76,6 @@ describe('AppSearchComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AppSearchComponent],
       imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
         DataViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
@@ -85,6 +83,9 @@ describe('AppSearchComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
+        provideHttpClientTesting(),
+        provideHttpClient(),
+        provideRouter([{ path: '', component: AppSearchComponent }]),
         { provide: ApplicationAPIService, useValue: appApiSpy },
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
@@ -671,37 +672,5 @@ describe('AppSearchComponent', () => {
     component.onExport()
 
     expect(component.displayExportDialog).toBeTrue()
-  })
-
-  describe('onExportConfirmation', () => {
-    it('should export assignment items', () => {
-      assgnmtApiSpy.exportAssignments.and.returnValue(of({} as any))
-      const selectedNames = ['Product1', 'Product2']
-      component.selectedProductNames = selectedNames
-
-      component.onExportConfirmation()
-
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
-    })
-
-    it('should display error msg when export fails', () => {
-      assgnmtApiSpy.exportAssignments.and.returnValue(throwError(() => 'Error'))
-      const selectedNames = ['Product1', 'Product2']
-      component.selectedProductNames = selectedNames
-
-      component.onExportConfirmation()
-
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
-    })
-  })
-
-  it('should reset displayExportDialog, selectedResults, and selectedProductNames', () => {
-    component.displayExportDialog = true
-    component.selectedProductNames = ['Product1']
-
-    component.onCloseExportDialog()
-
-    expect(component.displayExportDialog).toBeFalse()
-    expect(component.selectedProductNames).toEqual([])
   })
 })

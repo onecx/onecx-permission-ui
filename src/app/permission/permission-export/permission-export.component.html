@@ -1,0 +1,50 @@
+<p-dialog
+  [(visible)]="displayExportDialog"
+  [header]="'ACTIONS.EXPORT.ASSIGNMENT' | translate"
+  [modal]="true"
+  [resizable]="true"
+  [closable]="false"
+  [dismissableMask]="false"
+  [style]="{ 'max-width': '500px' }"
+>
+  <div *ngIf="products" class="flex flex-column row-gap-2">
+    <div>
+      <div>{{ listedProductsHeader | translate }}</div>
+      <p-listbox
+        id="apm_export_assigned_product_list"
+        [options]="products"
+        [(ngModel)]="selectedProductNames"
+        [filter]="true"
+        [checkbox]="true"
+        [multiple]="true"
+        [metaKeySelection]="false"
+        [showToggleAll]="true"
+        [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+        [listStyle]="{ 'max-height': '300px' }"
+      />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+      <p-button
+        id="apm_export_action_cancel"
+        icon="pi pi-times"
+        (onClick)="onCloseExportDialog()"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+      <p-button
+        id="apm_export_action_export"
+        icon="pi pi-download"
+        (onClick)="onExportConfirmation()"
+        [disabled]="selectedProductNames.length === 0"
+        [label]="'ACTIONS.EXPORT.LABEL' | translate"
+        [pTooltip]="'ACTIONS.EXPORT.ITEMS_SELECTED.TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

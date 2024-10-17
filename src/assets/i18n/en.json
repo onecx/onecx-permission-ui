@@ -71,7 +71,9 @@
         "ASSIGNMENT.EXPORT_OK": "Permissions were exported successfully",
         "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permissions were not exported."
       },
-      "APPLICATION_LIST": "List of Applications"
+      "APPLICATION_LIST": "List of Applications:",
+      "WS_APPLICATION_LIST": "List of Workspace Applications:",
+      "OF_APPLICATION": "of this Application:"
     },
     "IMPORT": {
       "LABEL": "Import",

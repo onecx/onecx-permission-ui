@@ -633,3 +633,9 @@
   [displayDeleteDialog]="showPermissionDeleteDialog"
   (dataChanged)="onDetailChanged($event)"
 ></app-permission-detail>
+
+<app-permission-export
+  [products]="productNames"
+  [listedProductsHeader]="listedProductsHeader"
+  [(displayExportDialog)]="displayExportDialog"
+></app-permission-export>

@@ -71,7 +71,9 @@
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
       },
-      "APPLICATION_LIST": "Liste der Applikationen"
+      "APPLICATION_LIST": "Liste der Applikationen:",
+      "WS_APPLICATION_LIST": "Liste der Applikationen dieses Workspace:",
+      "OF_APPLICATION": "dieser Applikation:"
     },
     "IMPORT": {
       "LABEL": "Import",

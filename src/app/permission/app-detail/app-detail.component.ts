@@ -32,7 +32,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
+import { dropDownSortItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
   isProduct: boolean
@@ -93,6 +93,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterAppItems!: SelectItem[]
   public filterAppValue: string | undefined = undefined
   private productApps: App[] = []
+  public productNames: string[] = []
+  public listedProductsHeader: string = ''
 
   // permission management
   private permissions$!: Observable<PermissionPageResult>
@@ -103,6 +105,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
   public showPermissionDetailDialog = false
   public showPermissionDeleteDialog = false
+  public displayExportDialog = false
   public showPermissionTools = false
   public protectedAssignments: Array<string> = []
 
@@ -183,11 +186,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         'ACTIONS.CREATE.ROLE.TOOLTIP',
         'ACTIONS.DELETE.LABEL',
         'ACTIONS.DELETE.APP',
-        'APP.TYPE'
+        'APP.TYPE',
+        'ACTIONS.EXPORT.LABEL',
+        'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'
       ])
       .pipe(
-        map((data: any) => {
+        map((data) => {
           return [
+            {
+              label: data['ACTIONS.EXPORT.LABEL'],
+              title: data['ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'],
+              actionCallback: () => this.onExport(),
+              icon: 'pi pi-download',
+              show: 'always',
+              permission: 'PERMISSION#EDIT'
+            },
             {
               label: data['ACTIONS.NAVIGATION.BACK'],
               title: data['ACTIONS.NAVIGATION.BACK.TOOLTIP'],
@@ -208,11 +221,27 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       )
   }
 
+  /**
+   * UI Events
+   */
   private onClose(): void {
     this.location.back()
   }
   public onReload(): void {
     this.loadData()
+  }
+  public onExport(): void {
+    if (this.currentApp.appType === 'WORKSPACE') {
+      this.currentApp.workspaceDetails?.products?.forEach((detail) => {
+        this.productNames.push(detail.productName!)
+      })
+      this.productNames.sort(sortByLocale)
+      this.listedProductsHeader = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
+    } else if (this.currentApp.appType === 'PRODUCT') {
+      this.productNames = [this.currentApp.name!]
+      this.listedProductsHeader = 'ACTIONS.EXPORT.OF_APPLICATION'
+    }
+    this.displayExportDialog = true
   }
 
   private loadData(): void {
