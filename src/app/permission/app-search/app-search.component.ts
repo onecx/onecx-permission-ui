@@ -19,7 +19,7 @@ import {
   RowListGridData
 } from '@onecx/portal-integration-angular'
 
-import { limitText } from 'src/app/shared/utils'
+import { limitText, sortByLocale } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
@@ -52,6 +52,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public filteredApps$!: Observable<(App & RowListGridData)[]>
   private papps$!: Observable<ApplicationPageResult>
   public products$!: Observable<(App & RowListGridData)[]>
+  public productNames: string[] = []
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
@@ -403,6 +404,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public onExport(): void {
     this.products$ = this.searchProducts() // search with max page size
-    this.displayExportDialog = true
+    this.products$
+      .pipe(
+        map((products) => {
+          this.productNames = Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
+          this.displayExportDialog = true
+        })
+      )
+      .subscribe()
   }
 }

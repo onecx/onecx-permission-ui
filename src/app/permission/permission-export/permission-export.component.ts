@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import FileSaver from 'file-saver'
 
-import { getCurrentDateTime, sortByLocale } from 'src/app/shared/utils'
-import { AssignmentAPIService } from 'src/app/shared/generated'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
-import { App } from '../app-search/app-search.component'
-import { RowListGridData } from '@onecx/angular-accelerator'
+import { getCurrentDateTime } from 'src/app/shared/utils'
+import { AssignmentAPIService } from 'src/app/shared/generated'
 
 @Component({
   selector: 'app-permission-export',
@@ -13,8 +11,9 @@ import { RowListGridData } from '@onecx/angular-accelerator'
   styleUrls: ['./permission-export.component.scss']
 })
 export class PermissionExportComponent {
-  @Input() products: any
+  @Input() products: string[] = []
   @Input() displayExportDialog = false
+  @Input() listedProductsHeader = ''
   @Output() displayExportDialogChange = new EventEmitter<boolean>()
   public selectedProductNames: string[] = []
 
@@ -23,9 +22,6 @@ export class PermissionExportComponent {
     private msgService: PortalMessageService
   ) {}
 
-  public extractProductNames(products: (App & RowListGridData)[]): string[] {
-    return Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
-  }
   public onExportConfirmation(): void {
     if (this.selectedProductNames.length > 0) {
       this.assgnmtApi

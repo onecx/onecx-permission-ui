@@ -201,6 +201,7 @@
 </p-dialog>
 
 <app-permission-export
-  [products]="products$ | async"
+  [products]="productNames"
+  [listedProductsHeader]="'ACTIONS.EXPORT.APPLICATION_LIST'"
   [(displayExportDialog)]="displayExportDialog"
 ></app-permission-export>

@@ -32,7 +32,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { dropDownSortItemsByLabel, limitText } from 'src/app/shared/utils'
+import { dropDownSortItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
   isProduct: boolean
@@ -93,7 +93,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterAppItems!: SelectItem[]
   public filterAppValue: string | undefined = undefined
   private productApps: App[] = []
-  public productsToExport: App[] = []
+  public productNames: string[] = []
+  public listedProductsHeader: string = ''
 
   // permission management
   private permissions$!: Observable<PermissionPageResult>
@@ -230,10 +231,15 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.loadData()
   }
   public onExport(): void {
-    /* if (this.currentApp.appType === 'WORKSPACE') {
-      this.productsToExport = this.currentApp.workspaceDetails?.products
-    } else */ if (this.currentApp.appType === 'PRODUCT') {
-      this.productsToExport = [this.currentApp]
+    if (this.currentApp.appType === 'WORKSPACE') {
+      this.currentApp.workspaceDetails?.products?.forEach((detail) => {
+        this.productNames.push(detail.productName!)
+      })
+      this.productNames.sort(sortByLocale)
+      this.listedProductsHeader = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
+    } else if (this.currentApp.appType === 'PRODUCT') {
+      this.productNames = [this.currentApp.name!]
+      this.listedProductsHeader = 'ACTIONS.EXPORT.OF_APPLICATION'
     }
     this.displayExportDialog = true
   }

@@ -9,10 +9,10 @@
 >
   <div *ngIf="products" class="flex flex-column row-gap-2">
     <div>
-      <div>{{ 'ACTIONS.EXPORT.APPLICATION_LIST' | translate }}</div>
+      <div>{{ listedProductsHeader | translate }}</div>
       <p-listbox
         id="apm_export_assigned_product_list"
-        [options]="extractProductNames(products)"
+        [options]="products"
         [(ngModel)]="selectedProductNames"
         [filter]="true"
         [checkbox]="true"
