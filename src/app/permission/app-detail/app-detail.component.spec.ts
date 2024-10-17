@@ -1,9 +1,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router } from '@angular/router'
-import { RouterTestingModule } from '@angular/router/testing'
+import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 import { of, throwError } from 'rxjs'
@@ -27,7 +26,7 @@ import {
 } from 'src/app/shared/generated'
 import { App, AppDetailComponent, PermissionViewRow } from './app-detail.component'
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
-import { HttpErrorResponse } from '@angular/common/http'
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
 import { Table } from 'primeng/table'
 import { FilterMatchMode } from 'primeng/api'
 
@@ -196,8 +195,6 @@ describe('AppDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AppDetailComponent],
       imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
         DataViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
@@ -205,6 +202,9 @@ describe('AppDetailComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
+        provideHttpClientTesting(),
+        provideHttpClient(),
+        provideRouter([{ path: '', component: AppDetailComponent }]),
         { provide: ApplicationAPIService, useValue: appApiSpy },
         { provide: AssignmentAPIService, useValue: assApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
@@ -251,6 +251,7 @@ describe('AppDetailComponent', () => {
 
   it('should prepare action buttons on init', () => {
     spyOn(component, 'onCreateRole')
+    spyOn(component, 'onExport')
 
     component.ngOnInit()
 
@@ -259,9 +260,11 @@ describe('AppDetailComponent', () => {
 
     actions[0].actionCallback()
     actions[1].actionCallback()
+    actions[2].actionCallback()
 
     expect(locationSpy.back).toHaveBeenCalled()
     expect(component.onCreateRole).toHaveBeenCalled()
+    expect(component.onExport).toHaveBeenCalled()
   })
 
   it('should loadData onReload', () => {
@@ -270,6 +273,38 @@ describe('AppDetailComponent', () => {
     component.onReload()
 
     expect((component as any).loadData).toHaveBeenCalled()
+  })
+
+  describe('onExport', () => {
+    it('should set up export for WORKSPACE app type', () => {
+      component.currentApp = {
+        appType: 'WORKSPACE',
+        workspaceDetails: {
+          products: [{ productName: 'Product A' }, { productName: 'Product B' }]
+        },
+        isProduct: false
+      }
+
+      component.onExport()
+
+      expect(component.productNames).toEqual(['Product A', 'Product B'])
+      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
+      expect(component.displayExportDialog).toBe(true)
+    })
+
+    it('should set up export for PRODUCT app type', () => {
+      component.currentApp = {
+        appType: 'PRODUCT',
+        name: 'Test Product',
+        isProduct: true
+      }
+
+      component.onExport()
+
+      expect(component.productNames).toEqual(['Test Product'])
+      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.OF_APPLICATION')
+      expect(component.displayExportDialog).toBe(true)
+    })
   })
 
   /**

@@ -334,7 +334,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe(() => {
         try {
           const importPermission = JSON.parse(text)
-          console.log('IMPORT', importPermission)
           this.importAssignmentItem = importPermission
         } catch (err) {
           console.error('Import Error', err)

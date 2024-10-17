@@ -1,8 +1,9 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideRouter } from '@angular/router'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
@@ -51,14 +52,15 @@ describe('RoleDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [RoleDetailComponent],
       imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
+        provideHttpClientTesting(),
+        provideHttpClient(),
+        provideRouter([{ path: '', component: RoleDetailComponent }]),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: UserService, useValue: mockUserService }
