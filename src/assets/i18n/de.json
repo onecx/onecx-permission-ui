@@ -105,6 +105,7 @@
       "SORT_BY": "Sortiert nach",
       "SORT_DIRECTION_ASC": "aufsteigend",
       "SORT_DIRECTION_DESC": "absteigend",
+      "OF": "von",
       "FILTER": {
         "LABEL": "Filter",
         "OF": "Filter für ",
@@ -202,7 +203,7 @@
     "TYPE_PRODUCT": "Applikation",
     "TYPE_WORKSPACE": "Workspace",
     "APPS": "Anzahl Apps",
-    "DELETE": "App einschließlich aller Zugriffsrechte und Rollen löschen",
+    "DELETE": "App einschließlich aller Berechtigungen und Rollen löschen",
     "DELETE_HEADER": "App löschen",
     "EDIT": "App ändern",
     "EDIT_HEADER": "App ändern",
@@ -277,27 +278,30 @@
     }
   },
   "USER_ROLE_PERMISSIONS": {
-    "HEADLINE": "Rollen und Zugriffsrechte",
-    "TAB_NAME_ROLES": "Rollen",
-    "TAB_NAME_ROLES.TOOLTIP": "Meine Rollen",
-    "TAB_NAME_PERMISSIONS": "Zugriffsrechte",
-    "TAB_NAME_PERMISSIONS.TOOLTIP": "Meine Zugriffsrechte",
+    "TABS": {
+      "ROLES": "Rollen",
+      "ROLES.TOOLTIP": "Die mir zugewiesenen Rollen",
+      "PERMISSIONS": "Berechtigungen",
+      "PERMISSIONS.TOOLTIP": "Über die mir zugewiesenen Rollen wirkende Berechtigungen"
+    },
     "TITLE_ROLES": "Meine Rollen",
-    "TITLE_PERMISSIONS": "Meine Zugriffsrechte",
+    "SUBTITLE_PERMISSIONS": "Meine Berechtigungen",
     "NO_RESULTS": "Keine Daten",
-    "PERMISSION": "Zugriffsrecht",
+    "NO_ROLES": "Keine Rollen zugewiesen",
+    "PERMISSION": "Berechtigung",
     "APPLICATION": "Applikation",
-    "NAME": "Name",
     "ACTION": "Aktion",
     "RESOURCE": "Ressource",
     "ROLE": "Rolle",
-    "TABS": {
-      "ROLES": "Rollen",
-      "PERMISSIONS": "Zugriffsrechte"
+    "TOOLTIPS": {
+      "APPLICATION": "Name der Applikation, die die Berechtigung definiert hat",
+      "ACTION": "Aktion die auf der Ressource erlaubt ist",
+      "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
+      "ROLE": "Rolle aus dem IAM (Identity Access Managment) der die Berechtigung zugewiesen wurde"
     },
     "MSG": {
-      "PERMISSIONS_REFRESH_INFO": "Zugriffsrechte wurden aktualisiert",
-      "PERMISSIONS_REFRESH_ERROR": "Unbekanntes Problem beim Aktualisieren von Zugriffsrechten"
+      "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",
+      "PERMISSIONS_REFRESH_ERROR": "Unbekanntes Problem beim Aktualisieren von Berechtigungen"
     }
   },
   "EXCEPTIONS": {
