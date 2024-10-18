@@ -1,10 +1,9 @@
 import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
+import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
-import { MenuItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 import { ReplaySubject } from 'rxjs'
-import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 
 import { SharedModule } from 'src/app/shared/shared.module'
@@ -43,22 +42,13 @@ import {
 })
 export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComponent, ocxRemoteWebcomponent {
   public roles: string[] = []
-  environment = environment
-  public myPermissions = new Array<string>() // permissions of the user
-
+  public environment = environment
   public userAssignmentItems: UserAssignment[] = []
-  public items: MenuItem[] = []
-  public cols = [{}]
-  public selectedColumns = [{}]
-  public selectedTab = 0
+  public columns
   public sortValue = ''
-  public visibility = false
-  public activeItem: MenuItem | undefined
-  public infoMessage: string | undefined
-  public errorMessage: string | undefined
   public loadingExceptionKey = ''
-  @ViewChild('userAssignmentTable') userAssignmentTable: Table | undefined
-  @ViewChild('userAssignmentTableFilterInput') userAssignmentTableFilter: ElementRef | undefined
+  @ViewChild('permissionTable') permissionTable: Table | undefined
+  @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -68,7 +58,20 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     private translateService: TranslateService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-    if (userService.hasPermission('ROLES_PERMISSIONS#VIEW')) this.myPermissions.push('ROLES_PERMISSIONS#VIEW')
+    this.columns = [
+      {
+        field: 'resource',
+        header: 'USER_ROLE_PERMISSIONS.RESOURCE',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE'
+      },
+      { field: 'action', header: 'USER_ROLE_PERMISSIONS.ACTION', tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION' },
+      {
+        field: 'productName',
+        header: 'USER_ROLE_PERMISSIONS.APPLICATION',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.APPLICATION'
+      },
+      { field: 'roleName', header: 'USER_ROLE_PERMISSIONS.ROLE', tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE' }
+    ]
   }
 
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -87,18 +90,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
 
   public ngOnInit(): void {
     this.sortValue = 'USER_ROLE_PERMISSIONS.APPLICATION'
-    this.cols = [
-      { field: 'resource', header: 'USER_ROLE_PERMISSIONS.RESOURCE' },
-      { field: 'action', header: 'USER_ROLE_PERMISSIONS.ACTION' },
-      { field: 'productName', header: 'USER_ROLE_PERMISSIONS.APPLICATION' },
-      { field: 'roleName', header: 'USER_ROLE_PERMISSIONS.ROLE' }
-    ]
-    this.items = [
-      { label: 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS', icon: 'fa-calendar', id: 'tabPerm' },
-      { label: 'USER_ROLE_PERMISSIONS.TABS.ROLES', icon: 'fa-bar-chart', id: 'tabRole' }
-    ]
-    this.activeItem = this.items[0]
-    this.selectedColumns = this.cols
     this.loadData()
   }
 
@@ -165,10 +156,10 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   }
 
   public onClearFilterUserAssignmentTable(): void {
-    if (this.userAssignmentTableFilter) {
-      this.userAssignmentTableFilter.nativeElement.value = ''
+    if (this.permissionTableFilter) {
+      this.permissionTableFilter.nativeElement.value = ''
     }
-    this.userAssignmentTable?.clear()
+    this.permissionTable?.clear()
     this.loadData()
   }
 

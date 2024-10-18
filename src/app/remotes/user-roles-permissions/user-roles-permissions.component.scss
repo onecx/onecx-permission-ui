@@ -1,5 +1,31 @@
+@import '/src/app/_apm-mixins.scss';
+
+@include tabview-fix-color-selected-tab;
+@include tabview-reduce-padding;
+
 :host {
   .border-permission-group {
     border-bottom-color: var(--primary-color) !important;
+  }
+}
+
+:host ::ng-deep {
+  .correct-ocx-interactive-data-view > ocx-interactive-data-view > div {
+    padding: 0 0 0.5rem 0 !important;
+    &.surface-border {
+      border-bottom: var(--table-header-border) !important;
+    }
+  }
+  // reduce on all panels
+  .p-tabview .p-tabview-panels {
+    padding: 0;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    border-bottom-width: 2px;
+  }
+  .user-roles-and-permissions.p-datatable .p-datatable-thead > tr > th,
+  .user-roles-and-permissions.p-datatable .p-datatable-tbody > tr > td {
+    text-align: center !important;
   }
 }

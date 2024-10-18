@@ -229,32 +229,32 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   })
 
   describe('onClearFilterUserAssignmentTable', () => {
-    it('should clear the userAssignmentTableFilter value if it exists', () => {
-      component.userAssignmentTableFilter = {
+    it('should clear the permissionTableFilter value if it exists', () => {
+      component.permissionTableFilter = {
         nativeElement: { value: 'test filter' }
       } as ElementRef
 
       component.onClearFilterUserAssignmentTable()
 
-      expect(component.userAssignmentTableFilter?.nativeElement.value).toBe('')
+      expect(component.permissionTableFilter?.nativeElement.value).toBe('')
     })
 
-    it('should not throw an error if userAssignmentTableFilter is undefined', () => {
-      component.userAssignmentTableFilter = undefined
+    it('should not throw an error if permissionTableFilter is undefined', () => {
+      component.permissionTableFilter = undefined
 
       expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
     })
 
-    it('should call clear() on userAssignmentTable if it exists', () => {
-      component.userAssignmentTable = jasmine.createSpyObj('userAssignmentTable', ['clear'])
+    it('should call clear() on permissionTable if it exists', () => {
+      component.permissionTable = jasmine.createSpyObj('permissionTable', ['clear'])
 
       component.onClearFilterUserAssignmentTable()
 
-      expect(component.userAssignmentTable?.clear).toHaveBeenCalled()
+      expect(component.permissionTable?.clear).toHaveBeenCalled()
     })
 
-    it('should not throw an error if userAssignmentTable is undefined', () => {
-      component.userAssignmentTable = undefined
+    it('should not throw an error if permissionTable is undefined', () => {
+      component.permissionTable = undefined
 
       expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
     })
