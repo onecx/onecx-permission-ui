@@ -280,12 +280,12 @@
   "USER_ROLE_PERMISSIONS": {
     "TABS": {
       "ROLES": "Rollen",
-      "ROLES.TOOLTIP": "Die mir zugewiesenen Rollen",
-      "ROLE.TITLE": "Meine Rolle: ",
-      "ROLES.TITLE": "Meine Rollen: ",
+      "ROLES.TOOLTIP": "Zugewiesene Rollen",
+      "ROLE.TITLE": "Rolle: ",
+      "ROLES.TITLE": "Rollen: ",
       "PERMISSIONS": "Berechtigungen",
-      "PERMISSIONS.TOOLTIP": "Über die mir zugewiesenen Rollen wirkende Berechtigungen",
-      "PERMISSIONS.TITLE": "Meine Berechtigungen: "
+      "PERMISSIONS.TOOLTIP": "Über die zugewiesenen Rollen wirkende Berechtigungen",
+      "PERMISSIONS.TITLE": "Berechtigungen: "
     },
     "NO_RESULTS": "Keine Daten",
     "NO_ROLES": "Keine Rollen zugewiesen",

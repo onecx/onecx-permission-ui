@@ -281,11 +281,11 @@
     "TABS": {
       "ROLES": "Roles",
       "ROLES.TOOLTIP": "Roles assigned to me",
-      "ROLE.TITLE": "My Role: ",
-      "ROLES.TITLE": "My Roles: ",
+      "ROLE.TITLE": "Role: ",
+      "ROLES.TITLE": "Roles: ",
       "PERMISSIONS": "Permissions",
-      "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned to me",
-      "PERMISSIONS.TITLE": "My Permissions: "
+      "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned",
+      "PERMISSIONS.TITLE": "Permissions: "
     },
     "NO_RESULTS": "No data",
     "NO_ROLES": "No Roles assigned",
