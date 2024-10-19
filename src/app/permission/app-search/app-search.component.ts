@@ -291,10 +291,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
     this.actions$ = this.translate
       .get([
-        'ACTIONS.IMPORT.LABEL',
-        'ACTIONS.IMPORT.ASSIGNMENT.TOOLTIP',
         'ACTIONS.EXPORT.LABEL',
-        'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'
+        'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP',
+        'ACTIONS.IMPORT.LABEL',
+        'ACTIONS.IMPORT.ASSIGNMENT.TOOLTIP'
       ])
       .pipe(
         map((data) => {

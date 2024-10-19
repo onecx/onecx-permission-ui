@@ -194,19 +194,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         map((data) => {
           return [
             {
+              label: data['ACTIONS.NAVIGATION.BACK'],
+              title: data['ACTIONS.NAVIGATION.BACK.TOOLTIP'],
+              actionCallback: () => this.onClose(),
+              icon: 'pi pi-arrow-left',
+              show: 'always'
+            },
+            {
               label: data['ACTIONS.EXPORT.LABEL'],
               title: data['ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'],
               actionCallback: () => this.onExport(),
               icon: 'pi pi-download',
               show: 'always',
               permission: 'PERMISSION#EDIT'
-            },
-            {
-              label: data['ACTIONS.NAVIGATION.BACK'],
-              title: data['ACTIONS.NAVIGATION.BACK.TOOLTIP'],
-              actionCallback: () => this.onClose(),
-              icon: 'pi pi-arrow-left',
-              show: 'always'
             },
             {
               label: data['ACTIONS.CREATE.ROLE'],
