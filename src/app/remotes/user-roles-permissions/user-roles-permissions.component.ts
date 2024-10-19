@@ -9,6 +9,7 @@ import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-transla
 import { SharedModule } from 'src/app/shared/shared.module'
 import { PortalCoreModule, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import { Configuration, UserAPIService, UserAssignment, UserAssignmentPageResult } from 'src/app/shared/generated'
+import { sortByLocale } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 import {
   AngularRemoteComponentsModule,
@@ -142,7 +143,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     items.forEach((item: UserAssignment) => {
       if (!arr.includes(item[fieldName] ?? '')) arr.push(item[fieldName] ?? '')
     })
-    return arr.sort()
+    return arr.sort(sortByLocale)
   }
 
   public applyGlobalFilter($event: Event, primengTable: Table): void {
