@@ -279,10 +279,15 @@
   },
   "USER_ROLE_PERMISSIONS": {
     "TABS": {
-      "ROLES": "Roles",
-      "ROLES.TOOLTIP": "Roles assigned to me",
+      "ROLES_N_MORE": "Roles & Applications",
+      "ROLES_N_MORE.TOOLTIP": "Assigned Roles and Applications with Permissions",
       "ROLE.TITLE": "Role: ",
       "ROLES.TITLE": "Roles: ",
+      "ROLES.FILTER": "Role Name",
+      "ROLES.TOOLTIP": "List of Roles which are assigned in the IAM (Identity Access Management)",
+      "PRODUCTS.TITLE": "Applications: ",
+      "PRODUCTS.FILTER": "Applikation Name",
+      "PRODUCTS.TOOLTIP": "List of Applications to which Permissions are granted",
       "PERMISSIONS": "Permissions",
       "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned",
       "PERMISSIONS.TITLE": "Permissions: "
