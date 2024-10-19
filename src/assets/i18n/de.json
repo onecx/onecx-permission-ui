@@ -124,7 +124,7 @@
     "CHOOSE": "Auswählen",
     "CLEAR_CACHE": "Cache entfernen",
     "CONFIRM": "Bestätigen",
-    "LOADING": "...wird geladen",
+    "LOADING": "Laden...",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",
     "SAVE_AS": "Speichern als ...",
@@ -281,20 +281,21 @@
     "TABS": {
       "ROLES": "Rollen",
       "ROLES.TOOLTIP": "Die mir zugewiesenen Rollen",
+      "ROLE.TITLE": "Meine Rolle: ",
+      "ROLES.TITLE": "Meine Rollen: ",
       "PERMISSIONS": "Berechtigungen",
-      "PERMISSIONS.TOOLTIP": "Über die mir zugewiesenen Rollen wirkende Berechtigungen"
+      "PERMISSIONS.TOOLTIP": "Über die mir zugewiesenen Rollen wirkende Berechtigungen",
+      "PERMISSIONS.TITLE": "Meine Berechtigungen: "
     },
-    "TITLE_ROLES": "Meine Rollen",
-    "SUBTITLE_PERMISSIONS": "Meine Berechtigungen",
     "NO_RESULTS": "Keine Daten",
     "NO_ROLES": "Keine Rollen zugewiesen",
     "PERMISSION": "Berechtigung",
-    "APPLICATION": "Applikation",
+    "PRODUCT": "Applikation",
     "ACTION": "Aktion",
     "RESOURCE": "Ressource",
     "ROLE": "Rolle",
     "TOOLTIPS": {
-      "APPLICATION": "Name der Applikation, die die Berechtigung definiert hat",
+      "PRODUCT": "Name der Applikation, die die Berechtigung definiert hat",
       "ACTION": "Aktion die auf der Ressource erlaubt ist",
       "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
       "ROLE": "Rolle aus dem IAM (Identity Access Managment) der die Berechtigung zugewiesen wurde"

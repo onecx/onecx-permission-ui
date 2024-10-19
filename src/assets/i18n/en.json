@@ -124,7 +124,7 @@
     "CHOOSE": "Choose",
     "CLEAR_CACHE": "Clear Cache",
     "CONFIRM": "Confirm",
-    "LOADING": "...is loading",
+    "LOADING": "Loading...",
     "RELOAD": "Reload",
     "SAVE": "Save",
     "SAVE_AS": "Save as ...",
@@ -281,23 +281,24 @@
     "TABS": {
       "ROLES": "Roles",
       "ROLES.TOOLTIP": "Roles assigned to me",
+      "ROLE.TITLE": "My Role: ",
+      "ROLES.TITLE": "My Roles: ",
       "PERMISSIONS": "Permissions",
-      "PERMISSIONS.TOOLTIP": "Access rights that apply to the roles assigned to me"
+      "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned to me",
+      "PERMISSIONS.TITLE": "My Permissions: "
     },
-    "TITLE_ROLES": "My Roles",
-    "SUBTITLE_PERMISSIONS": "My Permissions",
     "NO_RESULTS": "No data",
     "NO_ROLES": "No Roles assigned",
     "PERMISSION": "Permission",
-    "APPLICATION": "Application",
+    "PRODUCT": "Application",
     "ACTION": "Action",
     "RESOURCE": "Resource",
     "ROLE": "Role",
     "TOOLTIPS": {
-      "APPLICATION": "Name of the application that defined the permission",
-      "ACTION": "Action that is allowed on the resource",
-      "RESOURCE": "Name of the resource that can be worked on",
-      "ROLE": "Role from IAM (Identity Access Management) to which the permission was assigned"
+      "PRODUCT": "Name of the Application that defined the Permission",
+      "ACTION": "Action that is allowed on the Resource",
+      "RESOURCE": "Name of the Resource that can be worked on",
+      "ROLE": "Role from IAM (Identity Access Management) to which the Permission was assigned"
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
