@@ -71,9 +71,9 @@
         "ASSIGNMENT.EXPORT_OK": "Permissions were exported successfully",
         "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permissions were not exported."
       },
-      "APPLICATION_LIST": "List of Applications:",
-      "WS_APPLICATION_LIST": "List of Workspace Applications:",
-      "OF_APPLICATION": "of this Application:"
+      "APPLICATION_LIST": "Select Applications:",
+      "WS_APPLICATION_LIST": "Select Workspace Applications:",
+      "OF_APPLICATION": "Application:"
     },
     "IMPORT": {
       "LABEL": "Import",
@@ -146,7 +146,7 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Permission Management",
-      "SUBHEADER": "Management of App and Workspace Permissions",
+      "SUBHEADER": "Management of Application and Workspace Permissions",
       "QUICK_FILTER": {
         "LABEL": "Type",
         "TOOLTIP": "Quick Filter for App type",
@@ -258,7 +258,7 @@
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
     "IAM": {
       "HEADER": "Select IAM Roles",
-      "LIST": "List of missing Roles",
+      "LIST": "Missing Roles:",
       "INFO": "(IAM: Identity Access Management = User & Roles)",
       "Filter": "Filter",
       "SAVE": "Add selection",

@@ -25,7 +25,7 @@ export class RoleDetailComponent implements OnChanges {
   public myPermissions = new Array<string>() // permissions of the user
   public formGroupRole: FormGroup
   public iamRoles!: IAMRole[]
-  public selectedIamRoles: IAMRole[] | undefined
+  public selectedIamRoles: IAMRole[] = []
 
   constructor(
     private roleApi: RoleAPIService,
@@ -135,9 +135,10 @@ export class RoleDetailComponent implements OnChanges {
    * Select IAM Roles to be added
    */
   public getIamRoles() {
+    this.selectedIamRoles = []
+    this.iamRoles = []
     this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).subscribe({
       next: (data) => {
-        this.iamRoles = []
         data.stream?.forEach((iamRole) => {
           if (this.roles.filter((r) => r.name === iamRole.name).length === 0) this.iamRoles.push(iamRole)
         })
@@ -147,8 +148,9 @@ export class RoleDetailComponent implements OnChanges {
       }
     })
   }
+
   public onAddIamRoles() {
-    if (this.selectedIamRoles && this.selectedIamRoles.length > 0)
+    if (this.selectedIamRoles.length > 0)
       this.roleApi.createRole({ createRolesRequest: { roles: this.selectedIamRoles } }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })

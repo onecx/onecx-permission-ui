@@ -71,9 +71,9 @@
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
       },
-      "APPLICATION_LIST": "Liste der Applikationen:",
-      "WS_APPLICATION_LIST": "Liste der Applikationen dieses Workspace:",
-      "OF_APPLICATION": "dieser Applikation:"
+      "APPLICATION_LIST": "Applikationen auswählen:",
+      "WS_APPLICATION_LIST": "Workspace Applikationen auswählen:",
+      "OF_APPLICATION": "Applikation:"
     },
     "IMPORT": {
       "LABEL": "Import",
@@ -145,8 +145,8 @@
   },
   "DIALOG": {
     "SEARCH": {
-      "HEADER": "Berechtigungs-Verwaltung",
-      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
+      "HEADER": "Berechtigungsverwaltung",
+      "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
       "QUICK_FILTER": {
         "LABEL": "Typ",
         "TOOLTIP": "Quickfilter für Typ",
@@ -258,7 +258,7 @@
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "IAM": {
       "HEADER": "IAM Rollen auswählen",
-      "LIST": "Liste der fehlenden Rollen",
+      "LIST": "Fehlende Rollen:",
       "INFO": "(IAM: Identity Access Management = Benutzer & Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",

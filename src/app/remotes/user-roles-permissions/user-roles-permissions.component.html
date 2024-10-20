@@ -1,5 +1,5 @@
 <p-tabView *ngIf="(userAssignments$ | async)?.sort(sortUserAssignments) as items">
-  <p-tabPanel>
+  <p-tabPanel id="apm_user_assignments">
     <ng-template pTemplate="header">
       <span
         [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS.TOOLTIP' | translate"
@@ -45,7 +45,7 @@
                 #permissionTableFilterInput
                 pInputText
                 type="text"
-                id="up_permission_table_filter"
+                id="apm_user_assignments_table_filter"
                 (input)="applyGlobalFilter($event, permissionTable)"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                 [pTooltip]="
@@ -61,10 +61,10 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
-              <label for="up_permission_table_filter">{{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label>
+              <label for="apm_user_assignments_table_filter">{{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}</label>
             </span>
             <a
-              id="up_permission_table_filter_clear"
+              id="apm_user_assignments_table_filter_clear"
               class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
               (click)="onClearFilterUserAssignmentTable()"
               tabindex="0"
@@ -77,10 +77,11 @@
           <div class="ml-3 flex column-gap-2">
             <p-button
               type="button"
-              id="up_permissions_header_action_reload"
+              id="apm_user_assignments_table_header_action_reload"
               styleClass="h-full"
               icon="pi pi-refresh"
               (onClick)="onReload()"
+              [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
               [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -92,17 +93,22 @@
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th id="up_permissions_table_header_permission" colspan="3" class="text-center border-permission-group p-1">
+          <th
+            id="apm_user_assignments_table_header_permissions"
+            class="text-center border-permission-group p-1"
+            colspan="3"
+          >
             {{ 'USER_ROLE_PERMISSIONS.PERMISSION' | translate }}
           </th>
-          <th id="up_permissions_table_header_role" class="border-none"></th>
+          <th id="apm_user_assignments_table_header_roles" class="border-none"></th>
         </tr>
         <tr>
           <th
             *ngFor="let col of columns"
-            [id]="'up_permissions_table_header_' + col.field"
-            [pSortableColumn]="col.field"
+            [id]="'apm_user_assignments_table_header_' + col.field"
             class="p-2 text-center white-space-nowrap"
+            [pSortableColumn]="col.field"
+            [attr.aria-label]="col.tooltip | translate"
             [pTooltip]="col.tooltip | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -110,12 +116,13 @@
             <ng-container *ngIf="!col.filter"> {{ col.header | translate }} </ng-container>
             <p-dropdown
               *ngIf="col.filter"
+              [id]="'apm_user_assignments_table_filter_' + col.field"
+              panelStyleClass="text-left"
               [options]="extractFilterItems(items, col.field)"
               (onClick)="$event.stopPropagation()"
               (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
               [placeholder]="col.header | translate"
               [showClear]="true"
-              panelStyleClass="text-left"
             >
               <ng-template let-option pTemplate="item"> {{ option }} </ng-template>
             </p-dropdown>
@@ -126,14 +133,14 @@
 
       <ng-template pTemplate="body" let-item let-columns="columns" let-i="rowIndex">
         <tr>
-          <td *ngFor="let col of columns" [id]="'up_permissions_table_row_' + i + '_' + col.field">
+          <td *ngFor="let col of columns" [id]="'apm_user_assignments_table_row_' + i + '_' + col.field">
             {{ item[col.field] }}
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="columns.length" id="up_permissions_table_no_results">
+          <td [attr.colspan]="columns.length" id="apm_user_assignments_table_no_results">
             {{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}
           </td>
         </tr>
@@ -142,7 +149,7 @@
   </p-tabPanel>
 
   <!-- ROLES & MORE -->
-  <p-tabPanel>
+  <p-tabPanel id="apm_user_roles-and-more">
     <ng-template pTemplate="header">
       <span
         [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"
@@ -153,11 +160,11 @@
       </span>
     </ng-template>
 
-    <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5">
+    <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
       <!-- ROLES -->
       <ng-container *ngIf="extractFilterItems(items, 'roleName') as roles">
         <div *ngIf="roles.length === 1">
-          <div id="up_user_roles_one" class="font-bold">
+          <div id="apm_user_roles_one" class="font-bold">
             {{ 'USER_ROLE_PERMISSIONS.TABS.ROLE.TITLE' | translate }} {{ roles[0] }}
           </div>
         </div>
@@ -171,11 +178,12 @@
             {{ 'USER_ROLE_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
           </div>
           <p-listbox
-            id="up_user_roles_list"
+            id="apm_user_roles_list"
+            [listStyle]="{ 'max-height': '300px' }"
             [options]="roles"
             [filter]="true"
             [filterPlaceHolder]="'USER_ROLE_PERMISSIONS.TABS.ROLES.FILTER' | translate"
-            [listStyle]="{ 'max-height': '300px' }"
+            [ariaLabel]="'USER_ROLE_PERMISSIONS.TABS.ROLES.TITLE' | translate"
           />
         </div>
       </ng-container>
@@ -183,8 +191,8 @@
       <!-- PRODUCTS -->
       <ng-container *ngIf="extractFilterItems(items, 'productName') as products">
         <div *ngIf="products.length === 1">
-          <div id="up_user_products_one" class="font-bold">
-            {{ 'USER_ROLE_PERMISSIONS.TABS.ROLE.TITLE' | translate }} {{ products[0] }}
+          <div id="apm_user_products_one" class="font-bold">
+            {{ 'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products[0] }}
           </div>
         </div>
         <div *ngIf="products.length > 1" class="flex flex-column row-gap-2">
@@ -197,11 +205,12 @@
             {{ 'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
           </div>
           <p-listbox
-            id="up_user_products_list"
+            id="apm_user_products_list"
+            [listStyle]="{ 'max-height': '300px' }"
             [options]="products"
             [filter]="true"
             [filterPlaceHolder]="'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
-            [listStyle]="{ 'max-height': '300px' }"
+            [ariaLabel]="'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
           />
         </div>
       </ng-container>

@@ -130,10 +130,10 @@
   [resizable]="true"
   [dismissableMask]="true"
 >
-  <div class="flex flex-column row-gap-2">
+  <div class="flex flex-column row-gap-1">
     <div>{{ 'ROLE.IAM.LIST' | translate }}</div>
     <p-listbox
-      id="apm_iam_role_list"
+      id="apm_iam_roles_list"
       [options]="iamRoles"
       [(ngModel)]="selectedIamRoles"
       optionLabel="name"
@@ -144,13 +144,14 @@
       [showToggleAll]="false"
       [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
       [listStyle]="{ 'max-height': '300px' }"
+      [ariaLabel]="'ROLE.IAM.LIST' | translate"
     />
+    <div class="text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
   </div>
-  <div class="mt-2 text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <p-button
-        id="apm_iam_role_action_cancel"
+        id="apm_iam_roles_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -160,9 +161,10 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="apm_iam_role_action_save"
+        id="apm_iam_roles_action_save"
         icon="pi pi-check"
         (onClick)="onAddIamRoles()"
+        [disabled]="selectedIamRoles.length === 0"
         [label]="'ROLE.IAM.SAVE' | translate"
         [ariaLabel]="'ROLE.IAM.SAVE' | translate"
         [pTooltip]="'ROLE.IAM.SAVE.TOOLTIP' | translate"

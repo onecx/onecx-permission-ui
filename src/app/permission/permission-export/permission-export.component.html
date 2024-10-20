@@ -2,27 +2,26 @@
   [header]="'ACTIONS.EXPORT.ASSIGNMENT' | translate"
   [(visible)]="displayExportDialog"
   [modal]="true"
+  [closable]="true"
+  [draggable]="true"
   [resizable]="true"
-  [closable]="false"
   [dismissableMask]="false"
   [style]="{ 'max-width': '500px' }"
 >
-  <div *ngIf="products" class="flex flex-column row-gap-2">
-    <div>
-      <div>{{ listedProductsHeader | translate }}</div>
-      <p-listbox
-        id="apm_export_product_list"
-        [options]="products"
-        [(ngModel)]="selectedProductNames"
-        [filter]="true"
-        [checkbox]="true"
-        [multiple]="true"
-        [metaKeySelection]="false"
-        [showToggleAll]="true"
-        [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-        [listStyle]="{ 'max-height': '300px' }"
-      />
-    </div>
+  <div *ngIf="products" class="flex flex-column row-gap-1">
+    <div>{{ listedProductsHeader | translate }}</div>
+    <p-listbox
+      id="apm_export_product_list"
+      [options]="products"
+      [(ngModel)]="selectedProductNames"
+      [filter]="true"
+      [checkbox]="true"
+      [multiple]="true"
+      [showToggleAll]="true"
+      [metaKeySelection]="false"
+      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+      [listStyle]="{ 'max-height': '300px' }"
+    />
   </div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
