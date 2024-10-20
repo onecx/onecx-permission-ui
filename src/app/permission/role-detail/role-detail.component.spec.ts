@@ -269,7 +269,7 @@ describe('RoleDetailComponent', () => {
     it('should emit false if selectedIamRoles is undefined', () => {
       spyOn(component.dataChanged, 'emit')
 
-      component.selectedIamRoles = undefined
+      component.selectedIamRoles = []
       component.onAddIamRoles()
 
       expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
