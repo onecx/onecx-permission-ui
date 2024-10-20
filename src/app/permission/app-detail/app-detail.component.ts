@@ -70,7 +70,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterValue: string | undefined
   public filterMode: string
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
-  public quickFilterItems: SelectItem[]
+  public quickFilterItems$: Observable<SelectItem[]> | undefined
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
@@ -156,23 +156,40 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.myPermissions.push('PERMISSION#MANAGE')
 
     this.filterMode = FilterMatchMode.CONTAINS
-    this.quickFilterItems = [
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.DELETE', value: 'DELETE' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.EDIT', value: 'EDIT' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.READ', value: 'READ' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.WRITE', value: 'WRITE' }
-    ]
   }
 
   public ngOnInit(): void {
+    this.preparequickFilterItems()
     this.prepareActionButtons()
     this.loadData()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
     this.destroy$.complete()
+  }
+
+  private preparequickFilterItems(): void {
+    this.quickFilterItems$ = this.translate
+      .get([
+        'DIALOG.DETAIL.QUICK_FILTER.ALL',
+        'DIALOG.DETAIL.QUICK_FILTER.DELETE',
+        'DIALOG.DETAIL.QUICK_FILTER.EDIT',
+        'DIALOG.DETAIL.QUICK_FILTER.READ',
+        'DIALOG.DETAIL.QUICK_FILTER.VIEW',
+        'DIALOG.DETAIL.QUICK_FILTER.WRITE'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.ALL'], value: 'ALL' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.DELETE'], value: 'DELETE' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.EDIT'], value: 'EDIT' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.READ'], value: 'READ' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.VIEW'], value: 'VIEW' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.WRITE'], value: 'WRITE' }
+          ]
+        })
+      )
   }
 
   private prepareActionButtons(): void {
