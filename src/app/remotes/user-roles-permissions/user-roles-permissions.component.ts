@@ -6,11 +6,7 @@ import { Table } from 'primeng/table'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 
-import { SharedModule } from 'src/app/shared/shared.module'
 import { PortalCoreModule, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
-import { Configuration, UserAPIService, UserAssignment, UserAssignmentPageResult } from 'src/app/shared/generated'
-import { sortByLocale } from 'src/app/shared/utils'
-import { environment } from 'src/environments/environment'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -19,6 +15,11 @@ import {
   ocxRemoteWebcomponent,
   provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
+
+import { Configuration, UserAPIService, UserAssignment, UserAssignmentPageResult } from 'src/app/shared/generated'
+import { SharedModule } from 'src/app/shared/shared.module'
+import { sortByLocale } from 'src/app/shared/utils'
+import { environment } from 'src/environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
@@ -141,7 +142,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   public extractFilterItems(items: UserAssignment[], fieldName: PROPERTY_NAME): string[] {
     const arr: string[] = []
     items.forEach((item: UserAssignment) => {
-      if (!arr.includes(item[fieldName] ?? '')) arr.push(item[fieldName] ?? '')
+      if (item[fieldName] && item[fieldName] !== '') if (!arr.includes(item[fieldName])) arr.push(item[fieldName])
     })
     return arr.sort(sortByLocale)
   }

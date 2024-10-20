@@ -14,7 +14,8 @@ import { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-detai
 
 @Component({
   selector: 'app-permission-detail',
-  templateUrl: './permission-detail.component.html'
+  templateUrl: './permission-detail.component.html',
+  styleUrls: ['./permission-detail.component.scss']
 })
 export class PermissionDetailComponent implements OnChanges {
   @Input() currentApp!: App
@@ -72,6 +73,8 @@ export class PermissionDetailComponent implements OnChanges {
         this.formGroup.controls['action'].enable()
         this.formGroup.controls['description'].enable()
       }
+    } else {
+      this.formGroup.enable() // creation
     }
   }
 

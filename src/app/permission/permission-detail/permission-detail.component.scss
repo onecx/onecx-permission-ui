@@ -2,7 +2,4 @@
 
 @include dialog-footer-buttons;
 @include displaying-text-responsive;
-
-// IAM roles
-@include listbox-zebra-rows;
-@include listbox-layout;
+@include readable-disabled-form-controls;

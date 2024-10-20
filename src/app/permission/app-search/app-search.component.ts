@@ -60,13 +60,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public exceptionKey = ''
   public dataAccessIssue = false
   public viewMode = 'grid'
-  public appTypeItems: SelectItem[]
+  public appTypeItems$: Observable<SelectItem[]> | undefined
   public appTypeFilterValue: string = 'ALL'
   public quickFilterValue: AppFilterType = 'ALL'
-  public quickFilterItems: SelectItem[]
+  public quickFilterItems$: Observable<SelectItem[]> | undefined
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
-  public sortField = 'appType'
+  public sortField = 'displayName'
   public sortOrder = -1
 
   public displayImportDialog = false
@@ -107,17 +107,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
     this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
     this.appSearchCriteriaGroup.controls['name'].disable()
-    this.appTypeItems = [
-      { label: 'DIALOG.SEARCH.FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.SEARCH.FILTER.WORKSPACE', value: 'WORKSPACE' },
-      { label: 'DIALOG.SEARCH.FILTER.PRODUCT', value: 'PRODUCT' },
-      { label: 'DIALOG.SEARCH.FILTER.APP', value: 'APP' }
-    ]
-    this.quickFilterItems = [
-      { label: 'DIALOG.SEARCH.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE', value: 'WORKSPACE' },
-      { label: 'DIALOG.SEARCH.QUICK_FILTER.PRODUCT', value: 'PRODUCT' }
-    ]
     this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
       map(([typeValue, textFilter]) => {
         const filters: (Filter & { mode: 'contains' | 'equals' })[] = []
@@ -134,6 +123,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.prepareAppTypeItems()
+    this.prepareQuickFilterItems()
     this.prepareDialogTranslations()
     this.searchApps()
   }
@@ -262,6 +253,42 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /**
    * Dialog preparation
    */
+  private prepareAppTypeItems(): void {
+    this.appTypeItems$ = this.translate
+      .get([
+        'DIALOG.SEARCH.FILTER.ALL',
+        'DIALOG.SEARCH.FILTER.WORKSPACE',
+        'DIALOG.SEARCH.FILTER.PRODUCT',
+        'DIALOG.SEARCH.FILTER.APP'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            { label: data['DIALOG.SEARCH.FILTER.ALL'], value: 'ALL' },
+            { label: data['DIALOG.SEARCH.FILTER.WORKSPACE'], value: 'WORKSPACE' },
+            { label: data['DIALOG.SEARCH.FILTER.PRODUCT'], value: 'PRODUCT' },
+            { label: data['DIALOG.SEARCH.FILTER.APP'], value: 'APP' }
+          ]
+        })
+      )
+  }
+  private prepareQuickFilterItems(): void {
+    this.quickFilterItems$ = this.translate
+      .get([
+        'DIALOG.SEARCH.QUICK_FILTER.ALL',
+        'DIALOG.SEARCH.QUICK_FILTER.WORKSPACE',
+        'DIALOG.SEARCH.QUICK_FILTER.PRODUCT'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            { label: data['DIALOG.SEARCH.QUICK_FILTER.ALL'], value: 'ALL' },
+            { label: data['DIALOG.SEARCH.QUICK_FILTER.WORKSPACE'], value: 'WORKSPACE' },
+            { label: data['DIALOG.SEARCH.QUICK_FILTER.PRODUCT'], value: 'PRODUCT' }
+          ]
+        })
+      )
+  }
   private prepareDialogTranslations(): void {
     this.translate
       .get([

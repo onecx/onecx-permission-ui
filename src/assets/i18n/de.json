@@ -71,9 +71,9 @@
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
       },
-      "APPLICATION_LIST": "Liste der Applikationen:",
-      "WS_APPLICATION_LIST": "Liste der Applikationen dieses Workspace:",
-      "OF_APPLICATION": "dieser Applikation:"
+      "APPLICATION_LIST": "Applikationen auswählen:",
+      "WS_APPLICATION_LIST": "Workspace Applikationen auswählen:",
+      "OF_APPLICATION": "Applikation:"
     },
     "IMPORT": {
       "LABEL": "Import",
@@ -145,8 +145,8 @@
   },
   "DIALOG": {
     "SEARCH": {
-      "HEADER": "Berechtigungs-Verwaltung",
-      "SUBHEADER": "Verwaltung der Berechtigungen von Apps und Workspaces",
+      "HEADER": "Berechtigungsverwaltung",
+      "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
       "QUICK_FILTER": {
         "LABEL": "Typ",
         "TOOLTIP": "Quickfilter für Typ",
@@ -215,10 +215,14 @@
   "PERMISSION": {
     "LABEL": "Berechtigungen",
     "APP_ID": "App ID",
+    "APP_ID.TOOLTIP": "ID einer App (Frontend/Backend der Applikation)",
     "PRODUCT_NAME": "Applikationsname",
+    "PRODUCT_NAME.TOOLTIP": "Name der Applikation die die Berechtigung deklariert hat",
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
+    "RESOURCE.TOOLTIP": "Ressource/Objekt auf der Aktionen erlaubt werden",
     "ACTION": "Aktion",
+    "ACTION.TOOLTIP": "Aktion auf der Ressource",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
     "MANDATORY": "Unbedingt erforderlich",
@@ -254,7 +258,7 @@
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "IAM": {
       "HEADER": "IAM Rollen auswählen",
-      "LIST": "Liste der fehlenden Rollen",
+      "LIST": "Fehlende Rollen:",
       "INFO": "(IAM: Identity Access Management = Benutzer & Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",
@@ -311,6 +315,10 @@
     }
   },
   "EXCEPTIONS": {
+    "NOT_FOUND": {
+      "PRODUCT": "Es konnten keine Daten zu dieser Applikation gefunden werden.",
+      "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden."
+    },
     "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
     "HTTP_STATUS_0": {
       "APP": "Unbekanntes Problem beim Abrufen von Applikationen - Bitte versuchen sie es noch einmal.",
@@ -342,7 +350,7 @@
       "ROLES": "Es konnten keine Rollen gefunden werden.",
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
-      "WORKSPACE": "Workspace Daten konnten nicht gefunden werden."
+      "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",

@@ -3,6 +3,7 @@
 @include tabview-fix-color-selected-tab;
 @include tabview-reduce-padding;
 @include listbox-zebra-rows;
+@include listbox-layout;
 
 :host {
   .border-permission-group {

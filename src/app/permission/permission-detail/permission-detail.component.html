@@ -1,9 +1,10 @@
 <p-dialog
-  [(visible)]="displayDetailDialog"
   [header]="'ACTIONS.' + changeMode + '.PERMISSION' | translate"
+  [(visible)]="displayDetailDialog"
   (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
+  [draggable]="true"
   [resizable]="true"
   [dismissableMask]="true"
   [style]="{ width: '450px' }"
@@ -12,38 +13,62 @@
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="apm_detail_product_name" formControlName="productName" />
-          <label class="ocx-required-label" for="apm_detail_product_name">
+          <input
+            pInputText
+            type="text"
+            class="w-full text-responsive"
+            id="apm_permission_detail_product_name"
+            formControlName="productName"
+            [ariaLabel]="'PERMISSION.PRODUCT_NAME' | translate"
+            [pTooltip]="'PERMISSION.PRODUCT_NAME.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <label class="ocx-required-label" for="apm_permission_detail_product_name">
             {{ 'PERMISSION.PRODUCT_NAME' | translate }}
           </label>
         </span>
       </div>
       <div>
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="apm_detail_app_id" formControlName="appId" />
-          <label class="ocx-required-label" for="apm_detail_app_id"> {{ 'PERMISSION.APP_ID' | translate }} </label>
+          <input
+            pInputText
+            type="text"
+            class="w-full text-responsive"
+            id="apm_permission_detail_app_id"
+            formControlName="appId"
+            [ariaLabel]="'PERMISSION.APP_ID' | translate"
+            [pTooltip]="'PERMISSION.APP_ID.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <label class="ocx-required-label" for="apm_permission_detail_app_id">
+            {{ 'PERMISSION.APP_ID' | translate }}
+          </label>
         </span>
       </div>
       <div *ngIf="changeMode !== 'CREATE'">
         <div class="px-2 mb-2 flex flex-row justify-content-between align-items-center column-gap-3">
           <p-checkbox
             type="text"
-            inputId="apm_detail_operator"
+            inputId="apm_permission_detail_operator"
             formControlName="operator"
             [binary]="true"
             [styleClass]="'cursor-auto shadow-none'"
             [label]="'PERMISSION.OPERATOR' | translate"
+            [ariaLabel]="'PERMISSION.OPERATOR' | translate"
             [pTooltip]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
             tooltipPosition="right"
             tooltipEvent="hover"
           ></p-checkbox>
           <p-checkbox
             type="text"
-            inputId="apm_detail_mandatory"
+            inputId="apm_permission_detail_mandatory"
             formControlName="mandatory"
             [binary]="true"
             [styleClass]="'cursor-auto shadow-none'"
             [label]="'PERMISSION.MANDATORY' | translate"
+            [ariaLabel]="'PERMISSION.MANDATORY' | translate"
             [pTooltip]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
             tooltipPosition="right"
             tooltipEvent="hover"
@@ -52,27 +77,58 @@
         <p-message
           *ngIf="permission?.operator"
           styleClass="p-1"
-          id="workspace_import_confirm_message_workspace_exists"
+          id="apm_permission_detail_operator_message"
           severity="info"
           [text]="'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate"
         ></p-message>
       </div>
       <div>
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="apm_detail_resource" formControlName="resource" />
-          <label class="ocx-required-label" for="apm_detail_resource"> {{ 'PERMISSION.RESOURCE' | translate }} </label>
+          <input
+            pInputText
+            type="text"
+            class="w-full text-responsive"
+            id="apm_permission_detail_resource"
+            formControlName="resource"
+            [ariaLabel]="'PERMISSION.RESOURCE' | translate"
+            [pTooltip]="'PERMISSION.RESOURCE.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <label class="ocx-required-label" for="apm_permission_detail_resource">
+            {{ 'PERMISSION.RESOURCE' | translate }}
+          </label>
         </span>
       </div>
       <div>
         <span class="p-float-label" controlErrorAnchor>
-          <input pInputText type="text" class="w-full" id="apm_detail_action" formControlName="action" />
-          <label class="ocx-required-label" for="apm_detail_action"> {{ 'PERMISSION.ACTION' | translate }} </label>
+          <input
+            pInputText
+            type="text"
+            class="w-full text-responsive"
+            id="apm_permission_detail_action"
+            formControlName="action"
+            [ariaLabel]="'PERMISSION.ACTION' | translate"
+            [pTooltip]="'PERMISSION.ACTION.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <label class="ocx-required-label" for="apm_permission_detail_action">
+            {{ 'PERMISSION.ACTION' | translate }}
+          </label>
         </span>
       </div>
       <div>
         <span class="p-float-label">
-          <input pInputText type="text" class="w-full" id="apm_detail_description" formControlName="description" />
-          <label for="apm_detail_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
+          <input
+            pInputText
+            type="text"
+            class="w-full text-responsive"
+            id="apm_permission_detail_description"
+            formControlName="description"
+            [ariaLabel]="'PERMISSION.DESCRIPTION' | translate"
+          />
+          <label for="apm_permission_detail_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
         </span>
       </div>
     </div>
@@ -82,10 +138,11 @@
       <p-button
         *ngIf="changeMode === 'VIEW'"
         autofocus
-        id="apm_detail_button_close"
+        id="apm_permission_detail_action_close"
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -93,21 +150,23 @@
       <p-button
         *ngIf="changeMode !== 'VIEW'"
         autofocus
-        id="apm_detail_button_cancel"
+        id="apm_permission_detail_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.CANCEL' | translate"
+        [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
       <p-button
         *ngIf="changeMode !== 'VIEW'"
-        id="apm_detail_button_save"
+        id="apm_permission_detail_action_save"
         icon="pi pi-save"
-        (click)="onSave()"
+        (onClick)="onSave()"
         [disabled]="!formGroup.valid"
         [label]="'ACTIONS.SAVE' | translate"
+        [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -118,11 +177,12 @@
 
 <!-- DELETE PERMISSION -->
 <p-dialog
-  [(visible)]="displayDeleteDialog"
   [header]="'ACTIONS.DELETE.PERMISSION' | translate"
+  [(visible)]="displayDeleteDialog"
   (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
+  [draggable]="true"
   [resizable]="false"
   [dismissableMask]="true"
   [style]="{ 'max-width': '425px' }"
@@ -130,7 +190,7 @@
   <div class="mr-2 flex column-gap-4 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
     <div>
-      <div id="apm_delete_message" class="font-bold">
+      <div id="apm_permission_delete_message" class="font-bold">
         {{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', permission?.resource + '#' +
         permission?.action) }}
       </div>
@@ -142,19 +202,21 @@
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <p-button
         autofocus
-        id="apm_delete_button_no"
+        id="apm_permission_delete_action_no"
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
+        [arialabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="apm_delete_button_yes"
+        id="apm_permission_delete_action_yes"
         icon="pi pi-check"
         (onClick)="onDeleteConfirmation()"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
+        [ariaLabel]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"

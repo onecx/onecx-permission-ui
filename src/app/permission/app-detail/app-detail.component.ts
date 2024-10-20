@@ -62,7 +62,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   limitText = limitText
   // dialog control
   public loading = true
-  public loadingExceptionKey = ''
+  public loadingExceptionKey: string | undefined = undefined
   public actions$: Observable<Action[]> | undefined
   // filter row
   public filterBy = ['action', 'resource']
@@ -70,7 +70,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterValue: string | undefined
   public filterMode: string
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
-  public quickFilterItems: SelectItem[]
+  public quickFilterItems$: Observable<SelectItem[]> | undefined
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
@@ -156,23 +156,40 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.myPermissions.push('PERMISSION#MANAGE')
 
     this.filterMode = FilterMatchMode.CONTAINS
-    this.quickFilterItems = [
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.ALL', value: 'ALL' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.DELETE', value: 'DELETE' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.EDIT', value: 'EDIT' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.READ', value: 'READ' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.VIEW', value: 'VIEW' },
-      { label: 'DIALOG.DETAIL.QUICK_FILTER.WRITE', value: 'WRITE' }
-    ]
   }
 
   public ngOnInit(): void {
+    this.preparequickFilterItems()
     this.prepareActionButtons()
     this.loadData()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
     this.destroy$.complete()
+  }
+
+  private preparequickFilterItems(): void {
+    this.quickFilterItems$ = this.translate
+      .get([
+        'DIALOG.DETAIL.QUICK_FILTER.ALL',
+        'DIALOG.DETAIL.QUICK_FILTER.DELETE',
+        'DIALOG.DETAIL.QUICK_FILTER.EDIT',
+        'DIALOG.DETAIL.QUICK_FILTER.READ',
+        'DIALOG.DETAIL.QUICK_FILTER.VIEW',
+        'DIALOG.DETAIL.QUICK_FILTER.WRITE'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.ALL'], value: 'ALL' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.DELETE'], value: 'DELETE' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.EDIT'], value: 'EDIT' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.READ'], value: 'READ' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.VIEW'], value: 'VIEW' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.WRITE'], value: 'WRITE' }
+          ]
+        })
+      )
   }
 
   private prepareActionButtons(): void {
@@ -206,7 +223,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               actionCallback: () => this.onExport(),
               icon: 'pi pi-download',
               show: 'always',
-              permission: 'PERMISSION#EDIT'
+              permission: 'PERMISSION#EDIT',
+              conditional: true,
+              showCondition: this.loadingExceptionKey !== undefined
             },
             {
               label: data['ACTIONS.CREATE.ROLE'],
@@ -214,7 +233,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               actionCallback: () => this.onCreateRole(),
               icon: 'pi pi-plus',
               show: 'asOverflow',
-              permission: 'ROLE#EDIT'
+              permission: 'ROLE#EDIT',
+              conditional: true,
+              showCondition: this.loadingExceptionKey !== undefined
             }
           ]
         })
@@ -250,7 +271,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       return
     }
     this.loading = true
-    this.loadingExceptionKey = ''
+    this.loadingExceptionKey = undefined
     this.currentApp = {
       id: this.urlParamAppId,
       name: this.urlParamAppId,
@@ -261,6 +282,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.productApps = []
     this.urlParamAppType === 'WORKSPACE' ? this.loadWorkspaceDetails() : this.loadProductDetails()
   }
+
   private loadProductDetails() {
     this.appApi
       .searchApplications({ applicationSearchCriteria: { productName: this.urlParamAppId! } })
@@ -270,11 +292,15 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
           console.error('searchApplications() result:', result)
         } else if (result instanceof Object && result.stream) {
-          this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
-          this.currentApp.name = this.currentApp.productName
-          result.stream.map((app: Application) => this.productApps.push(app as App))
-          this.prepareActionButtons()
-          this.loadRolesAndPermissions()
+          // expected apps per product: 2 (bff + ui)
+          if (result.totalElements === 0) this.loadingExceptionKey = 'EXCEPTIONS.NOT_FOUND.PRODUCT'
+          else {
+            this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
+            this.currentApp.name = this.currentApp.productName
+            result.stream.map((app: Application) => this.productApps.push(app as App))
+            this.prepareActionButtons()
+            this.loadRolesAndPermissions()
+          }
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
           console.error('getApplicationById() => unknown response:', result)
@@ -282,6 +308,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.loading = false
       })
   }
+
   private loadWorkspaceDetails() {
     this.workspaceApi
       .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId! })
@@ -302,6 +329,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         }
+        this.loading = false
       })
   }
   private fillProductApps(product: ProductDetails) {

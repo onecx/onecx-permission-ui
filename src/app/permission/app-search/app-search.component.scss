@@ -7,31 +7,13 @@
 @include search-criteria-select-button-slim;
 @include search-criteria-select-button-filter;
 @include dialog-footer-buttons;
+@include correct-file-upload;
 @include card-badges;
 @include displaying-text-responsive;
-@include listbox-zebra-rows;
 @include media-queries;
 
 :host {
   .card-badge-right.badge-2-1 {
     top: 20px;
-  }
-}
-
-:host ::ng-deep {
-  .p-listbox {
-    box-shadow:
-      0 2px 1px -1px rgba(0, 0, 0, 0.2),
-      0 1px 1px 0 rgba(0, 0, 0, 0.14),
-      0 1px 3px 0 rgba(0, 0, 0, 0.12);
-    .p-listbox-list-wrapper {
-      border-radius: var(--border-radius);
-      .p-listbox-list .p-listbox-item {
-        padding: 0.5rem 1rem;
-        .p-checkbox {
-          margin-right: 1rem;
-        }
-      }
-    }
   }
 }
