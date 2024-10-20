@@ -215,10 +215,14 @@
   "PERMISSION": {
     "LABEL": "Berechtigungen",
     "APP_ID": "App ID",
+    "APP_ID.TOOLTIP": "ID einer App (Frontend/Backend der Applikation)",
     "PRODUCT_NAME": "Applikationsname",
+    "PRODUCT_NAME.TOOLTIP": "Name der Applikation die die Berechtigung deklariert hat",
     "DESCRIPTION": "Beschreibung",
     "RESOURCE": "Ressource",
+    "RESOURCE.TOOLTIP": "Ressource/Objekt auf der Aktionen erlaubt werden",
     "ACTION": "Aktion",
+    "ACTION.TOOLTIP": "Aktion auf der Ressource",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
     "MANDATORY": "Unbedingt erforderlich",
@@ -311,6 +315,10 @@
     }
   },
   "EXCEPTIONS": {
+    "NOT_FOUND": {
+      "PRODUCT": "Es konnten keine Daten zu dieser Applikation gefunden werden.",
+      "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden."
+    },
     "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
     "HTTP_STATUS_0": {
       "APP": "Unbekanntes Problem beim Abrufen von Applikationen - Bitte versuchen sie es noch einmal.",
@@ -342,7 +350,7 @@
       "ROLES": "Es konnten keine Rollen gefunden werden.",
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
-      "WORKSPACE": "Workspace Daten konnten nicht gefunden werden."
+      "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",

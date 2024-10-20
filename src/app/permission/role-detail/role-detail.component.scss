@@ -1,7 +1,10 @@
 @import '/src/app/_apm-mixins.scss';
 
-@include listbox-zebra-rows;
 @include dialog-footer-buttons;
+@include displaying-text-responsive;
+
+// IAM roles
+@include listbox-zebra-rows;
 
 :host ::ng-deep {
   .p-listbox {

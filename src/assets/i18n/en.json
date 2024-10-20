@@ -215,10 +215,14 @@
   "PERMISSION": {
     "LABEL": "Permissions",
     "APP_ID": "App ID",
+    "APP_ID.TOOLTIP": "ID of the App (frontend/backend of an Application)",
     "PRODUCT_NAME": "Application Name",
+    "PRODUCT_NAME.TOOLTIP": "Name of the Application which has declared the Permission",
     "DESCRIPTION": "Description",
     "RESOURCE": "Resource",
+    "RESOURCE.TOOLTIP": "Resource/Object on which Actions are allowed",
     "ACTION": "Action",
+    "ACTION.TOOLTIP": "Action on the Resource",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
     "MANDATORY": "Mandatory required",
@@ -311,6 +315,10 @@
     }
   },
   "EXCEPTIONS": {
+    "NOT_FOUND": {
+      "PRODUCT": "No data could be found for this Application.",
+      "WORKSPACE": "No data could be found for this Workspace."
+    },
     "HTTP_MISSING_PARAMETER": "Parameters from the URL could not be determined",
     "HTTP_STATUS_0": {
       "APP": "Unknown problem retrieving Application data - please try again.",
@@ -342,7 +350,7 @@
       "ROLES": "No Roles could be found.",
       "PERMISSIONS": "No Permissions could be found.",
       "ASSIGNMENTS": "No Permissions could be found.",
-      "WORKSPACE": "Workspace data could not be found."
+      "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving Application data - please try again.",

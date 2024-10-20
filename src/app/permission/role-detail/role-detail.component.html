@@ -1,9 +1,10 @@
 <p-dialog
-  [(visible)]="displayDetailDialog"
   [header]="'ACTIONS.' + changeMode + '.ROLE' | translate"
+  [(visible)]="displayDetailDialog"
   (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
+  [draggable]="true"
   [resizable]="true"
   [dismissableMask]="true"
   [style]="{ width: '400px' }"
@@ -15,9 +16,10 @@
           <input
             pInputText
             type="text"
-            class="w-full"
+            class="w-full text-responsive"
             id="apm_role_detail_name"
             formControlName="name"
+            [ariaLabel]="'ROLE.NAME' | translate"
             [pTooltip]="'ROLE.NAME' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -30,7 +32,7 @@
           <input
             pInputText
             type="text"
-            class="w-full"
+            class="w-full text-responsive"
             id="apm_role_detail_description"
             formControlName="description"
             [pTooltip]="'ROLE.DESCRIPTION' | translate"
@@ -48,8 +50,9 @@
         autofocus
         id="apm_role_detail_action_cancel"
         icon="pi pi-times"
-        [label]="'ACTIONS.CANCEL' | translate"
         (onClick)="onClose()"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -60,6 +63,7 @@
         (onClick)="onSaveRole()"
         [disabled]="!formGroupRole.valid"
         [label]="'ACTIONS.SAVE' | translate"
+        [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -75,6 +79,7 @@
   (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
+  [draggable]="true"
   [resizable]="false"
   [dismissableMask]="true"
   [style]="{ 'max-width': '425px' }"
@@ -95,6 +100,7 @@
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
+        [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -104,6 +110,7 @@
         icon="pi pi-check"
         (onClick)="onDeleteConfirmation()"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
+        [ariaLabel]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -114,11 +121,12 @@
 
 <!-- SELECT IAM ROLES -->
 <p-dialog
-  [(visible)]="showIamRolesDialog"
   [header]="'ROLE.IAM.HEADER' | translate"
+  [(visible)]="showIamRolesDialog"
   (onHide)="onClose()"
   [modal]="true"
   [closable]="true"
+  [draggable]="true"
   [resizable]="true"
   [dismissableMask]="true"
 >
@@ -146,6 +154,7 @@
         icon="pi pi-times"
         (onClick)="onClose()"
         [label]="'ACTIONS.CANCEL' | translate"
+        [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -155,6 +164,7 @@
         icon="pi pi-check"
         (onClick)="onAddIamRoles()"
         [label]="'ROLE.IAM.SAVE' | translate"
+        [ariaLabel]="'ROLE.IAM.SAVE' | translate"
         [pTooltip]="'ROLE.IAM.SAVE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
