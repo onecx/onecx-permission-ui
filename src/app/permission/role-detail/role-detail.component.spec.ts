@@ -9,7 +9,7 @@ import { of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 
-import { Role, RoleAPIService } from 'src/app/shared/generated'
+import { Role, IAMRole, RoleAPIService } from 'src/app/shared/generated'
 import { RoleDetailComponent } from './role-detail.component'
 
 const role: Role = {
@@ -208,28 +208,100 @@ describe('RoleDetailComponent', () => {
   /**
    * Select IAM Roles to be added
    */
-  xdescribe('searchIamRoles', () => {
-    it('should populate iamRoles with unique roles', () => {
-      const mockRoles = [{ name: 'Role1' }, { name: 'Role2' }]
-      const mockData = { stream: mockRoles }
-      roleApiSpy.searchAvailableRoles.and.returnValue(of(mockData))
-      component.roles = [{ name: 'Role2' }]
+  describe('searchIamRoles', () => {
+    it('should clear selected IAM roles', () => {
+      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: [] }))
+      component.selectedIamRoles = [{ name: 'role1' }, { name: 'role2' }] as IAMRole[]
 
       component.searchIamRoles()
 
-      //expect(component.iamRoles.length).toBe(1)
-      //expect(component.iamRoles).toContain(mockRoles[0])
-      //expect(component.iamRoles).not.toContain(mockRoles[1])
+      expect(component.selectedIamRoles).toEqual([])
+    })
+
+    it('should call searchAvailableRoles with correct parameters', () => {
+      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: [] }))
+      component.searchIamRoles()
+      expect(roleApiSpy.searchAvailableRoles).toHaveBeenCalledWith({ iAMRoleSearchCriteria: { pageSize: 1000 } })
+    })
+
+    it('should handle successful response', () => {
+      const mockRoles = [
+        { id: '1', name: 'Role 1' },
+        { id: '2', name: 'Role 2' }
+      ]
+      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: mockRoles }))
+
+      component.searchIamRoles()
+
+      component.iamRoles$.subscribe((roles) => {
+        expect(roles).toEqual(mockRoles)
+      })
     })
 
     it('should handle error response', () => {
-      const errorResponse = { error: 'Error' }
-      spyOn(console, 'error')
+      const errorResponse = { error: 'error' }
       roleApiSpy.searchAvailableRoles.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.searchIamRoles()
 
-      expect(console.error).toHaveBeenCalledWith('Error')
+      component.iamRoles$.subscribe(() => {
+        expect(console.error).toHaveBeenCalledWith('searchAvailableRoles():', errorResponse)
+      })
+    })
+
+    it('should handle empty stream in response', () => {
+      roleApiSpy.searchAvailableRoles.and.returnValue(of({}))
+
+      component.searchIamRoles()
+
+      component.iamRoles$.subscribe((roles) => {
+        expect(roles).toEqual([])
+      })
+    })
+  })
+
+  describe('sortRoleByName', () => {
+    it('should return negative value when first role name comes before second alphabetically', () => {
+      const roleA = { name: 'Admin' }
+      const roleB = { name: 'User' }
+      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
+    })
+
+    it('should return positive value when first role name comes after second alphabetically', () => {
+      const roleA = { name: 'User' }
+      const roleB = { name: 'Admin' }
+      expect(component.sortRoleByName(roleA, roleB)).toBeGreaterThan(0)
+    })
+
+    it('should return zero when role names are the same', () => {
+      const roleA = { name: 'Admin' }
+      const roleB = { name: 'Admin' }
+      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
+    })
+
+    it('should be case-insensitive', () => {
+      const roleA = { name: 'admin' }
+      const roleB = { name: 'Admin' }
+      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
+    })
+
+    it('should handle undefined names', () => {
+      const roleA = { name: undefined }
+      const roleB = { name: 'Admin' }
+      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
+    })
+
+    it('should handle empty string names', () => {
+      const roleA = { name: '' }
+      const roleB = { name: 'Admin' }
+      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
+    })
+
+    it('should handle both names being undefined', () => {
+      const roleA = { name: undefined }
+      const roleB = { name: undefined }
+      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
     })
   })
 

@@ -1,4 +1,5 @@
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core'
+import { AsyncPipe, CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Table, TableModule } from 'primeng/table'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -32,7 +33,7 @@ class MockTable {
   filterGlobal(value: string, mode: string) {}
 }
 
-xdescribe('OneCXUserRolesPermissionsComponent', () => {
+describe('OneCXUserRolesPermissionsComponent', () => {
   let component: OneCXUserRolesPermissionsComponent
   let fixture: ComponentFixture<OneCXUserRolesPermissionsComponent>
 
@@ -70,7 +71,7 @@ xdescribe('OneCXUserRolesPermissionsComponent', () => {
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
         set: {
-          imports: [TranslateTestingModule],
+          imports: [TranslateTestingModule, CommonModule, AsyncPipe],
           providers: [{ provide: UserAPIService, useValue: userServiceSpy }, { provide: AppConfigService }]
         }
       })
@@ -127,14 +128,12 @@ xdescribe('OneCXUserRolesPermissionsComponent', () => {
       initializeComponent()
     })
 
-    it('should display errors if api calls fail', () => {
-      const err = { status: '404' }
-      userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
-      spyOn(console, 'error')
+    it('should search user assignments', () => {
+      spyOn(component, 'searchUserAssignments')
 
       component.onReload()
 
-      expect(console.error).toHaveBeenCalledWith('searchAssignments():', err)
+      expect(component.searchUserAssignments).toHaveBeenCalledWith()
     })
   })
 
@@ -148,15 +147,22 @@ xdescribe('OneCXUserRolesPermissionsComponent', () => {
     expect(mockTable.filterGlobal).toHaveBeenCalledWith('test', 'contains')
   })
 
-  it('should clear userAssignmentItems and roles, and reload the data on onReload', () => {
-    spyOn(component, 'onReload')
+  describe('searchUserAssignments', () => {
+    beforeEach(() => {
+      initializeComponent()
+    })
 
-    component.userAssignmentItems = userAssignments
+    it('should handle error when trying to search user assignments', () => {
+      const err = { error: 'error' }
+      userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
+      spyOn(console, 'error')
 
-    component.onReload()
+      component.ngOnInit()
 
-    expect(component.userAssignmentItems).toEqual([])
-    expect(component.onReload).toHaveBeenCalled()
+      component.userAssignments$.subscribe(() => {
+        expect(console.error).toHaveBeenCalledWith('getUserAssignments():', err)
+      })
+    })
   })
 
   describe('sortUserAssignments', () => {
@@ -230,26 +236,10 @@ xdescribe('OneCXUserRolesPermissionsComponent', () => {
       expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
     })
 
-    it('should call clear() on permissionTable if it exists', () => {
-      component.permissionTable = jasmine.createSpyObj('permissionTable', ['clear'])
-
-      component.onClearFilterUserAssignmentTable()
-
-      expect(component.permissionTable?.clear).toHaveBeenCalled()
-    })
-
     it('should not throw an error if permissionTable is undefined', () => {
       component.permissionTable = undefined
 
       expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
-    })
-
-    it('should call onReload()', () => {
-      spyOn(component, 'onReload')
-
-      component.onClearFilterUserAssignmentTable()
-
-      expect(component.onReload).toHaveBeenCalled()
     })
   })
 })
