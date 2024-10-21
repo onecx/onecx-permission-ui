@@ -756,6 +756,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * 3.2 If currentApp is WORKSPACE then all product are used
    */
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
+    const productNames = this.prepareProductListForBulkOperation()
     const response: any = {
       next: () => {
         this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
@@ -767,20 +768,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
     if (this.filterAppValue) {
-      this.assApi
-        .grantRoleApplicationAssignments({
-          roleId: role.id,
-          createRoleApplicationAssignmentRequest: {
-            appId: this.filterAppValue,
-            productName: this.prepareProductListForBulkOperation()[0]
-          }
-        } as GrantRoleApplicationAssignmentsRequestParams)
-        .subscribe(response)
+      if (productNames.length === 1)
+        this.assApi
+          .grantRoleApplicationAssignments({
+            roleId: role.id,
+            createRoleApplicationAssignmentRequest: {
+              appId: this.filterAppValue,
+              productName: productNames[0]
+            }
+          } as GrantRoleApplicationAssignmentsRequestParams)
+          .subscribe(response)
     } else {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
-          createRoleProductsAssignmentRequest: { productNames: this.prepareProductListForBulkOperation() }
+          createRoleProductsAssignmentRequest: { productNames: productNames }
         } as GrantRoleProductsAssignmentsRequestParams)
         .subscribe(response)
     }
@@ -790,6 +792,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
      ... see GRANT description above
   */
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
+    const productNames = this.prepareProductListForBulkOperation()
     const response: any = {
       next: () => {
         this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
@@ -801,20 +804,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
     if (this.filterAppValue) {
-      this.assApi
-        .revokeRoleApplicationAssignments({
-          roleId: role.id,
-          revokeRoleApplicationAssignmentRequest: {
-            appId: this.filterAppValue,
-            productName: this.prepareProductListForBulkOperation()[0]
-          }
-        } as RevokeRoleApplicationAssignmentsRequestParams)
-        .subscribe(response)
+      if (productNames.length === 1)
+        this.assApi
+          .revokeRoleApplicationAssignments({
+            roleId: role.id,
+            revokeRoleApplicationAssignmentRequest: {
+              appId: this.filterAppValue,
+              productName: productNames[0]
+            }
+          } as RevokeRoleApplicationAssignmentsRequestParams)
+          .subscribe(response)
     } else {
       this.assApi
         .revokeRoleProductsAssignments({
           roleId: role.id,
-          revokeRoleProductsAssignmentRequest: { productNames: this.prepareProductListForBulkOperation() }
+          revokeRoleProductsAssignmentRequest: { productNames: productNames }
         } as RevokeRoleProductsAssignmentsRequestParams)
         .subscribe(response)
     }
@@ -825,7 +829,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // case 1: APP filter value =>
     if (this.filterAppValue) {
       const apps = this.productApps.filter((p) => p.appId === this.filterAppValue)
-      apps.length === 1 ? pList.push(apps[0].productName ?? '') : undefined
+      if (apps.length === 1) pList.push(apps[0].productName ?? '')
       // case 2: PRODUCT
     } else if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
     // case 3: WORKSPACE
