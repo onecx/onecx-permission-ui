@@ -31,10 +31,10 @@ export class RoleDetailComponent implements OnChanges {
   public selectedIamRoles: IAMRole[] = []
 
   constructor(
-    private roleApi: RoleAPIService,
-    private translate: TranslateService,
-    private msgService: PortalMessageService,
-    private userService: UserService
+    private readonly roleApi: RoleAPIService,
+    private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService,
+    private readonly userService: UserService
   ) {
     if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
     if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
