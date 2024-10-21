@@ -80,7 +80,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
   // data
-  private pageSize = 1000
+  private readonly pageSize = 1000
   public urlParamAppId: string | null
   public urlParamAppType: string | undefined
   public currentApp: App = { appId: 'dummy', appType: 'PRODUCT', isProduct: true } as App
@@ -120,16 +120,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public showRoleTools = false
 
   constructor(
-    private appApi: ApplicationAPIService,
-    private assApi: AssignmentAPIService,
-    private permApi: PermissionAPIService,
-    private roleApi: RoleAPIService,
-    private workspaceApi: WorkspaceAPIService,
-    private route: ActivatedRoute,
-    private location: Location,
-    private translate: TranslateService,
-    private msgService: PortalMessageService,
-    private userService: UserService
+    private readonly appApi: ApplicationAPIService,
+    private readonly assApi: AssignmentAPIService,
+    private readonly permApi: PermissionAPIService,
+    private readonly roleApi: RoleAPIService,
+    private readonly workspaceApi: WorkspaceAPIService,
+    private readonly route: ActivatedRoute,
+    private readonly location: Location,
+    private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService,
+    private readonly userService: UserService
   ) {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId')
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
