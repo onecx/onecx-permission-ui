@@ -91,13 +91,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   @ViewChild(DataView) dv: DataView | undefined
 
   constructor(
-    private appApi: ApplicationAPIService,
-    private assgnmtApi: AssignmentAPIService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private translate: TranslateService,
-    private msgService: PortalMessageService,
-    private workspaceApi: WorkspaceAPIService
+    private readonly appApi: ApplicationAPIService,
+    private readonly assgnmtApi: AssignmentAPIService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService,
+    private readonly workspaceApi: WorkspaceAPIService
   ) {
     // search criteria
     this.appSearchCriteriaGroup = new FormGroup<AppSearchCriteria>({
@@ -253,7 +253,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /**
    * Dialog preparation
    */
-  private prepareAppTypeItems(): void {
+  public prepareAppTypeItems(): void {
     this.appTypeItems$ = this.translate
       .get([
         'DIALOG.SEARCH.FILTER.ALL',
@@ -272,7 +272,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         })
       )
   }
-  private prepareQuickFilterItems(): void {
+  public prepareQuickFilterItems(): void {
     this.quickFilterItems$ = this.translate
       .get([
         'DIALOG.SEARCH.QUICK_FILTER.ALL',

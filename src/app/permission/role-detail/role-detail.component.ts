@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
+import { catchError, finalize, map, of, Observable } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 
@@ -22,9 +23,11 @@ export class RoleDetailComponent implements OnChanges {
   @Input() showIamRolesDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
+  public loading = true
+  public loadingExceptionKey: string | undefined = undefined
   public myPermissions = new Array<string>() // permissions of the user
   public formGroupRole: FormGroup
-  public iamRoles!: IAMRole[]
+  public iamRoles$!: Observable<IAMRole[]>
   public selectedIamRoles: IAMRole[] = []
 
   constructor(
@@ -48,7 +51,7 @@ export class RoleDetailComponent implements OnChanges {
       this.formGroupRole.controls['name'].patchValue(this.role.name)
       this.formGroupRole.controls['description'].patchValue(this.role.description)
     }
-    if (this.showIamRolesDialog) this.getIamRoles()
+    this.searchIamRoles()
   }
 
   public onClose(): void {
@@ -134,19 +137,23 @@ export class RoleDetailComponent implements OnChanges {
   /**
    * Select IAM Roles to be added
    */
-  public getIamRoles() {
+  public searchIamRoles(): void {
+    this.loading = true
     this.selectedIamRoles = []
-    this.iamRoles = []
-    this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).subscribe({
-      next: (data) => {
-        data.stream?.forEach((iamRole) => {
-          if (this.roles.filter((r) => r.name === iamRole.name).length === 0) this.iamRoles.push(iamRole)
-        })
-      },
-      error: (err) => {
-        console.error(err.error)
-      }
-    })
+    this.iamRoles$ = this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).pipe(
+      catchError((err) => {
+        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        console.error('searchAvailableRoles():', err)
+        return of([])
+      }),
+      map((result: any) => {
+        return result.stream ?? []
+      }),
+      finalize(() => (this.loading = false))
+    )
+  }
+  public sortRoleByName(a: IAMRole, b: IAMRole): number {
+    return (a.name ? a.name.toUpperCase() : '').localeCompare(b.name ? b.name.toUpperCase() : '')
   }
 
   public onAddIamRoles() {

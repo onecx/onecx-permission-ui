@@ -1074,4 +1074,17 @@ describe('AppDetailComponent', () => {
     fixture.detectChanges()
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
+
+  describe('Test translations', () => {
+    it('should translate quick filter items', () => {
+      component.prepareQuickFilterItems()
+
+      let items: any = []
+      component.quickFilterItems$!.subscribe((data) => (items = data))
+
+      items[0].value
+
+      expect(items[0].value).toEqual('ALL')
+    })
+  })
 })

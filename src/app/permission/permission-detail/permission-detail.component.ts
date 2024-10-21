@@ -30,10 +30,10 @@ export class PermissionDetailComponent implements OnChanges {
   public formGroup: FormGroup
 
   constructor(
-    private permApi: PermissionAPIService,
-    private translate: TranslateService,
-    private msgService: PortalMessageService,
-    private userService: UserService
+    private readonly permApi: PermissionAPIService,
+    private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService,
+    private readonly userService: UserService
   ) {
     if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
     if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
