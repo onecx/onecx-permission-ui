@@ -63,7 +63,7 @@ const routes: Routes = [
   schemas: []
 })
 export class OneCXPermissionModule implements DoBootstrap {
-  constructor(private injector: Injector) {
+  constructor(private readonly injector: Injector) {
     console.info('OneCX Permission Module constructor')
   }
 

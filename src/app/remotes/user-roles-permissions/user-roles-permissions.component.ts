@@ -59,7 +59,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   public searchInProgress = false
 
   constructor(
-    @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
+    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
     private readonly userService: UserService,
     private readonly userApi: UserAPIService,
     private readonly translate: TranslateService
