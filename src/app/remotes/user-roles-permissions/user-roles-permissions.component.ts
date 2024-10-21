@@ -55,7 +55,6 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public columns
   public environment = environment
-  public userAssignmentItems: UserAssignment[] = []
   public loadingExceptionKey = ''
   public searchInProgress = false
 
