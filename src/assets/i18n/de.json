@@ -270,8 +270,8 @@
       "FORMAT_URL": "Format: "
     },
     "ERRORS": {
-      "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung mit diesem Namen bereits existiert.",
-      "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung mit diesem Namen bereits existiert.",
+      "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
+      "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
       "ROLE.CREATE_ALREADY_EXISTS": "Rolle konnte nicht erstellt werden, da eine Rolle mit diesem Namen bereits existiert.",
       "ROLE.EDIT_ALREADY_EXISTS": "Rolle konnte nicht geändert werden, da eine Rolle mit diesem Namen bereits existiert.",
       "INTERNAL_ERROR": "Interner Fehler",

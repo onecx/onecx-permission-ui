@@ -159,7 +159,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.preparequickFilterItems()
+    this.prepareQuickFilterItems()
     this.prepareActionButtons()
     this.loadData()
   }
@@ -168,7 +168,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
 
-  private preparequickFilterItems(): void {
+  public prepareQuickFilterItems(): void {
     this.quickFilterItems$ = this.translate
       .get([
         'DIALOG.DETAIL.QUICK_FILTER.ALL',

@@ -2,8 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
 import FileSaver from 'file-saver'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
-import { getCurrentDateTime } from 'src/app/shared/utils'
+
 import { AssignmentAPIService } from 'src/app/shared/generated'
+import { getCurrentDateTime } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-permission-export',
@@ -15,11 +16,12 @@ export class PermissionExportComponent {
   @Input() displayExportDialog = false
   @Input() listedProductsHeader = ''
   @Output() displayExportDialogChange = new EventEmitter<boolean>()
+
   public selectedProductNames: string[] = []
 
   constructor(
-    private assgnmtApi: AssignmentAPIService,
-    private msgService: PortalMessageService
+    private readonly assgnmtApi: AssignmentAPIService,
+    private readonly msgService: PortalMessageService
   ) {}
 
   public onExportConfirmation(): void {
@@ -44,6 +46,7 @@ export class PermissionExportComponent {
       this.displayExportDialogChange.emit(false)
     }
   }
+
   public onCloseExportDialog(): void {
     this.displayExportDialogChange.emit(false)
     this.selectedProductNames = []
