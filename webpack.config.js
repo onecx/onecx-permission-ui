@@ -31,25 +31,14 @@ const config = withModuleFederationPlugin({
   }),
   sharedMappings: ['@onecx/portal-integration-angular']
 })
-config.devServer = {
-  allowedHosts: 'all'
-}
+config.devServer = { allowedHosts: 'all' }
 
 const plugins = config.plugins.filter((plugin) => !(plugin instanceof ModifyEntryPlugin))
 
 module.exports = {
   ...config,
   plugins,
-  output: {
-    uniqueName: 'onecx-permission-ui',
-    publicPath: 'auto'
-  },
-  experiments: {
-    ...config.experiments,
-    topLevelAwait: true
-  },
-  optimization: {
-    runtimeChunk: false,
-    splitChunks: false
-  }
+  output: { uniqueName: 'onecx-permission-ui', publicPath: 'auto' },
+  experiments: { ...config.experiments, topLevelAwait: true },
+  optimization: { runtimeChunk: false, splitChunks: false }
 }
