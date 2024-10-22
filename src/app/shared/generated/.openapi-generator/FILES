@@ -19,6 +19,7 @@ model/applicationSearchCriteria.ts
 model/assignment.ts
 model/assignmentPageResult.ts
 model/assignmentSearchCriteria.ts
+model/assignmentUserSearchCriteria.ts
 model/createAssignmentRequest.ts
 model/createPermissionRequest.ts
 model/createProductAssignmentsRequest.ts

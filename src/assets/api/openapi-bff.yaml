@@ -1,9 +1,10 @@
+---
 openapi: 3.0.3
 info:
   title: onecx-permission-bff
   version: 1.0.0
 servers:
-  - url: 'http://onecx-permission-bff:8080'
+  - url: "http://onecx-permission-bff:8080"
 tags:
   - name: application
   - name: assignment
@@ -351,6 +352,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments/user/search:
+    post:
+      x-onecx:
+        permissions:
+          assignment:
+            - read
+      tags:
+        - assignment
+      description: Search for assignments
+      operationId: searchUserAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentUserSearchCriteria'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentPageResult'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /assignments:
     post:
       x-onecx:
@@ -598,13 +628,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ExportAssignmentsRequest'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-        '404':
+        "404":
           description: No themes founds
   /assignments/import:
     x-onecx:
@@ -623,9 +653,9 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Import successful
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -677,7 +707,7 @@ paths:
             schema:
               $ref: '#/components/schemas/WorkspaceSearchCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -700,7 +730,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -723,7 +753,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -746,7 +776,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -769,7 +799,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1126,6 +1156,22 @@ components:
           default: 100
           maximum: 1000
           type: integer
+    AssignmentUserSearchCriteria:
+      type: object
+      properties:
+        userId:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          maximum: 1000
+          type: integer
     AssignmentPageResult:
       type: object
       properties:
@@ -1297,7 +1343,7 @@ components:
         productName:
           type: string
         workspaceName:
-          type: string
+            type: string
         pageNumber:
           format: int32
           description: The number of page.

@@ -25,6 +25,8 @@ import { AssignmentPageResult } from '../model/assignmentPageResult';
 // @ts-ignore
 import { AssignmentSearchCriteria } from '../model/assignmentSearchCriteria';
 // @ts-ignore
+import { AssignmentUserSearchCriteria } from '../model/assignmentUserSearchCriteria';
+// @ts-ignore
 import { CreateAssignmentRequest } from '../model/createAssignmentRequest';
 // @ts-ignore
 import { CreateRoleApplicationAssignmentRequest } from '../model/createRoleApplicationAssignmentRequest';
@@ -94,6 +96,10 @@ export interface RevokeRoleProductsAssignmentsRequestParams {
 
 export interface SearchAssignmentsRequestParams {
     assignmentSearchCriteria: AssignmentSearchCriteria;
+}
+
+export interface SearchUserAssignmentsRequestParams {
+    assignmentUserSearchCriteria: AssignmentUserSearchCriteria;
 }
 
 
@@ -953,6 +959,75 @@ export class AssignmentAPIService {
             {
                 context: localVarHttpContext,
                 body: assignmentSearchCriteria,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Search for assignments
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AssignmentPageResult>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AssignmentPageResult>>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AssignmentPageResult>>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const assignmentUserSearchCriteria = requestParameters.assignmentUserSearchCriteria;
+        if (assignmentUserSearchCriteria === null || assignmentUserSearchCriteria === undefined) {
+            throw new Error('Required parameter assignmentUserSearchCriteria was null or undefined when calling searchUserAssignments.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/assignments/user/search`;
+        return this.httpClient.request<AssignmentPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: assignmentUserSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
