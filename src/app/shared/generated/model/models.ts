@@ -4,6 +4,7 @@ export * from './applicationSearchCriteria';
 export * from './assignment';
 export * from './assignmentPageResult';
 export * from './assignmentSearchCriteria';
+export * from './assignmentUserSearchCriteria';
 export * from './createAssignmentRequest';
 export * from './createPermissionRequest';
 export * from './createProductAssignmentsRequest';
