@@ -333,6 +333,7 @@
     },
     "HTTP_STATUS_401": {
       "APPS": "You have no Permissions to see Applications.",
+      "ROLES": "You have no Permissions to see Roles.",
       "WORKSPACE": "You have no Permissions to see Workspace Data."
     },
     "HTTP_STATUS_403": {

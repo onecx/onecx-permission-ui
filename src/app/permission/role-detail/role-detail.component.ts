@@ -51,7 +51,7 @@ export class RoleDetailComponent implements OnChanges {
       this.formGroupRole.controls['name'].patchValue(this.role.name)
       this.formGroupRole.controls['description'].patchValue(this.role.description)
     }
-    this.searchIamRoles()
+    if (this.showIamRolesDialog) this.searchIamRoles()
   }
 
   public onClose(): void {

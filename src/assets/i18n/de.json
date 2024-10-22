@@ -333,10 +333,11 @@
     },
     "HTTP_STATUS_401": {
       "APPS": "Sie haben keine Rechte um Applikationen zu sehen.",
+      "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "WORKSPACE": "Sie haben keine Rechte um Workspace Daten zu sehen."
     },
     "HTTP_STATUS_403": {
-      "APP": "Sie haben keine Rechte um Applikation Daten zu sehen.",
+      "APP": "Sie haben keine Rechte um Applikationsdaten zu sehen.",
       "APPS": "Sie haben keine Rechte um Applikationen zu sehen.",
       "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
       "PERMISSIONS": "Sie haben keine Rechte um Berechtigungen zu sehen.",
