@@ -157,7 +157,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
       spyOn(console, 'error')
 
-      component.ngOnInit()
+      component.ngOnChanges()
 
       component.userAssignments$.subscribe(() => {
         expect(console.error).toHaveBeenCalledWith('getUserAssignments():', err)
