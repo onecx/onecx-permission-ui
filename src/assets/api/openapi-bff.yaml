@@ -374,7 +374,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AssignmentPageResult'
+                $ref: '#/components/schemas/UserAssignmentPageResult'
         400:
           description: Bad request
           content:

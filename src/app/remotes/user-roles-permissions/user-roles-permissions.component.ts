@@ -106,6 +106,9 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
+    this.assgnmtApi.configuration = new Configuration({
+      basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
+    })
   }
 
   public ngOnInit(): void {
@@ -134,6 +137,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     } else {
       return this.userApi.getUserAssignments({ userCriteria: { pageSize: 1000 } }).pipe(
         map((pageResult: UserAssignmentPageResult) => {
+          console.log('GET USER ASSGMTS', pageResult)
           return pageResult.stream ?? []
         }),
         catchError((err) => {
