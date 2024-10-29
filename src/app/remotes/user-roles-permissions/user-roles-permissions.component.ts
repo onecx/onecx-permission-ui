@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, Inject, Input, ViewChild, OnChanges } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
@@ -16,7 +16,13 @@ import {
   provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
 
-import { Configuration, UserAPIService, UserAssignment, UserAssignmentPageResult } from 'src/app/shared/generated'
+import {
+  AssignmentAPIService,
+  Configuration,
+  UserAPIService,
+  UserAssignment,
+  UserAssignmentPageResult
+} from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { sortByLocale } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
@@ -45,7 +51,8 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
     })
   ]
 })
-export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComponent, ocxRemoteWebcomponent {
+export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
+  @Input() userId = ''
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
@@ -62,6 +69,7 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
     private readonly userService: UserService,
     private readonly userApi: UserAPIService,
+    private readonly assgnmtApi: AssignmentAPIService,
     private readonly translate: TranslateService
   ) {
     this.userService.lang$.subscribe((lang) => this.translate.use(lang))
@@ -98,9 +106,12 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
+    this.assgnmtApi.configuration = new Configuration({
+      basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
+    })
   }
 
-  public ngOnInit(): void {
+  public ngOnChanges(): void {
     this.onReload()
   }
 
@@ -110,17 +121,33 @@ export class OneCXUserRolesPermissionsComponent implements OnInit, ocxRemoteComp
 
   public searchUserAssignments(): Observable<UserAssignment[]> {
     this.searchInProgress = true
-    return this.userApi.getUserAssignments({ userCriteria: { pageSize: 1000 } }).pipe(
-      map((pageResult: UserAssignmentPageResult) => {
-        return pageResult.stream ?? []
-      }),
-      catchError((err) => {
-        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-        console.error('getUserAssignments():', err)
-        return of([])
-      }),
-      finalize(() => (this.searchInProgress = false))
-    )
+    if (this.userId) {
+      return this.assgnmtApi
+        .searchUserAssignments({ assignmentUserSearchCriteria: { userId: this.userId, pageSize: 1000 } })
+        .pipe(
+          map((pageResult: UserAssignmentPageResult) => {
+            return pageResult.stream ?? []
+          }),
+          catchError((err) => {
+            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+            console.error('searchUserAssignments():', err)
+            return of([])
+          }),
+          finalize(() => (this.searchInProgress = false))
+        )
+    } else {
+      return this.userApi.getUserAssignments({ userCriteria: { pageSize: 1000 } }).pipe(
+        map((pageResult: UserAssignmentPageResult) => {
+          return pageResult.stream ?? []
+        }),
+        catchError((err) => {
+          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          console.error('getUserAssignments():', err)
+          return of([])
+        }),
+        finalize(() => (this.searchInProgress = false))
+      )
+    }
   }
 
   public sortUserAssignments(a: UserAssignment, b: UserAssignment): number {

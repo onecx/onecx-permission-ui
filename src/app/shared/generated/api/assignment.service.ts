@@ -40,6 +40,8 @@ import { ProblemDetailResponse } from '../model/problemDetailResponse';
 import { RevokeRoleApplicationAssignmentRequest } from '../model/revokeRoleApplicationAssignmentRequest';
 // @ts-ignore
 import { RevokeRoleProductsAssignmentRequest } from '../model/revokeRoleProductsAssignmentRequest';
+// @ts-ignore
+import { UserAssignmentPageResult } from '../model/userAssignmentPageResult';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -974,9 +976,9 @@ export class AssignmentAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AssignmentPageResult>;
-    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AssignmentPageResult>>;
-    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AssignmentPageResult>>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserAssignmentPageResult>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserAssignmentPageResult>>;
+    public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserAssignmentPageResult>>;
     public searchUserAssignments(requestParameters: SearchUserAssignmentsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const assignmentUserSearchCriteria = requestParameters.assignmentUserSearchCriteria;
         if (assignmentUserSearchCriteria === null || assignmentUserSearchCriteria === undefined) {
@@ -1024,7 +1026,7 @@ export class AssignmentAPIService {
         }
 
         let localVarPath = `/assignments/user/search`;
-        return this.httpClient.request<AssignmentPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<UserAssignmentPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: assignmentUserSearchCriteria,
