@@ -84,20 +84,18 @@
             >
             </a>
           </div>
-          <div class="ml-3 flex column-gap-2">
-            <p-button
-              type="button"
-              id="apm_user_assignments_table_header_action_reload"
-              styleClass="h-full"
-              icon="pi pi-refresh"
-              (onClick)="onReload()"
-              [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
-              [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-            </p-button>
-          </div>
+          <p-button
+            type="button"
+            id="apm_user_assignments_table_header_action_reload"
+            styleClass="h-full sm:ml-3"
+            icon="pi pi-refresh"
+            (onClick)="onReload()"
+            [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
+            [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+          </p-button>
         </div>
       </ng-template>
 
@@ -128,12 +126,13 @@
               <span *ngIf="col.filter" class="p-float-label atext-left">
                 <p-dropdown
                   [id]="'apm_user_assignments_table_filter_' + col.field"
-                  [options]="extractFilterItems(items, col.field)"
                   (onClick)="$event.stopPropagation()"
                   (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                   [showClear]="true"
+                  [emptyMessage]="'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate"
+                  [options]="extractFilterItems(items, col.field)"
+                  [(ngModel)]="col.value"
                 >
-                  <ng-template let-option pTemplate="item"> {{ option }} </ng-template>
                 </p-dropdown>
                 <label [for]="'apm_user_assignments_table_filter_' + col.field"> {{ col.header | translate }}</label>
               </span>
