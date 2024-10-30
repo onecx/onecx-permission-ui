@@ -24,12 +24,6 @@
     font-size: var(--dialog-header-font-size);
   }
 
-  .correct-ocx-interactive-data-view > ocx-interactive-data-view > div {
-    padding: 0 0 0.5rem 0 !important;
-    &.surface-border {
-      border-bottom: var(--table-header-border) !important;
-    }
-  }
   // reduce on all panels
   .p-tabview .p-tabview-panels {
     padding: 0;
