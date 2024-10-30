@@ -1,3 +1,13 @@
+<div
+  *ngIf="userId"
+  class="absolute user-profile-name"
+  [pTooltip]="'USER_ROLE_PERMISSIONS.USER_PROFILE' | translate"
+  tooltipPosition="top"
+  tooltipEvent="hover"
+>
+  {{ displayName }}
+</div>
+
 <p-tabView *ngIf="(userAssignments$ | async)?.sort(sortUserAssignments) as items">
   <p-tabPanel id="apm_user_assignments">
     <ng-template pTemplate="header">
@@ -20,7 +30,7 @@
       #permissionTable
       [columns]="columns"
       [value]="items"
-      styleClass="p-datatable-striped user-roles-and-permissions"
+      styleClass="p-datatable-striped user-roles-and-permissions px-2 sm:px-3"
       [autoLayout]="true"
       [globalFilterFields]="['productName', 'role', 'resource', 'action']"
       [paginator]="true"
@@ -74,20 +84,18 @@
             >
             </a>
           </div>
-          <div class="ml-3 flex column-gap-2">
-            <p-button
-              type="button"
-              id="apm_user_assignments_table_header_action_reload"
-              styleClass="h-full"
-              icon="pi pi-refresh"
-              (onClick)="onReload()"
-              [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
-              [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-            </p-button>
-          </div>
+          <p-button
+            type="button"
+            id="apm_user_assignments_table_header_action_reload"
+            styleClass="h-full sm:ml-3"
+            icon="pi pi-refresh"
+            (onClick)="onReload()"
+            [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
+            [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+          </p-button>
         </div>
       </ng-template>
 
@@ -106,34 +114,41 @@
           <th
             *ngFor="let col of columns"
             [id]="'apm_user_assignments_table_header_' + col.field"
-            class="p-2 text-center white-space-nowrap"
+            class="p-2"
             [pSortableColumn]="col.field"
             [attr.aria-label]="col.tooltip | translate"
             [pTooltip]="col.tooltip | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
           >
-            <ng-container *ngIf="!col.filter"> {{ col.header | translate }} </ng-container>
-            <p-dropdown
-              *ngIf="col.filter"
-              [id]="'apm_user_assignments_table_filter_' + col.field"
-              panelStyleClass="text-left"
-              [options]="extractFilterItems(items, col.field)"
-              (onClick)="$event.stopPropagation()"
-              (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
-              [placeholder]="col.header | translate"
-              [showClear]="true"
-            >
-              <ng-template let-option pTemplate="item"> {{ option }} </ng-template>
-            </p-dropdown>
-            <p-sortIcon [field]="col.field"></p-sortIcon>
+            <div class="flex flex-row flex-nowrap justify-content-center align-items-center">
+              <ng-container *ngIf="!col.filter"> {{ col.header | translate }} </ng-container>
+              <span *ngIf="col.filter" class="p-float-label atext-left">
+                <p-dropdown
+                  [id]="'apm_user_assignments_table_filter_' + col.field"
+                  (onClick)="$event.stopPropagation()"
+                  (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
+                  [showClear]="true"
+                  [emptyMessage]="'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate"
+                  [options]="extractFilterItems(items, col.field)"
+                  [(ngModel)]="col.value"
+                >
+                </p-dropdown>
+                <label [for]="'apm_user_assignments_table_filter_' + col.field"> {{ col.header | translate }}</label>
+              </span>
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </div>
           </th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-item let-columns="columns" let-i="rowIndex">
         <tr>
-          <td *ngFor="let col of columns" [id]="'apm_user_assignments_table_row_' + i + '_' + col.field">
+          <td
+            *ngFor="let col of columns"
+            [id]="'apm_user_assignments_table_row_' + i + '_' + col.field"
+            class="text-center"
+          >
             {{ item[col.field] }}
           </td>
         </tr>

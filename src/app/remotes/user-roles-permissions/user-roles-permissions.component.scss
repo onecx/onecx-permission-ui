@@ -12,6 +12,18 @@
 }
 
 :host ::ng-deep {
+  .p-dialog .p-dialog-content {
+    border-bottom-left-radius: var(--border-radius) !important;
+    border-bottom-right-radius: var(--border-radius) !important;
+  }
+
+  .user-profile-name {
+    top: 1.55rem;
+    right: 8rem;
+    font-weight: var(--dialog-header-font-weight); // same as dialog-title
+    font-size: var(--dialog-header-font-size);
+  }
+
   .correct-ocx-interactive-data-view > ocx-interactive-data-view > div {
     padding: 0 0 0.5rem 0 !important;
     &.surface-border {
@@ -25,9 +37,5 @@
 
   .p-datatable .p-datatable-thead > tr > th {
     border-bottom-width: 2px;
-  }
-  .user-roles-and-permissions.p-datatable .p-datatable-thead > tr > th,
-  .user-roles-and-permissions.p-datatable .p-datatable-tbody > tr > td {
-    text-align: center !important;
   }
 }

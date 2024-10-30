@@ -296,6 +296,7 @@
       "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned",
       "PERMISSIONS.TITLE": "Permissions: "
     },
+    "USER_PROFILE": "User Profile",
     "NO_RESULTS": "No data",
     "NO_ROLES": "No Roles assigned",
     "PERMISSION": "Permission",

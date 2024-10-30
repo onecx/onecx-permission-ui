@@ -52,7 +52,8 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
   ]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
-  @Input() userId = ''
+  @Input() userId: string | undefined = undefined
+  @Input() displayName: string | undefined = undefined
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
@@ -78,30 +79,35 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         field: 'resource',
         header: 'USER_ROLE_PERMISSIONS.RESOURCE',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE',
-        filter: true
+        filter: true,
+        value: null
       },
       {
         field: 'action',
         header: 'USER_ROLE_PERMISSIONS.ACTION',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION',
-        filter: true
+        filter: true,
+        value: null
       },
       {
         field: 'productName',
         header: 'USER_ROLE_PERMISSIONS.PRODUCT',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.PRODUCT',
-        filter: true
+        filter: true,
+        value: null
       },
       {
         field: 'roleName',
         header: 'USER_ROLE_PERMISSIONS.ROLE',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE',
-        filter: true
+        filter: true,
+        value: null
       }
     ]
   }
 
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.searchInProgress = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
@@ -121,6 +127,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public searchUserAssignments(): Observable<UserAssignment[]> {
     this.searchInProgress = true
+    // on admin view the userId is set, otherwise the me services are used
     if (this.userId) {
       return this.assgnmtApi
         .searchUserAssignments({ assignmentUserSearchCriteria: { userId: this.userId, pageSize: 1000 } })
@@ -170,7 +177,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     items.forEach((item: UserAssignment) => {
       if (item[fieldName] && item[fieldName] !== '') if (!arr.includes(item[fieldName])) arr.push(item[fieldName])
     })
-    return arr.sort(sortByLocale)
+    arr.sort(sortByLocale)
+    return arr
   }
 
   public applyGlobalFilter($event: Event, primengTable: Table): void {
