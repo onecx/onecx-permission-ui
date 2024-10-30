@@ -11,7 +11,7 @@ import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-component
 
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { UserAPIService, UserAssignment } from 'src/app/shared/generated'
+import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import { provideHttpClient } from '@angular/common/http'
 
 const userAssignments: UserAssignment[] = [
@@ -39,6 +39,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   const userServiceSpy = {
     getUserAssignments: jasmine.createSpy('getUserAssignments').and.returnValue(of({ stream: userAssignments }))
+  }
+  const assgnmtApiSpy = {
+    searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
 
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
@@ -72,7 +75,11 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
         set: {
           imports: [TranslateTestingModule, CommonModule, AsyncPipe],
-          providers: [{ provide: UserAPIService, useValue: userServiceSpy }, { provide: AppConfigService }]
+          providers: [
+            { provide: UserAPIService, useValue: userServiceSpy },
+            { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
+            { provide: AppConfigService }
+          ]
         }
       })
       .compileComponents()
@@ -80,6 +87,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     baseUrlSubject.next('base_url_mock')
 
     userServiceSpy.getUserAssignments.calls.reset()
+    assgnmtApiSpy.searchUserAssignments.calls.reset()
     routerMock.navigateByUrl.calls.reset()
   }))
 
@@ -152,7 +160,42 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       initializeComponent()
     })
 
-    it('should handle error when trying to search user assignments', () => {
+    it('should get another users assignments', () => {
+      assgnmtApiSpy.searchUserAssignments.and.returnValue(of(userAssignments))
+      component.userId = 'id'
+
+      component.ngOnChanges()
+
+      component.userAssignments$.subscribe((assignments) => {
+        expect(assignments).toEqual(assignments)
+      })
+    })
+
+    it('should handle error when trying to get another users assignments', () => {
+      const err = { error: 'error' }
+      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => err))
+      spyOn(console, 'error')
+      component.userId = 'id'
+
+      component.ngOnChanges()
+
+      component.userAssignments$.subscribe(() => {
+        expect(console.error).toHaveBeenCalledWith('searchUserAssignments():', err)
+      })
+    })
+
+    it('should get my user assignments', () => {
+      userServiceSpy.getUserAssignments.and.returnValue(of(userAssignments))
+      spyOn(console, 'error')
+
+      component.ngOnChanges()
+
+      component.userAssignments$.subscribe((assignments) => {
+        expect(assignments).toEqual(assignments)
+      })
+    })
+
+    it('should handle error when trying to get my user assignments', () => {
       const err = { error: 'error' }
       userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
       spyOn(console, 'error')
@@ -167,8 +210,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   describe('sortUserAssignments', () => {
     it('should sort by productName when different', () => {
-      const a = { productName: 'Apple', resource: 'R1', action: 'A1' }
-      const b = { productName: 'Banana', resource: 'R1', action: 'A1' }
+      const a = { productName: 'Apple', resource: 'R1', action: 'A1', applicationId: 'id' }
+      const b = { productName: 'Banana', resource: 'R1', action: 'A1', applicationId: 'id2' }
       expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
       expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
     })
@@ -216,6 +259,69 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       const a = { productName: '', resource: '', action: '' }
       const b = { productName: undefined, resource: undefined, action: undefined }
       expect(component['sortUserAssignments'](a, b)).toBe(0)
+    })
+  })
+
+  describe('extractFilterItems', () => {
+    it('should return empty array when input array is empty', () => {
+      const result = component.extractFilterItems([], 'productName')
+      expect(result).toEqual([])
+    })
+
+    it('should extract unique product names and sort them', () => {
+      const items: UserAssignment[] = [
+        { productName: 'Product B', roleName: 'Role 1' },
+        { productName: 'Product A', roleName: 'Role 2' },
+        { productName: 'Product B', roleName: 'Role 3' },
+        { productName: 'Product C', roleName: 'Role 4' }
+      ]
+
+      const result = component.extractFilterItems(items, 'productName')
+      expect(result).toEqual(['Product A', 'Product B', 'Product C'])
+    })
+
+    it('should extract unique role names and sort them', () => {
+      const items: UserAssignment[] = [
+        { productName: 'Product 1', roleName: 'Role B' },
+        { productName: 'Product 2', roleName: 'Role A' },
+        { productName: 'Product 3', roleName: 'Role B' }
+      ]
+
+      const result = component.extractFilterItems(items, 'roleName')
+      expect(result).toEqual(['Role A', 'Role B'])
+    })
+
+    it('should handle empty and undefined values', () => {
+      const items: UserAssignment[] = [
+        { productName: 'Product 1', roleName: '' },
+        { productName: 'Product 2', roleName: undefined },
+        { productName: 'Product 3', roleName: 'Role A' }
+      ]
+
+      const result = component.extractFilterItems(items, 'roleName')
+      expect(result).toEqual(['Role A'])
+    })
+
+    it('should extract unique resources and sort them', () => {
+      const items: UserAssignment[] = [
+        { resource: 'Resource B', action: 'Action 1' },
+        { resource: 'Resource A', action: 'Action 2' },
+        { resource: 'Resource B', action: 'Action 3' }
+      ]
+
+      const result = component.extractFilterItems(items, 'resource')
+      expect(result).toEqual(['Resource A', 'Resource B'])
+    })
+
+    it('should extract unique actions and sort them', () => {
+      const items: UserAssignment[] = [
+        { resource: 'Resource 1', action: 'Action B' },
+        { resource: 'Resource 2', action: 'Action A' },
+        { resource: 'Resource 3', action: 'Action B' }
+      ]
+
+      const result = component.extractFilterItems(items, 'action')
+      expect(result).toEqual(['Action A', 'Action B'])
     })
   })
 
