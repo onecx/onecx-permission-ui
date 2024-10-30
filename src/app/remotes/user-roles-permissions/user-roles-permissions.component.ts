@@ -52,7 +52,8 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
   ]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
-  @Input() userId = ''
+  @Input() userId: string | undefined = undefined
+  @Input() displayName: string | undefined = undefined
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
@@ -102,6 +103,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.searchInProgress = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
@@ -121,6 +123,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public searchUserAssignments(): Observable<UserAssignment[]> {
     this.searchInProgress = true
+    // on admin view the userId is set, otherwise the me services are used
     if (this.userId) {
       return this.assgnmtApi
         .searchUserAssignments({ assignmentUserSearchCriteria: { userId: this.userId, pageSize: 1000 } })
@@ -170,7 +173,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     items.forEach((item: UserAssignment) => {
       if (item[fieldName] && item[fieldName] !== '') if (!arr.includes(item[fieldName])) arr.push(item[fieldName])
     })
-    return arr.sort(sortByLocale)
+    arr.sort(sortByLocale)
+    return arr
   }
 
   public applyGlobalFilter($event: Event, primengTable: Table): void {

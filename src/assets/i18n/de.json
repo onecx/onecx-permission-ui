@@ -296,6 +296,7 @@
       "PERMISSIONS.TOOLTIP": "Über die zugewiesenen Rollen wirkende Berechtigungen",
       "PERMISSIONS.TITLE": "Berechtigungen: "
     },
+    "USER_PROFILE": "Nutzerprofil",
     "NO_RESULTS": "Keine Daten",
     "NO_ROLES": "Keine Rollen zugewiesen",
     "PERMISSION": "Berechtigung",
