@@ -79,28 +79,28 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         field: 'resource',
         header: 'USER_ROLE_PERMISSIONS.RESOURCE',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE',
-        filter: false,
+        filter: true,
         value: null
       },
       {
         field: 'action',
         header: 'USER_ROLE_PERMISSIONS.ACTION',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION',
-        filter: false,
+        filter: true,
         value: null
       },
       {
         field: 'productName',
         header: 'USER_ROLE_PERMISSIONS.PRODUCT',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.PRODUCT',
-        filter: false,
+        filter: true,
         value: null
       },
       {
         field: 'roleName',
         header: 'USER_ROLE_PERMISSIONS.ROLE',
         tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE',
-        filter: false,
+        filter: true,
         value: null
       }
     ]
