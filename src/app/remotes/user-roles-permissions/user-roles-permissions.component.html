@@ -30,7 +30,7 @@
       #permissionTable
       [columns]="columns"
       [value]="items"
-      styleClass="p-datatable-striped user-roles-and-permissions"
+      [styleClass]="'p-datatable-striped' + (!userId ? ' px-2 sm:px-3' : '')"
       [autoLayout]="true"
       [globalFilterFields]="['productName', 'role', 'resource', 'action']"
       [paginator]="true"
