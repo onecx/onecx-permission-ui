@@ -310,130 +310,142 @@ describe('AppDetailComponent', () => {
   /**
    * loadData
    */
-  it('should not loadData if the url does not provide app id or app type', () => {
-    component.urlParamAppId = null
-    component.urlParamAppType = undefined
+  describe('loadData', () => {
+    it('should not loadData if the url does not provide app id or app type', () => {
+      component.urlParamAppId = null
+      component.urlParamAppType = undefined
 
-    const res = (component as any).loadData()
+      const res = (component as any).loadData()
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
-    expect(res).toBeUndefined()
-  })
-
-  it('should loadProductDetails successfully', () => {
-    const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
-    loadedApp.name = loadedApp.productName
-    component.myPermissions = ['ROLE#CREATE']
-
-    component.ngOnInit()
-
-    expect(component.currentApp).toEqual(loadedApp)
-    expect(component.myPermissions.length).toEqual(2)
-    expect(component.myPermissions).toEqual(['ROLE#CREATE', 'ROLE#MANAGE'])
-  })
-
-  it('should detect manage roles/permissions on creation', () => {
-    component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
-
-    component.ngOnInit()
-
-    expect(component.myPermissions.length).toEqual(4)
-    expect(component.myPermissions).toEqual(['ROLE#CREATE', 'PERMISSION#CREATE', 'ROLE#MANAGE', 'PERMISSION#MANAGE'])
-  })
-
-  it('should detect manage roles/permissions on deletion', () => {
-    component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
-
-    component.ngOnInit()
-
-    expect(component.myPermissions.length).toEqual(4)
-    expect(component.myPermissions[2]).toEqual('ROLE#MANAGE')
-    expect(component.myPermissions[3]).toEqual('PERMISSION#MANAGE')
-  })
-
-  it('should catch error if search for applications fails ', () => {
-    const err = new HttpErrorResponse({
-      error: 'test 404 error',
-      status: 404,
-      statusText: 'Not Found'
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
+      expect(res).toBeUndefined()
     })
-    appApiSpy.searchApplications.and.returnValue(throwError(() => err))
 
-    component.ngOnInit()
+    it('should loadProductDetails successfully', () => {
+      const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
+      loadedApp.name = loadedApp.productName
+      component.myPermissions = ['ROLE#CREATE']
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
-  })
+      component.ngOnInit()
 
-  it('should catch non-HttpErrorResponse error if search for applications fails', () => {
-    const nonHttpError = { message: 'non-HTTP error' }
-    appApiSpy.searchApplications.and.returnValue(throwError(() => nonHttpError))
-
-    component.ngOnInit()
-
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
-  })
-
-  it('should loadWorkspaceDetails successfully', () => {
-    component.urlParamAppType = 'WORKSPACE'
-
-    component.ngOnInit()
-
-    expect(component.currentApp.workspaceDetails).toEqual(wsDetails)
-  })
-
-  it('should catch error if workspace detail load fails ', () => {
-    component.urlParamAppType = 'WORKSPACE'
-    const err = new HttpErrorResponse({
-      error: 'test 404 error',
-      status: 404,
-      statusText: 'Not Found'
+      expect(component.currentApp).toEqual(loadedApp)
+      expect(component.myPermissions.length).toEqual(2)
+      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'ROLE#MANAGE'])
     })
-    wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => err))
-    spyOn(console, 'error')
 
-    component.ngOnInit()
+    it('should detect manage roles/permissions on creation', () => {
+      component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
-    expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
-  })
+      component.ngOnInit()
 
-  xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {
-    component.urlParamAppType = 'WORKSPACE'
-    const nonHttpError = { message: 'non-HTTP error' }
-    wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => nonHttpError))
+      expect(component.myPermissions.length).toEqual(4)
+      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'PERMISSION#CREATE', 'ROLE#MANAGE', 'PERMISSION#MANAGE'])
+    })
 
-    component.ngOnInit()
+    it('should detect manage roles/permissions on deletion', () => {
+      component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
-  })
+      component.ngOnInit()
 
-  it('should load roles and permissions', () => {
-    component.urlParamAppType = 'WORKSPACE'
+      expect(component.myPermissions.length).toEqual(4)
+      expect(component.myPermissions[2]).toEqual('ROLE#MANAGE')
+      expect(component.myPermissions[3]).toEqual('PERMISSION#MANAGE')
+    })
 
-    component.ngOnInit()
+    it('should catch error if search for applications fails ', () => {
+      appApiSpy.searchApplications.and.returnValue(of({ totalElements: 0, stream: [] } as any))
+      component.urlParamAppId = 'unknown product'
+      component.urlParamAppType = 'PRODUCT'
 
-    expect(component.roles.length).toBe(2)
-    expect(component.permissions.length).toBe(2)
-  })
+      component.ngOnInit()
 
-  it('should display error when loading roles fails', () => {
-    const err = { status: '404' }
-    roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
-    component.urlParamAppType = 'WORKSPACE'
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.NOT_FOUND.PRODUCT')
+    })
 
-    component.ngOnInit()
+    it('should catch error if search for applications fails ', () => {
+      const err = new HttpErrorResponse({
+        error: 'test 404 error',
+        status: 404,
+        statusText: 'Not Found'
+      })
+      appApiSpy.searchApplications.and.returnValue(throwError(() => err))
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
-  })
+      component.ngOnInit()
 
-  it('should display error when loading permissions fails', () => {
-    const err = { status: '404' }
-    permApiSpy.searchPermissions.and.returnValue(throwError(() => err))
-    component.urlParamAppType = 'WORKSPACE'
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
+    })
 
-    component.ngOnInit()
+    it('should catch non-HttpErrorResponse error if search for applications fails', () => {
+      const nonHttpError = { message: 'non-HTTP error' }
+      appApiSpy.searchApplications.and.returnValue(throwError(() => nonHttpError))
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+      component.ngOnInit()
+
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+    })
+
+    it('should loadWorkspaceDetails successfully', () => {
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+
+      expect(component.currentApp.workspaceDetails).toEqual(wsDetails)
+    })
+
+    it('should catch error if workspace detail load fails ', () => {
+      component.urlParamAppType = 'WORKSPACE'
+      const err = new HttpErrorResponse({
+        error: 'test 404 error',
+        status: 404,
+        statusText: 'Not Found'
+      })
+      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => err))
+      spyOn(console, 'error')
+
+      component.ngOnInit()
+
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
+      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
+    })
+
+    xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {
+      component.urlParamAppType = 'WORKSPACE'
+      const nonHttpError = { message: 'non-HTTP error' }
+      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => nonHttpError))
+
+      component.ngOnInit()
+
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
+    })
+
+    it('should load roles and permissions', () => {
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+
+      expect(component.roles.length).toBe(2)
+      expect(component.permissions.length).toBe(2)
+    })
+
+    it('should display error when loading roles fails', () => {
+      const err = { status: '404' }
+      roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+    })
+
+    it('should display error when loading permissions fails', () => {
+      const err = { status: '404' }
+      permApiSpy.searchPermissions.and.returnValue(throwError(() => err))
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+
+      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+    })
   })
 
   /**
