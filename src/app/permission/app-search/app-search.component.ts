@@ -433,7 +433,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.products$
       .pipe(
         map((products) => {
-          this.productNames = Array.from(products.map((p) => p.displayName ?? '')).sort(sortByLocale)
+          this.productNames = Array.from(products.map((p) => p.displayName!)).sort(sortByLocale)
           this.displayExportDialog = true
         })
       )

@@ -119,6 +119,16 @@ describe('PermissionDetailComponent', () => {
 
   it('should enable formGroup if user has permissions: create mode', () => {
     component.changeMode = 'CREATE'
+    component.permission = undefined
+
+    component.ngOnChanges()
+
+    expect(component.formGroup.enabled).toBeTrue()
+  })
+
+  it('should enable formGroup if user has permissions: copy mode', () => {
+    component.changeMode = 'CREATE'
+    component.permission = permRow
 
     component.ngOnChanges()
 
