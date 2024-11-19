@@ -323,10 +323,32 @@ describe('AppDetailComponent', () => {
   it('should loadProductDetails successfully', () => {
     const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
     loadedApp.name = loadedApp.productName
+    component.myPermissions = ['ROLE#CREATE']
 
     component.ngOnInit()
 
     expect(component.currentApp).toEqual(loadedApp)
+    expect(component.myPermissions.length).toEqual(2)
+    expect(component.myPermissions).toEqual(['ROLE#CREATE', 'ROLE#MANAGE'])
+  })
+
+  it('should detect manage roles/permissions on creation', () => {
+    component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
+
+    component.ngOnInit()
+
+    expect(component.myPermissions.length).toEqual(4)
+    expect(component.myPermissions).toEqual(['ROLE#CREATE', 'PERMISSION#CREATE', 'ROLE#MANAGE', 'PERMISSION#MANAGE'])
+  })
+
+  it('should detect manage roles/permissions on deletion', () => {
+    component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
+
+    component.ngOnInit()
+
+    expect(component.myPermissions.length).toEqual(4)
+    expect(component.myPermissions[2]).toEqual('ROLE#MANAGE')
+    expect(component.myPermissions[3]).toEqual('PERMISSION#MANAGE')
   })
 
   it('should catch error if search for applications fails ', () => {
@@ -1073,6 +1095,14 @@ describe('AppDetailComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+  })
+
+  xit('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
+    const perm = mockUserService.hasPermission.and.returnValue(true)
+    fixture = TestBed.createComponent(AppDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(perm).toBeTrue()
   })
 
   describe('Test translations', () => {

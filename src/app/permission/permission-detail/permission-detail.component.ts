@@ -50,6 +50,7 @@ export class PermissionDetailComponent implements OnChanges {
 
   public ngOnChanges(): void {
     this.formGroup.reset()
+    this.formGroup.disable() // default: all fields are disabled
     if (this.permission) {
       this.formGroup.controls['appId'].patchValue(this.permission.appId)
       this.formGroup.controls['productName'].patchValue(this.permission.productName)
@@ -66,15 +67,14 @@ export class PermissionDetailComponent implements OnChanges {
         this.formGroup.controls['mandatory'].patchValue(this.permission.mandatory ?? false)
         this.formGroup.controls['operator'].patchValue(this.permission.operator ?? false)
       }
-      this.formGroup.disable() // default: all fields are disabled
       // enable editable fields if not mandatory
       if (!this.permission?.mandatory) {
         this.formGroup.controls['resource'].enable()
         this.formGroup.controls['action'].enable()
         this.formGroup.controls['description'].enable()
       }
-    } else {
-      this.formGroup.enable() // creation
+    } else if (this.changeMode === 'CREATE') {
+      this.formGroup.enable()
     }
   }
 

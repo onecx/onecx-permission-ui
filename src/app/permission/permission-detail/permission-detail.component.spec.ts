@@ -124,6 +124,15 @@ describe('PermissionDetailComponent', () => {
     component.ngOnChanges()
 
     expect(component.formGroup.enabled).toBeTrue()
+  })
+
+  it('should enable formGroup if user has permissions: copy mode', () => {
+    component.changeMode = 'CREATE'
+    component.permission = permRow
+
+    component.ngOnChanges()
+
+    expect(component.formGroup.enabled).toBeTrue()
     expect(component.formGroup.controls['mandatory'].disabled).toBeTrue()
     expect(component.formGroup.controls['operator'].disabled).toBeTrue()
   })

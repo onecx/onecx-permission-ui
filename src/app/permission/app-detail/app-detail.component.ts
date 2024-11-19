@@ -142,23 +142,22 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (userService.hasPermission('PERMISSION#CREATE')) this.myPermissions.push('PERMISSION#CREATE')
     if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
     if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
-    if (
-      userService.hasPermission('ROLE#EDIT') ||
-      userService.hasPermission('ROLE#CREATE') ||
-      userService.hasPermission('ROLE#DELETE')
-    )
-      this.myPermissions.push('ROLE#MANAGE')
-    if (
-      userService.hasPermission('PERMISSION#EDIT') ||
-      userService.hasPermission('PERMISSION#CREATE') ||
-      userService.hasPermission('PERMISSION#DELETE')
-    )
-      this.myPermissions.push('PERMISSION#MANAGE')
-
     this.filterMode = FilterMatchMode.CONTAINS
   }
 
   public ngOnInit(): void {
+    if (
+      this.myPermissions.includes('ROLE#EDIT') ||
+      this.myPermissions.includes('ROLE#CREATE') ||
+      this.myPermissions.includes('ROLE#DELETE')
+    )
+      this.myPermissions.push('ROLE#MANAGE')
+    if (
+      this.myPermissions.includes('PERMISSION#EDIT') ||
+      this.myPermissions.includes('PERMISSION#CREATE') ||
+      this.myPermissions.includes('PERMISSION#DELETE')
+    )
+      this.myPermissions.push('PERMISSION#MANAGE')
     this.prepareQuickFilterItems()
     this.prepareActionButtons()
     this.loadData()
