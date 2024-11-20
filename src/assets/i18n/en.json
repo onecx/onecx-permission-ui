@@ -42,8 +42,10 @@
         "OPERATOR_TEXT": "This Permission was created automatically. If the application continues to offer this Permission, it will be restored during the next deployment.",
         "APPLICATION_OK": "The App was deleted successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
+        "PERMISSION": "Do you want to delete this Permission?",
         "PERMISSION_OK": "The Permission was deleted successfully",
         "PERMISSION_NOK": "An error has occurred. The Permission was not deleted.",
+        "ROLE": "Do you want to delete this Role?",
         "ROLE_OK": "The Role was deleted successfully",
         "ROLE_NOK": "An error has occurred. The Role was not deleted."
       }
@@ -191,6 +193,10 @@
         "PRODUCT.TOOLTIP": "The Applications registered in the workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
+      },
+      "ROLES": {
+        "FILTER": "Role filter",
+        "FILTER.TOOLTIP": "Filter for Role name"
       }
     }
   },

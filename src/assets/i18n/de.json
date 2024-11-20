@@ -42,8 +42,10 @@
         "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
+        "PERMISSION": "Möchten Sie diese Berechtigung löschen?",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
+        "ROLE": "Möchten Sie diese Rolle löschen?",
         "ROLE_OK": "Die Rolle wurde erfolgreich gelöscht.",
         "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht gelöscht."
       }
@@ -191,6 +193,10 @@
         "PRODUCT.TOOLTIP": "Registrierte Applikationen im Workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
+      },
+      "ROLES": {
+        "FILTER": "Rollenfilter",
+        "FILTER.TOOLTIP": "Filter für Rollenname"
       }
     }
   },

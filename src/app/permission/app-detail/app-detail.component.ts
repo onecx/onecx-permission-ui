@@ -113,6 +113,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private roles$!: Observable<RolePageResult>
   public roles!: PermissionRole[]
   public role: Role | undefined
+  public rolesFiltered: PermissionRole[] = []
   public missingWorkspaceRoles = false
   public showRoleDetailDialog = false
   public showRoleDeleteDialog = false
@@ -263,6 +264,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     this.displayExportDialog = true
   }
+  public onRoleFilterChange(val: string): void {
+    this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
+  }
 
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
@@ -405,6 +409,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       () => {
         this.checkWorkspaceRoles()
         this.roles.sort(this.sortRoleByName)
+        this.rolesFiltered = this.roles
         this.prepareFilterProducts()
         this.prepareFilterApps()
         this.preparePermissionTable()
