@@ -173,6 +173,8 @@
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Applications",
       "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application including all of its Apps",
       "SUBHEADER_APP": "Managing Business Roles and Permissions of the App",
+      "ADDITIONAL_INFO": "More data...",
+      "ADDITIONAL_INFO.TOOLTIP": "Show additional information per permission",
       "QUICK_FILTER": {
         "LABEL": "Type",
         "TOOLTIP": "Quick Filter for Action",

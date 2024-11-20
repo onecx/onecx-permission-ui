@@ -15,10 +15,13 @@
   .word-break-all {
     word-break: break-all;
   }
-  .p-datatable .p-datatable-header {
-    padding-left: 0;
-    padding-right: 0;
-    border: unset;
+  .p-datatable {
+    .p-datatable-table {
+      margin-top: 0.5rem;
+    }
+    .p-datatable-thead > tr:first-of-type > th {
+      border-bottom: unset;
+    }
   }
   .button-letter-icon {
     padding: 1px 4px !important;

@@ -103,9 +103,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
-  public showPermissionDetailDialog = false
-  public showPermissionDeleteDialog = false
-  public displayExportDialog = false
+  public displayPermissionDetailDialog = false
+  public displayPermissionDeleteDialog = false
+  public displayPermissionExportDialog = false
+  public displayAdditionalRowData = false
   public showPermissionTools = false
   public protectedAssignments: Array<string> = []
 
@@ -262,7 +263,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.productNames = [this.currentApp.name!]
       this.listedProductsHeader = 'ACTIONS.EXPORT.OF_APPLICATION'
     }
-    this.displayExportDialog = true
+    this.displayPermissionExportDialog = true
   }
   public onRoleFilterChange(val: string): void {
     this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
@@ -311,6 +312,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.loading = false
       })
   }
+  public calcPermissionColspan(): number {
+    let colspan = this.currentApp.appType === 'PRODUCT' ? 2 : 3
+    colspan = colspan + (this.showPermissionTools ? 2 : 0) // display actions and locks
+    return colspan
+  }
 
   private loadWorkspaceDetails() {
     this.workspaceApi
@@ -347,7 +353,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
-  private searchRoles(): Observable<Role[]> {
+  private searchRoles(): Observable<PermissionRole[]> {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
       catchError((err) => {
         this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
@@ -358,12 +364,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
     return this.roles$.pipe(
       map((result: any) => {
-        return result.stream
-          ? result.stream?.map((role: PermissionRole) => {
-              this.roles.push(role)
-              return role
-            })
-          : []
+        return result.stream ? result.stream?.map((role: PermissionRole) => role) : []
       })
     )
   }
@@ -391,40 +392,36 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       )
     return this.permissions$.pipe(
       map((result: any) => {
-        return result.stream
-          ? result.stream?.map((perm: Permission) => {
-              this.permissions.push(perm)
-              return perm
-            })
-          : []
+        return result.stream ?? []
       })
     )
   }
+
   private loadRolesAndPermissions(): void {
     this.roles = []
     this.permissions = []
-    combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(
-      () => {}, // next
-      () => {}, // error
-      () => {
-        this.checkWorkspaceRoles()
-        this.roles.sort(this.sortRoleByName)
-        this.rolesFiltered = this.roles
-        this.prepareFilterProducts()
-        this.prepareFilterApps()
-        this.preparePermissionTable()
-      }
-    )
+    combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(([roles, permissions]) => {
+      // filter
+      this.prepareFilterProducts()
+      this.prepareFilterApps()
+      // roles
+      this.roles = roles
+      this.roles.sort(this.sortRoleByName)
+      this.rolesFiltered = this.roles
+      this.checkWorkspaceRoles(roles)
+      // permissions
+      this.permissions = permissions
+      this.preparePermissionTable(permissions) // including sort
+    })
   }
+
   // does the workspace have roles which are not exist in permission product?
-  private checkWorkspaceRoles() {
+  private checkWorkspaceRoles(roles: PermissionRole[]) {
     if (this.currentApp.isProduct) return
     if (this.currentApp.workspaceDetails?.workspaceRoles) {
-      this.roles.forEach(
-        (r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name!))
-      )
+      roles.forEach((r) => (r.isWorkspaceRole = this.currentApp.workspaceDetails?.workspaceRoles?.includes(r.name!)))
       this.missingWorkspaceRoles =
-        this.roles.filter((r) => r.isWorkspaceRole === true).length !==
+        roles.filter((r) => r.isWorkspaceRole === true).length !==
         this.currentApp.workspaceDetails?.workspaceRoles.length
     }
   }
@@ -497,13 +494,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *    key (resource#action):   'PERMISSION#READ'
    *    value: {resource: 'PERMISSION', action: 'READ', key: 'PERMISSION#READ', name: 'View permission matrix'
    */
-  private preparePermissionTable(): void {
-    if (this.permissions.length === 0) {
+  private preparePermissionTable(permissions: Permission[]): void {
+    if (permissions.length === 0) {
       console.warn('No permissions found for the apps - stop processing')
       return
     }
     this.permissionRows = []
-    for (const perm of this.permissions) {
+    for (const perm of permissions) {
       const products = this.filterProductItems.filter((p) => p.value === perm.productName)
       const label = products.length > 0 ? products[0].label : perm.productName
       const apps = this.filterAppItems.filter((p) => p.value === perm.appId)
@@ -562,6 +559,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
           this.loading = false
+          this.calcPermissionColspan()
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments() => unknown response:', result)
@@ -678,8 +676,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.role = undefined
     this.permission = undefined
     this.changeMode = 'VIEW'
-    this.showPermissionDetailDialog = false
-    this.showPermissionDeleteDialog = false
+    this.displayPermissionDetailDialog = false
+    this.displayPermissionDeleteDialog = false
     this.showRoleDetailDialog = false
     this.showRoleDeleteDialog = false
     this.showIamRolesDialog = false
@@ -701,19 +699,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev?.stopPropagation()
     this.role = undefined
     this.changeMode = 'CREATE'
-    this.showPermissionDetailDialog = true
+    this.displayPermissionDetailDialog = true
   }
   public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = this.permission.mandatory ? 'VIEW' : 'EDIT'
-    this.showPermissionDetailDialog = true
+    this.displayPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = 'DELETE'
-    this.showPermissionDeleteDialog = true
+    this.displayPermissionDeleteDialog = true
   }
 
   /****************************************************************************
@@ -881,7 +879,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     )
   }
 
-  private sortRoleByName(a: Role, b: Role): number {
+  private sortRoleByName(a: PermissionRole, b: PermissionRole): number {
     return (a.name ? a.name.toUpperCase() : '').localeCompare(b.name ? b.name.toUpperCase() : '')
   }
 }

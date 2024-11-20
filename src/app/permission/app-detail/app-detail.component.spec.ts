@@ -289,7 +289,7 @@ describe('AppDetailComponent', () => {
 
       expect(component.productNames).toEqual(['Product A', 'Product B'])
       expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
-      expect(component.displayExportDialog).toBe(true)
+      expect(component.displayPermissionExportDialog).toBe(true)
     })
 
     it('should set up export for PRODUCT app type', () => {
@@ -303,7 +303,7 @@ describe('AppDetailComponent', () => {
 
       expect(component.productNames).toEqual(['Test Product'])
       expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.OF_APPLICATION')
-      expect(component.displayExportDialog).toBe(true)
+      expect(component.displayPermissionExportDialog).toBe(true)
     })
   })
 
@@ -820,8 +820,8 @@ describe('AppDetailComponent', () => {
     expect(component.role).toBeUndefined()
     expect(component.permission).toBeUndefined()
     expect(component.changeMode).toBe('VIEW')
-    expect(component.showPermissionDetailDialog).toBeFalse()
-    expect(component.showPermissionDeleteDialog).toBeFalse()
+    expect(component.displayPermissionDetailDialog).toBeFalse()
+    expect(component.displayPermissionDeleteDialog).toBeFalse()
     expect(component.showRoleDetailDialog).toBeFalse()
     expect(component.showRoleDeleteDialog).toBeFalse()
   })
@@ -849,7 +849,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.role).toBeUndefined()
     expect(component.changeMode).toBe('CREATE')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.displayPermissionDetailDialog).toBeTrue()
   })
 
   it('should call stopPropagation and set permission onDetailPermission', () => {
@@ -861,7 +861,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
     expect(component.changeMode).toBe('EDIT')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.displayPermissionDetailDialog).toBeTrue()
   })
 
   it('should set changeMode according to operator onDetailPermission', () => {
@@ -873,7 +873,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
     expect(component.changeMode).toBe('EDIT')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.displayPermissionDetailDialog).toBeTrue()
   })
 
   it('should call stopPropagation and set permission in onDeletePermission', () => {
@@ -885,7 +885,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
     expect(component.changeMode).toBe('DELETE')
-    expect(component.showPermissionDeleteDialog).toBeTrue()
+    expect(component.displayPermissionDeleteDialog).toBeTrue()
   })
 
   /****************************************************************************

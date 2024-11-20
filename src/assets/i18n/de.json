@@ -173,6 +173,8 @@
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Applikationen",
       "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für die Applikation und deren Apps",
       "SUBHEADER_APP": "Verwalten von Berechtigungen für die App",
+      "ADDITIONAL_INFO": "Mehr Daten...",
+      "ADDITIONAL_INFO.TOOLTIP": "Zusätzliche Information pro Berechtigung anzeigen",
       "QUICK_FILTER": {
         "LABEL": "Action",
         "TOOLTIP": "Quick Filter for Action",
