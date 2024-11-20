@@ -132,14 +132,12 @@
       </ng-template>
 
       <ng-template pTemplate="header" let-columns>
-        <!-- 1. header row 
-            !showPermissionTools ? 3 : protectedAssignments.length === 0 ? 4 : 5"         
-        -->
+        <!-- 1. header row -->
         <tr>
           <th
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permissions"
-            [attr.colspan]="calcPermissionColspan()"
+            [attr.colspan]="(currentApp.appType === 'PRODUCT' ? 2 : 3) + (showPermissionTools ? 2 : 0)"
             class="py-2 border-right-primary"
             [ngClass]="
               myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 'py-0' : 'py-1'

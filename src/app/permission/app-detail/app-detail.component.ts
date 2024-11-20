@@ -312,11 +312,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.loading = false
       })
   }
-  public calcPermissionColspan(): number {
-    let colspan = this.currentApp.appType === 'PRODUCT' ? 2 : 3
-    colspan = colspan + (this.showPermissionTools ? 2 : 0) // display actions and locks
-    return colspan
-  }
 
   private loadWorkspaceDetails() {
     this.workspaceApi
@@ -559,7 +554,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
           this.loading = false
-          this.calcPermissionColspan()
         } else {
           this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments() => unknown response:', result)
