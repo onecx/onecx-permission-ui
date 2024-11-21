@@ -19,18 +19,15 @@
         {{ 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS' | translate }}
       </span>
     </ng-template>
-    <p-message
-      *ngIf="searchInProgress"
-      severity="info"
-      styleClass="m-3"
-      [text]="'ACTIONS.LOADING' | translate"
-    ></p-message>
+    <p-message *ngIf="loading" severity="info" styleClass="m-3" [text]="'ACTIONS.LOADING' | translate"></p-message>
     <p-table
-      *ngIf="!searchInProgress"
+      *ngIf="!loading"
       #permissionTable
       [columns]="columns"
       [value]="items"
       [styleClass]="'p-datatable-striped' + (!userId ? ' px-2 sm:px-3' : '')"
+      [scrollable]="true"
+      scrollHeight="590px"
       [autoLayout]="true"
       [globalFilterFields]="['productName', 'role', 'resource', 'action']"
       [paginator]="true"
@@ -178,12 +175,7 @@
     <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
       <!-- ROLES -->
       <ng-container *ngIf="extractFilterItems(items, 'roleName') as roles">
-        <div *ngIf="roles.length === 1">
-          <div id="apm_user_roles_one" class="font-bold">
-            {{ 'USER_ROLE_PERMISSIONS.TABS.ROLE.TITLE' | translate }} {{ roles[0] }}
-          </div>
-        </div>
-        <div *ngIf="roles.length > 1" class="flex flex-column row-gap-2">
+        <div class="flex flex-column row-gap-2">
           <div
             class="font-bold"
             [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"

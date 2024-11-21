@@ -297,7 +297,7 @@
       "ROLE.TITLE": "Rolle: ",
       "ROLES.TITLE": "Rollen: ",
       "ROLES.FILTER": "Rollenname",
-      "ROLES.TOOLTIP": "Liste von Rollen die im IAM  (Identity Access Management) zugeordnet wurden",
+      "ROLES.TOOLTIP": "Liste von Rollen zu denen Berechtigungen erteilt sind.",
       "PRODUCTS.TITLE": "Applikationen: ",
       "PRODUCTS.FILTER": "Applikationsname",
       "PRODUCTS.TOOLTIP": "Liste von Applikationen zu denen Berechtigungen erteilt sind",
