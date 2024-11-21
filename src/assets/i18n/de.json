@@ -222,6 +222,7 @@
   },
   "PERMISSION": {
     "LABEL": "Berechtigungen",
+    "TOOLTIP": "Liste der Berechtigungen",
     "APP_ID": "App ID",
     "APP_ID.TOOLTIP": "ID einer App (Frontend/Backend der Applikation)",
     "PRODUCT_NAME": "Applikationsname",

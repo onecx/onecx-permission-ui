@@ -222,6 +222,7 @@
   },
   "PERMISSION": {
     "LABEL": "Permissions",
+    "TOOLTIP": "List of Permissions",
     "APP_ID": "App ID",
     "APP_ID.TOOLTIP": "ID of the App (frontend/backend of an Application)",
     "PRODUCT_NAME": "Application Name",
