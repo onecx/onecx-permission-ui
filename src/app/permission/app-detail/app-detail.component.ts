@@ -92,7 +92,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterProductValue: string | undefined = undefined
   public filterAppItems!: SelectItem[]
   public filterAppValue: string | undefined = undefined
-  private productApps: App[] = []
+  public productApps: App[] = []
   public productNames: string[] = []
   public listedProductsHeader: string = ''
 
@@ -462,10 +462,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  private prepareFilterApps(selectedProductName?: string) {
+  public prepareFilterApps(selectedProductName?: string) {
     this.filterAppItems = []
     // 1. load from permisions
     this.permissions
+      // if no product is selected then exclude filtering
       .filter((p) => p.productName === (selectedProductName ?? p.productName))
       .forEach((p) => {
         if (this.filterAppItems.filter((item) => item.value === p.appId).length === 0) {
