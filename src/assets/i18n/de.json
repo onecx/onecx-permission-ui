@@ -42,8 +42,10 @@
         "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
+        "PERMISSION": "Möchten Sie diese Berechtigung löschen?",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
+        "ROLE": "Möchten Sie diese Rolle löschen?",
         "ROLE_OK": "Die Rolle wurde erfolgreich gelöscht.",
         "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht gelöscht."
       }
@@ -171,6 +173,8 @@
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Applikationen",
       "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für die Applikation und deren Apps",
       "SUBHEADER_APP": "Verwalten von Berechtigungen für die App",
+      "ADDITIONAL_INFO": "Mehr Daten...",
+      "ADDITIONAL_INFO.TOOLTIP": "Zusätzliche Information pro Berechtigung anzeigen",
       "QUICK_FILTER": {
         "LABEL": "Action",
         "TOOLTIP": "Quick Filter for Action",
@@ -191,6 +195,10 @@
         "PRODUCT.TOOLTIP": "Registrierte Applikationen im Workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
+      },
+      "ROLES": {
+        "FILTER": "Rollenfilter",
+        "FILTER.TOOLTIP": "Filter für Rollenname"
       }
     }
   },
@@ -214,6 +222,7 @@
   },
   "PERMISSION": {
     "LABEL": "Berechtigungen",
+    "TOOLTIP": "Liste der Berechtigungen",
     "APP_ID": "App ID",
     "APP_ID.TOOLTIP": "ID einer App (Frontend/Backend der Applikation)",
     "PRODUCT_NAME": "Applikationsname",
@@ -225,7 +234,7 @@
     "ACTION.TOOLTIP": "Aktion auf der Ressource",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
-    "MANDATORY": "Unbedingt erforderlich",
+    "MANDATORY": "Erforderlich",
     "MANDATORY.COLUMN": "Ist die Berechtigung für den Betrieb unbedingt erforderlich?",
     "MANDATORY.COLUMN.TOOLTIP": "Diese Berechtigung ist für den Betrieb unbedingt erforderlich und kann deshalb nicht bearbeitet oder gelöscht werden.",
     "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung unbedingt erforderlich für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
@@ -288,7 +297,7 @@
       "ROLE.TITLE": "Rolle: ",
       "ROLES.TITLE": "Rollen: ",
       "ROLES.FILTER": "Rollenname",
-      "ROLES.TOOLTIP": "Liste von Rollen die im IAM  (Identity Access Management) zugeordnet wurden",
+      "ROLES.TOOLTIP": "Liste von Rollen zu denen Berechtigungen erteilt sind.",
       "PRODUCTS.TITLE": "Applikationen: ",
       "PRODUCTS.FILTER": "Applikationsname",
       "PRODUCTS.TOOLTIP": "Liste von Applikationen zu denen Berechtigungen erteilt sind",

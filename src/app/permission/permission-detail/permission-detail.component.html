@@ -189,13 +189,15 @@
 >
   <div class="mr-2 flex column-gap-4 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
-    <div>
+    <div class="flex flex-column row-gap-2">
       <div id="apm_permission_delete_message" class="font-bold">
-        {{ ('ACTIONS.DELETE.MESSAGE.TEXT' | translate).replace('{{ITEM}}', permission?.resource + '#' +
-        permission?.action) }}
+        {{ 'ACTIONS.DELETE.MESSAGE.PERMISSION' | translate }}
       </div>
-      <div *ngIf="permission?.operator" class="mt-3">{{ 'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate }}</div>
-      <div class="mt-3">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+      <div id="apm_permission_delete_role_name" class="font-bold text-center danger-action-text">
+        {{ permission?.resource }} # {{ permission?.action }}
+      </div>
+      <div *ngIf="permission?.operator">{{ 'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate }}</div>
+      <div>{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">

@@ -222,6 +222,13 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       expect(component['sortUserAssignments'](a, b)).toBe(0)
     })
 
+    it('should sort by app id when productName is the same', () => {
+      const a = { productName: 'Apple', resource: 'R1', action: 'A1', applicationId: 'id1' }
+      const b = { productName: 'Apple', resource: 'R2', action: 'A2', applicationId: 'id2' }
+      expect(component['sortUserAssignments'](a, b)).toBeLessThan(0)
+      expect(component['sortUserAssignments'](b, a)).toBeGreaterThan(0)
+    })
+
     it('should sort by resource when productName is the same', () => {
       const a = { productName: 'Apple', resource: 'R1', action: 'A1' }
       const b = { productName: 'Apple', resource: 'R2', action: 'A1' }

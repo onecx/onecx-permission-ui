@@ -30,57 +30,39 @@ import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
 import { Table } from 'primeng/table'
 import { FilterMatchMode } from 'primeng/api'
 
-const app: Application = {
-  name: 'appName',
-  appId: 'appId',
-  productName: 'product'
+// this application can be a workspace or product: set appType on your tests
+const app1: Application = {
+  name: 'appName1',
+  appId: 'appId1',
+  productName: 'prodName1'
 }
 
 const app2: Application = {
   name: 'appName2',
   appId: 'appId2',
-  productName: 'product2'
+  productName: 'prodName1'
 }
 
 const appPageRes: ApplicationPageResult = {
-  stream: [app, app2]
+  stream: [app1, app2]
 }
 
-const prodDetails: ProductDetails = {
-  productName: 'prodName',
-  displayName: 'displayName',
-  mfe: [
-    {
-      appId: 'prodDetailMfeAppId',
-      appName: 'prodDetailMfeAppName'
-    }
-  ],
-  ms: [
-    {
-      appId: 'prodDetailMsAppId',
-      appName: 'prodDetailMsAppName'
-    }
-  ]
+const prodDetails1: ProductDetails = {
+  productName: 'prodName1',
+  displayName: 'prodDisplayName1',
+  mfe: [{ appId: 'prodDetailMfeAppId', appName: 'prodDetailMfeAppName' }],
+  ms: [{ appId: 'prodDetailMsAppId', appName: 'prodDetailMsAppName' }]
 }
 const prodDetails2: ProductDetails = {
   productName: 'prodName2',
-  displayName: 'displayName2',
-  mfe: [
-    {
-      appId: 'prodDetailMfeAppId',
-      appName: 'prodDetailMfeAppName'
-    }
-  ],
-  ms: [
-    {
-      appId: 'prodDetailMsAppId',
-      appName: 'prodDetailMsAppName'
-    }
-  ]
+  displayName: 'prodDisplayName2',
+  mfe: [{ appId: 'prodDetailMfeAppId', appName: 'prodDetailMfeAppName' }],
+  ms: [{ appId: 'prodDetailMsAppId', appName: 'prodDetailMsAppName' }]
 }
+
 const wsDetails: WorkspaceDetails = {
   workspaceRoles: ['role1', 'role2'],
-  products: [prodDetails, prodDetails2]
+  products: [prodDetails1, prodDetails2]
 }
 
 const role1: Role = {
@@ -88,8 +70,8 @@ const role1: Role = {
   name: 'roleName1'
 }
 const role2: Role = {
-  id: 'roleId1',
-  name: 'roleName1'
+  id: 'roleId2',
+  name: 'roleName2'
 }
 const rolePageRes: RolePageResult = {
   stream: [role1, role2]
@@ -98,12 +80,13 @@ const rolePageRes: RolePageResult = {
 const perm1: Permission = {
   id: 'permId1',
   appId: 'appId1',
-  productName: 'prodName1'
+  productName: 'prodName1',
+  mandatory: false
 }
 const perm2: Permission = {
-  id: 'permId1',
-  appId: 'appId1',
-  productName: 'prodName1'
+  id: 'permId2',
+  appId: 'appId2',
+  productName: 'prodName2'
 }
 const permPageRes: PermissionPageResult = {
   stream: [perm1, perm2]
@@ -114,8 +97,8 @@ const permRow: PermissionViewRow = {
   key: 'key',
   roles: { undefined },
   appType: 'MFE',
-  appDisplayName: 'appName',
-  productDisplayName: 'prodName',
+  appDisplayName: 'appName1',
+  productDisplayName: 'prodName1',
   operator: false
 }
 const permRow2: PermissionViewRow = {
@@ -123,8 +106,8 @@ const permRow2: PermissionViewRow = {
   key: 'key',
   roles: { undefined },
   appType: 'MFE',
-  appDisplayName: 'appName',
-  productDisplayName: 'prodName'
+  appDisplayName: 'appName1',
+  productDisplayName: 'prodName1'
 }
 
 const assgmt1: Assignment = {
@@ -145,7 +128,7 @@ describe('AppDetailComponent', () => {
   const mockActivatedRoute: ActivatedRoute = {
     snapshot: {
       paramMap: {
-        get: (key: string) => 'product'
+        get: (key: string) => 'prodName1'
       } as ParamMap
     } as ActivatedRouteSnapshot
   } as ActivatedRoute
@@ -289,7 +272,7 @@ describe('AppDetailComponent', () => {
 
       expect(component.productNames).toEqual(['Product A', 'Product B'])
       expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
-      expect(component.displayExportDialog).toBe(true)
+      expect(component.displayPermissionExportDialog).toBe(true)
     })
 
     it('should set up export for PRODUCT app type', () => {
@@ -303,7 +286,7 @@ describe('AppDetailComponent', () => {
 
       expect(component.productNames).toEqual(['Test Product'])
       expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.OF_APPLICATION')
-      expect(component.displayExportDialog).toBe(true)
+      expect(component.displayPermissionExportDialog).toBe(true)
     })
   })
 
@@ -322,8 +305,10 @@ describe('AppDetailComponent', () => {
     })
 
     it('should loadProductDetails successfully', () => {
-      const loadedApp: App = { ...app, appType: 'PRODUCT', isProduct: true }
-      loadedApp.name = loadedApp.productName
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      loadedApp.name = loadedApp.productName // is a product
+      component.urlParamAppId = app1.name!
+      component.urlParamAppType = loadedApp.appType
       component.myPermissions = ['ROLE#CREATE']
 
       component.ngOnInit()
@@ -427,6 +412,16 @@ describe('AppDetailComponent', () => {
       expect(component.permissions.length).toBe(2)
     })
 
+    it('should filter roles', () => {
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+      component.onRoleFilterChange('roleName1')
+
+      expect(component.roles.length).toBe(2)
+      expect(component.rolesFiltered.length).toBe(1)
+    })
+
     it('should display error when loading roles fails', () => {
       const err = { status: '404' }
       roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
@@ -451,45 +446,47 @@ describe('AppDetailComponent', () => {
   /**
    * CREATE
    */
-  it('should do something onAddIAMRoles', () => {
-    component.onAddIAMRoles(new MouseEvent('click'))
+  describe('create', () => {
+    it('should do something onAddIAMRoles', () => {
+      component.onAddIAMRoles(new MouseEvent('click'))
 
-    expect(component.showIamRolesDialog).toBeTrue()
-  })
+      expect(component.showIamRolesDialog).toBeTrue()
+    })
 
-  it('should return if there are no missing ws roles', () => {
-    const ev = new MouseEvent('click')
-    spyOn(ev, 'stopPropagation')
-    component.missingWorkspaceRoles = false
+    it('should return if there are no missing ws roles', () => {
+      const ev = new MouseEvent('click')
+      spyOn(ev, 'stopPropagation')
+      component.missingWorkspaceRoles = false
 
-    component.onCreateWorkspaceRoles(ev)
+      component.onCreateWorkspaceRoles(ev)
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
-  })
+      expect(ev.stopPropagation).toHaveBeenCalled()
+    })
 
-  it('should create a role', () => {
-    const ev = new MouseEvent('click')
-    spyOn(ev, 'stopPropagation')
-    component.missingWorkspaceRoles = true
-    component.currentApp.workspaceDetails = wsDetails
+    it('should create a role', () => {
+      const ev = new MouseEvent('click')
+      spyOn(ev, 'stopPropagation')
+      component.missingWorkspaceRoles = true
+      component.currentApp.workspaceDetails = wsDetails
 
-    component.onCreateWorkspaceRoles(ev)
+      component.onCreateWorkspaceRoles(ev)
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
-  })
+      expect(ev.stopPropagation).toHaveBeenCalled()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+    })
 
-  it('should display error msg if create role fails', () => {
-    roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
-    const ev = new MouseEvent('click')
-    spyOn(ev, 'stopPropagation')
-    component.missingWorkspaceRoles = true
-    component.currentApp.workspaceDetails = wsDetails
+    it('should display error msg if create role fails', () => {
+      roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+      const ev = new MouseEvent('click')
+      spyOn(ev, 'stopPropagation')
+      component.missingWorkspaceRoles = true
+      component.currentApp.workspaceDetails = wsDetails
 
-    component.onCreateWorkspaceRoles(ev)
+      component.onCreateWorkspaceRoles(ev)
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+      expect(ev.stopPropagation).toHaveBeenCalled()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+    })
   })
 
   /**
@@ -498,7 +495,7 @@ describe('AppDetailComponent', () => {
   it('should handle loading role assignments without apps', () => {
     component.urlParamAppType = 'WORKSPACE'
     spyOn(console, 'warn')
-    component['productApps'] = []
+    component.productApps = []
 
     component['loadRoleAssignments'](true)
 
@@ -506,7 +503,7 @@ describe('AppDetailComponent', () => {
   })
 
   it('should search assigments', () => {
-    component['searchAssignments'](true, ['appId'])
+    component['searchAssignments'](true, ['appId1'])
 
     expect(component.protectedAssignments.length).toBe(1)
   })
@@ -519,7 +516,7 @@ describe('AppDetailComponent', () => {
     })
     assApiSpy.searchAssignments.and.returnValue(throwError(() => err))
 
-    component['searchAssignments'](true, ['appId'])
+    component['searchAssignments'](true, ['appId1'])
 
     expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
   })
@@ -536,243 +533,305 @@ describe('AppDetailComponent', () => {
   /*
    * Table Filter
    */
-  it('should set filterMode to CONTAINS when mode is "="', () => {
-    component.onFilterModeChange('=')
+  describe('table global filter', () => {
+    it('should set filterMode to CONTAINS when mode is "="', () => {
+      component.onFilterModeChange('=')
 
-    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
-  })
+      expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+    })
 
-  it('should set filterMode to NOT_CONTAINS when mode is "!="', () => {
-    component.onFilterModeChange('!=')
+    it('should set filterMode to NOT_CONTAINS when mode is "!="', () => {
+      component.onFilterModeChange('!=')
 
-    expect(component.filterMode).toBe(FilterMatchMode.NOT_CONTAINS)
-  })
+      expect(component.filterMode).toBe(FilterMatchMode.NOT_CONTAINS)
+    })
 
-  it('should not change filterMode when mode is undefined', () => {
-    component.filterMode = FilterMatchMode.CONTAINS
+    it('should not change filterMode when mode is undefined', () => {
+      component.filterMode = FilterMatchMode.CONTAINS
 
-    component.onFilterModeChange(undefined)
+      component.onFilterModeChange(undefined)
 
-    expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
-  })
+      expect(component.filterMode).toBe(FilterMatchMode.CONTAINS)
+    })
 
-  it('should call tableFilter with the input value', () => {
-    spyOn(component, 'tableFilter')
-    component.permissionTableFilterInput = { nativeElement: { value: 'test' } }
-    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+    it('should call tableFilter with the input value', () => {
+      spyOn(component, 'tableFilter')
+      component.permissionTableFilterInput = { nativeElement: { value: 'test' } }
+      component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
-    component.onFilterModeChange('=')
+      component.onFilterModeChange('=')
 
-    expect(component.filterValue).toBe('test')
-    expect(component.tableFilter).toHaveBeenCalledWith('test')
-  })
+      expect(component.filterValue).toBe('test')
+      expect(component.tableFilter).toHaveBeenCalledWith('test')
+    })
 
-  it('should not call tableFilter when permissionTableFilterInput is not present', () => {
-    spyOn(component, 'tableFilter')
-    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+    it('should not call tableFilter when permissionTableFilterInput is not present', () => {
+      spyOn(component, 'tableFilter')
+      component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
-    component.onFilterModeChange('=')
+      component.onFilterModeChange('=')
 
-    expect(component.tableFilter).not.toHaveBeenCalled()
-  })
+      expect(component.tableFilter).not.toHaveBeenCalled()
+    })
 
-  it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {
-    component.onQuickFilterChange({ value: 'ALL' })
+    it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {
+      component.onQuickFilterChange({ value: 'ALL' })
 
-    expect(component.filterBy).toEqual(['action', 'resource'])
-    expect(component.filterValue).toBe('')
-  })
+      expect(component.filterBy).toEqual(['action', 'resource'])
+      expect(component.filterValue).toBe('')
+    })
 
-  it('should set filterBy correctly and filterValue to quick filter value ', () => {
-    component.onQuickFilterChange({ value: 'VIEW' })
+    it('should set filterBy correctly and filterValue to quick filter value ', () => {
+      component.onQuickFilterChange({ value: 'VIEW' })
 
-    expect(component.filterBy).toEqual(['action'])
-    expect(component.filterValue).toBe('VIEW')
-  })
+      expect(component.filterBy).toEqual(['action'])
+      expect(component.filterValue).toBe('VIEW')
+    })
 
-  it('should set the permissionTableFilterInput value and call tableFilter', () => {
-    spyOn(component, 'tableFilter')
-    component.permissionTableFilterInput = { nativeElement: { value: '' } }
-    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+    it('should set the permissionTableFilterInput value and call tableFilter', () => {
+      spyOn(component, 'tableFilter')
+      component.permissionTableFilterInput = { nativeElement: { value: '' } }
+      component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
-    component.onQuickFilterChange({ value: 'ALL' })
+      component.onQuickFilterChange({ value: 'ALL' })
 
-    expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
-    expect(component.tableFilter).toHaveBeenCalledWith('')
-  })
+      expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+      expect(component.tableFilter).toHaveBeenCalledWith('')
+    })
 
-  it('should call filterGlobal on permissionTable with the provided value and filterMode', () => {
-    component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
-    component.filterMode = 'mode'
+    it('should call filterGlobal on permissionTable with the provided value and filterMode', () => {
+      component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
+      component.filterMode = 'mode'
 
-    component.tableFilter('testValue')
+      component.tableFilter('testValue')
 
-    expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('testValue', 'mode')
-  })
+      expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('testValue', 'mode')
+    })
 
-  it('should clear all clear all values onClearTableFilter', () => {
-    component.permissionTableFilterInput = { nativeElement: { value: 'value' } }
-    component.quickFilterValue = 'ALL'
-    component.filterAppValue = 'value'
-    component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
-    spyOn(component, 'onSortPermissionTable')
+    it('should clear all clear all values onClearTableFilter', () => {
+      component.permissionTableFilterInput = { nativeElement: { value: 'value' } }
+      component.quickFilterValue = 'ALL'
+      component.filterAppValue = 'value'
+      component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
+      spyOn(component, 'onSortPermissionTable')
 
-    component.onClearTableFilter()
+      component.onClearTableFilter()
 
-    expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
-    expect(component.quickFilterValue).toBe('ALL')
-    expect(component.filterAppValue).toBeUndefined()
-    expect(component.onSortPermissionTable).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-  })
+      expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+      expect(component.quickFilterValue).toBe('ALL')
+      expect(component.filterAppValue).toBeUndefined()
+      expect(component.onSortPermissionTable).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+    })
 
-  it('should reset icons onSortPermissionTables', () => {
-    component.sortIconAppId = { nativeElement: { className: 'oldClassName' } }
-    component.sortIconProduct = { nativeElement: { className: 'oldClassName' } }
+    it('should reset icons onSortPermissionTables', () => {
+      component.sortIconAppId = { nativeElement: { className: 'oldClassName' } }
+      component.sortIconProduct = { nativeElement: { className: 'oldClassName' } }
 
-    component.onSortPermissionTable()
+      component.onSortPermissionTable()
 
-    expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
-    expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+      expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+      expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+    })
   })
 
   /**
    * Filter: Product, AppId
    */
-  it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-alt'
+  describe('table column sorting', () => {
+    it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-alt'
 
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
 
-    component.onFilterItemSortIcon(event, icon, 'appId')
+      component.onFilterItemSortIcon(event, icon, 'appId')
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+    })
+
+    it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-amount-down'
+
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+
+      component.onFilterItemSortIcon(event, icon, 'appId')
+
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+    })
+
+    it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+
+      component.onFilterItemSortIcon(event, icon, 'appId')
+
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+    })
+
+    /* same tests for sortByProduct */
+    it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-alt'
+
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+
+      component.onFilterItemSortIcon(event, icon, 'prodName')
+
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+    })
+
+    it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-amount-down'
+
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+
+      component.onFilterItemSortIcon(event, icon, 'prodName')
+
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+    })
+
+    it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
+      const event = new MouseEvent('click')
+      const icon = document.createElement('span')
+      icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+
+      spyOn(event, 'stopPropagation')
+      component.permissionTable = {
+        clear: jasmine.createSpy(),
+        _value: [permRow, permRow2],
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+
+      component.onFilterItemSortIcon(event, icon, 'prodName')
+
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permissionTable.clear).toHaveBeenCalled()
+      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+    })
   })
 
-  it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-amount-down'
+  describe('table column filtering', () => {
+    it('should clear filter', () => {
+      component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
 
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
+      component.onFilterItemClearAppId()
 
-    component.onFilterItemSortIcon(event, icon, 'appId')
+      expect(component.filterAppValue).toBeUndefined()
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+    })
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
-  })
+    it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
+      const event = { value: 'prodName1' }
 
-  it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+      component.ngOnInit()
+      expect(component.roles.length).toBe(2)
+      expect(component.permissions.length).toBe(2)
+      expect(component.permissionRows.length).toBe(2)
+      // component.permissionRows => permPageRes
 
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
+      component.permissionTable = { filter: jasmine.createSpy(), value: component.permissionRows } as unknown as Table
 
-    component.onFilterItemSortIcon(event, icon, 'appId')
+      component.onFilterItemChangeProduct(event)
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
-  })
+      expect(component.filterProductValue).toBe(event.value)
+      expect(component.filterAppValue).toBeUndefined()
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(event.value, 'productName', 'equals')
+    })
 
-  /* same tests for sortByProduct */
-  it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-alt'
+    it('should reset filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
+      const event = { value: '' }
+      component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
 
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
+      component.ngOnInit()
+      component.onFilterItemChangeProduct(event)
 
-    component.onFilterItemSortIcon(event, icon, 'product')
+      expect(component.filterProductValue).toBe(event.value)
+      expect(component.filterAppValue).toBeUndefined()
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(event.value, 'productName', 'equals')
+    })
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
-  })
+    it('should filter apps from permissions for the selected product', () => {
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      loadedApp.name = loadedApp.productName // is a product
+      component.urlParamAppId = app1.name!
+      component.urlParamAppType = loadedApp.appType
 
-  it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-amount-down'
+      component.ngOnInit()
+      expect(component.currentApp).toEqual(loadedApp)
 
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
+      expect(component.roles.length).toBe(2)
+      expect(component.permissions.length).toBe(2)
+      expect(component.permissions).toEqual([
+        { id: 'permId1', appId: 'appId1', productName: 'prodName1', mandatory: false },
+        { id: 'permId2', appId: 'appId2', productName: 'prodName2' }
+      ])
+      // component.permissionRows => permPageRes
+      expect(component.permissionRows.length).toBe(2)
 
-    component.onFilterItemSortIcon(event, icon, 'product')
+      expect(component.productApps.length).toBe(2)
+      expect(component.productApps).toEqual([
+        { name: 'appName1', appId: 'appId1', productName: 'prodName1' } as App,
+        { name: 'appName2', appId: 'appId2', productName: 'prodName1' } as App
+      ])
+      expect(loadedApp.productName).toEqual('prodName1')
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
-  })
+      component.prepareFilterApps()
+      expect(component.filterAppItems.length).toBe(2)
+      expect(component.filterAppItems).toEqual([
+        { label: 'appId2', value: 'appId2' },
+        { label: 'appName1', value: 'appId1' }
+      ])
 
-  it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
-    const event = new MouseEvent('click')
-    const icon = document.createElement('span')
-    icon.className = 'pi pi-fw pi-sort-amount-up-alt'
-
-    spyOn(event, 'stopPropagation')
-    component.permissionTable = {
-      clear: jasmine.createSpy(),
-      _value: [permRow, permRow2],
-      filterGlobal: jasmine.createSpy()
-    } as unknown as Table
-
-    component.onFilterItemSortIcon(event, icon, 'product')
-
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permissionTable.clear).toHaveBeenCalled()
-    expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
-  })
-
-  it('should clear filter', () => {
-    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
-
-    component.onFilterItemClearAppId()
-
-    expect(component.filterAppValue).toBeUndefined()
-    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
-  })
-
-  it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
-    const event = { value: 'someProduct' }
-    component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
-
-    component.onFilterItemChangeProduct(event)
-
-    expect(component.filterProductValue).toBe('someProduct')
-    expect(component.filterAppValue).toBeUndefined()
-    expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
-    expect(component.permissionTable.filter).toHaveBeenCalledWith('someProduct', 'productName', 'equals')
+      component.prepareFilterApps('prodName2')
+      expect(component.filterAppItems.length).toBe(1)
+    })
   })
 
   /*
@@ -820,8 +879,8 @@ describe('AppDetailComponent', () => {
     expect(component.role).toBeUndefined()
     expect(component.permission).toBeUndefined()
     expect(component.changeMode).toBe('VIEW')
-    expect(component.showPermissionDetailDialog).toBeFalse()
-    expect(component.showPermissionDeleteDialog).toBeFalse()
+    expect(component.displayPermissionDetailDialog).toBeFalse()
+    expect(component.displayPermissionDeleteDialog).toBeFalse()
     expect(component.showRoleDetailDialog).toBeFalse()
     expect(component.showRoleDeleteDialog).toBeFalse()
   })
@@ -849,7 +908,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.role).toBeUndefined()
     expect(component.changeMode).toBe('CREATE')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.displayPermissionDetailDialog).toBeTrue()
   })
 
   it('should call stopPropagation and set permission onDetailPermission', () => {
@@ -861,7 +920,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
     expect(component.changeMode).toBe('EDIT')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.displayPermissionDetailDialog).toBeTrue()
   })
 
   it('should set changeMode according to operator onDetailPermission', () => {
@@ -872,8 +931,11 @@ describe('AppDetailComponent', () => {
 
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
-    expect(component.changeMode).toBe('EDIT')
-    expect(component.showPermissionDetailDialog).toBeTrue()
+    expect(component.changeMode).toBe('EDIT') //   mandatory: false
+    expect(component.displayPermissionDetailDialog).toBeTrue()
+
+    component.onDetailPermission(event, { ...permRow, mandatory: true })
+    expect(component.changeMode).toBe('VIEW')
   })
 
   it('should call stopPropagation and set permission in onDeletePermission', () => {
@@ -885,7 +947,7 @@ describe('AppDetailComponent', () => {
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
     expect(component.changeMode).toBe('DELETE')
-    expect(component.showPermissionDeleteDialog).toBeTrue()
+    expect(component.displayPermissionDeleteDialog).toBeTrue()
   })
 
   /****************************************************************************
@@ -928,7 +990,7 @@ describe('AppDetailComponent', () => {
 
   it('should grant all permissions: assign all perms of an app to a role', () => {
     const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId'
+    component.filterAppValue = 'appId1'
 
     component.ngOnInit()
     component.onGrantAllPermissions(ev, role1)
@@ -939,7 +1001,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
     assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
     const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId'
+    component.filterAppValue = 'appId1'
 
     component.ngOnInit()
     component.onGrantAllPermissions(ev, role1)
@@ -979,7 +1041,7 @@ describe('AppDetailComponent', () => {
 
   it('should revoke all permissions: remove all perms of an app to a role', () => {
     const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId'
+    component.filterAppValue = 'appId1'
 
     component.ngOnInit()
     component.onRevokeAllPermissions(ev, role1)
@@ -990,7 +1052,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
     assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
     const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId'
+    component.filterAppValue = 'appId1'
 
     component.ngOnInit()
     component.onRevokeAllPermissions(ev, role1)
@@ -1021,7 +1083,7 @@ describe('AppDetailComponent', () => {
 
   it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
     component.filterProductItems = [
-      { label: 'prodName', value: 'prodName' },
+      { label: 'prodName1', value: 'prodName1' },
       { label: 'prodName2', value: 'prodName2' }
     ]
     component.filterProductValue = undefined
@@ -1029,7 +1091,7 @@ describe('AppDetailComponent', () => {
 
     const res = component['prepareProductListForBulkOperation']()
 
-    expect(res).toEqual(['prodName', 'prodName2'])
+    expect(res).toEqual(['prodName1', 'prodName2'])
   })
 
   it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
@@ -1064,16 +1126,16 @@ describe('AppDetailComponent', () => {
       key: 'key',
       roles: { undefined },
       appType: 'MFE',
-      appDisplayName: 'appName',
-      productDisplayName: 'prodName'
+      appDisplayName: 'appName1',
+      productDisplayName: 'prodName1'
     }
     const permRow4: PermissionViewRow = {
       ...perm3,
       key: 'key',
       roles: { undefined },
       appType: 'MFE',
-      appDisplayName: 'appName',
-      productDisplayName: 'prodName'
+      appDisplayName: 'appName1',
+      productDisplayName: 'prodName1'
     }
     const resultAppAsc = (component as any).sortPermissionRowByAppIdAsc(permRow3, permRow4)
     expect(resultAppAsc).toBe(0)
@@ -1107,14 +1169,6 @@ describe('AppDetailComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
-  })
-
-  xit('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
-    const perm = mockUserService.hasPermission.and.returnValue(true)
-    fixture = TestBed.createComponent(AppDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(perm).toBeTrue()
   })
 
   describe('Test translations', () => {

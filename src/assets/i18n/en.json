@@ -42,8 +42,10 @@
         "OPERATOR_TEXT": "This Permission was created automatically. If the application continues to offer this Permission, it will be restored during the next deployment.",
         "APPLICATION_OK": "The App was deleted successfully",
         "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
+        "PERMISSION": "Do you want to delete this Permission?",
         "PERMISSION_OK": "The Permission was deleted successfully",
         "PERMISSION_NOK": "An error has occurred. The Permission was not deleted.",
+        "ROLE": "Do you want to delete this Role?",
         "ROLE_OK": "The Role was deleted successfully",
         "ROLE_NOK": "An error has occurred. The Role was not deleted."
       }
@@ -171,6 +173,8 @@
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Applications",
       "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application including all of its Apps",
       "SUBHEADER_APP": "Managing Business Roles and Permissions of the App",
+      "ADDITIONAL_INFO": "More data...",
+      "ADDITIONAL_INFO.TOOLTIP": "Show additional information per permission",
       "QUICK_FILTER": {
         "LABEL": "Type",
         "TOOLTIP": "Quick Filter for Action",
@@ -191,6 +195,10 @@
         "PRODUCT.TOOLTIP": "The Applications registered in the workspace",
         "WORKSPACE": "Workspace",
         "TOOLTIP": "Set filter value"
+      },
+      "ROLES": {
+        "FILTER": "Role filter",
+        "FILTER.TOOLTIP": "Filter for Role name"
       }
     }
   },
@@ -214,6 +222,7 @@
   },
   "PERMISSION": {
     "LABEL": "Permissions",
+    "TOOLTIP": "List of Permissions",
     "APP_ID": "App ID",
     "APP_ID.TOOLTIP": "ID of the App (frontend/backend of an Application)",
     "PRODUCT_NAME": "Application Name",
@@ -225,8 +234,8 @@
     "ACTION.TOOLTIP": "Action on the Resource",
     "KEY": "Resource # Action",
     "ACTIONS": "Actions",
-    "MANDATORY": "Mandatory required",
-    "MANDATORY.COLUMN": "Can the Permission be edited?",
+    "MANDATORY": "Required",
+    "MANDATORY.COLUMN": "Required?",
     "MANDATORY.COLUMN.TOOLTIP": "This Permission is absolutely necessary for operation and therefore cannot be edited or deleted.",
     "MANDATORY.TOOLTIP": "If set then this Permission is necessary for operation and cannot therefore be changed or deleted.",
     "OPERATOR": "Automated created",
@@ -288,7 +297,7 @@
       "ROLE.TITLE": "Role: ",
       "ROLES.TITLE": "Roles: ",
       "ROLES.FILTER": "Role Name",
-      "ROLES.TOOLTIP": "List of Roles which are assigned in the IAM (Identity Access Management)",
+      "ROLES.TOOLTIP": "List of Roles to which Permissions are granted",
       "PRODUCTS.TITLE": "Applications: ",
       "PRODUCTS.FILTER": "Applikation Name",
       "PRODUCTS.TOOLTIP": "List of Applications to which Permissions are granted",

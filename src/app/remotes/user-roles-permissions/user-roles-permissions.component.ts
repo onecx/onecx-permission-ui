@@ -64,7 +64,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public columns
   public environment = environment
   public loadingExceptionKey = ''
-  public searchInProgress = false
+  public loading = false
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -107,7 +107,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.searchInProgress = true
+    this.loading = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
@@ -126,7 +126,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public searchUserAssignments(): Observable<UserAssignment[]> {
-    this.searchInProgress = true
+    this.loading = true
     // on admin view the userId is set, otherwise the me services are used
     if (this.userId) {
       return this.assgnmtApi
@@ -140,7 +140,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
             console.error('searchUserAssignments():', err)
             return of([])
           }),
-          finalize(() => (this.searchInProgress = false))
+          finalize(() => (this.loading = false))
         )
     } else {
       return this.userApi.getUserAssignments({ userCriteria: { pageSize: 1000 } }).pipe(
@@ -152,7 +152,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           console.error('getUserAssignments():', err)
           return of([])
         }),
-        finalize(() => (this.searchInProgress = false))
+        finalize(() => (this.loading = false))
       )
     }
   }
