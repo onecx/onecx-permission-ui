@@ -80,7 +80,8 @@ const rolePageRes: RolePageResult = {
 const perm1: Permission = {
   id: 'permId1',
   appId: 'appId1',
-  productName: 'prodName1'
+  productName: 'prodName1',
+  mandatory: false
 }
 const perm2: Permission = {
   id: 'permId2',
@@ -650,7 +651,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'appId1')
+      component.onFilterItemSortIcon(event, icon, 'appId')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -669,7 +670,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'appId1')
+      component.onFilterItemSortIcon(event, icon, 'appId')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -688,7 +689,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'appId1')
+      component.onFilterItemSortIcon(event, icon, 'appId')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -708,7 +709,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'prodName1')
+      component.onFilterItemSortIcon(event, icon, 'prodName')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -727,7 +728,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'prodName1')
+      component.onFilterItemSortIcon(event, icon, 'prodName')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -746,7 +747,7 @@ describe('AppDetailComponent', () => {
         filterGlobal: jasmine.createSpy()
       } as unknown as Table
 
-      component.onFilterItemSortIcon(event, icon, 'prodName1')
+      component.onFilterItemSortIcon(event, icon, 'prodName')
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -808,7 +809,7 @@ describe('AppDetailComponent', () => {
       expect(component.roles.length).toBe(2)
       expect(component.permissions.length).toBe(2)
       expect(component.permissions).toEqual([
-        { id: 'permId1', appId: 'appId1', productName: 'prodName1' },
+        { id: 'permId1', appId: 'appId1', productName: 'prodName1', mandatory: false },
         { id: 'permId2', appId: 'appId2', productName: 'prodName2' }
       ])
       // component.permissionRows => permPageRes
@@ -930,8 +931,11 @@ describe('AppDetailComponent', () => {
 
     expect(event.stopPropagation).toHaveBeenCalled()
     expect(component.permission).toBe(permRow)
-    expect(component.changeMode).toBe('EDIT')
+    expect(component.changeMode).toBe('EDIT') //   mandatory: false
     expect(component.displayPermissionDetailDialog).toBeTrue()
+
+    component.onDetailPermission(event, { ...permRow, mandatory: true })
+    expect(component.changeMode).toBe('VIEW')
   })
 
   it('should call stopPropagation and set permission in onDeletePermission', () => {

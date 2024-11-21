@@ -827,9 +827,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     // case 1: APP filter value =>
     if (this.filterAppValue) {
       const apps = this.productApps.filter((p) => p.appId === this.filterAppValue)
-      if (apps.length === 1) pList.push(apps[0].productName ?? '')
+      if (apps.length === 1) pList.push(apps[0].productName!)
       // case 2: PRODUCT
-    } else if (this.currentApp.isProduct) pList.push(this.currentApp.productName ?? '')
+    } else if (this.currentApp.isProduct) pList.push(this.currentApp.productName!)
     // case 3: WORKSPACE
     //      a) selected product
     else if (this.filterProductValue) pList.push(this.filterProductValue)
