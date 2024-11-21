@@ -233,8 +233,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should prepare action buttons on init', () => {
-    spyOn(component, 'onCreateRole')
     spyOn(component, 'onExport')
+    spyOn(component, 'onDeleteApp')
 
     component.ngOnInit()
 
@@ -246,8 +246,8 @@ describe('AppDetailComponent', () => {
     actions[2].actionCallback()
 
     expect(locationSpy.back).toHaveBeenCalled()
-    expect(component.onCreateRole).toHaveBeenCalled()
     expect(component.onExport).toHaveBeenCalled()
+    expect(component.onDeleteApp).toHaveBeenCalled()
   })
 
   it('should loadData onReload', () => {
@@ -271,7 +271,7 @@ describe('AppDetailComponent', () => {
       component.onExport()
 
       expect(component.productNames).toEqual(['Product A', 'Product B'])
-      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
+      expect(component.listedProductsHeaderKey).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
       expect(component.displayPermissionExportDialog).toBe(true)
     })
 
@@ -285,8 +285,18 @@ describe('AppDetailComponent', () => {
       component.onExport()
 
       expect(component.productNames).toEqual(['Test Product'])
-      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.OF_APPLICATION')
+      expect(component.listedProductsHeaderKey).toBe('ACTIONS.EXPORT.OF_APPLICATION')
       expect(component.displayPermissionExportDialog).toBe(true)
+    })
+  })
+
+  describe('onDeleteApp', () => {
+    it('should set up export for PRODUCT app type', () => {
+      component.displayApplicationDeleteDialog = false
+
+      component.onDeleteApp()
+
+      expect(component.displayApplicationDeleteDialog).toBeTrue()
     })
   })
 
@@ -300,7 +310,7 @@ describe('AppDetailComponent', () => {
 
       const res = (component as any).loadData()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
       expect(res).toBeUndefined()
     })
 
@@ -344,7 +354,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.NOT_FOUND.PRODUCT')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.NOT_FOUND.PRODUCT')
     })
 
     it('should catch error if search for applications fails ', () => {
@@ -357,7 +367,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
     })
 
     it('should catch non-HttpErrorResponse error if search for applications fails', () => {
@@ -366,7 +376,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
     })
 
     it('should loadWorkspaceDetails successfully', () => {
@@ -389,7 +399,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
       expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
     })
 
@@ -400,7 +410,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
     })
 
     it('should load roles and permissions', () => {
@@ -429,7 +439,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
     })
 
     it('should display error when loading permissions fails', () => {
@@ -439,7 +449,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
     })
   })
 
@@ -518,7 +528,7 @@ describe('AppDetailComponent', () => {
 
     component['searchAssignments'](true, ['appId1'])
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
+    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
   })
 
   it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
@@ -527,7 +537,7 @@ describe('AppDetailComponent', () => {
 
     component.ngOnInit()
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
   })
 
   /*

@@ -9,6 +9,7 @@ import { SharedModule } from 'src/app/shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AppSearchComponent } from './app-search/app-search.component'
+import { AppDeleteComponent } from './app-delete/app-delete.component'
 import { AppDetailComponent } from './app-detail/app-detail.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
 import { PermissionDetailComponent } from './permission-detail/permission-detail.component'
@@ -42,6 +43,7 @@ const routes: Routes = [
   declarations: [
     AppSearchComponent,
     AppDetailComponent,
+    AppDeleteComponent,
     RoleDetailComponent,
     PermissionDetailComponent,
     PermissionExportComponent

@@ -14,7 +14,7 @@ import { getCurrentDateTime } from 'src/app/shared/utils'
 export class PermissionExportComponent {
   @Input() products: string[] = []
   @Input() displayExportDialog = false
-  @Input() listedProductsHeader = ''
+  @Input() listedProductsHeaderKey = ''
   @Output() displayExportDialogChange = new EventEmitter<boolean>()
 
   public selectedProductNames: string[] = []

@@ -9,7 +9,7 @@
   [style]="{ 'max-width': '500px' }"
 >
   <div *ngIf="products" class="flex flex-column row-gap-1">
-    <div>{{ listedProductsHeader | translate }}</div>
+    <div>{{ listedProductsHeaderKey | translate }}</div>
     <p-listbox
       id="apm_export_product_list"
       [options]="products"

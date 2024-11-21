@@ -1,24 +1,31 @@
 <ocx-portal-page permission="APP#VIEW" helpArticleId="PAGE_PERMISSION_DETAIL">
   <ocx-page-header
-    [loading]="loading"
+    [loadingApp]="loadingApp"
     [actions]="(actions$ | async) ?? []"
-    [header]="loading ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
-    [subheader]="loading ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
+    [header]="loadingApp ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
+    [subheader]="loadingApp ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
     [manualBreadcrumbs]="false"
   >
   </ocx-page-header>
 
   <ocx-page-content>
     <p-message
-      *ngIf="loadingExceptionKey"
+      *ngIf="exceptionKey"
       id="apm_app_detail_permission_table_data_access_issue"
       severity="error"
       styleClass="m-3"
-      [text]="loadingExceptionKey | translate"
+      [text]="exceptionKey | translate"
+    ></p-message>
+    <p-message
+      *ngIf="loadingApp || loadingPermissions"
+      id="apm_app_detail_permission_table_data_loading"
+      severity="info"
+      styleClass="m-3"
+      [text]="'ACTIONS.LOADING' | translate"
     ></p-message>
 
     <p-table
-      *ngIf="!loadingExceptionKey"
+      *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
       styleClass="px-3 p-datatable-striped"
@@ -685,6 +692,12 @@
 
 <app-permission-export
   [products]="productNames"
-  [listedProductsHeader]="listedProductsHeader"
+  [listedProductsHeaderKey]="listedProductsHeaderKey"
   [(displayExportDialog)]="displayPermissionExportDialog"
 ></app-permission-export>
+
+<app-app-delete
+  [app]="currentApp"
+  (deleteEmitter)="onClose()"
+  [(displayDialog)]="displayApplicationDeleteDialog"
+></app-app-delete>

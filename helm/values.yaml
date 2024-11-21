@@ -38,6 +38,7 @@ app:
         permissions:
           APP:
             EDIT: Edit permission app details
+            DELETE: Delete permission app
             SEARCH: Search permission apps
             VIEW: View app details
           PERMISSION:

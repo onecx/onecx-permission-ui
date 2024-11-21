@@ -33,15 +33,20 @@
     },
     "DELETE": {
       "LABEL": "Delete",
-      "APP": "Delete App",
+      "NO_UNDO": "This action cannot be undone!",
+      "APP": {
+        "HEADER": "Delete Application",
+        "TOOLTIP": "Delete Application including all of their Permissions.",
+        "TEXT": "Do you want to delete this Application?",
+        "MESSAGE_OK": "The Application was deleted successfully",
+        "MESSAGE_NOK": "An error has occurred. The Application was not deleted."
+      },
       "PERMISSION": "Delete Permission",
       "ROLE": "Delete Role",
       "MESSAGE": {
         "TEXT": "Do you want to delete \"{{ITEM}}\"?",
         "INFO": "This action cannot be undone!",
-        "OPERATOR_TEXT": "This Permission was created automatically. If the application continues to offer this Permission, it will be restored during the next deployment.",
-        "APPLICATION_OK": "The App was deleted successfully",
-        "APPLICATION_NOK": "An error has occurred. The App was not deleted.",
+        "OPERATOR_TEXT": "This Permission was created by automation. If the application continues to offer this Permission, it will be restored during the next deployment.",
         "PERMISSION": "Do you want to delete this Permission?",
         "PERMISSION_OK": "The Permission was deleted successfully",
         "PERMISSION_NOK": "An error has occurred. The Permission was not deleted.",
@@ -176,8 +181,8 @@
       "ADDITIONAL_INFO": "More data...",
       "ADDITIONAL_INFO.TOOLTIP": "Show additional information per permission",
       "QUICK_FILTER": {
-        "LABEL": "Type",
-        "TOOLTIP": "Quick Filter for Action",
+        "LABEL": "Quick Filter for Actions",
+        "TOOLTIP": "Quick Filter for Actions",
         "ALL": "All",
         "VIEW": "VIEW",
         "EDIT": "EDIT",
@@ -331,11 +336,11 @@
     },
     "HTTP_MISSING_PARAMETER": "Parameters from the URL could not be determined",
     "HTTP_STATUS_0": {
-      "APP": "Unknown problem retrieving Application data - please try again.",
-      "ROLES": "Unknown problem retrieving Role data - please try again.",
-      "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
-      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
-      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
+      "APP": "Unknown problem retrieving Application data. Please try again.",
+      "ROLES": "Unknown problem retrieving Role data. Please try again.",
+      "PERMISSIONS": "Unknown problem retrieving Permission data. Please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data. Please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data. Please try again."
     },
     "HTTP_STATUS_400": {
       "ROLES": "The Role could not be processed.",
@@ -364,12 +369,12 @@
       "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_STATUS_500": {
-      "APP": "Unknown problem retrieving Application data - please try again.",
-      "APPS": "Unknown problem retrieving Applications data - please try again.",
-      "ROLES": "Unknown problem retrieving Role data - please try again.",
-      "PERMISSIONS": "Unknown problem retrieving Permission data - please try again.",
-      "ASSIGNMENTS": "Unknown problem retrieving Assignment data - please try again.",
-      "WORKSPACE": "Unknown problem retrieving Workspace data - please try again."
+      "APP": "Unknown problem retrieving Application data. Please try again.",
+      "APPS": "Unknown problem retrieving Applications data. Please try again.",
+      "ROLES": "Unknown problem retrieving Role data. Please try again.",
+      "PERMISSIONS": "Unknown problem retrieving Permission data. Please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Assignment data. Please try again.",
+      "WORKSPACE": "Unknown problem retrieving Workspace data. Please try again."
     }
   }
 }
