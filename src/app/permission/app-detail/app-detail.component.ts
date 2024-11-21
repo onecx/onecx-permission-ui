@@ -112,7 +112,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   // role management
   private roles$!: Observable<RolePageResult>
-  public roles!: PermissionRole[]
+  public roles: PermissionRole[] = []
   public role: Role | undefined
   public rolesFiltered: PermissionRole[] = []
   public missingWorkspaceRoles = false
@@ -266,7 +266,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayPermissionExportDialog = true
   }
   public onRoleFilterChange(val: string): void {
-    this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
+    if (this.rolesFiltered && this.roles.length > 0)
+      this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
   }
 
   private loadData(): void {
@@ -366,10 +367,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private searchPermissions(): Observable<Permission[]> {
     const productNames: string[] = []
     if (this.currentApp.isProduct) {
-      productNames.push(this.currentApp.productName ?? '')
+      productNames.push(this.currentApp.productName!)
     } else
       this.currentApp.workspaceDetails?.products?.map((p) => {
-        productNames.push(p.productName ?? '')
+        productNames.push(p.productName!)
       })
     this.permissions$ = this.permApi
       .searchPermissions({

@@ -49,34 +49,14 @@ const appPageRes: ApplicationPageResult = {
 const prodDetails: ProductDetails = {
   productName: 'prodName',
   displayName: 'displayName',
-  mfe: [
-    {
-      appId: 'prodDetailMfeAppId',
-      appName: 'prodDetailMfeAppName'
-    }
-  ],
-  ms: [
-    {
-      appId: 'prodDetailMsAppId',
-      appName: 'prodDetailMsAppName'
-    }
-  ]
+  mfe: [{ appId: 'prodDetailMfeAppId', appName: 'prodDetailMfeAppName' }],
+  ms: [{ appId: 'prodDetailMsAppId', appName: 'prodDetailMsAppName' }]
 }
 const prodDetails2: ProductDetails = {
   productName: 'prodName2',
   displayName: 'displayName2',
-  mfe: [
-    {
-      appId: 'prodDetailMfeAppId',
-      appName: 'prodDetailMfeAppName'
-    }
-  ],
-  ms: [
-    {
-      appId: 'prodDetailMsAppId',
-      appName: 'prodDetailMsAppName'
-    }
-  ]
+  mfe: [{ appId: 'prodDetailMfeAppId', appName: 'prodDetailMfeAppName' }],
+  ms: [{ appId: 'prodDetailMsAppId', appName: 'prodDetailMsAppName' }]
 }
 const wsDetails: WorkspaceDetails = {
   workspaceRoles: ['role1', 'role2'],
@@ -88,8 +68,8 @@ const role1: Role = {
   name: 'roleName1'
 }
 const role2: Role = {
-  id: 'roleId1',
-  name: 'roleName1'
+  id: 'roleId2',
+  name: 'roleName2'
 }
 const rolePageRes: RolePageResult = {
   stream: [role1, role2]
@@ -101,9 +81,9 @@ const perm1: Permission = {
   productName: 'prodName1'
 }
 const perm2: Permission = {
-  id: 'permId1',
-  appId: 'appId1',
-  productName: 'prodName1'
+  id: 'permId2',
+  appId: 'appId2',
+  productName: 'prodName2'
 }
 const permPageRes: PermissionPageResult = {
   stream: [perm1, perm2]
@@ -425,6 +405,16 @@ describe('AppDetailComponent', () => {
 
       expect(component.roles.length).toBe(2)
       expect(component.permissions.length).toBe(2)
+    })
+
+    it('should filter roles', () => {
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+      component.onRoleFilterChange('roleName1')
+
+      expect(component.roles.length).toBe(2)
+      expect(component.rolesFiltered.length).toBe(1)
     })
 
     it('should display error when loading roles fails', () => {
@@ -1107,14 +1097,6 @@ describe('AppDetailComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
-  })
-
-  xit('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
-    const perm = mockUserService.hasPermission.and.returnValue(true)
-    fixture = TestBed.createComponent(AppDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(perm).toBeTrue()
   })
 
   describe('Test translations', () => {

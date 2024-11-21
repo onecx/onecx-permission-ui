@@ -233,7 +233,7 @@
     "ACTION.TOOLTIP": "Aktion auf der Ressource",
     "KEY": "Ressource # Aktion",
     "ACTIONS": "Aktionen",
-    "MANDATORY": "Unbedingt erforderlich",
+    "MANDATORY": "Erforderlich",
     "MANDATORY.COLUMN": "Ist die Berechtigung für den Betrieb unbedingt erforderlich?",
     "MANDATORY.COLUMN.TOOLTIP": "Diese Berechtigung ist für den Betrieb unbedingt erforderlich und kann deshalb nicht bearbeitet oder gelöscht werden.",
     "MANDATORY.TOOLTIP": "Wenn gesetzt, dann ist diese Berechtigung unbedingt erforderlich für den Betrieb und kann deshalb nicht bearbeitet oder gelöscht werden.",
