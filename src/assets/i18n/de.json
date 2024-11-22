@@ -39,7 +39,6 @@
       "MESSAGE": {
         "TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
         "OPERATOR_TEXT": "Diese Berechtigung wurde automatisiert erstellt. Wenn die Applikation diese Berechtigung weiterhin anbietet dann wird sie beim nächsten Deployment wiederhergestellt.",
-        "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "PERMISSION": "Möchten Sie diese Berechtigung löschen?",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
@@ -202,8 +201,8 @@
   },
   "APP": {
     "ID": "App ID",
-    "DISPLAY_NAME": "Anzeigename",
     "NAME": "Name",
+    "DISPLAY_NAME": "Anzeigename",
     "TYPE": "Typ",
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Applikation",
@@ -244,7 +243,6 @@
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Berechtigung erteilt - Kann nicht geändert werden",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
       "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) erteilen",
       "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
