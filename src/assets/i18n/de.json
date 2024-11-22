@@ -239,6 +239,8 @@
     "OPERATOR": "Automatisiert erstellt",
     "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung automatisiert erzeugt. Alle Änderungen gehen beim nächsten Deployment verloren.",
     "ASSIGNMENTS": {
+      "GRANT_ROLE": "Zuordnen: ",
+      "REVOKE_ROLE": "Entziehen: ",
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Berechtigung erteilt - Kann nicht geändert werden",
@@ -266,7 +268,7 @@
     "IAM": {
       "HEADER": "IAM Rollen auswählen",
       "LIST": "Fehlende Rollen:",
-      "INFO": "(IAM: Identity Access Management = Benutzer & Rollen)",
+      "INFO": "(IAM: Identity Access Management = Benutzer und Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",
       "SAVE.TOOLTIP": "Augewählte Rollen übernehmen"
@@ -315,7 +317,7 @@
       "PRODUCT": "Name der Applikation, die die Berechtigung definiert hat",
       "ACTION": "Aktion die auf der Ressource erlaubt ist",
       "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
-      "ROLE": "Rolle aus dem IAM (Identity Access Managment) der die Berechtigung zugewiesen wurde"
+      "ROLE": "Rolle aus dem IAM (Identity Access Management) der die Berechtigung zugewiesen wurde"
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",

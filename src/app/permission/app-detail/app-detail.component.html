@@ -28,7 +28,7 @@
       *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
-      styleClass="px-3 p-datatable-striped"
+      styleClass="pb-2 px-3 p-datatable-striped"
       [columns]="rolesFiltered"
       [value]="permissionRows"
       [globalFilterFields]="filterBy"
@@ -634,8 +634,8 @@
                   [id]="
                     'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_not_assigned'
                   "
-                  [ariaLabel]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
-                  [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                  [ariaLabel]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
+                  [pTooltip]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >
@@ -650,8 +650,8 @@
                   class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onRemovePermission($event, rowData, role)"
                   [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
-                  [ariaLabel]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
-                  [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                  [ariaLabel]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
+                  [pTooltip]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >

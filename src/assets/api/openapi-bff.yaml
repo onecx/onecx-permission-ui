@@ -690,31 +690,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /applications/{name}:
-    delete:
-      x-onecx:
-        permissions:
-          application:
-            - delete
-      tags:
-        - application
-      description: delete application by name
-      operationId: deleteByApplicationName
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        204:
-          description: Application deleted
-        400:
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/search:
     post:
       x-onecx:

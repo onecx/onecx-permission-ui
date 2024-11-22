@@ -239,10 +239,11 @@
     "OPERATOR": "Automated created",
     "OPERATOR.TOOLTIP": "If set then this Permission was automated created. All changes will be lost on the next deployment.",
     "ASSIGNMENTS": {
+      "GRANT_ROLE": "Grant: ",
+      "REVOKE_ROLE": "Revoke: ",
       "ROLE_IS_ASSIGNED_0": "No Permission",
       "ROLE_IS_ASSIGNED_1": "Permission granted",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Permission granted, cannot be changed",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Change Permission",
       "GRANT_ALL_FOR_ROLE": "Grant all Permissions according to the filters (Application, App).",
       "REVOKE_ALL_FOR_ROLE": "Revoke all Permissions according to the filters (Application, App).",
       "GRANT_ERROR": "Permission could not be granted",
@@ -266,7 +267,7 @@
     "IAM": {
       "HEADER": "Select IAM Roles",
       "LIST": "Missing Roles:",
-      "INFO": "(IAM: Identity Access Management = User & Roles)",
+      "INFO": "(IAM: Identity Access Management => Users & Roles)",
       "Filter": "Filter",
       "SAVE": "Add selection",
       "SAVE.TOOLTIP": "Add selected roles"

@@ -29,7 +29,7 @@
       [scrollable]="true"
       scrollHeight="590px"
       [autoLayout]="true"
-      [globalFilterFields]="['productName', 'role', 'resource', 'action']"
+      [globalFilterFields]="['role', 'action', 'resource', 'productName']"
       [rows]="10"
       [rowsPerPageOptions]="[10, 25, 100, 1000]"
       [paginator]="true"
@@ -57,13 +57,13 @@
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                 [pTooltip]="
                   ('ACTIONS.SEARCH.FILTER.OF' | translate) +
-                  ('USER_ROLE_PERMISSIONS.ROLE' | translate) +
+                  ('USER_ROLE_PERMISSIONS.RESOURCE' | translate) +
+                  ', ' +
+                  ('USER_ROLE_PERMISSIONS.ACTION' | translate) +
                   ', ' +
                   ('USER_ROLE_PERMISSIONS.PRODUCT' | translate) +
                   ', ' +
-                  ('USER_ROLE_PERMISSIONS.RESOURCE' | translate) +
-                  ', ' +
-                  ('USER_ROLE_PERMISSIONS.ACTION' | translate)
+                  ('USER_ROLE_PERMISSIONS.ROLE' | translate)
                 "
                 tooltipPosition="top"
                 tooltipEvent="hover"
