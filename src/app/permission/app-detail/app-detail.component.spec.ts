@@ -233,7 +233,6 @@ describe('AppDetailComponent', () => {
   })
 
   it('should prepare action buttons on init', () => {
-    spyOn(component, 'onCreateRole')
     spyOn(component, 'onExport')
 
     component.ngOnInit()
@@ -243,10 +242,8 @@ describe('AppDetailComponent', () => {
 
     actions[0].actionCallback()
     actions[1].actionCallback()
-    actions[2].actionCallback()
 
     expect(locationSpy.back).toHaveBeenCalled()
-    expect(component.onCreateRole).toHaveBeenCalled()
     expect(component.onExport).toHaveBeenCalled()
   })
 
@@ -271,7 +268,7 @@ describe('AppDetailComponent', () => {
       component.onExport()
 
       expect(component.productNames).toEqual(['Product A', 'Product B'])
-      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
+      expect(component.listedProductsHeaderKey).toBe('ACTIONS.EXPORT.WS_APPLICATION_LIST')
       expect(component.displayPermissionExportDialog).toBe(true)
     })
 
@@ -285,7 +282,7 @@ describe('AppDetailComponent', () => {
       component.onExport()
 
       expect(component.productNames).toEqual(['Test Product'])
-      expect(component.listedProductsHeader).toBe('ACTIONS.EXPORT.OF_APPLICATION')
+      expect(component.listedProductsHeaderKey).toBe('ACTIONS.EXPORT.OF_APPLICATION')
       expect(component.displayPermissionExportDialog).toBe(true)
     })
   })
@@ -300,12 +297,12 @@ describe('AppDetailComponent', () => {
 
       const res = (component as any).loadData()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_MISSING_PARAMETER')
       expect(res).toBeUndefined()
     })
 
     it('should loadProductDetails successfully', () => {
-      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true, apps: ['appId1', 'appId2'] }
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType
@@ -344,7 +341,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.NOT_FOUND.PRODUCT')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.NOT_FOUND.PRODUCT')
     })
 
     it('should catch error if search for applications fails ', () => {
@@ -357,7 +354,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
     })
 
     it('should catch non-HttpErrorResponse error if search for applications fails', () => {
@@ -366,7 +363,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
     })
 
     it('should loadWorkspaceDetails successfully', () => {
@@ -389,7 +386,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
       expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
     })
 
@@ -400,7 +397,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
     })
 
     it('should load roles and permissions', () => {
@@ -429,7 +426,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
     })
 
     it('should display error when loading permissions fails', () => {
@@ -439,7 +436,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
     })
   })
 
@@ -518,7 +515,7 @@ describe('AppDetailComponent', () => {
 
     component['searchAssignments'](true, ['appId1'])
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
+    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
   })
 
   it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
@@ -527,7 +524,7 @@ describe('AppDetailComponent', () => {
 
     component.ngOnInit()
 
-    expect(component.loadingExceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
   })
 
   /*
@@ -798,7 +795,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should filter apps from permissions for the selected product', () => {
-      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true, apps: ['appId1', 'appId2'] }
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType

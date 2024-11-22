@@ -12,8 +12,13 @@
 @include displaying-text-responsive;
 @include media-queries;
 
-:host {
+:host ::ng-deep {
   .card-badge-right.badge-2-1 {
     top: 20px;
+  }
+  .p-dataview .p-dataview-content {
+    margin: 0.75rem 0rem 0rem 0rem;
+    padding: 0.5rem 0rem 0rem 0rem;
+    border-top: var(--table-header-border);
   }
 }

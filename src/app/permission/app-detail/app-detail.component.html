@@ -1,27 +1,34 @@
 <ocx-portal-page permission="APP#VIEW" helpArticleId="PAGE_PERMISSION_DETAIL">
   <ocx-page-header
-    [loading]="loading"
+    [loadingApp]="loadingApp"
     [actions]="(actions$ | async) ?? []"
-    [header]="loading ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
-    [subheader]="loading ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
+    [header]="loadingApp ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
+    [subheader]="loadingApp ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
     [manualBreadcrumbs]="false"
   >
   </ocx-page-header>
 
   <ocx-page-content>
     <p-message
-      *ngIf="loadingExceptionKey"
+      *ngIf="exceptionKey"
       id="apm_app_detail_permission_table_data_access_issue"
       severity="error"
       styleClass="m-3"
-      [text]="loadingExceptionKey | translate"
+      [text]="exceptionKey | translate"
+    ></p-message>
+    <p-message
+      *ngIf="loadingApp || loadingPermissions"
+      id="apm_app_detail_permission_table_data_loading"
+      severity="info"
+      styleClass="m-3"
+      [text]="'ACTIONS.LOADING' | translate"
     ></p-message>
 
     <p-table
-      *ngIf="!loadingExceptionKey"
+      *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
-      styleClass="px-3 p-datatable-striped"
+      styleClass="pb-2 px-3 p-datatable-striped"
       [columns]="rolesFiltered"
       [value]="permissionRows"
       [globalFilterFields]="filterBy"
@@ -138,7 +145,7 @@
           <th
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permissions"
-            [attr.colspan]="(currentApp.appType === 'PRODUCT' ? 2 : 3) + (showPermissionTools ? 2 : 0)"
+            [attr.colspan]="(currentApp.isProduct ? 2 : 3) + (showPermissionTools ? 2 : 0)"
             class="py-2 border-right-primary"
             [ngClass]="
               myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 'py-0' : 'py-1'
@@ -627,8 +634,8 @@
                   [id]="
                     'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_not_assigned'
                   "
-                  [ariaLabel]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
-                  [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                  [ariaLabel]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
+                  [pTooltip]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >
@@ -643,8 +650,8 @@
                   class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                   (click)="onRemovePermission($event, rowData, role)"
                   [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
-                  [ariaLabel]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
-                  [pTooltip]="'PERMISSION.ASSIGNMENTS.ROLE_ASSIGNEMENT_CHANGEABLE' | translate"
+                  [ariaLabel]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
+                  [pTooltip]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >
@@ -685,6 +692,6 @@
 
 <app-permission-export
   [products]="productNames"
-  [listedProductsHeader]="listedProductsHeader"
+  [listedProductsHeaderKey]="listedProductsHeaderKey"
   [(displayExportDialog)]="displayPermissionExportDialog"
 ></app-permission-export>

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core'
-import { Subject, catchError, combineLatest, finalize, map, of, Observable } from 'rxjs'
+import { Subject, catchError, combineLatest, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
@@ -37,6 +37,7 @@ import { dropDownSortItemsByLabel, limitText, sortByLocale } from 'src/app/share
 export type App = Application & {
   isProduct: boolean
   appType: AppType
+  apps?: string[]
   workspaceDetails?: WorkspaceDetails
 }
 export type AppType = 'WORKSPACE' | 'PRODUCT'
@@ -61,8 +62,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private readonly debug = true // to be removed after finalization
   limitText = limitText
   // dialog control
-  public loading = true
-  public loadingExceptionKey: string | undefined = undefined
+  public loadingApp = true
+  public loadingPermissions = true
+  public exceptionKey: string | undefined = undefined
   public actions$: Observable<Action[]> | undefined
   // filter row
   public filterBy = ['action', 'resource']
@@ -94,7 +96,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterAppValue: string | undefined = undefined
   public productApps: App[] = []
   public productNames: string[] = []
-  public listedProductsHeader: string = ''
+  public listedProductsHeaderKey: string = ''
 
   // permission management
   private permissions$!: Observable<PermissionPageResult>
@@ -103,6 +105,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public permissionRows!: PermissionViewRow[]
   public permissionRow: PermissionViewRow | undefined // working row
   public permissionDefaultRoles: RoleAssignments = {} // used initially on row creation
+  public displayApplicationDeleteDialog = false
   public displayPermissionDetailDialog = false
   public displayPermissionDeleteDialog = false
   public displayPermissionExportDialog = false
@@ -198,13 +201,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .get([
         'ACTIONS.NAVIGATION.BACK',
         'ACTIONS.NAVIGATION.BACK.TOOLTIP',
-        'ACTIONS.CREATE.PERMISSION',
-        'ACTIONS.CREATE.PERMISSION.TOOLTIP',
-        'ACTIONS.CREATE.ROLE',
-        'ACTIONS.CREATE.ROLE.TOOLTIP',
-        'ACTIONS.DELETE.LABEL',
-        'ACTIONS.DELETE.APP',
-        'APP.TYPE',
         'ACTIONS.EXPORT.LABEL',
         'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'
       ])
@@ -226,17 +222,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               show: 'always',
               permission: 'PERMISSION#EDIT',
               conditional: true,
-              showCondition: this.loadingExceptionKey !== undefined
-            },
-            {
-              label: data['ACTIONS.CREATE.ROLE'],
-              title: data['ACTIONS.CREATE.ROLE.TOOLTIP'],
-              actionCallback: () => this.onCreateRole(),
-              icon: 'pi pi-plus',
-              show: 'asOverflow',
-              permission: 'ROLE#EDIT',
-              conditional: true,
-              showCondition: this.loadingExceptionKey !== undefined
+              showCondition: this.exceptionKey === undefined
             }
           ]
         })
@@ -246,7 +232,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * UI Events
    */
-  private onClose(): void {
+  public onClose(): void {
     this.location.back()
   }
   public onReload(): void {
@@ -258,10 +244,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.productNames.push(detail.productName!)
       })
       this.productNames.sort(sortByLocale)
-      this.listedProductsHeader = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
-    } else if (this.currentApp.appType === 'PRODUCT') {
+      this.listedProductsHeaderKey = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
+    } else if (this.currentApp.isProduct) {
       this.productNames = [this.currentApp.name!]
-      this.listedProductsHeader = 'ACTIONS.EXPORT.OF_APPLICATION'
+      this.listedProductsHeaderKey = 'ACTIONS.EXPORT.OF_APPLICATION'
     }
     this.displayPermissionExportDialog = true
   }
@@ -272,19 +258,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
-      this.loadingExceptionKey = 'EXCEPTIONS.HTTP_MISSING_PARAMETER'
+      this.exceptionKey = 'EXCEPTIONS.HTTP_MISSING_PARAMETER'
       return
     }
-    this.loading = true
-    this.loadingExceptionKey = undefined
     this.currentApp = {
       id: this.urlParamAppId,
       name: this.urlParamAppId,
       appId: this.urlParamAppId,
       appType: this.urlParamAppType,
-      isProduct: this.urlParamAppType !== 'WORKSPACE'
+      isProduct: this.urlParamAppType === 'PRODUCT'
     } as App
     this.productApps = []
+    this.loadingApp = true
+    this.exceptionKey = undefined
     this.urlParamAppType === 'WORKSPACE' ? this.loadWorkspaceDetails() : this.loadProductDetails()
   }
 
@@ -294,23 +280,26 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
           console.error('searchApplications() result:', result)
         } else if (result instanceof Object && result.stream) {
           // expected apps per product: 2 (bff + ui)
-          if (result.totalElements === 0) this.loadingExceptionKey = 'EXCEPTIONS.NOT_FOUND.PRODUCT'
+          if (result.totalElements === 0) this.exceptionKey = 'EXCEPTIONS.NOT_FOUND.PRODUCT'
           else {
-            this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
+            this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true, apps: [] } as App
             this.currentApp.name = this.currentApp.productName
-            result.stream.map((app: Application) => this.productApps.push(app as App))
+            result.stream.map((app: Application) => {
+              this.currentApp.apps!.push(app.appId!)
+              this.productApps.push(app as App)
+            })
             this.prepareActionButtons()
             this.loadRolesAndPermissions()
+            this.loadingApp = false
           }
         } else {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
           console.error('getApplicationById() => unknown response:', result)
         }
-        this.loading = false
       })
   }
 
@@ -319,14 +308,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .getDetailsByWorkspaceName({ workspaceName: this.currentApp.appId! })
       .pipe(
         catchError((error) => {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
           console.error('getDetailsByWorkspaceName() => unknown response:', error)
           return of(error)
         })
       )
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
           console.error('getDetailsByWorkspaceName() result:', result)
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
@@ -334,7 +323,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.prepareActionButtons()
           this.loadRolesAndPermissions()
         }
-        this.loading = false
+        this.loadingApp = false
       })
   }
   private fillProductApps(product: ProductDetails) {
@@ -352,11 +341,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private searchRoles(): Observable<PermissionRole[]> {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
       catchError((err) => {
-        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
         console.error('searchRoles():', err)
         return of({} as RolePageResult)
-      }),
-      finalize(() => (this.loading = false))
+      })
     )
     return this.roles$.pipe(
       map((result: any) => {
@@ -381,7 +369,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
       .pipe(
         catchError((err) => {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
           console.error('searchPermissions():', err)
           return of({} as PermissionPageResult)
         })
@@ -396,6 +384,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   private loadRolesAndPermissions(): void {
     this.roles = []
     this.permissions = []
+    this.loadingPermissions = true
     combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(([roles, permissions]) => {
       // filter
       this.prepareFilterProducts()
@@ -408,6 +397,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       // permissions
       this.permissions = permissions
       this.preparePermissionTable(permissions) // including sort
+      this.loadingPermissions = false
     })
   }
 
@@ -543,7 +533,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments() result:', result)
         } else if (result instanceof Object && result.stream) {
           if (init) this.protectedAssignments = [] // ids of mandatory assignments
@@ -555,9 +545,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
-          this.loading = false
         } else {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments() => unknown response:', result)
         }
       })

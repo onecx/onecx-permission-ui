@@ -33,15 +33,12 @@
     },
     "DELETE": {
       "LABEL": "Löschen",
-      "APP": "App löschen",
+      "NO_UNDO": "Diese Aktion kann nicht rückgängig gemacht werden!",
       "PERMISSION": "Berechtigung löschen",
       "ROLE": "Rolle löschen",
       "MESSAGE": {
         "TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
         "OPERATOR_TEXT": "Diese Berechtigung wurde automatisiert erstellt. Wenn die Applikation diese Berechtigung weiterhin anbietet dann wird sie beim nächsten Deployment wiederhergestellt.",
-        "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
-        "APPLICATION_OK": "Die App wurde erfolgreich gelöscht",
-        "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht.",
         "PERMISSION": "Möchten Sie diese Berechtigung löschen?",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
@@ -150,7 +147,7 @@
       "HEADER": "Berechtigungsverwaltung",
       "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
       "QUICK_FILTER": {
-        "LABEL": "Typ",
+        "LABEL": "Quickfilter für Typ",
         "TOOLTIP": "Quickfilter für Typ",
         "ALL": "Alle",
         "APP": "Apps (Komponenten von Applikationen)",
@@ -176,8 +173,8 @@
       "ADDITIONAL_INFO": "Mehr Daten...",
       "ADDITIONAL_INFO.TOOLTIP": "Zusätzliche Information pro Berechtigung anzeigen",
       "QUICK_FILTER": {
-        "LABEL": "Action",
-        "TOOLTIP": "Quick Filter for Action",
+        "LABEL": "Quickfilter für Aktionen",
+        "TOOLTIP": "Quick Filter für Aktionen",
         "ALL": "Alle",
         "VIEW": "VIEW",
         "EDIT": "EDIT",
@@ -204,8 +201,8 @@
   },
   "APP": {
     "ID": "App ID",
-    "DISPLAY_NAME": "Anzeigename",
     "NAME": "Name",
+    "DISPLAY_NAME": "Anzeigename",
     "TYPE": "Typ",
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Applikation",
@@ -241,10 +238,11 @@
     "OPERATOR": "Automatisiert erstellt",
     "OPERATOR.TOOLTIP": "Wenn gesetzt, dann wurde diese Berechtigung automatisiert erzeugt. Alle Änderungen gehen beim nächsten Deployment verloren.",
     "ASSIGNMENTS": {
+      "GRANT_ROLE": "Zuordnen: ",
+      "REVOKE_ROLE": "Entziehen: ",
       "ROLE_IS_ASSIGNED_0": "Keine Berechtigung",
       "ROLE_IS_ASSIGNED_1": "Berechtigung erteilt",
       "ROLE_IS_ASSIGNED_1.MANDATORY": "Berechtigung erteilt - Kann nicht geändert werden",
-      "ROLE_ASSIGNEMENT_CHANGEABLE": "Berechtigung ändern",
       "GRANT_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) erteilen",
       "REVOKE_ALL_FOR_ROLE": "Alle Berechtigungen entsprechend der Filter (Applikation, App) entziehen",
       "GRANT_ERROR": "Berechtigung konnte nicht erteilt werden",
@@ -268,7 +266,7 @@
     "IAM": {
       "HEADER": "IAM Rollen auswählen",
       "LIST": "Fehlende Rollen:",
-      "INFO": "(IAM: Identity Access Management = Benutzer & Rollen)",
+      "INFO": "(IAM: Identity Access Management = Benutzer und Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",
       "SAVE.TOOLTIP": "Augewählte Rollen übernehmen"
@@ -317,7 +315,7 @@
       "PRODUCT": "Name der Applikation, die die Berechtigung definiert hat",
       "ACTION": "Aktion die auf der Ressource erlaubt ist",
       "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
-      "ROLE": "Rolle aus dem IAM (Identity Access Managment) der die Berechtigung zugewiesen wurde"
+      "ROLE": "Rolle aus dem IAM (Identity Access Management) der die Berechtigung zugewiesen wurde"
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",
@@ -331,11 +329,11 @@
     },
     "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
     "HTTP_STATUS_0": {
-      "APP": "Unbekanntes Problem beim Abrufen von Applikationen - Bitte versuchen sie es noch einmal.",
-      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es noch einmal.",
-      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
-      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es noch einmal.",
-      "WORKSPACE": "Unbekanntes Problem beim Abrufen von Workspace Daten - Bitte versuchen sie es noch einmal."
+      "APP": "Unbekanntes Problem beim Abrufen von Applikationsdaten. Bitte versuchen sie es noch einmal.",
+      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen. Bitte versuchen sie es noch einmal.",
+      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen. Bitte versuchen sie es noch einmal.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen. Bitte versuchen sie es noch einmal.",
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen von Workspace Daten. Bitte versuchen sie es noch einmal."
     },
     "HTTP_STATUS_400": {
       "ROLES": "Die Rolle konnte nicht verarbeitet werden.",
@@ -364,12 +362,12 @@
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
     },
     "HTTP_STATUS_500": {
-      "APP": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
-      "APPS": "Unbekanntes Problem beim Abrufen von Apps - Bitte versuchen sie es erneut.",
-      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen - Bitte versuchen sie es erneut.",
-      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
-      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen - Bitte versuchen sie es erneut.",
-      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten - Bitte versuchen sie es erneut."
+      "APP": "Unbekanntes Problem beim Abrufen von Apps. Bitte versuchen sie es erneut.",
+      "APPS": "Unbekanntes Problem beim Abrufen von Apps. Bitte versuchen sie es erneut.",
+      "ROLES": "Unbekanntes Problem beim Abrufen von Rollen. Bitte versuchen sie es erneut.",
+      "PERMISSIONS": "Unbekanntes Problem beim Abrufen von Berechtigungen. Bitte versuchen sie es erneut.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Berechtigungen. Bitte versuchen sie es erneut.",
+      "WORKSPACE": "Unbekanntes Problem beim Abrufen der Workspace Daten. Bitte versuchen sie es erneut."
     }
   }
 }
