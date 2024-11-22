@@ -37,6 +37,7 @@ import { dropDownSortItemsByLabel, limitText, sortByLocale } from 'src/app/share
 export type App = Application & {
   isProduct: boolean
   appType: AppType
+  apps?: string[]
   workspaceDetails?: WorkspaceDetails
 }
 export type AppType = 'WORKSPACE' | 'PRODUCT'
@@ -200,7 +201,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .get([
         'ACTIONS.NAVIGATION.BACK',
         'ACTIONS.NAVIGATION.BACK.TOOLTIP',
-        'ACTIONS.DELETE.APP.HEADER',
         'ACTIONS.EXPORT.LABEL',
         'ACTIONS.EXPORT.ASSIGNMENT.TOOLTIP'
       ])
@@ -223,16 +223,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               permission: 'PERMISSION#EDIT',
               conditional: true,
               showCondition: this.exceptionKey === undefined
-            },
-            {
-              label: data['ACTIONS.DELETE.APP.HEADER'],
-              title: data['ACTIONS.DELETE.APP.TOOLTIP'],
-              actionCallback: () => this.onDeleteApp(),
-              icon: 'pi pi-trash',
-              show: 'asOverflow',
-              permission: 'APP#DELETE',
-              conditional: true,
-              showCondition: this.exceptionKey === undefined
             }
           ]
         })
@@ -242,9 +232,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * UI Events
    */
-  public onDeleteApp() {
-    this.displayApplicationDeleteDialog = true
-  }
   public onClose(): void {
     this.location.back()
   }
@@ -258,7 +245,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
       this.productNames.sort(sortByLocale)
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
-    } else if (this.currentApp.appType === 'PRODUCT') {
+    } else if (this.currentApp.isProduct) {
       this.productNames = [this.currentApp.name!]
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.OF_APPLICATION'
     }
@@ -279,7 +266,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       name: this.urlParamAppId,
       appId: this.urlParamAppId,
       appType: this.urlParamAppType,
-      isProduct: this.urlParamAppType !== 'WORKSPACE'
+      isProduct: this.urlParamAppType === 'PRODUCT'
     } as App
     this.productApps = []
     this.loadingApp = true
@@ -299,9 +286,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           // expected apps per product: 2 (bff + ui)
           if (result.totalElements === 0) this.exceptionKey = 'EXCEPTIONS.NOT_FOUND.PRODUCT'
           else {
-            this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true } as App
+            this.currentApp = { ...result.stream[0], appType: this.urlParamAppType, isProduct: true, apps: [] } as App
             this.currentApp.name = this.currentApp.productName
-            result.stream.map((app: Application) => this.productApps.push(app as App))
+            result.stream.map((app: Application) => {
+              this.currentApp.apps!.push(app.appId!)
+              this.productApps.push(app as App)
+            })
             this.prepareActionButtons()
             this.loadRolesAndPermissions()
             this.loadingApp = false

@@ -34,13 +34,6 @@
     "DELETE": {
       "LABEL": "Löschen",
       "NO_UNDO": "Diese Aktion kann nicht rückgängig gemacht werden!",
-      "APP": {
-        "HEADER": "Applikation löschen",
-        "TOOLTIP": "Die Applikation mit allen Berechtigungen löschen.",
-        "TEXT": "Möchten Sie diese Applikation löschen?",
-        "MESSAGE_OK": "Die App wurde erfolgreich gelöscht",
-        "MESSAGE_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht gelöscht."
-      },
       "PERMISSION": "Berechtigung löschen",
       "ROLE": "Rolle löschen",
       "MESSAGE": {

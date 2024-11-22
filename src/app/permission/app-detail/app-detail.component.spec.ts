@@ -234,7 +234,6 @@ describe('AppDetailComponent', () => {
 
   it('should prepare action buttons on init', () => {
     spyOn(component, 'onExport')
-    spyOn(component, 'onDeleteApp')
 
     component.ngOnInit()
 
@@ -243,11 +242,9 @@ describe('AppDetailComponent', () => {
 
     actions[0].actionCallback()
     actions[1].actionCallback()
-    actions[2].actionCallback()
 
     expect(locationSpy.back).toHaveBeenCalled()
     expect(component.onExport).toHaveBeenCalled()
-    expect(component.onDeleteApp).toHaveBeenCalled()
   })
 
   it('should loadData onReload', () => {
@@ -290,16 +287,6 @@ describe('AppDetailComponent', () => {
     })
   })
 
-  describe('onDeleteApp', () => {
-    it('should set up export for PRODUCT app type', () => {
-      component.displayApplicationDeleteDialog = false
-
-      component.onDeleteApp()
-
-      expect(component.displayApplicationDeleteDialog).toBeTrue()
-    })
-  })
-
   /**
    * loadData
    */
@@ -315,7 +302,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should loadProductDetails successfully', () => {
-      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true, apps: ['appId1', 'appId2'] }
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType
@@ -808,7 +795,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should filter apps from permissions for the selected product', () => {
-      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true }
+      const loadedApp: App = { ...app1, appType: 'PRODUCT', isProduct: true, apps: ['appId1', 'appId2'] }
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType

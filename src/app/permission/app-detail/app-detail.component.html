@@ -145,7 +145,7 @@
           <th
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permissions"
-            [attr.colspan]="(currentApp.appType === 'PRODUCT' ? 2 : 3) + (showPermissionTools ? 2 : 0)"
+            [attr.colspan]="(currentApp.isProduct ? 2 : 3) + (showPermissionTools ? 2 : 0)"
             class="py-2 border-right-primary"
             [ngClass]="
               myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 'py-0' : 'py-1'
@@ -695,9 +695,3 @@
   [listedProductsHeaderKey]="listedProductsHeaderKey"
   [(displayExportDialog)]="displayPermissionExportDialog"
 ></app-permission-export>
-
-<app-app-delete
-  [app]="currentApp"
-  (deleteEmitter)="onClose()"
-  [(displayDialog)]="displayApplicationDeleteDialog"
-></app-app-delete>
