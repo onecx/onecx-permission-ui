@@ -9,7 +9,7 @@
   [dismissableMask]="true"
   [style]="{ width: '400px' }"
 >
-  <form [formGroup]="formGroupRole" errorTailor>
+  <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
       <div class="mt-1">
         <span class="p-float-label" controlErrorAnchor>
@@ -61,7 +61,7 @@
         id="apm_role_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSaveRole()"
-        [disabled]="!formGroupRole.valid"
+        [disabled]="!formGroup.valid"
         [label]="'ACTIONS.SAVE' | translate"
         [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"

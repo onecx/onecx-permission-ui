@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
-import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalMessageService } from '@onecx/portal-integration-angular'
 
 import {
   CreatePermissionRequest,
@@ -26,17 +26,13 @@ export class PermissionDetailComponent implements OnChanges {
   @Input() displayDeleteDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
-  public myPermissions = new Array<string>() // permissions of the user
   public formGroup: FormGroup
 
   constructor(
     private readonly permApi: PermissionAPIService,
     private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
-    private readonly userService: UserService
+    private readonly msgService: PortalMessageService
   ) {
-    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
-    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
     this.formGroup = new FormGroup({
       appId: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       productName: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),

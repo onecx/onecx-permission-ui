@@ -91,15 +91,15 @@ describe('RoleDetailComponent', () => {
 
   it('should enable formGroup if user has permissions: edit mode', () => {
     component.changeMode = 'EDIT'
-    component.formGroupRole = formGroup
+    component.formGroup = formGroup
     component.showIamRolesDialog = true
     spyOn(component, 'searchIamRoles')
 
     component.ngOnChanges()
 
-    expect(component.formGroupRole.enabled).toBeTrue()
-    expect(component.formGroupRole.controls['name'].value).toEqual(role.name)
-    expect(component.formGroupRole.controls['description'].value).toBeUndefined()
+    expect(component.formGroup.enabled).toBeTrue()
+    expect(component.formGroup.controls['name'].value).toEqual(role.name)
+    expect(component.formGroup.controls['description'].value).toBeUndefined()
     expect(component.searchIamRoles).toHaveBeenCalled()
   })
 
@@ -123,7 +123,7 @@ describe('RoleDetailComponent', () => {
     it('should check for duplicates in permissions - edit', () => {
       component.roles = [role]
       component.changeMode = 'EDIT'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
 
       component.onSaveRole()
 
@@ -136,7 +136,7 @@ describe('RoleDetailComponent', () => {
     it('should check for duplicates in permissions - create', () => {
       component.roles = [role]
       component.changeMode = 'CREATE'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
 
       component.onSaveRole()
 
@@ -148,11 +148,11 @@ describe('RoleDetailComponent', () => {
 
     it('should create a role', () => {
       component.changeMode = 'CREATE'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
 
       component.onSaveRole()
 
-      expect(component.formGroupRole.valid).toBeTrue()
+      expect(component.formGroup.valid).toBeTrue()
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
     })
 
@@ -160,7 +160,7 @@ describe('RoleDetailComponent', () => {
       const errorResponse = { error: 'Error on creating a role', status: 400 }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
       component.changeMode = 'CREATE'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
       component.role!.id = undefined
 
       component.onSaveRole()
@@ -170,11 +170,11 @@ describe('RoleDetailComponent', () => {
 
     it('should update a role', () => {
       component.changeMode = 'EDIT'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
 
       component.onSaveRole()
 
-      expect(component.formGroupRole.valid).toBeTrue()
+      expect(component.formGroup.valid).toBeTrue()
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
     })
 
@@ -182,7 +182,7 @@ describe('RoleDetailComponent', () => {
       const errorResponse = { error: 'Error on updating a role', status: 400 }
       roleApiSpy.updateRole.and.returnValue(throwError(() => errorResponse))
       component.changeMode = 'EDIT'
-      component.formGroupRole = formGroup
+      component.formGroup = formGroup
 
       component.onSaveRole()
 
