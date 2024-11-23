@@ -32,13 +32,15 @@
       [columns]="rolesFiltered"
       [value]="permissionRows"
       [globalFilterFields]="filterBy"
+      (onSort)="onSortPermissionTable()"
       [scrollable]="true"
       scrollHeight="590px"
-      [paginator]="true"
-      [alwaysShowPaginator]="true"
       [rows]="10"
       [rowsPerPageOptions]="[10, 30, 100, 1000]"
-      (onSort)="onSortPermissionTable()"
+      [paginator]="true"
+      [alwaysShowPaginator]="true"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
         <div class="flex flex-wrap justify-content-between row-gap-1 p-1">
