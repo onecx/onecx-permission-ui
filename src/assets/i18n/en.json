@@ -340,9 +340,10 @@
       "PERMISSIONS": "The Permission could not be processed."
     },
     "HTTP_STATUS_401": {
-      "APPS": "You have no Permissions to see Applications.",
-      "ROLES": "You have no Permissions to see Roles.",
-      "WORKSPACE": "You have no Permissions to see Workspace Data."
+      "APPS": "You are not authorized to see Applications.",
+      "ROLES": "You are not authorized to see Roles.",
+      "PERMISSIONS": "You are not authorized to see Permissions.",
+      "WORKSPACE": "You are not authorized to see Workspace Data."
     },
     "HTTP_STATUS_403": {
       "APP": "You have no Permissions to see Application data.",

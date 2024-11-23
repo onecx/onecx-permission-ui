@@ -1,4 +1,13 @@
-import { Component, ElementRef, Inject, Input, ViewChild, OnChanges } from '@angular/core'
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  NO_ERRORS_SCHEMA,
+  Inject,
+  Input,
+  ViewChild,
+  OnChanges
+} from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
@@ -49,7 +58,8 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
         deps: [HttpClient, BASE_URL]
       }
     })
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() userId: string | undefined = undefined
@@ -63,7 +73,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public columns
   public environment = environment
-  public loadingExceptionKey = ''
+  public exceptionKey = ''
   public loading = false
 
   constructor(
@@ -136,7 +146,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
             return pageResult.stream ?? []
           }),
           catchError((err) => {
-            this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
             console.error('searchUserAssignments():', err)
             return of([])
           }),
@@ -148,7 +158,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           return pageResult.stream ?? []
         }),
         catchError((err) => {
-          this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
           console.error('getUserAssignments():', err)
           return of([])
         }),

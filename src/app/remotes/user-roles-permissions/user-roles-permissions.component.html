@@ -19,13 +19,27 @@
         {{ 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS' | translate }}
       </span>
     </ng-template>
-    <p-message *ngIf="loading" severity="info" styleClass="m-3" [text]="'ACTIONS.LOADING' | translate"></p-message>
+    <p-message
+      *ngIf="exceptionKey"
+      id="apm_user_assignments_exception"
+      severity="error"
+      styleClass="m-3"
+      [text]="exceptionKey | translate"
+    ></p-message>
+    <p-message
+      *ngIf="loading"
+      id="apm_user_assignments_loading"
+      severity="info"
+      styleClass="m-3"
+      [text]="'ACTIONS.LOADING' | translate"
+    ></p-message>
     <p-table
-      *ngIf="!loading"
+      *ngIf="!exceptionKey && !loading"
       #permissionTable
+      id="apm_user_assignments_table"
       [columns]="columns"
       [value]="items"
-      [styleClass]="'p-datatable-striped' + (!userId ? ' px-2 sm:px-3' : '')"
+      [styleClass]="'p-datatable-striped pb-2' + (!userId ? ' px-2 sm:px-3' : '')"
       [scrollable]="true"
       scrollHeight="590px"
       [autoLayout]="true"
@@ -161,7 +175,7 @@
   </p-tabPanel>
 
   <!-- ROLES & MORE -->
-  <p-tabPanel id="apm_user_roles-and-more">
+  <p-tabPanel id="apm_user_overview_roles_and_apps" *ngIf="!exceptionKey && !loading">
     <ng-template pTemplate="header">
       <span
         [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"

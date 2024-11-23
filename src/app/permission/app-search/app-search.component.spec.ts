@@ -22,33 +22,23 @@ import { RowListGridData } from '@onecx/angular-accelerator'
 import { FileSelectEvent } from 'primeng/fileupload'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
-const wsAbstract: WorkspaceAbstract = {
-  name: 'wsName'
-}
-const wsAbstract2: WorkspaceAbstract = {
-  name: 'wsName2'
-}
-
-const wsPageRes: WorkspacePageResult = {
-  stream: [wsAbstract, wsAbstract2]
-}
+const wsAbstract: WorkspaceAbstract = { name: 'wsName' }
+const wsAbstract2: WorkspaceAbstract = { name: 'wsName2' }
+const wsPageRes: WorkspacePageResult = { stream: [wsAbstract, wsAbstract2] }
 
 const app: Application = {
   name: 'appName',
   appId: 'appId',
   productName: 'product'
 }
-
 const app2: Application = {
   name: 'appName2',
   appId: 'appId2',
   productName: 'product'
 }
-
 const appPageRes: ApplicationPageResult = {
   stream: [app, app2]
 }
-
 const permission: Permission = {
   appId: 'onecx-app',
   productName: 'onecx-product'
@@ -367,15 +357,17 @@ describe('AppSearchComponent', () => {
 
   it('should catch error on searchApps: products', (done) => {
     component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    const err = { status: 404 }
-    appApiSpy.searchApplications.and.returnValue(throwError(() => err))
+    const errorResponse = { status: 404 }
+    appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
 
     component.searchApps()
 
     component.apps$.subscribe({
       next: (result) => {
         expect(result.length).toBe(0)
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.APPS')
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
+        expect(console.error).toHaveBeenCalledWith('searchApplications()', errorResponse)
         done()
       },
       error: done.fail
@@ -386,14 +378,8 @@ describe('AppSearchComponent', () => {
    * UI Events
    */
   it('should navigate to detail page when a tile is clicked', () => {
-    const app: App = {
-      appId: 'appId',
-      appType: 'APP'
-    }
-    const product: App = {
-      appId: 'appId',
-      appType: 'PRODUCT'
-    }
+    const app: App = { appId: 'appId', appType: 'APP' }
+    const product: App = { appId: 'appId', appType: 'PRODUCT' }
 
     component.onAppClick(app)
     expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
@@ -432,10 +418,10 @@ describe('AppSearchComponent', () => {
   })
 
   it('should disable name input field if app type on search is ALL', () => {
-    component.onAppTypeFilterChange({ value: 'ALL' })
+    component.onAppTypeCriteriaChange({ value: 'ALL' })
     expect(component.appSearchCriteriaGroup.controls['name'].disabled).toBeTrue()
 
-    component.onAppTypeFilterChange({ value: 'Apps' })
+    component.onAppTypeCriteriaChange({ value: 'Apps' })
     expect(component.appSearchCriteriaGroup.controls['name'].enabled).toBeTrue()
   })
 

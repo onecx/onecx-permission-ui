@@ -179,59 +179,74 @@ describe('PermissionDetailComponent', () => {
     })
   })
 
-  it('should create a permission', () => {
-    component.changeMode = 'CREATE'
-    component.formGroup = formGroup
+  describe('Permission creation', () => {
+    it('should create a permission', () => {
+      component.changeMode = 'CREATE'
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(component.formGroup.valid).toBeTrue()
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_OK' })
+      expect(component.formGroup.valid).toBeTrue()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_OK' })
+    })
+
+    it('should display error when trying to create a permission failed', () => {
+      const errorResponse = { error: 'Error on creating a permission', status: 400 }
+      permApiSpy.createPermission.and.returnValue(throwError(() => errorResponse))
+      component.changeMode = 'CREATE'
+      component.formGroup = formGroup
+      component.permission!.id = undefined
+
+      component.onSave()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_NOK' })
+    })
   })
 
-  it('should display error when trying to create a permission failed', () => {
-    permApiSpy.createPermission.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'CREATE'
-    component.formGroup = formGroup
-    component.permission!.id = undefined
+  describe('Permission update', () => {
+    it('should update a permission', () => {
+      component.changeMode = 'EDIT'
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_NOK' })
+      expect(component.formGroup.valid).toBeTrue()
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_OK' })
+    })
+
+    it('should display error when trying to update a permission failed', () => {
+      const errorResponse = { error: 'Error on updating a permission', status: 400 }
+      permApiSpy.updatePermission.and.returnValue(throwError(() => errorResponse))
+      component.changeMode = 'EDIT'
+      component.formGroup = formGroup
+
+      component.onSave()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
+    })
   })
 
-  it('should update a permission', () => {
-    component.changeMode = 'EDIT'
-    component.formGroup = formGroup
+  describe('Permission deletion', () => {
+    it('should delete a permission - ignoring because missing permission id', () => {
+      component.onDeleteConfirmation()
+    })
 
-    component.onSave()
+    it('should delete a permission', () => {
+      component.permission = { ...permRow, id: 'id' }
 
-    expect(component.formGroup.valid).toBeTrue()
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_OK' })
-  })
+      component.onDeleteConfirmation()
 
-  it('should display error when trying to update a permission failed', () => {
-    permApiSpy.updatePermission.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'EDIT'
-    component.formGroup = formGroup
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
+    })
 
-    component.onSave()
+    it('should display error when trying to delete a permission failed', () => {
+      const errorResponse = { error: 'Error on deleting a permission', status: 400 }
+      permApiSpy.deletePermission.and.returnValue(throwError(() => errorResponse))
+      component.permission = { ...permRow, id: 'id' }
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
-  })
+      component.onDeleteConfirmation()
 
-  it('should delete a permission', () => {
-    component.onDeleteConfirmation()
-
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
-  })
-
-  it('should display error when trying to delete a permission failed', () => {
-    permApiSpy.deletePermission.and.returnValue(throwError(() => new Error()))
-    component.permission!.id = undefined
-
-    component.onDeleteConfirmation()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
+    })
   })
 })
