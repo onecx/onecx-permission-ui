@@ -1,10 +1,12 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { importProvidersFrom } from '@angular/core'
-import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+
 import { AngularAuthModule } from '@onecx/angular-auth'
-import { environment } from 'src/environments/environment'
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+
+import { environment } from 'src/environments/environment'
+import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 
 bootstrapRemoteComponent(
   OneCXUserRolesPermissionsComponent,

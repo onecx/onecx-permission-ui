@@ -131,10 +131,10 @@
   *ngIf="(iamRoles$ | async)?.sort(sortRoleByName) ?? [] as roles"
 >
   <p-message
-    *ngIf="loadingExceptionKey"
+    *ngIf="exceptionKey"
     id="apm_iam_roles_data_access_issue"
     severity="error"
-    [text]="loadingExceptionKey | translate"
+    [text]="exceptionKey | translate"
   ></p-message>
   <p-message
     *ngIf="loading"
@@ -143,7 +143,7 @@
     [text]="'ACTIONS.LOADING' | translate"
   ></p-message>
 
-  <div *ngIf="!loading && !loadingExceptionKey" class="flex flex-column row-gap-1">
+  <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
     <div>{{ 'ROLE.IAM.LIST' | translate }}</div>
     <p-listbox
       id="apm_iam_roles_list"
@@ -165,7 +165,7 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <p-button
-        *ngIf="loadingExceptionKey || loading"
+        *ngIf="exceptionKey || loading"
         id="apm_iam_roles_action_close"
         icon="pi pi-times"
         (onClick)="onClose()"
@@ -176,7 +176,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        *ngIf="!loadingExceptionKey && !loading"
+        *ngIf="!exceptionKey && !loading"
         id="apm_iam_roles_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
@@ -187,7 +187,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        *ngIf="!loadingExceptionKey && !loading"
+        *ngIf="!exceptionKey && !loading"
         id="apm_iam_roles_action_save"
         icon="pi pi-check"
         (onClick)="onAddIamRoles()"

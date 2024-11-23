@@ -387,7 +387,7 @@ describe('AppDetailComponent', () => {
       component.ngOnInit()
 
       expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
-      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName() => unknown response:', err)
+      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName()', err)
     })
 
     xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {
@@ -473,7 +473,8 @@ describe('AppDetailComponent', () => {
     })
 
     it('should display error msg if create role fails', () => {
-      roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+      const errorResponse = { error: 'Error on creating a role', status: 400 }
+      roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
       const ev = new MouseEvent('click')
       spyOn(ev, 'stopPropagation')
       component.missingWorkspaceRoles = true
@@ -506,16 +507,16 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error if search assigments fails', () => {
-    const err = new HttpErrorResponse({
+    const errorResponse = new HttpErrorResponse({
       error: 'test 404 error',
       status: 404,
       statusText: 'Not Found'
     })
-    assApiSpy.searchAssignments.and.returnValue(throwError(() => err))
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
 
     component['searchAssignments'](true, ['appId1'])
 
-    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS')
+    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ASSIGNMENTS')
   })
 
   it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
@@ -960,7 +961,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error if assignment fails', () => {
-    assApiSpy.createAssignment.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on creating an assignment', status: 400 }
+    assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
 
     component.onAssignPermission(ev, permRow, role1)
@@ -977,7 +979,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error if assignment creation fails', () => {
-    assApiSpy.deleteAssignment.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on removing a permission', status: 400 }
+    assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
 
     component.onRemovePermission(ev, permRow, role1)
@@ -996,7 +999,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
-    assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on grant all permissions with app filter', status: 400 }
+    assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
     component.filterAppValue = 'appId1'
 
@@ -1017,7 +1021,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
-    assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on grant all permissions with product filter', status: 400 }
+    assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
     component.filterProductValue = 'productAppId'
 
@@ -1047,7 +1052,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
-    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on revoke all permissions with app filter', status: 400 }
+    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
     component.filterAppValue = 'appId1'
 
@@ -1092,7 +1098,8 @@ describe('AppDetailComponent', () => {
   })
 
   it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
-    assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => new Error()))
+    const errorResponse = { error: 'Error on revoke all permissions with product filter', status: 400 }
+    assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
     const ev = new MouseEvent('click')
     component.filterProductValue = 'productAppId'
 

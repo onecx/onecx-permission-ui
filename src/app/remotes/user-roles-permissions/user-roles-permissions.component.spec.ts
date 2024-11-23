@@ -1,4 +1,4 @@
-import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core'
+import { ElementRef } from '@angular/core'
 import { AsyncPipe, CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Table, TableModule } from 'primeng/table'
@@ -59,7 +59,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: UserAPIService, useValue: userServiceSpy },
         { provide: Router, useValue: routerMock },
@@ -172,7 +171,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should handle error when trying to get another users assignments', () => {
-      const err = { error: 'error' }
+      const err = { error: 'error', status: 403 }
       assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => err))
       spyOn(console, 'error')
       component.userId = 'id'
@@ -181,6 +180,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.userAssignments$.subscribe(() => {
         expect(console.error).toHaveBeenCalledWith('searchUserAssignments():', err)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
       })
     })
 

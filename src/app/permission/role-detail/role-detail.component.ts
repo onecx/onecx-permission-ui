@@ -24,7 +24,7 @@ export class RoleDetailComponent implements OnChanges {
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   public loading = true
-  public loadingExceptionKey: string | undefined = undefined
+  public exceptionKey: string | undefined = undefined
   public myPermissions = new Array<string>() // permissions of the user
   public formGroupRole: FormGroup
   public iamRoles$!: Observable<IAMRole[]>
@@ -80,7 +80,6 @@ export class RoleDetailComponent implements OnChanges {
       return
     }
     if (this.changeMode === 'CREATE') {
-      console.info('form valid ' + this.changeMode)
       const role = {
         name: this.formGroupRole.controls['name'].value,
         description: this.formGroupRole.controls['description'].value
@@ -122,14 +121,15 @@ export class RoleDetailComponent implements OnChanges {
    * Delete a ROLE
    */
   public onDeleteConfirmation() {
-    this.roleApi.deleteRole({ id: this.role?.id ?? '' }).subscribe({
+    if (!this.role?.id) return
+    this.roleApi.deleteRole({ id: this.role?.id }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
         this.dataChanged.emit(true)
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error(err.error)
+        console.error(err)
       }
     })
   }
@@ -142,7 +142,7 @@ export class RoleDetailComponent implements OnChanges {
     this.selectedIamRoles = []
     this.iamRoles$ = this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).pipe(
       catchError((err) => {
-        this.loadingExceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
         console.error('searchAvailableRoles():', err)
         return of([])
       }),

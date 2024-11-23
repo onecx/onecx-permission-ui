@@ -340,9 +340,10 @@
       "PERMISSIONS": "Die Berechtigung konnte nicht verarbeitet werden."
     },
     "HTTP_STATUS_401": {
-      "APPS": "Sie haben keine Rechte um Applikationen zu sehen.",
-      "ROLES": "Sie haben keine Rechte um Rollen zu sehen.",
-      "WORKSPACE": "Sie haben keine Rechte um Workspace Daten zu sehen."
+      "APPS": "Sie sind nicht autorisiert um Applikationen zu sehen.",
+      "ROLES": "Sie sind nicht autorisiert um Rollen zu sehen.",
+      "PERMISSIONS": "Sie sind nicht autorisiert um Berechtigungen zu sehen.",
+      "WORKSPACE": "Sie sind nicht autorisiert um Workspace Daten zu sehen."
     },
     "HTTP_STATUS_403": {
       "APP": "Sie haben keine Rechte um Applikationsdaten zu sehen.",

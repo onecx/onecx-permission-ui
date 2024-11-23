@@ -78,7 +78,8 @@ describe('PermissionExportComponent', () => {
     })
 
     it('should display error msg when export fails', () => {
-      assgnmtApiSpy.exportAssignments.and.returnValue(throwError(() => 'Error'))
+      const errorResponse = { error: 'Error on exporting permissions', status: 400 }
+      assgnmtApiSpy.exportAssignments.and.returnValue(throwError(() => errorResponse))
       const selectedNames = ['Product1', 'Product2']
       component.selectedProductNames = selectedNames
 

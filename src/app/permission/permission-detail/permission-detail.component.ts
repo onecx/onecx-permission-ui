@@ -150,14 +150,15 @@ export class PermissionDetailComponent implements OnChanges {
   }
 
   public onDeleteConfirmation() {
-    this.permApi.deletePermission({ id: this.permission?.id ?? '' }).subscribe({
+    if (!this.permission?.id) return
+    this.permApi.deletePermission({ id: this.permission?.id }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
         this.dataChanged.emit(true)
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
-        console.error(err.error)
+        console.error(err)
       }
     })
   }

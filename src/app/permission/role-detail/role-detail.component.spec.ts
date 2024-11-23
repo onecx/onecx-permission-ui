@@ -146,7 +146,7 @@ describe('RoleDetailComponent', () => {
       })
     })
 
-    it('should create a permission', () => {
+    it('should create a role', () => {
       component.changeMode = 'CREATE'
       component.formGroupRole = formGroup
 
@@ -156,8 +156,9 @@ describe('RoleDetailComponent', () => {
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
     })
 
-    it('should display error when trying to create a permission failed', () => {
-      roleApiSpy.createRole.and.returnValue(throwError(() => new Error()))
+    it('should display error when trying to create a role failed', () => {
+      const errorResponse = { error: 'Error on creating a role', status: 400 }
+      roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
       component.changeMode = 'CREATE'
       component.formGroupRole = formGroup
       component.role!.id = undefined
@@ -167,7 +168,7 @@ describe('RoleDetailComponent', () => {
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
     })
 
-    it('should update a permission', () => {
+    it('should update a role', () => {
       component.changeMode = 'EDIT'
       component.formGroupRole = formGroup
 
@@ -177,8 +178,9 @@ describe('RoleDetailComponent', () => {
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_OK' })
     })
 
-    it('should display error when trying to update a permission failed', () => {
-      roleApiSpy.updateRole.and.returnValue(throwError(() => new Error()))
+    it('should display error when trying to update a role failed', () => {
+      const errorResponse = { error: 'Error on updating a role', status: 400 }
+      roleApiSpy.updateRole.and.returnValue(throwError(() => errorResponse))
       component.changeMode = 'EDIT'
       component.formGroupRole = formGroup
 
@@ -189,15 +191,21 @@ describe('RoleDetailComponent', () => {
   })
 
   describe('oneDeleteConfirmation', () => {
-    it('should delete a permission', () => {
+    it('should delete a role - ignoring because missing role id', () => {
+      component.onDeleteConfirmation()
+    })
+
+    it('should delete a role', () => {
+      component.role = { ...role, id: 'id' }
       component.onDeleteConfirmation()
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
     })
 
-    it('should display error when trying to delete a permission failed', () => {
-      roleApiSpy.deleteRole.and.returnValue(throwError(() => new Error()))
-      component.role!.id = undefined
+    it('should display error when trying to delete a role failed', () => {
+      const errorResponse = { error: 'Error on deleting a role', status: 400 }
+      roleApiSpy.deleteRole.and.returnValue(throwError(() => errorResponse))
+      component.role = { ...role, id: 'id' }
 
       component.onDeleteConfirmation()
 
@@ -239,13 +247,14 @@ describe('RoleDetailComponent', () => {
     })
 
     it('should handle error response', () => {
-      const errorResponse = { error: 'error' }
+      const errorResponse = { error: 'Error on retrieving IAM roles', status: 401 }
       roleApiSpy.searchAvailableRoles.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.searchIamRoles()
 
       component.iamRoles$.subscribe(() => {
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
         expect(console.error).toHaveBeenCalledWith('searchAvailableRoles():', errorResponse)
       })
     })
@@ -314,7 +323,17 @@ describe('RoleDetailComponent', () => {
 
       expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
     })
+    it('should emit false if selectedIamRoles is undefined', () => {
+      spyOn(component.dataChanged, 'emit')
 
+      component.selectedIamRoles = []
+      component.onAddIamRoles()
+
+      expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
+    })
+  })
+
+  describe('role creation', () => {
     it('should create a role and notify on success', () => {
       spyOn(component.dataChanged, 'emit')
       roleApiSpy.createRole.and.returnValue(of({}))
@@ -328,7 +347,7 @@ describe('RoleDetailComponent', () => {
 
     it('should handle error if role could not be created', () => {
       spyOn(component.dataChanged, 'emit')
-      const errorResponse = new Error('Test error')
+      const errorResponse = { error: 'Role could not be created', status: 400 }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
 
       component.selectedIamRoles = [{ name: 'role1' }]
@@ -336,15 +355,6 @@ describe('RoleDetailComponent', () => {
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
       expect(component.dataChanged.emit).not.toHaveBeenCalled()
-    })
-
-    it('should emit false if selectedIamRoles is undefined', () => {
-      spyOn(component.dataChanged, 'emit')
-
-      component.selectedIamRoles = []
-      component.onAddIamRoles()
-
-      expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
     })
   })
 })
