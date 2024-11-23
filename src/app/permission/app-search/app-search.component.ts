@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, FormGroup } from '@angular/forms'
-import { combineLatest, finalize, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
+import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
@@ -56,9 +56,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
-  public searchInProgress = false
-  public exceptionKey = ''
-  public dataAccessIssue = false
+  public loading = false
+  public exceptionKey: string | undefined = undefined
   public viewMode = 'grid'
   public appTypeItems$: Observable<SelectItem[]> | undefined
   public appTypeFilterValue: string = 'ALL'
@@ -148,12 +147,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
       .pipe(
         catchError((err) => {
-          this.dataAccessIssue = true
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE'
-          console.error('getAllWorkspaceNames():', err)
+          console.error('getAllWorkspaceNames()', err)
           return of({} as WorkspacePageResult)
-        }),
-        finalize(() => (this.searchInProgress = false))
+        })
       )
     return this.workspaces$.pipe(
       map((result) => {
@@ -175,7 +172,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   // Product => Group of Permission Applications with same product name
   private searchProducts(searchAppType?: string): Observable<(App & RowListGridData)[]> {
-    this.searchInProgress = true
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
@@ -187,12 +183,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
       .pipe(
         catchError((err) => {
-          this.dataAccessIssue = true
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
-          console.error('searchMicrofrontends():', err)
+          console.error('searchApplications()', err)
           return of({} as ApplicationPageResult)
-        }),
-        finalize(() => (this.searchInProgress = false))
+        })
       )
     return this.papps$.pipe(
       map((result) => {
@@ -213,7 +207,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     )
   }
   public searchApps(): void {
-    this.searchInProgress = true
+    this.loading = true
+    this.exceptionKey = undefined
     switch (this.appSearchCriteriaGroup.controls['appType'].value) {
       case 'ALL':
         this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
@@ -232,6 +227,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     }
     this.filteredApps$ = combineLatest([this.apps$, this.filters$]).pipe(
       map(([apps, filters]) => {
+        this.loading = false
         return apps.filter((app) => {
           return filters.every((filter) => {
             return filter.mode === 'equals'
@@ -400,14 +396,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       relativeTo: this.route
     })
   }
-  public onQuickFilterChange(ev: any): void {
-    if (ev.value === 'ALL') this.typeFilterValue$.next('')
-    else if (ev.value) this.typeFilterValue$.next(ev.value)
-  }
-  public onAppTypeFilterChange(ev: any): void {
+  public onAppTypeCriteriaChange(ev: any): void {
     if (ev.value) this.appTypeFilterValue = ev.value
     if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
     else this.appSearchCriteriaGroup.controls['name'].enable()
+  }
+  public onQuickFilterChange(ev: any): void {
+    if (ev.value === 'ALL') this.typeFilterValue$.next('')
+    else if (ev.value) this.typeFilterValue$.next(ev.value)
   }
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
