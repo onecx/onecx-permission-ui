@@ -1,8 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
@@ -54,15 +53,11 @@ describe('PermissionDetailComponent', () => {
       getValue: jasmine.createSpy('getValue').and.returnValue('en')
     },
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
-      if (
+      return (
         permissionName === 'PERMISSION#CREATE' ||
         permissionName === 'PERMISSION#EDIT' ||
         permissionName === 'PERMISSION#DELETE'
-      ) {
-        return true
-      } else {
-        return false
-      }
+      )
     })
   }
 
@@ -70,14 +65,13 @@ describe('PermissionDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PermissionDetailComponent],
       imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
         { provide: UserService, useValue: mockUserService }
