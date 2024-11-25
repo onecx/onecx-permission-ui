@@ -2,7 +2,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
-import { provideRouter } from '@angular/router'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
@@ -40,11 +39,7 @@ describe('RoleDetailComponent', () => {
       getValue: jasmine.createSpy('getValue').and.returnValue('en')
     },
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
-      if (permissionName === 'ROLE#EDIT' || permissionName === 'ROLE#DELETE') {
-        return true
-      } else {
-        return false
-      }
+      return permissionName === 'ROLE#EDIT' || permissionName === 'ROLE#DELETE'
     })
   }
 
@@ -60,7 +55,6 @@ describe('RoleDetailComponent', () => {
       providers: [
         provideHttpClientTesting(),
         provideHttpClient(),
-        provideRouter([{ path: '', component: RoleDetailComponent }]),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: UserService, useValue: mockUserService }

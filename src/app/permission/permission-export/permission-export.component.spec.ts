@@ -1,7 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRoute, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 import { of, throwError } from 'rxjs'
@@ -14,8 +13,6 @@ import { provideHttpClient } from '@angular/common/http'
 describe('PermissionExportComponent', () => {
   let component: PermissionExportComponent
   let fixture: ComponentFixture<PermissionExportComponent>
-  let mockActivatedRoute: ActivatedRoute
-  const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assgnmtApiSpy = {
@@ -40,13 +37,10 @@ describe('PermissionExportComponent', () => {
       providers: [
         provideHttpClientTesting(),
         provideHttpClient(),
-        provideRouter([{ path: '', component: PermissionExportComponent }]),
         { provide: ApplicationAPIService, useValue: appApiSpy },
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
+        { provide: PortalMessageService, useValue: msgServiceSpy }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents()
