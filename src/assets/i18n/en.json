@@ -166,7 +166,7 @@
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_PRODUCT": "Application: ",
-      "HEADER_PRODUCTS": "Applicationen: ",
+      "HEADER_PRODUCTS": "Applications: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Applications",
       "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application including all of its Apps",
