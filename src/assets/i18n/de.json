@@ -166,6 +166,7 @@
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_PRODUCT": "Applikation: ",
+      "HEADER_PRODUCTS": "Applikationen: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Applikationen",
       "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für die Applikation und deren Apps",
@@ -361,6 +362,9 @@
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
+    },
+    "HTTP_STATUS_418": {
+      "ROLES": "Eine Rollenauswahl ist nicht möglich da IAM nicht zur Verfügung steht."
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps. Bitte versuchen sie es erneut.",

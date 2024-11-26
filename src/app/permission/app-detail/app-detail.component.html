@@ -148,11 +148,15 @@
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permissions"
             [attr.colspan]="(currentApp.isProduct ? 2 : 3) + (showPermissionTools ? 2 : 0)"
-            class="py-2 border-right-primary"
-            [ngClass]="
-              myPermissions.includes('PERMISSION#EDIT') || myPermissions.includes('PERMISSION#DELETE') ? 'py-0' : 'py-1'
-            "
+            class="py-2 px-0 border-right-primary"
           >
+            <!-- summary -->
+            <div *ngIf="!currentApp.isProduct" class="absolute pl-2 flex flex-column row-gap-1 text-sm">
+              <div>{{ 'PERMISSION.LABEL' | translate }}: {{ permissions.length }}</div>
+              <div>
+                {{ 'DIALOG.DETAIL.HEADER_PRODUCTS' | translate }}{{ currentApp.workspaceDetails?.products?.length }}
+              </div>
+            </div>
             <div class="flex flex-row justify-content-evenly">
               <div class="flex flex-row align-items-center column-gap-2">
                 <span
@@ -323,8 +327,10 @@
             id="apm_app_detail_permission_table_header_permission_key"
             class="p-2 vertical-align-bottom border-bottom-primary sm:white-space-nowrap"
           >
-            {{ 'PERMISSION.KEY' | translate }}
-            <p-sortIcon field="key"></p-sortIcon>
+            <div class="flex flex-column sm:flex-row justify-content-end sm:justify-content-start">
+              <span class="pb-4 sm:pb-0 white-space-nowrap">{{ 'PERMISSION.KEY' | translate }}</span>
+              <p-sortIcon field="key"></p-sortIcon>
+            </div>
           </th>
           <th
             pFrozenColumn
@@ -333,7 +339,7 @@
             class="p-2 vertical-align-bottom border-bottom-primary white-space-nowrap"
           >
             <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
-            <div *ngIf="!currentApp.isProduct" class="flex">
+            <div *ngIf="!currentApp.isProduct" class="flex flex-wrap sm:white-space-nowrap">
               <span #filterProduct class="p-float-label inline-block">
                 <p-dropdown
                   id="apm_app_detail_permission_table_filter_product_name"
@@ -371,7 +377,7 @@
             id="apm_app_detail_permission_table_header_permission_filter_app_id"
             class="p-2 vertical-align-bottom border-bottom-primary white-space-nowrap border-right-primary"
           >
-            <div class="flex">
+            <div class="flex flex-wrap sm:white-space-nowrap">
               <span #filterApp class="p-float-label inline-block">
                 <p-dropdown
                   id="apm_app_detail_permission_table_filter_app_id"
