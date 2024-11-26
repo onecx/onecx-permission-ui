@@ -166,6 +166,7 @@
     "DETAIL": {
       "HEADER_WORKSPACE": "Workspace: ",
       "HEADER_PRODUCT": "Application: ",
+      "HEADER_PRODUCTS": "Applicationen: ",
       "HEADER_APP": "App: ",
       "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and all Apps of the registered Applications",
       "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application including all of its Apps",
@@ -361,6 +362,9 @@
       "PERMISSIONS": "No Permissions could be found.",
       "ASSIGNMENTS": "No Permissions could be found.",
       "WORKSPACE": "No data could be found for this Workspace."
+    },
+    "HTTP_STATUS_418": {
+      "ROLES": "A role selection is not possible because IAM is not available."
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving Application data. Please try again.",
