@@ -480,14 +480,14 @@ describe('AppSearchComponent', () => {
   })
 
   it('should open import dialog', () => {
-    spyOn(component, 'onImport')
+    spyOn(component, 'onOpenImport')
 
     component.ngOnInit()
     component.actions$?.subscribe((action) => {
       action[1].actionCallback()
     })
 
-    expect(component.onImport).toHaveBeenCalled()
+    expect(component.onOpenImport).toHaveBeenCalled()
   })
 
   it('should open export dialog', () => {
@@ -507,12 +507,12 @@ describe('AppSearchComponent', () => {
   it('should display import dialog when import button is clicked', () => {
     component.displayImportDialog = false
 
-    component.onImport()
+    component.onOpenImport()
 
     expect(component.displayImportDialog).toBeTrue()
   })
 
-  describe('onSelect', () => {
+  describe('onImportFileSelect', () => {
     let file: File
     let event: any = {}
 
@@ -532,7 +532,7 @@ describe('AppSearchComponent', () => {
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockText))
       translateServiceSpy.get.and.returnValue(of({}))
 
-      await component.onSelect(event as any as FileSelectEvent)
+      await component.onImportFileSelect(event as any as FileSelectEvent)
 
       expect(file.text).toHaveBeenCalled()
       expect(component.importAssignmentItem).toEqual(JSON.parse(mockText))
@@ -543,22 +543,22 @@ describe('AppSearchComponent', () => {
       spyOn(console, 'error')
       translateServiceSpy.get.and.returnValue(of({}))
 
-      await component.onSelect(event)
+      await component.onImportFileSelect(event)
 
       expect(console.error).toHaveBeenCalled()
       expect(component.importError).toBeTrue()
-      expect(component.validationErrorCause).toBe('')
+      expect(component.importError).toBe('')
     })
   })
 
   it('should reset errors when clear button is clicked', () => {
     component.importError = true
-    component.validationErrorCause = 'Some error'
+    component.importError = 'Some error'
 
-    component.onClear()
+    component.onImportClear()
 
     expect(component.importError).toBeFalse()
-    expect(component.validationErrorCause).toBe('')
+    expect(component.importError).toBe('')
   })
 
   describe('onImportConfirmation', () => {
@@ -596,12 +596,6 @@ describe('AppSearchComponent', () => {
 
       expect(assgnmtApiSpy.importAssignments).not.toHaveBeenCalled()
     })
-  })
-
-  it('should validate a file', () => {
-    component.importError = false
-
-    expect(component.isFileValid()).toBeTrue()
   })
 
   it('should close displayImportDialog', () => {

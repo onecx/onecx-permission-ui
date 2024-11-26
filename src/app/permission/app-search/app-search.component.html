@@ -181,7 +181,7 @@
   [resizable]="false"
   [dismissableMask]="true"
 >
-  <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
+  <div class="flex flex-column row-gap-3">
     <p-fileUpload
       #fileUploader
       id="apm_import_file_upload"
@@ -191,14 +191,39 @@
       [maxFileSize]="1000000"
       [customUpload]="true"
       (uploadHandler)="onImportConfirmation()"
-      (onClear)="onClear()"
-      (onRemove)="onClear()"
-      (onSelect)="onSelect($event)"
-      [showUploadButton]="isFileValid()"
+      (onImportClear)="onImportClear()"
+      (onRemove)="onImportClear()"
+      (onSelect)="onImportFileSelect($event)"
+      [showUploadButton]="importError === undefined"
       [chooseLabel]="'ACTIONS.IMPORT.CHOOSE' | translate"
       [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
       [cancelLabel]="'ACTIONS.CANCEL' | translate"
     />
+    <ng-container *ngIf="importError">
+      <p-message
+        id="pm_import_error_message"
+        class="w-full"
+        severity="error"
+        [text]="'ACTIONS.IMPORT.ERROR.' + importError.error.errorCode | translate"
+      ></p-message>
+      <div class="w-full max-h-8rem p-2 surface-100 border-round overflow-auto">
+        <div *ngIf="!importError.error.invalidParams">{{ importError.error.detail }}</div>
+        <div *ngIf="importError.error.invalidParams?.length > 0">
+          <div *ngIf="importError.statusText === 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ importError.error.invalidParams.length }}):
+          </div>
+          <div *ngIf="importError.statusText !== 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError.error.invalidParams.length }}):
+          </div>
+          <ul class="m-2 px-3">
+            <li *ngFor="let param of importError.error.invalidParams.slice(0, 4)">
+              {{ param.name }}
+              <div>{{ param.message }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
   </div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
