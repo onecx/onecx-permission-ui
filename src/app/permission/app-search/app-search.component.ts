@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
@@ -39,6 +40,7 @@ export interface AppSearchCriteria {
 export type App = Application & { apps?: number; appType: AppType; displayName?: string }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
+export type ImportError = { name: string; message: string; error: any; ok: boolean; status: number; statusText: string }
 
 @Component({
   templateUrl: './app-search.component.html',
@@ -68,12 +70,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public sortField = 'displayName'
   public sortOrder = -1
 
-  public displayImportDialog = false
   public displayExportDialog = false
+  public displayImportDialog = false
+  public importError: ImportError | undefined = undefined
 
-  importAssignmentItem: Permission | null = null
-  public importError = false
-  public validationErrorCause: string
+  public importAssignmentItem: Permission | null = null
   public selectedProductNames: string[] = []
 
   public limitText = limitText
@@ -118,7 +119,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         return filters
       })
     )
-    this.validationErrorCause = ''
   }
 
   ngOnInit(): void {
@@ -333,7 +333,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
             {
               label: data['ACTIONS.IMPORT.LABEL'],
               title: data['ACTIONS.IMPORT.ASSIGNMENT.TOOLTIP'],
-              actionCallback: () => this.onImport(),
+              actionCallback: () => this.onOpenImport(),
               icon: 'pi pi-upload',
               show: 'always',
               permission: 'PERMISSION#EDIT'
@@ -346,46 +346,52 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /****************************************************************************
    *  IMPORT
    */
-  public onImport(): void {
+  public onOpenImport(): void {
     this.displayImportDialog = true
   }
-  public onSelect(event: FileSelectEvent): void {
+  public onImportFileSelect(event: FileSelectEvent): void {
+    this.importError = undefined
     event.files[0].text().then((text) => {
-      this.importError = false
-      this.validationErrorCause = ''
-
-      this.translate.get(['IMPORT.VALIDATION_RESULT']).subscribe(() => {
-        try {
-          const importPermission = JSON.parse(text)
-          this.importAssignmentItem = importPermission
-        } catch (err) {
-          console.error('Import Error', err)
-          this.importError = true
+      try {
+        const importPermission = JSON.parse(text)
+        this.importAssignmentItem = importPermission
+      } catch (err) {
+        console.error('Import parse error', err)
+        this.importError = {
+          name: 'Parse error',
+          ok: false,
+          status: 400,
+          statusText: 'Parser error',
+          message: '',
+          error: { errorCode: 'PARSER', detail: err }
         }
-      })
+        console.error(this.importError)
+      }
     })
   }
+
   public onImportConfirmation(): void {
     if (this.importAssignmentItem) {
+      this.importError = undefined
       this.assgnmtApi.importAssignments({ body: this.importAssignmentItem }).subscribe({
         next: () => {
           this.displayImportDialog = false
-          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_OK' })
+          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
+          this.searchApps()
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.ASSIGNMENT.IMPORT_NOK' })
+        error: (err: HttpErrorResponse) => {
+          console.error('Import upload error', err)
+          this.importError = err
+          this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
+        }
       })
-      this.searchApps()
     }
-  }
-  public isFileValid(): boolean {
-    return !this.importError
   }
   public onCloseImportDialog(): void {
     this.displayImportDialog = false
   }
-  public onClear(): void {
-    this.importError = false
-    this.validationErrorCause = ''
+  public onImportClear(): void {
+    this.importError = undefined
   }
 
   /**

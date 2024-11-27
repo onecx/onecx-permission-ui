@@ -80,9 +80,15 @@
       "UPLOAD": "Datei hochladen",
       "ASSIGNMENT": "Berechtigungen importieren",
       "ASSIGNMENT.TOOLTIP": "Berechtigungen importieren",
+      "ERROR": {
+        "PARSER": "Fehler beim Lesen der Datei",
+        "CONFLICTS": "Konflikte",
+        "PROBLEMS": "Probleme",
+        "INVALID_IMPORT_REQUEST": "Datei konnte nicht importiert werden!"
+      },
       "MESSAGE": {
-        "ASSIGNMENT.IMPORT_OK": "Die Berechtigungen wurden erfolgreich importiert",
-        "ASSIGNMENT.IMPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht importiert."
+        "OK": "Die Berechtigungen wurden erfolgreich importiert",
+        "NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht importiert."
       },
       "VALIDATION_RESULT": "Die Datei wurde geprüft."
     },

@@ -80,9 +80,15 @@
       "UPLOAD": "Upload file",
       "ASSIGNMENT": "Import Permissions",
       "ASSIGNMENT.TOOLTIP": "Import of Permissions",
+      "ERROR": {
+        "PARSER": "Error reading file",
+        "CONFLICTS": "Conflicts",
+        "PROBLEMS": "Problems",
+        "INVALID_IMPORT_REQUEST": "File could not be imported!"
+      },
       "MESSAGE": {
-        "ASSIGNMENT.IMPORT_OK": "Permissions were imported successfully",
-        "ASSIGNMENT.IMPORT_NOK": "An error has occurred. Permissions were not imported."
+        "OK": "Permissions were imported successfully",
+        "NOK": "An error has occurred. Permissions were not imported."
       },
       "VALIDATION_RESULT": "The file has been checked."
     },
