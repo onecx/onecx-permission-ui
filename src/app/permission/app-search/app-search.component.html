@@ -7,8 +7,8 @@
     (resetted)="onSearchReset()"
     [manualBreadcrumbs]="false"
   >
-    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 px-2">
-      <div class="flex flex-wrap flex-row align-items-center ml-1 gap-2">
+    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 md:px-2">
+      <div class="flex flex-wrap flex-row align-items-center gap-2">
         <div
           class="slim-selectbutton search-criteria-selectbutton"
           [pTooltip]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
@@ -172,14 +172,17 @@
   </ocx-page-content>
 </ocx-portal-page>
 
+<!-- IMPORT -->
 <p-dialog
   [header]="'ACTIONS.IMPORT.ASSIGNMENT' | translate"
   [(visible)]="displayImportDialog"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
-  [resizable]="false"
+  [resizable]="true"
   [dismissableMask]="true"
+  [style]="{ width: '550px' }"
+  styleClass="disable-max-height-preset"
 >
   <div class="flex flex-column row-gap-3">
     <p-fileUpload
@@ -206,7 +209,7 @@
         severity="error"
         [text]="'ACTIONS.IMPORT.ERROR.' + importError.error.errorCode | translate"
       ></p-message>
-      <div class="w-full max-h-8rem p-2 surface-100 border-round overflow-auto">
+      <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
         <div *ngIf="!importError.error.invalidParams">{{ importError.error.detail }}</div>
         <div *ngIf="importError.error.invalidParams?.length > 0">
           <div *ngIf="importError.statusText === 'Conflict'">
@@ -216,7 +219,7 @@
             {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError.error.invalidParams.length }}):
           </div>
           <ul class="m-2 px-3">
-            <li *ngFor="let param of importError.error.invalidParams.slice(0, 4)">
+            <li *ngFor="let param of importError.error.invalidParams.slice(0, 5)">
               {{ param.name }}
               <div>{{ param.message }}</div>
             </li>
@@ -241,6 +244,7 @@
   </ng-template>
 </p-dialog>
 
+<!-- EXPORT -->
 <app-permission-export
   [products]="productNames"
   [listedProductsHeader]="'ACTIONS.EXPORT.APPLICATION_LIST'"

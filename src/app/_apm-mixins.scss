@@ -473,16 +473,16 @@
     }
   }
 }
-@mixin dialog-non-full-size-modal {
+@mixin dialog-modal-disable-full-height {
   :host ::ng-deep {
     @media (max-width: 991px) {
-      .p-dialog.p-dialog {
+      .p-dialog.disable-max-height-preset.p-dialog {
         max-height: unset !important;
         height: unset !important;
       }
     }
     @media (max-width: 576px) {
-      .p-dialog.p-dialog {
+      .p-dialog.disable-max-height-preset.p-dialog {
         max-height: inherit !important;
         height: inherit !important;
       }

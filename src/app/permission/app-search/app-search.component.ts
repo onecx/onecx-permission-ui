@@ -356,7 +356,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         const importPermission = JSON.parse(text)
         this.importAssignmentItem = importPermission
       } catch (err) {
-        console.error('Import file parse error', err)
+        console.error('Import parse error', err)
         this.importError = {
           name: 'Parse error',
           ok: false,
@@ -365,6 +365,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           message: '',
           error: { errorCode: 'PARSER', detail: err }
         }
+        console.error(this.importError)
       }
     })
   }

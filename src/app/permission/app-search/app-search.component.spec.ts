@@ -5,7 +5,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
+import { FileSelectEvent } from 'primeng/fileupload'
 import { of, throwError } from 'rxjs'
+
+import { RowListGridData } from '@onecx/angular-accelerator'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
   ApplicationAPIService,
@@ -17,10 +21,7 @@ import {
   AssignmentAPIService,
   Permission
 } from 'src/app/shared/generated'
-import { App, AppSearchComponent } from './app-search.component'
-import { RowListGridData } from '@onecx/angular-accelerator'
-import { FileSelectEvent } from 'primeng/fileupload'
-import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { App, AppSearchComponent, ImportError } from './app-search.component'
 
 const wsAbstract: WorkspaceAbstract = { name: 'wsName' }
 const wsAbstract2: WorkspaceAbstract = { name: 'wsName2' }
@@ -512,7 +513,7 @@ describe('AppSearchComponent', () => {
     expect(component.displayImportDialog).toBeTrue()
   })
 
-  xdescribe('onImportFileSelect', () => {
+  describe('on import file select', () => {
     let file: File
     let event: any = {}
 
@@ -527,67 +528,85 @@ describe('AppSearchComponent', () => {
       event = { files: fileList }
     })
 
-    it('should select a file to upload', async () => {
-      const mockText = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
-      spyOn(file, 'text').and.returnValue(Promise.resolve(mockText))
+    it('should select a file and parse', async () => {
+      const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
+      spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
       translateServiceSpy.get.and.returnValue(of({}))
 
       await component.onImportFileSelect(event as any as FileSelectEvent)
 
       expect(file.text).toHaveBeenCalled()
-      expect(component.importAssignmentItem).toEqual(JSON.parse(mockText))
+      expect(component.importAssignmentItem).toEqual(JSON.parse(mockContent))
     })
 
-    it('should handle JSON parse error', async () => {
-      spyOn(file, 'text').and.returnValue(Promise.resolve('Invalid Json'))
+    it('should handle JSON parse error on invalid file content', async () => {
+      const mockContent = 'content'
+      const errorResponse: ImportError = {
+        name: 'Parse error',
+        ok: false,
+        status: 400,
+        statusText: 'Parser error',
+        message: '',
+        error: { errorCode: 'PARSER', detail: 'SyntaxError: Unexpected token \'c\', "content"' }
+      }
+      spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
       spyOn(console, 'error')
       translateServiceSpy.get.and.returnValue(of({}))
 
       await component.onImportFileSelect(event)
 
       expect(console.error).toHaveBeenCalled()
-      //expect(component.importError).toBeTrue()
-      //expect(component.importError).toBe('')
+      expect(component.importError?.name).toEqual(errorResponse.name)
+      expect(component.importError?.statusText).toEqual(errorResponse.statusText)
+    })
+
+    it('should reset errors when clear button is clicked', () => {
+      component.importError = {
+        name: 'Parse error',
+        ok: false,
+        status: 400,
+        statusText: 'Parser error',
+        message: '',
+        error: { errorCode: 'PARSER', detail: 'parse error' }
+      }
+      component.onImportClear()
+      expect(component.importError).toBeUndefined()
     })
   })
 
-  it('should reset errors when clear button is clicked', () => {
-    component.importError = {
-      name: 'Parse error',
-      ok: false,
-      status: 400,
-      statusText: 'Parser error',
-      message: '',
-      error: { errorCode: 'PARSER', detail: 'parse error' }
-    }
-    component.onImportClear()
-    expect(component.importError).toBeUndefined()
-  })
-
-  describe('onImportConfirmation', () => {
-    it('should import assignment items', (done) => {
+  describe('on import confirmation => uploading', () => {
+    it('should successfully import assignments', (done) => {
       assgnmtApiSpy.importAssignments.and.returnValue(of(permission))
+      spyOn(component, 'searchApps')
       component.importAssignmentItem = permission
 
       component.onImportConfirmation()
 
       setTimeout(() => {
         expect(component.displayImportDialog).toBeFalse()
-        expect(msgServiceSpy.success).toHaveBeenCalledWith({
-          summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK'
-        })
+        expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
+        expect(component.searchApps).toHaveBeenCalled()
         done()
       })
     })
 
-    it('should call importAssignments and handle error', (done) => {
-      assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => 'Error'))
+    it('should import assignments fails and handle error', (done) => {
+      const errorResponse = {
+        name: 'Upload error',
+        ok: false,
+        status: 400,
+        statusText: 'Parser error',
+        message: '',
+        error: { errorCode: 'PARSER', detail: {} }
+      }
+      assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))
       component.importAssignmentItem = permission
 
       component.onImportConfirmation()
 
       setTimeout(() => {
         expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
+        expect(component.importError).toEqual(errorResponse)
         done()
       }, 0)
     })
