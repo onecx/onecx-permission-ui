@@ -6,8 +6,7 @@ import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubjec
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
-import { FileSelectEvent } from 'primeng/fileupload'
-import { FileUpload } from 'primeng/fileupload'
+import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
 import {
   Action,
