@@ -83,8 +83,7 @@
       "ERROR": {
         "PARSER": "Fehler beim Lesen der Datei",
         "CONFLICTS": "Konflikte",
-        "PROBLEMS": "Probleme",
-        "INVALID_IMPORT_REQUEST": "Datei konnte nicht importiert werden!"
+        "PROBLEMS": "Probleme"
       },
       "MESSAGE": {
         "OK": "Die Berechtigungen wurden erfolgreich importiert",
@@ -368,6 +367,9 @@
       "PERMISSIONS": "Es konnten keine Berechtigungen gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Berechtigungen gefunden werden.",
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
+    },
+    "HTTP_STATUS_409": {
+      "PERMISSIONS": "Datei konnte nicht importiert werden."
     },
     "HTTP_STATUS_418": {
       "ROLES": "Eine Rollenauswahl ist nicht möglich da IAM nicht zur Verfügung steht."

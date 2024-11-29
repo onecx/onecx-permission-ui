@@ -40,7 +40,15 @@ export interface AppSearchCriteria {
 export type App = Application & { apps?: number; appType: AppType; displayName?: string }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
-export type ImportError = { name: string; message: string; error: any; ok: boolean; status: number; statusText: string }
+export type ImportError = {
+  name: string
+  message: string
+  error: any
+  ok: boolean
+  status: number
+  statusText: string
+  exceptionKey: string
+}
 
 @Component({
   templateUrl: './app-search.component.html',
@@ -349,6 +357,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onOpenImport(): void {
     this.displayImportDialog = true
   }
+
   public onImportFileSelect(event: FileSelectEvent): void {
     this.importError = undefined
     event.files[0].text().then((text) => {
@@ -363,7 +372,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           status: 400,
           statusText: 'Parser error',
           message: '',
-          error: { errorCode: 'PARSER', detail: err }
+          error: { errorCode: 'PARSER', detail: err },
+          exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
         }
         console.error(this.importError)
       }
@@ -381,7 +391,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         },
         error: (err: HttpErrorResponse) => {
           console.error('Import upload error', err)
-          this.importError = err
+          this.importError = { ...err, exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS' }
           this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
         }
       })
