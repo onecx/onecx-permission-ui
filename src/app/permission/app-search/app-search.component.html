@@ -202,24 +202,27 @@
       [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
       [cancelLabel]="'ACTIONS.CANCEL' | translate"
     />
-    <ng-container *ngIf="importError">
-      <p-message
-        id="pm_import_error_message"
-        class="w-full"
-        severity="error"
-        [text]="'ACTIONS.IMPORT.ERROR.' + importError.error.errorCode | translate"
-      ></p-message>
+    <p-message
+      *ngIf="importError?.exceptionKey"
+      id="pm_import_error_message_general"
+      class="w-full"
+      severity="error"
+      [text]="importError ? (importError.exceptionKey | translate) : ''"
+    ></p-message>
+    <ng-container *ngIf="importError?.error">
       <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
-        <div *ngIf="!importError.error.invalidParams">{{ importError.error.detail }}</div>
-        <div *ngIf="importError.error.invalidParams?.length > 0">
-          <div *ngIf="importError.statusText === 'Conflict'">
-            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ importError.error.invalidParams.length }}):
+        <div *ngIf="importError?.error.detail && !importError?.error.invalidParams">
+          {{ importError?.error.detail }}
+        </div>
+        <div *ngIf="importError?.error.invalidParams?.length > 0">
+          <div *ngIf="importError?.statusText === 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ importError?.error.invalidParams.length }}):
           </div>
-          <div *ngIf="importError.statusText !== 'Conflict'">
-            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError.error.invalidParams.length }}):
+          <div *ngIf="importError?.statusText !== 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError?.error.invalidParams.length }}):
           </div>
           <ul class="m-2 px-3">
-            <li *ngFor="let param of importError.error.invalidParams.slice(0, 5)">
+            <li *ngFor="let param of importError?.error.invalidParams.slice(0, 5)">
               {{ param.name }}
               <div>{{ param.message }}</div>
             </li>
