@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
 import { FileSelectEvent } from 'primeng/fileupload'
+import { FileUpload } from 'primeng/fileupload'
 
 import {
   Action,
@@ -97,6 +98,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public dataViewControlsTranslations: DataViewControlTranslations = {}
   @ViewChild(DataView) dv: DataView | undefined
+  @ViewChild(FileUpload) fileUploader: FileUpload | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
@@ -399,6 +401,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   public onCloseImportDialog(): void {
     this.displayImportDialog = false
+    this.importError = undefined
+    this.fileUploader?.clear()
   }
   public onImportClear(): void {
     this.importError = undefined

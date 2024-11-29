@@ -547,7 +547,8 @@ describe('AppSearchComponent', () => {
         status: 400,
         statusText: 'Parser error',
         message: '',
-        error: { errorCode: 'PARSER', detail: 'SyntaxError: Unexpected token \'c\', "content"' }
+        error: { errorCode: 'PARSER', detail: 'SyntaxError: Unexpected token \'c\', "content"' },
+        exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
       }
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
       spyOn(console, 'error')
@@ -567,7 +568,8 @@ describe('AppSearchComponent', () => {
         status: 400,
         statusText: 'Parser error',
         message: '',
-        error: { errorCode: 'PARSER', detail: 'parse error' }
+        error: { errorCode: 'PARSER', detail: 'parse error' },
+        exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
       }
       component.onImportClear()
       expect(component.importError).toBeUndefined()
@@ -594,10 +596,11 @@ describe('AppSearchComponent', () => {
       const errorResponse = {
         name: 'Upload error',
         ok: false,
-        status: 400,
-        statusText: 'Parser error',
+        status: 409,
+        statusText: 'Upload error',
         message: '',
-        error: { errorCode: 'PARSER', detail: {} }
+        error: { errorCode: 'UPLOAD', detail: {} },
+        exceptionKey: 'EXCEPTIONS.HTTP_STATUS_409.PERMISSIONS'
       }
       assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))
       component.importAssignmentItem = permission
