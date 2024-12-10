@@ -93,6 +93,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   function initializeComponent() {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
     component = fixture.componentInstance
+    component.active = true
     fixture.detectChanges()
   }
 
@@ -135,7 +136,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       initializeComponent()
     })
 
-    it('should search user assignments', () => {
+    it('should search user assignments on reload', () => {
       spyOn(component, 'searchUserAssignments')
 
       component.onReload()
@@ -171,16 +172,34 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should handle error when trying to get another users assignments', () => {
-      const err = { error: 'error', status: 403 }
-      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => err))
+      const errorResponse = { error: 'error', status: 403, statusText: 'No permissions' }
+      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
       component.userId = 'id'
 
       component.ngOnChanges()
 
       component.userAssignments$.subscribe(() => {
-        expect(console.error).toHaveBeenCalledWith('searchUserAssignments():', err)
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+        expect(console.error).toHaveBeenCalledWith('searchUserAssignments', errorResponse)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.PERMISSIONS')
+      })
+    })
+
+    it('should handle error when user not longer exist in IAM', () => {
+      const errorResponse = {
+        error: { errorCode: '400', detail: 'USER_NOT_FOUND' },
+        status: 400,
+        statusText: 'User does not exist'
+      }
+      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      component.userId = 'id'
+
+      component.ngOnChanges()
+
+      component.userAssignments$.subscribe(() => {
+        expect(console.error).toHaveBeenCalledWith('searchUserAssignments', errorResponse)
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.NOT_FOUND.USER')
       })
     })
 

@@ -331,6 +331,7 @@
   "EXCEPTIONS": {
     "NOT_FOUND": {
       "PRODUCT": "Es konnten keine Daten zu dieser Applikation gefunden werden.",
+      "USER": "Der Benutzer existiert nicht mehr im IAM (Identity Access Management).",
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden."
     },
     "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
