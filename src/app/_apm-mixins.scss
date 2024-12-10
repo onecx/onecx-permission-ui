@@ -180,7 +180,7 @@
     .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
       padding-top: 0.4rem;
       padding-bottom: 0.4rem;
-      &:nth-child(odd) {
+      &:nth-child(even) {
         background-color: #f8f9fa;
       }
     }
