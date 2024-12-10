@@ -10,7 +10,6 @@
     background-color: rgba(var(--primary-color-rgb), 0.12);
   }
 }
-
 :host ::ng-deep {
   .p-dialog .p-dialog-content {
     border-bottom-left-radius: var(--border-radius) !important;
@@ -24,12 +23,16 @@
     font-size: var(--dialog-header-font-size);
   }
 
-  // reduce on all panels
+  // reduce on all panels (tab content)
   .p-tabview .p-tabview-panels {
     padding: 0;
   }
 
-  .p-datatable .p-datatable-thead > tr > th {
+  .p-datatable .p-datatable-thead > tr:nth-child(2) > th {
     border-bottom-width: 2px;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem;
   }
 }

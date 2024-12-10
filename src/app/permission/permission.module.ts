@@ -13,7 +13,7 @@ import { AppDetailComponent } from './app-detail/app-detail.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
 import { PermissionDetailComponent } from './permission-detail/permission-detail.component'
 import { PermissionExportComponent } from './permission-export/permission-export.component'
-import { OneCXUserRolesPermissionsComponent } from '../remotes/user-roles-permissions/user-roles-permissions.component'
+import { OneCXUserRolesPermissionsComponent } from 'src/app/remotes/user-roles-permissions/user-roles-permissions.component'
 
 const routes: Routes = [
   {

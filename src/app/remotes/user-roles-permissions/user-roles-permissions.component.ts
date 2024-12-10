@@ -6,6 +6,8 @@ import {
   Inject,
   Input,
   ViewChild,
+  Renderer2,
+  AfterViewInit,
   OnChanges
 } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
@@ -61,9 +63,12 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
+export class OneCXUserRolesPermissionsComponent
+  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, AfterViewInit
+{
   @Input() userId: string | undefined = undefined
   @Input() displayName: string | undefined = undefined
+  @Input() active: boolean | undefined = undefined // this is set actively on call the component
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
@@ -73,7 +78,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public columns
   public environment = environment
-  public exceptionKey = ''
+  public exceptionKey: string | undefined = undefined
   public loading = false
 
   constructor(
@@ -81,41 +86,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     private readonly userService: UserService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly renderer: Renderer2,
+    private readonly elem: ElementRef
   ) {
     this.userService.lang$.subscribe((lang) => this.translate.use(lang))
-    this.columns = [
-      {
-        field: 'resource',
-        header: 'USER_ROLE_PERMISSIONS.RESOURCE',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE',
-        filter: true,
-        value: null
-      },
-      {
-        field: 'action',
-        header: 'USER_ROLE_PERMISSIONS.ACTION',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION',
-        filter: true,
-        value: null
-      },
-      {
-        field: 'productName',
-        header: 'USER_ROLE_PERMISSIONS.PRODUCT',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.PRODUCT',
-        filter: true,
-        value: null
-      },
-      {
-        field: 'roleName',
-        header: 'USER_ROLE_PERMISSIONS.ROLE',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE',
-        filter: true,
-        value: null
-      }
-    ]
+    this.columns = this.prepareColumn()
   }
-
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
     this.loading = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
@@ -127,8 +104,20 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     })
   }
 
+  // remove styles set by lib (why ever)
+  public ngAfterViewInit() {
+    try {
+      const el = this.renderer.selectRootElement('.buttonDialogScrollableContent', true)
+      if (el) {
+        this.renderer.setStyle(el, 'overflow', 'unset')
+        this.renderer.setStyle(el, 'max-height', 'unset')
+        this.renderer.setStyle(el, 'margin-bottom', '10px')
+      }
+    } catch (err) {} // ignore runtime error if component not used within dialog
+  }
+
   public ngOnChanges(): void {
-    this.onReload()
+    if (this.active !== undefined) this.onReload()
   }
 
   public onReload() {
@@ -137,6 +126,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public searchUserAssignments(): Observable<UserAssignment[]> {
     this.loading = true
+    this.exceptionKey = undefined
     // on admin view the userId is set, otherwise the me services are used
     if (this.userId) {
       return this.assgnmtApi
@@ -146,8 +136,10 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
             return pageResult.stream ?? []
           }),
           catchError((err) => {
-            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-            console.error('searchUserAssignments():', err)
+            if (err.error?.errorCode === '400' && err.error?.detail === 'USER_NOT_FOUND')
+              this.exceptionKey = 'EXCEPTIONS.NOT_FOUND.USER'
+            else this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+            console.error('searchUserAssignments', err)
             return of([])
           }),
           finalize(() => (this.loading = false))
@@ -199,5 +191,38 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     if (this.permissionTableFilter) {
       this.permissionTableFilter.nativeElement.value = ''
     }
+  }
+
+  private prepareColumn() {
+    return [
+      {
+        field: 'resource',
+        header: 'USER_ROLE_PERMISSIONS.RESOURCE',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE',
+        filter: true,
+        value: null
+      },
+      {
+        field: 'action',
+        header: 'USER_ROLE_PERMISSIONS.ACTION',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION',
+        filter: true,
+        value: null
+      },
+      {
+        field: 'productName',
+        header: 'USER_ROLE_PERMISSIONS.PRODUCT',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.PRODUCT',
+        filter: true,
+        value: null
+      },
+      {
+        field: 'roleName',
+        header: 'USER_ROLE_PERMISSIONS.ROLE',
+        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE',
+        filter: true,
+        value: null
+      }
+    ]
   }
 }
