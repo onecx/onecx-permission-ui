@@ -86,6 +86,7 @@ export class PermissionDetailComponent implements OnChanges {
       console.info('form not valid')
       return
     }
+    /*
     if (this.permissions.length > 0) {
       let permExist = this.permissions.filter(
         (p) =>
@@ -102,7 +103,7 @@ export class PermissionDetailComponent implements OnChanges {
         })
         return
       }
-    }
+    }*/
     if (this.changeMode === 'CREATE') {
       const permission = {
         appId: this.formGroup.controls['appId'].value,

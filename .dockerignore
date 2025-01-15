@@ -27,7 +27,6 @@ speed-measure-plugin*.json
 .angular
 .eslintcache
 .sass-cache
-.scannerwork
 .husky/_
 .gitlab*
 connect.lock
