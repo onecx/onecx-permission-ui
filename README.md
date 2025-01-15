@@ -1,3 +1,3 @@
 # onecx-permission-ui
 
-OneCX Permission
+OneCX Permission UI
