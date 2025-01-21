@@ -64,7 +64,7 @@
     "@onecx/portal-layout-styles": "5.30.0",
     "@webcomponents/webcomponentsjs": "2.8.0",
     "file-saver": "^2.0.5",
-    "keycloak-angular": "^16.1.0",
+    "keycloak-angular": "^19.0.2",
     "ngx-filesaver": "^19.0.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
