@@ -74,12 +74,14 @@ describe('PermissionExportComponent', () => {
     it('should display error msg when export fails', () => {
       const errorResponse = { error: 'Error on exporting permissions', status: 400 }
       assgnmtApiSpy.exportAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       const selectedNames = ['Product1', 'Product2']
       component.selectedProductNames = selectedNames
 
       component.onExportConfirmation()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
+      expect(console.error).toHaveBeenCalledWith('exportAssignments', errorResponse)
     })
   })
 

@@ -40,7 +40,7 @@ export class PermissionExportComponent {
           },
           error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_NOK' })
-            console.error(err)
+            console.error('exportAssignments', err)
           }
         })
       this.displayExportDialogChange.emit(false)

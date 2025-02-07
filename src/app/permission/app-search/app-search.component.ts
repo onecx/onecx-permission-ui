@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
@@ -157,8 +156,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .pipe(
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE'
-          console.error('getAllWorkspaceNames()', err)
-          return of({} as WorkspacePageResult)
+          console.error('searchWorkspaces', err)
+          return of({})
         })
       )
     return this.workspaces$.pipe(
@@ -193,8 +192,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .pipe(
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.APPS'
-          console.error('searchApplications()', err)
-          return of({} as ApplicationPageResult)
+          console.error('searchApplications', err)
+          return of({})
         })
       )
     return this.papps$.pipe(
@@ -376,7 +375,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           error: { errorCode: 'PARSER', detail: err },
           exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
         }
-        console.error(this.importError)
       }
     })
   }
@@ -390,8 +388,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
           this.searchApps()
         },
-        error: (err: HttpErrorResponse) => {
-          console.error('Import upload error', err)
+        error: (err) => {
+          console.error('importAssignments', err)
           this.importError = { ...err, exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS' }
           this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
         }

@@ -281,7 +281,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.APP'
-          console.error('searchApplications()', result)
+          console.error('searchApplications', result)
         } else if (result instanceof Object && result.stream) {
           // expected apps per product: 2 (bff + ui)
           if (result.totalElements === 0) this.exceptionKey = 'EXCEPTIONS.NOT_FOUND.PRODUCT'
@@ -298,7 +298,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           }
         } else {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.APP'
-          console.error('getApplicationById()', result)
+          console.error('searchApplications', result)
         }
       })
   }
@@ -309,14 +309,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(
         catchError((error) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.WORKSPACE'
-          console.error('getDetailsByWorkspaceName()', error)
+          console.error('getDetailsByWorkspaceName', error)
           return of(error)
         })
       )
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.WORKSPACE'
-          console.error('getDetailsByWorkspaceName()', result)
+          console.error('getDetailsByWorkspaceName', result)
         } else if (result instanceof Object) {
           this.currentApp.workspaceDetails = { ...result }
           this.currentApp.workspaceDetails?.products?.map((product) => this.fillProductApps(product))
@@ -342,7 +342,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-        console.error('searchRoles()', err)
+        console.error('searchRoles', err)
         return of({} as RolePageResult)
       })
     )
@@ -370,7 +370,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .pipe(
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-          console.error('searchPermissions()', err)
+          console.error('searchPermissions', err)
           return of({} as PermissionPageResult)
         })
       )
@@ -427,7 +427,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
-        console.error(err)
+        console.error('createRole', err)
       }
     })
   }
@@ -534,7 +534,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
-          console.error('searchAssignments()', result)
+          console.error('searchAssignments', result)
         } else if (result instanceof Object && result.stream) {
           if (init) this.protectedAssignments = [] // ids of mandatory assignments
           // result.stream => assignments => roleId, permissionId, appId
@@ -547,7 +547,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           })
         } else {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
-          console.error('searchAssignments()', result)
+          console.error('searchAssignments', result)
         }
       })
   }
@@ -718,7 +718,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-          console.error(err)
+          console.error('createAssignment', err)
         }
       })
   }
@@ -730,7 +730,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-        console.error(err)
+        console.error('deleteAssignment', err)
       }
     })
   }
@@ -744,14 +744,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    */
   public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
     const productNames = this.prepareProductListForBulkOperation()
-    const response: any = {
-      next: () => {
-        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
-        this.loadRoleAssignments(false, role.id)
-      },
-      error: (err: any) => {
-        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-        console.error(err)
+    const response = function (outside: any, fname: string) {
+      return {
+        next: () => {
+          outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+          outside.loadRoleAssignments(false, role.id)
+        },
+        error: (err: any) => {
+          outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+          console.error(fname, err)
+        }
       }
     }
     if (this.filterAppValue) {
@@ -764,14 +766,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               productName: productNames[0]
             }
           } as GrantRoleApplicationAssignmentsRequestParams)
-          .subscribe(response)
+          .subscribe(response(this, 'grantRoleApplicationAssignments'))
     } else {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
           createRoleProductsAssignmentRequest: { productNames: productNames }
         } as GrantRoleProductsAssignmentsRequestParams)
-        .subscribe(response)
+        .subscribe(response(this, 'grantRoleProductsAssignments'))
     }
   }
 
@@ -780,14 +782,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   */
   public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
     const productNames = this.prepareProductListForBulkOperation()
-    const response: any = {
-      next: () => {
-        this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-        this.loadRoleAssignments(false, role.id)
-      },
-      error: (err: any) => {
-        this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-        console.error(err)
+    const response = function (outside: any, fname: string) {
+      return {
+        next: () => {
+          outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+          outside.loadRoleAssignments(false, role.id)
+        },
+        error: (err: any) => {
+          outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+          console.error(fname, err)
+        }
       }
     }
     if (this.filterAppValue) {
@@ -800,14 +804,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
               productName: productNames[0]
             }
           } as RevokeRoleApplicationAssignmentsRequestParams)
-          .subscribe(response)
+          .subscribe(response(this, 'revokeRoleApplicationAssignments'))
     } else {
       this.assApi
         .revokeRoleProductsAssignments({
           roleId: role.id,
           revokeRoleProductsAssignmentRequest: { productNames: productNames }
         } as RevokeRoleProductsAssignmentsRequestParams)
-        .subscribe(response)
+        .subscribe(response(this, 'revokeRoleProductsAssignments'))
     }
   }
 

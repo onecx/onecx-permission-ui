@@ -51,16 +51,14 @@ describe('AppSearchComponent', () => {
   let mockActivatedRoute: ActivatedRoute
   const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
+  const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assgnmtApiSpy = {
     searchAssignments: jasmine.createSpy('searchAssignments').and.returnValue(of({})),
     importAssignments: jasmine.createSpy('importAssignments').and.returnValue(of({})),
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
-
-  const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
-
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
   beforeEach(waitForAsync(() => {
@@ -102,6 +100,7 @@ describe('AppSearchComponent', () => {
     assgnmtApiSpy.importAssignments.calls.reset()
     assgnmtApiSpy.exportAssignments.calls.reset()
     wsApiSpy.searchWorkspaces.calls.reset()
+    appApiSpy.searchApplications.and.returnValue(of({}) as any)
   })
 
   it('should create', () => {
@@ -128,250 +127,259 @@ describe('AppSearchComponent', () => {
   /**
    * SEARCH
    */
-  it('should search workspaces', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
-    component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
+  describe('search', () => {
+    it('should search workspaces', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+      component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
 
-    component.searchApps()
+      component.searchApps()
 
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(2)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('WORKSPACE')
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(2)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('WORKSPACE')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search workspaces: empty', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+      wsApiSpy.searchWorkspaces.and.returnValue(of({}) as any)
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(0)
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should catch error on searchApps: ws', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+      const errorResponse = { status: 404, statusText: 'Not Found' }
+      wsApiSpy.searchWorkspaces.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (result) => {
+          expect(result.length).toBe(0)
+          expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.WORKSPACE')
+          expect(console.error).toHaveBeenCalledWith('searchWorkspaces', errorResponse)
+          done()
+        },
+        error: done.fail
+      })
+    })
+  })
+
+  describe('search products', () => {
+    it('should search products - ok', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search products with equals filter', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.typeFilterValue$.next('filterValue')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search products with contains filter', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.textFilterValue$.next('textFilterValue')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search products with existing product name', (done) => {
+      appApiSpy.searchApplications.and.returnValue(
+        of({
+          stream: [
+            {
+              name: 'appName3',
+              appId: 'appId3',
+              productName: 'product2'
+            }
+          ]
+        } as any)
+      )
+      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search products without search criteria', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteriaGroup.controls['name'].setValue(null)
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+  })
+
+  describe('search apps', () => {
+    it('should search apps', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
+      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should search apps without criteria', (done) => {
+      component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
+      component.appSearchCriteriaGroup.controls['name'].setValue(null)
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(1)
+          apps.forEach((app) => {
+            expect(app.appType).toEqual('PRODUCT')
+          })
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    describe('search products', () => {
+      it('should search products with empty appIds', (done) => {
+        const app3: Application = { name: 'appName3', productName: 'product3' }
+        const app4: Application = { name: 'appName4', productName: 'product4' }
+        const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
+
+        appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
+        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+        component.appSearchCriteriaGroup.controls['name'].setValue('app')
+
+        component.searchApps()
+
+        component.apps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(2)
+            apps.forEach((app) => {
+              expect(app.appType).toEqual('PRODUCT')
+            })
+            done()
+          },
+          error: done.fail
         })
-        done()
-      },
-      error: done.fail
-    })
-  })
+      })
 
-  it('should search workspaces: empty', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
-    wsApiSpy.searchWorkspaces.and.returnValue(of({}) as any)
+      it('should search products: empty', (done) => {
+        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+        appApiSpy.searchApplications.and.returnValue(of({}) as any)
 
-    component.searchApps()
+        component.searchApps()
 
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(0)
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should catch error on searchApps: ws', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
-    const err = { status: 404 }
-    wsApiSpy.searchWorkspaces.and.returnValue(throwError(() => err))
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (result) => {
-        expect(result.length).toBe(0)
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.WORKSPACE')
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
+        component.apps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(0)
+            done()
+          },
+          error: done.fail
         })
-        done()
-      },
-      error: done.fail
-    })
-  })
+      })
 
-  it('should search products with equals filter', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-    component.typeFilterValue$.next('filterValue')
+      it('should catch error on searchApps: products', (done) => {
+        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+        const errorResponse = { status: 404, statusText: 'Not Found' }
+        appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
+        spyOn(console, 'error')
 
-    component.searchApps()
+        component.searchApps()
 
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
+        component.apps$.subscribe({
+          next: (result) => {
+            expect(result.length).toBe(0)
+            expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
+            expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
+            done()
+          },
+          error: done.fail
         })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products with contains filter', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-    component.textFilterValue$.next('textFilterValue')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products with existing product name', (done) => {
-    appApiSpy.searchApplications.and.returnValue(
-      of({
-        stream: [
-          {
-            name: 'appName3',
-            appId: 'appId3',
-            productName: 'product2'
-          }
-        ]
-      } as any)
-    )
-
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products without search criteria', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue(null)
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search apps', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search apps without criteria', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
-    component.appSearchCriteriaGroup.controls['name'].setValue(null)
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(1)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products with empty appIds', (done) => {
-    const app3: Application = { name: 'appName3', productName: 'product3' }
-    const app4: Application = { name: 'appName4', productName: 'product4' }
-    const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
-
-    appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    component.appSearchCriteriaGroup.controls['name'].setValue('app')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(2)
-        apps.forEach((app) => {
-          expect(app.appType).toEqual('PRODUCT')
-        })
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should search products: empty', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    appApiSpy.searchApplications.and.returnValue(of({}) as any)
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (apps) => {
-        expect(apps.length).toBe(0)
-        done()
-      },
-      error: done.fail
-    })
-  })
-
-  it('should catch error on searchApps: products', (done) => {
-    component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-    const errorResponse = { status: 404 }
-    appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-
-    component.searchApps()
-
-    component.apps$.subscribe({
-      next: (result) => {
-        expect(result.length).toBe(0)
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
-        expect(console.error).toHaveBeenCalledWith('searchApplications()', errorResponse)
-        done()
-      },
-      error: done.fail
+      })
     })
   })
 
@@ -435,13 +443,13 @@ describe('AppSearchComponent', () => {
     expect(component.textFilterValue$.next).toHaveBeenCalledWith(filterValue)
   })
 
-  it('should set correct values onSortChange', () => {
-    component.onSortChange('field')
+  describe('sorting', () => {
+    it('should set correct values onSortChange', () => {
+      component.onSortChange('field')
 
-    expect(component.sortField).toEqual('field')
-  })
+      expect(component.sortField).toEqual('field')
+    })
 
-  describe('onSortDirChange', () => {
     it('should set correct values onSortDirChange', () => {
       component.onSortDirChange(true)
 
@@ -455,64 +463,76 @@ describe('AppSearchComponent', () => {
     })
   })
 
-  it('should searchApps when search button is clicked', () => {
-    spyOn(component, 'searchApps')
+  describe('search actions', () => {
+    it('should searchApps when search button is clicked', () => {
+      spyOn(component, 'searchApps')
 
-    component.onSearch()
+      component.onSearch()
 
-    expect(component.searchApps).toHaveBeenCalled()
-  })
+      expect(component.searchApps).toHaveBeenCalled()
+    })
 
-  it('should reset search criteria group and assign empty array to apps observable', (done) => {
-    spyOn(component.appSearchCriteriaGroup, 'reset')
+    it('should reset search criteria group and assign empty array to apps observable', (done) => {
+      spyOn(component.appSearchCriteriaGroup, 'reset')
 
-    component.onSearchReset()
+      component.onSearchReset()
 
-    expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
-    component.apps$.subscribe({
-      next: (res) => {
-        if (res) {
-          expect(res).toEqual([] as (App & RowListGridData)[])
-        }
-        done()
-      },
-      error: done.fail
+      expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
+      component.apps$.subscribe({
+        next: (res) => {
+          if (res) {
+            expect(res).toEqual([] as (App & RowListGridData)[])
+          }
+          done()
+        },
+        error: done.fail
+      })
     })
   })
 
-  it('should open import dialog', () => {
-    spyOn(component, 'onOpenImport')
+  describe('open import/export dialog', () => {
+    it('should open import dialog', () => {
+      spyOn(component, 'onOpenImport')
 
-    component.ngOnInit()
-    component.actions$?.subscribe((action) => {
-      action[1].actionCallback()
+      component.ngOnInit()
+      component.actions$?.subscribe((action) => {
+        action[1].actionCallback()
+      })
+
+      expect(component.onOpenImport).toHaveBeenCalled()
     })
 
-    expect(component.onOpenImport).toHaveBeenCalled()
-  })
+    it('should display import dialog when import button is clicked', () => {
+      component.displayImportDialog = false
 
-  it('should open export dialog', () => {
-    spyOn(component, 'onExport')
+      component.onOpenImport()
 
-    component.ngOnInit()
-    component.actions$?.subscribe((action) => {
-      action[0].actionCallback()
+      expect(component.displayImportDialog).toBeTrue()
     })
 
-    expect(component.onExport).toHaveBeenCalled()
+    it('should close displayImportDialog', () => {
+      component.displayImportDialog = true
+
+      component.onCloseImportDialog()
+
+      expect(component.displayImportDialog).toBeFalse()
+    })
+
+    it('should open export dialog', () => {
+      spyOn(component, 'onExport')
+
+      component.ngOnInit()
+      component.actions$?.subscribe((action) => {
+        action[0].actionCallback()
+      })
+
+      expect(component.onExport).toHaveBeenCalled()
+    })
   })
 
   /*
    * IMPORT
    */
-  it('should display import dialog when import button is clicked', () => {
-    component.displayImportDialog = false
-
-    component.onOpenImport()
-
-    expect(component.displayImportDialog).toBeTrue()
-  })
-
   describe('on import file select', () => {
     let file: File
     let event: any = {}
@@ -603,6 +623,7 @@ describe('AppSearchComponent', () => {
         exceptionKey: 'EXCEPTIONS.HTTP_STATUS_409.PERMISSIONS'
       }
       assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.importAssignmentItem = permission
 
       component.onImportConfirmation()
@@ -610,6 +631,7 @@ describe('AppSearchComponent', () => {
       setTimeout(() => {
         expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
         expect(component.importError).toEqual(errorResponse)
+        expect(console.error).toHaveBeenCalledWith('importAssignments', errorResponse)
         done()
       }, 0)
     })
@@ -623,60 +645,56 @@ describe('AppSearchComponent', () => {
     })
   })
 
-  it('should close displayImportDialog', () => {
-    component.displayImportDialog = true
-
-    component.onCloseImportDialog()
-
-    expect(component.displayImportDialog).toBeFalse()
-  })
-
   /*
    * EXPORT
    */
-  it('should prepare export by getting all products for export', (done) => {
-    const app3: Application = { name: 'appName3', productName: 'product3' }
-    const app4: Application = { name: 'appName4', productName: 'product4' }
-    const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
-    appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
+  describe('export', () => {
+    it('should prepare export by getting all products for export', (done) => {
+      const app3: Application = { name: 'appName3', productName: 'product3' }
+      const app4: Application = { name: 'appName4', productName: 'product4' }
+      const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
+      appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
 
-    component.ngOnInit()
-    component.onExport()
+      component.ngOnInit()
+      component.onExport()
 
-    component.products$.subscribe({
-      next: (products) => {
-        expect(products.length).toBe(2)
-        expect(products[0].displayName).toEqual('product3')
-        expect(products[1].displayName).toEqual('product4')
-        done()
-      },
-      error: done.fail
+      component.products$.subscribe({
+        next: (products) => {
+          expect(products.length).toBe(2)
+          expect(products[0].displayName).toEqual('product3')
+          expect(products[1].displayName).toEqual('product4')
+          done()
+        },
+        error: done.fail
+      })
     })
-  })
 
-  it('should handle error when getting all products for export', (done) => {
-    const err = { status: 404 }
-    appApiSpy.searchApplications.and.returnValue(throwError(() => err))
+    it('should handle error when getting all products for export', (done) => {
+      const errorResponse = { status: 404, statusText: 'Not Found' }
+      appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
-    component.ngOnInit()
-    component.onExport()
+      component.ngOnInit()
+      component.onExport()
 
-    component.products$.subscribe({
-      next: (products) => {
-        expect(products.length).toBe(0)
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_404.APPS')
-        done()
-      },
-      error: done.fail
+      component.products$.subscribe({
+        next: (products) => {
+          expect(products.length).toBe(0)
+          expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
+          expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
+          done()
+        },
+        error: done.fail
+      })
     })
-  })
 
-  it('should display export dialog', () => {
-    component.displayExportDialog = false
+    it('should display export dialog', () => {
+      component.displayExportDialog = false
 
-    component.onExport()
+      component.onExport()
 
-    expect(component.displayExportDialog).toBeTrue()
+      expect(component.displayExportDialog).toBeTrue()
+    })
   })
 
   describe('Test translations', () => {

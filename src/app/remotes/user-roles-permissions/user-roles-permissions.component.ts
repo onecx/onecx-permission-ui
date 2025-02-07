@@ -1,6 +1,5 @@
 import {
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   NO_ERRORS_SCHEMA,
   Inject,
@@ -17,7 +16,8 @@ import { Table } from 'primeng/table'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 
-import { PortalCoreModule, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/angular-integration-interface'
+import { PortalCoreModule, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -33,10 +33,10 @@ import {
   UserAPIService,
   UserAssignment,
   UserAssignmentPageResult
-} from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
-import { sortByLocale } from 'src/app/shared/utils'
-import { environment } from 'src/environments/environment'
+} from '../../shared/generated'
+import { SharedModule } from '../../shared/shared.module'
+import { sortByLocale } from '../../shared/utils'
+import { environment } from '../../../environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
@@ -61,7 +61,7 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
       }
     })
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent
   implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, AfterViewInit

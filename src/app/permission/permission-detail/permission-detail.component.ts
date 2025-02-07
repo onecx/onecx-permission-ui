@@ -119,7 +119,7 @@ export class PermissionDetailComponent implements OnChanges {
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.PERMISSION_NOK' })
-          console.error(err)
+          console.error('createPermission', err)
         }
       })
     } else {
@@ -139,7 +139,7 @@ export class PermissionDetailComponent implements OnChanges {
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
-          console.error(err)
+          console.error('updatePermission', err)
         }
       })
     }
@@ -154,7 +154,7 @@ export class PermissionDetailComponent implements OnChanges {
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
-        console.error(err)
+        console.error('deletePermission', err)
       }
     })
   }
