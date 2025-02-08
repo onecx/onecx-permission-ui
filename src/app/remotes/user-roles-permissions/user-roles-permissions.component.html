@@ -26,11 +26,11 @@
     <p-tabPanel id="apm_user_assignments">
       <ng-template pTemplate="header">
         <span
-          [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS.TOOLTIP' | translate"
+          [pTooltip]="'USER_PERMISSIONS.TABS.PERMISSIONS.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         >
-          {{ 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS' | translate }}
+          {{ 'USER_PERMISSIONS.TABS.PERMISSIONS' | translate }}
         </span>
       </ng-template>
       <p-table
@@ -53,9 +53,7 @@
       >
         <ng-template pTemplate="caption">
           <div class="flex flex-wrap justify-content-between align-items-center gap-2">
-            <div class="font-bold">
-              {{ 'USER_ROLE_PERMISSIONS.TABS.PERMISSIONS.TITLE' | translate }} {{ items.length }}
-            </div>
+            <div class="font-bold">{{ 'USER_PERMISSIONS.TABS.PERMISSIONS.TITLE' | translate }} {{ items.length }}</div>
             <div class="p-inputgroup w-auto">
               <span class="p-inputgroup-addon data-view-control-border">
                 <span class="pi pi-filter"></span>
@@ -70,13 +68,13 @@
                   [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                   [pTooltip]="
                     ('ACTIONS.SEARCH.FILTER.OF' | translate) +
-                    ('USER_ROLE_PERMISSIONS.RESOURCE' | translate) +
+                    ('USER_PERMISSIONS.RESOURCE' | translate) +
                     ', ' +
-                    ('USER_ROLE_PERMISSIONS.ACTION' | translate) +
+                    ('USER_PERMISSIONS.ACTION' | translate) +
                     ', ' +
-                    ('USER_ROLE_PERMISSIONS.PRODUCT' | translate) +
+                    ('USER_PERMISSIONS.PRODUCT' | translate) +
                     ', ' +
-                    ('USER_ROLE_PERMISSIONS.ROLE' | translate)
+                    ('USER_PERMISSIONS.ROLE' | translate)
                   "
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -116,7 +114,7 @@
               class="text-center border-permission-group p-1"
               colspan="3"
             >
-              {{ 'USER_ROLE_PERMISSIONS.PERMISSION' | translate }}
+              {{ 'USER_PERMISSIONS.PERMISSION' | translate }}
             </th>
             <th id="apm_user_assignments_table_header_roles" class="border-none"></th>
           </tr>
@@ -139,7 +137,7 @@
                     (onClick)="$event.stopPropagation()"
                     (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                     [showClear]="true"
-                    [emptyMessage]="'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate"
+                    [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
                     [options]="extractFilterItems(items, col.field)"
                     [(ngModel)]="col.value"
                   >
@@ -166,7 +164,7 @@
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="columns.length" id="apm_user_assignments_table_no_results">
-              {{ 'USER_ROLE_PERMISSIONS.NO_RESULTS' | translate }}
+              {{ 'USER_PERMISSIONS.NO_RESULTS' | translate }}
             </td>
           </tr>
         </ng-template>
@@ -177,11 +175,11 @@
     <p-tabPanel id="apm_user_overview_roles_and_apps" *ngIf="!exceptionKey && !loading">
       <ng-template pTemplate="header">
         <span
-          [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"
+          [pTooltip]="'USER_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         >
-          {{ 'USER_ROLE_PERMISSIONS.TABS.ROLES_N_MORE' | translate }}
+          {{ 'USER_PERMISSIONS.TABS.ROLES_N_MORE' | translate }}
         </span>
       </ng-template>
 
@@ -191,19 +189,19 @@
           <div class="flex flex-column row-gap-2">
             <div
               class="font-bold"
-              [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
+              [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
-              {{ 'USER_ROLE_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
+              {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
             </div>
             <p-listbox
               id="apm_user_roles_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="roles"
               [filter]="true"
-              [filterPlaceHolder]="'USER_ROLE_PERMISSIONS.TABS.ROLES.FILTER' | translate"
-              [ariaLabel]="'USER_ROLE_PERMISSIONS.TABS.ROLES.TITLE' | translate"
+              [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
+              [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
             />
           </div>
         </ng-container>
@@ -212,25 +210,25 @@
         <ng-container *ngIf="extractFilterItems(items, 'productName') as products">
           <div *ngIf="products.length === 1">
             <div id="apm_user_products_one" class="font-bold">
-              {{ 'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products[0] }}
+              {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products[0] }}
             </div>
           </div>
           <div *ngIf="products.length > 1" class="flex flex-column row-gap-2">
             <div
               class="font-bold"
-              [pTooltip]="'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
+              [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
-              {{ 'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
+              {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
             </div>
             <p-listbox
               id="apm_user_products_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="products"
               [filter]="true"
-              [filterPlaceHolder]="'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
-              [ariaLabel]="'USER_ROLE_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
+              [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
+              [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
             />
           </div>
         </ng-container>

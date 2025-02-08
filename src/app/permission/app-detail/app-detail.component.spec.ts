@@ -345,25 +345,29 @@ describe('AppDetailComponent', () => {
     })
 
     it('should catch error if search for applications fails ', () => {
-      const err = new HttpErrorResponse({
+      const errorResponse = new HttpErrorResponse({
         error: 'test 404 error',
         status: 404,
         statusText: 'Not Found'
       })
-      appApiSpy.searchApplications.and.returnValue(throwError(() => err))
+      appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.ngOnInit()
 
-      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.APP')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APP')
+      expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
     })
 
     it('should catch non-HttpErrorResponse error if search for applications fails', () => {
-      const nonHttpError = { message: 'non-HTTP error' }
-      appApiSpy.searchApplications.and.returnValue(throwError(() => nonHttpError))
+      const errorResponse = { message: 'non-HTTP error' }
+      appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.ngOnInit()
 
       expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.APP')
+      expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
     })
 
     it('should loadWorkspaceDetails successfully', () => {
@@ -376,28 +380,30 @@ describe('AppDetailComponent', () => {
 
     it('should catch error if workspace detail load fails ', () => {
       component.urlParamAppType = 'WORKSPACE'
-      const err = new HttpErrorResponse({
+      const errorResponse = new HttpErrorResponse({
         error: 'test 404 error',
         status: 404,
         statusText: 'Not Found'
       })
-      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => err))
+      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.ngOnInit()
 
-      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACE')
-      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName()', err)
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.WORKSPACE')
+      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName', errorResponse)
     })
 
     xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {
       component.urlParamAppType = 'WORKSPACE'
-      const nonHttpError = { message: 'non-HTTP error' }
-      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => nonHttpError))
+      const errorResponse = { message: 'non-HTTP error' }
+      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.ngOnInit()
 
       expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
+      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName', errorResponse)
     })
 
     it('should load roles and permissions', () => {
@@ -420,23 +426,29 @@ describe('AppDetailComponent', () => {
     })
 
     it('should display error when loading roles fails', () => {
-      const err = { status: '404' }
-      roleApiSpy.searchRoles.and.returnValue(throwError(() => err))
+      const errorResponse = { status: '404', statusText: 'Not Found' }
+      roleApiSpy.searchRoles.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.urlParamAppType = 'WORKSPACE'
 
       component.ngOnInit()
 
-      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
+      expect(console.error).toHaveBeenCalledWith('searchRoles', errorResponse)
     })
 
     it('should display error when loading permissions fails', () => {
-      const err = { status: '404' }
-      permApiSpy.searchPermissions.and.returnValue(throwError(() => err))
+      const errorResponse = { status: '404', statusText: 'Not Found' }
+      permApiSpy.searchPermissions.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      spyOn(console, 'warn')
       component.urlParamAppType = 'WORKSPACE'
 
       component.ngOnInit()
 
-      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS')
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.PERMISSIONS')
+      expect(console.error).toHaveBeenCalledWith('searchPermissions', errorResponse)
+      expect(console.warn).toHaveBeenCalledWith('No permissions found for the apps - stop processing')
     })
   })
 
@@ -475,6 +487,7 @@ describe('AppDetailComponent', () => {
     it('should display error msg if create role fails', () => {
       const errorResponse = { error: 'Error on creating a role', status: 400 }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       const ev = new MouseEvent('click')
       spyOn(ev, 'stopPropagation')
       component.missingWorkspaceRoles = true
@@ -484,6 +497,7 @@ describe('AppDetailComponent', () => {
 
       expect(ev.stopPropagation).toHaveBeenCalled()
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+      expect(console.error).toHaveBeenCalledWith('createRole', errorResponse)
     })
   })
 
@@ -513,19 +527,23 @@ describe('AppDetailComponent', () => {
       statusText: 'Not Found'
     })
     assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
 
     component['searchAssignments'](true, ['appId1'])
 
     expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ASSIGNMENTS')
+    expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
   })
 
   it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
-    const nonHttpError = { message: 'non-HTTP error' }
-    assApiSpy.searchAssignments.and.returnValue(throwError(() => nonHttpError))
+    const errorResponse = { message: 'non-HTTP error' }
+    assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+    expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
   })
 
   /*
@@ -963,11 +981,13 @@ describe('AppDetailComponent', () => {
   it('should display error if assignment fails', () => {
     const errorResponse = { error: 'Error on creating an assignment', status: 400 }
     assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
 
     component.onAssignPermission(ev, permRow, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('createAssignment', errorResponse)
   })
 
   it('should delete an assignment', () => {
@@ -981,11 +1001,13 @@ describe('AppDetailComponent', () => {
   it('should display error if assignment creation fails', () => {
     const errorResponse = { error: 'Error on removing a permission', status: 400 }
     assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
 
     component.onRemovePermission(ev, permRow, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('deleteAssignment', errorResponse)
   })
 
   it('should grant all permissions: assign all perms of an app to a role', () => {
@@ -1001,6 +1023,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
     const errorResponse = { error: 'Error on grant all permissions with app filter', status: 400 }
     assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
     component.filterAppValue = 'appId1'
 
@@ -1008,6 +1031,7 @@ describe('AppDetailComponent', () => {
     component.onGrantAllPermissions(ev, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('grantRoleApplicationAssignments', errorResponse)
   })
 
   it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
@@ -1023,6 +1047,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
     const errorResponse = { error: 'Error on grant all permissions with product filter', status: 400 }
     assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
     component.filterProductValue = 'productAppId'
 
@@ -1030,6 +1055,7 @@ describe('AppDetailComponent', () => {
     component.onGrantAllPermissions(ev, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('grantRoleProductsAssignments', errorResponse)
   })
 
   it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
@@ -1054,6 +1080,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
     const errorResponse = { error: 'Error on revoke all permissions with app filter', status: 400 }
     assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
     component.filterAppValue = 'appId1'
 
@@ -1061,6 +1088,7 @@ describe('AppDetailComponent', () => {
     component.onRevokeAllPermissions(ev, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('revokeRoleApplicationAssignments', errorResponse)
   })
 
   it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
@@ -1100,6 +1128,7 @@ describe('AppDetailComponent', () => {
   it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
     const errorResponse = { error: 'Error on revoke all permissions with product filter', status: 400 }
     assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
     const ev = new MouseEvent('click')
     component.filterProductValue = 'productAppId'
 
@@ -1107,6 +1136,7 @@ describe('AppDetailComponent', () => {
     component.onRevokeAllPermissions(ev, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+    expect(console.error).toHaveBeenCalledWith('revokeRoleProductsAssignments', errorResponse)
   })
 
   it('should revoke all permissions: remove all assgmts of a role', () => {

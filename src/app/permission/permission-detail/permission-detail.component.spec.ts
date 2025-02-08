@@ -187,6 +187,7 @@ describe('PermissionDetailComponent', () => {
     it('should display error when trying to create a permission failed', () => {
       const errorResponse = { error: 'Error on creating a permission', status: 400 }
       permApiSpy.createPermission.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.changeMode = 'CREATE'
       component.formGroup = formGroup
       component.permission!.id = undefined
@@ -194,6 +195,7 @@ describe('PermissionDetailComponent', () => {
       component.onSave()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.PERMISSION_NOK' })
+      expect(console.error).toHaveBeenCalledWith('createPermission', errorResponse)
     })
   })
 
@@ -211,12 +213,14 @@ describe('PermissionDetailComponent', () => {
     it('should display error when trying to update a permission failed', () => {
       const errorResponse = { error: 'Error on updating a permission', status: 400 }
       permApiSpy.updatePermission.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.changeMode = 'EDIT'
       component.formGroup = formGroup
 
       component.onSave()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
+      expect(console.error).toHaveBeenCalledWith('updatePermission', errorResponse)
     })
   })
 
@@ -236,11 +240,13 @@ describe('PermissionDetailComponent', () => {
     it('should display error when trying to delete a permission failed', () => {
       const errorResponse = { error: 'Error on deleting a permission', status: 400 }
       permApiSpy.deletePermission.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.permission = { ...permRow, id: 'id' }
 
       component.onDeleteConfirmation()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
+      expect(console.error).toHaveBeenCalledWith('deletePermission', errorResponse)
     })
   })
 })

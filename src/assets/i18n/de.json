@@ -294,7 +294,7 @@
       "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
     }
   },
-  "USER_ROLE_PERMISSIONS": {
+  "USER_PERMISSIONS": {
     "TABS": {
       "ROLES_N_MORE": "Rollen & Applikationen",
       "ROLES_N_MORE.TOOLTIP": "Zugewiesene Rollen und Applikationen mit Berechtigungen",
@@ -309,6 +309,7 @@
       "PERMISSIONS.TOOLTIP": "Über die zugewiesenen Rollen wirkende Berechtigungen",
       "PERMISSIONS.TITLE": "Berechtigungen: "
     },
+    "USER_NAME": "Nutzername",
     "USER_PROFILE": "Nutzerprofil",
     "NO_RESULTS": "Keine Daten",
     "NO_ROLES": "Keine Rollen zugewiesen",

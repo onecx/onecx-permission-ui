@@ -1,23 +1,13 @@
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  NO_ERRORS_SCHEMA,
-  Inject,
-  Input,
-  ViewChild,
-  Renderer2,
-  AfterViewInit,
-  OnChanges
-} from '@angular/core'
+import { Component, ElementRef, NO_ERRORS_SCHEMA, Inject, Input, OnChanges, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
-import { Table } from 'primeng/table'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { Table } from 'primeng/table'
 
-import { PortalCoreModule, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/angular-integration-interface'
+import { PortalCoreModule, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -33,10 +23,10 @@ import {
   UserAPIService,
   UserAssignment,
   UserAssignmentPageResult
-} from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
-import { sortByLocale } from 'src/app/shared/utils'
-import { environment } from 'src/environments/environment'
+} from '../../shared/generated'
+import { SharedModule } from '../../shared/shared.module'
+import { sortByLocale } from '../../shared/utils'
+import { environment } from '../../../environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
@@ -61,11 +51,9 @@ type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
       }
     })
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [NO_ERRORS_SCHEMA]
 })
-export class OneCXUserRolesPermissionsComponent
-  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, AfterViewInit
-{
+export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() userId: string | undefined = undefined
   @Input() displayName: string | undefined = undefined
   @Input() active: boolean | undefined = undefined // this is set actively on call the component
@@ -86,9 +74,7 @@ export class OneCXUserRolesPermissionsComponent
     private readonly userService: UserService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
-    private readonly translate: TranslateService,
-    private readonly renderer: Renderer2,
-    private readonly elem: ElementRef
+    private readonly translate: TranslateService
   ) {
     this.userService.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
@@ -102,18 +88,6 @@ export class OneCXUserRolesPermissionsComponent
     this.assgnmtApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
-  }
-
-  // remove styles set by lib (why ever)
-  public ngAfterViewInit() {
-    try {
-      const el = this.renderer.selectRootElement('.buttonDialogScrollableContent', true)
-      if (el) {
-        this.renderer.setStyle(el, 'overflow', 'unset')
-        this.renderer.setStyle(el, 'max-height', 'unset')
-        this.renderer.setStyle(el, 'margin-bottom', '10px')
-      }
-    } catch (err) {} // ignore runtime error if component not used within dialog
   }
 
   public ngOnChanges(): void {
@@ -197,29 +171,29 @@ export class OneCXUserRolesPermissionsComponent
     return [
       {
         field: 'resource',
-        header: 'USER_ROLE_PERMISSIONS.RESOURCE',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.RESOURCE',
+        header: 'USER_PERMISSIONS.RESOURCE',
+        tooltip: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
         filter: true,
         value: null
       },
       {
         field: 'action',
-        header: 'USER_ROLE_PERMISSIONS.ACTION',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ACTION',
+        header: 'USER_PERMISSIONS.ACTION',
+        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
         filter: true,
         value: null
       },
       {
         field: 'productName',
-        header: 'USER_ROLE_PERMISSIONS.PRODUCT',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.PRODUCT',
+        header: 'USER_PERMISSIONS.PRODUCT',
+        tooltip: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
         filter: true,
         value: null
       },
       {
         field: 'roleName',
-        header: 'USER_ROLE_PERMISSIONS.ROLE',
-        tooltip: 'USER_ROLE_PERMISSIONS.TOOLTIPS.ROLE',
+        header: 'USER_PERMISSIONS.ROLE',
+        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
         filter: true,
         value: null
       }

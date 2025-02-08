@@ -151,8 +151,9 @@ describe('RoleDetailComponent', () => {
     })
 
     it('should display error when trying to create a role failed', () => {
-      const errorResponse = { error: 'Error on creating a role', status: 400 }
+      const errorResponse = { status: 400, statusText: 'Error on creating a role' }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.changeMode = 'CREATE'
       component.formGroup = formGroup
       component.role!.id = undefined
@@ -173,14 +174,16 @@ describe('RoleDetailComponent', () => {
     })
 
     it('should display error when trying to update a role failed', () => {
-      const errorResponse = { error: 'Error on updating a role', status: 400 }
+      const errorResponse = { status: 400, statusText: 'Error on updating a role' }
       roleApiSpy.updateRole.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.changeMode = 'EDIT'
       component.formGroup = formGroup
 
       component.onSaveRole()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
+      expect(console.error).toHaveBeenCalledWith('updateRole', errorResponse)
     })
   })
 
@@ -197,13 +200,15 @@ describe('RoleDetailComponent', () => {
     })
 
     it('should display error when trying to delete a role failed', () => {
-      const errorResponse = { error: 'Error on deleting a role', status: 400 }
+      const errorResponse = { status: 400, statusText: 'Error on deleting a role' }
       roleApiSpy.deleteRole.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.role = { ...role, id: 'id' }
 
       component.onDeleteConfirmation()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
+      expect(console.error).toHaveBeenCalledWith('deleteRole', errorResponse)
     })
   })
 
@@ -241,7 +246,7 @@ describe('RoleDetailComponent', () => {
     })
 
     it('should handle error response', () => {
-      const errorResponse = { error: 'Error on retrieving IAM roles', status: 401 }
+      const errorResponse = { status: 400, statusText: 'Error on retrieving IAM roles' }
       roleApiSpy.searchAvailableRoles.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
@@ -249,7 +254,7 @@ describe('RoleDetailComponent', () => {
 
       component.iamRoles$.subscribe(() => {
         expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
-        expect(console.error).toHaveBeenCalledWith('searchAvailableRoles():', errorResponse)
+        expect(console.error).toHaveBeenCalledWith('searchAvailableRoles', errorResponse)
       })
     })
 
@@ -341,14 +346,16 @@ describe('RoleDetailComponent', () => {
 
     it('should handle error if role could not be created', () => {
       spyOn(component.dataChanged, 'emit')
-      const errorResponse = { error: 'Role could not be created', status: 400 }
+      const errorResponse = { status: 400, statusText: 'Role could not be created' }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.selectedIamRoles = [{ name: 'role1' }]
       component.onAddIamRoles()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
       expect(component.dataChanged.emit).not.toHaveBeenCalled()
+      expect(console.error).toHaveBeenCalledWith('createRole', errorResponse)
     })
   })
 })

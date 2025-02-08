@@ -95,7 +95,7 @@ export class RoleDetailComponent implements OnChanges {
           },
           error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.' + this.changeMode + '.MESSAGE.ROLE_NOK' })
-            console.error(err)
+            console.error('createRole', err)
           }
         })
     } else {
@@ -111,7 +111,7 @@ export class RoleDetailComponent implements OnChanges {
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
-          console.error(err)
+          console.error('updateRole', err)
         }
       })
     }
@@ -129,7 +129,7 @@ export class RoleDetailComponent implements OnChanges {
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error(err)
+        console.error('deleteRole', err)
       }
     })
   }
@@ -143,7 +143,7 @@ export class RoleDetailComponent implements OnChanges {
     this.iamRoles$ = this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).pipe(
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-        console.error('searchAvailableRoles():', err)
+        console.error('searchAvailableRoles', err)
         return of([])
       }),
       map((result: any) => {
@@ -165,7 +165,7 @@ export class RoleDetailComponent implements OnChanges {
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
-          console.error(err)
+          console.error('createRole', err)
         }
       })
     else this.dataChanged.emit(false)
