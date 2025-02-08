@@ -294,7 +294,7 @@
       "PATTERN_ERROR": "Your input does not match the required pattern"
     }
   },
-  "USER_ROLE_PERMISSIONS": {
+  "USER_PERMISSIONS": {
     "TABS": {
       "ROLES_N_MORE": "Roles & Applications",
       "ROLES_N_MORE.TOOLTIP": "Assigned Roles and Applications with Permissions",
@@ -309,6 +309,7 @@
       "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned",
       "PERMISSIONS.TITLE": "Permissions: "
     },
+    "USER_NAME": "User Name",
     "USER_PROFILE": "User Profile",
     "NO_RESULTS": "No data",
     "NO_ROLES": "No Roles assigned",
