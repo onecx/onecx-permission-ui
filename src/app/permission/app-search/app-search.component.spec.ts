@@ -112,9 +112,7 @@ describe('AppSearchComponent', () => {
 
     it('dataview translations', (done) => {
       const translationData = {
-        'DIALOG.DATAVIEW.FILTER': 'filter',
-        'DIALOG.DATAVIEW.FILTER_OF': 'filterOf',
-        'DIALOG.DATAVIEW.SORT_BY': 'sortBy'
+        'ACTIONS.SEARCH.SORT_BY': 'sortBy'
       }
       const translateService = TestBed.inject(TranslateService)
       spyOn(translateService, 'get').and.returnValue(of(translationData))

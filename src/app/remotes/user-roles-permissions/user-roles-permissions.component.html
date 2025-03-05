@@ -9,26 +9,7 @@
     {{ displayName }}
   </div>
 
-  <p-message
-    *ngIf="exceptionKey"
-    id="apm_user_assignments_exception"
-    severity="error"
-    styleClass="m-3 p-2"
-    [text]="exceptionKey | translate"
-  ></p-message>
-  <p-message
-    *ngIf="loading"
-    id="apm_user_assignments_loading"
-    severity="info"
-    styleClass="m-3 p-2"
-    [text]="'ACTIONS.LOADING' | translate"
-  ></p-message>
-
-  <p-tabView
-    *ngIf="!(exceptionKey || loading)"
-    (onChange)="onTabChange($event, items)"
-    [activeIndex]="selectedTabIndex"
-  >
+  <p-tabView (onChange)="onTabChange($event, items)">
     <p-tabPanel id="apm_user_assignments">
       <ng-template pTemplate="header">
         <span
@@ -39,7 +20,23 @@
           {{ 'USER_PERMISSIONS.TABS.PERMISSIONS' | translate }}
         </span>
       </ng-template>
+      <p-message
+        *ngIf="loading"
+        id="apm_user_assignments_loading"
+        severity="info"
+        styleClass="m-3 p-2"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
+      <p-message
+        *ngIf="exceptionKey"
+        id="apm_user_assignments_exception"
+        severity="error"
+        styleClass="m-3 p-2"
+        [text]="exceptionKey | translate"
+      ></p-message>
+
       <p-table
+        *ngIf="!(exceptionKey || loading)"
         #permissionTable
         id="apm_user_assignments_table"
         [columns]="columns"
@@ -244,21 +241,25 @@
         </span>
       </ng-template>
 
-      <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
-        <p-message
-          *ngIf="loadingIamRoles"
-          id="apm_user_iam_roles_loading"
-          severity="info"
-          styleClass="m-3 p-2"
-          [text]="'ACTIONS.LOADING' | translate"
-        ></p-message>
-        <p-message
-          *ngIf="exceptionKey"
-          id="apm_user_iam_roles_info"
-          severity="error"
-          [text]="'USER_PERMISSIONS.TOKEN_ROLES' | translate"
-        ></p-message>
+      <p-message
+        *ngIf="loadingIamRoles"
+        id="apm_user_iam_roles_loading"
+        severity="info"
+        styleClass="m-3 p-2"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
+      <p-message
+        *ngIf="exceptionKeyIamRoles"
+        id="apm_user_iam_roles_exception"
+        severity="error"
+        styleClass="m-3 p-2"
+        [text]="exceptionKeyIamRoles | translate"
+      ></p-message>
 
+      <div
+        *ngIf="!exceptionKeyIamRoles && !loadingIamRoles"
+        class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4"
+      >
         <!-- ROLES -->
         <div *ngIf="iamRoles$ | async as iamRoles" class="flex flex-column row-gap-2">
           <div

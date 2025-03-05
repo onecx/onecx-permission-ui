@@ -66,13 +66,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
 
   public userAssignments$: Observable<UserAssignment[]> = of([])
+  public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
+  public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
   public loadingIamRoles = false
-  public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public selectedTabIndex = 0
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -207,34 +207,33 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
   // activate TAB
   public onTabChange($event: any, items: UserAssignment[]) {
-    this.selectedTabIndex = $event.index
-    if (this.selectedTabIndex === 2) this.iamRoles$ = this.getIamRoles(this.extractFilterItems(items, 'roleName'))
+    if ($event.index === 2) this.iamRoles$ = this.getIamRoles(this.extractFilterItems(items, 'roleName'))
   }
 
   public getIamRoles(assignedRoles: string[]): Observable<ExtendedSelectItem[]> {
-    this.loadingIamRoles = true
-    this.exceptionKey = undefined
+    this.loadingIamRoles = false
+    this.exceptionKeyIamRoles = undefined
+    console.log('getIamRoles user => ' + this.userId)
+
     // on admin view the userId is set, otherwise the me services are used
     if (this.userId) {
-      console.log('getIamRoles => iam roles')
+      this.loadingIamRoles = false
       return of([])
       // get other user stuff
     } else {
-      console.log('getIamRoles => token roles')
       return this.userApi.getTokenRoles().pipe(
         map((data) => {
           const roles: ExtendedSelectItem[] = []
           data.forEach((role) =>
             roles.push({
               label: role,
-              value: role,
               isUserAssignedRole: assignedRoles.includes(role)
             } as ExtendedSelectItem)
           )
           return roles
         }),
         catchError((err) => {
-          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
           console.error('getTokenRoles', err)
           return of([])
         }),
