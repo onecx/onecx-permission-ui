@@ -94,9 +94,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public filters$: Observable<(Filter & { mode: 'contains' | 'equals' })[]>
   public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
 
-  public dataViewControlsTranslations: DataViewControlTranslations = {}
-  @ViewChild(DataView) dv: DataView | undefined
   @ViewChild(FileUpload) fileUploader: FileUpload | undefined
+  @ViewChild(DataView) dv: DataView | undefined
+  public dataViewControlsTranslations$: Observable<DataViewControlTranslations> | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
@@ -294,7 +294,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       )
   }
   private prepareDialogTranslations(): void {
-    this.translate
+    this.dataViewControlsTranslations$ = this.translate
       .get([
         'APP.DISPLAY_NAME',
         'APP.TYPE',
@@ -306,7 +306,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       ])
       .pipe(
         map((data) => {
-          this.dataViewControlsTranslations = {
+          return {
             sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
             filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
             filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.DISPLAY_NAME'] + ', ' + data['APP.TYPE'],
@@ -315,10 +315,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
               descending: data['ACTIONS.SEARCH.SORT_DIRECTION_DESC']
             },
             sortDropdownTooltip: data['ACTIONS.SEARCH.SORT_BY']
-          }
+          } as DataViewControlTranslations
         })
       )
-      .subscribe()
 
     this.actions$ = this.translate
       .get([

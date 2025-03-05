@@ -2,9 +2,10 @@ import { Component, ElementRef, NO_ERRORS_SCHEMA, Inject, Input, OnChanges, View
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
-import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { Table } from 'primeng/table'
+import { SelectItem } from 'primeng/api'
 
 import { UserService } from '@onecx/angular-integration-interface'
 import { PortalCoreModule, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
@@ -25,11 +26,12 @@ import {
   UserAssignmentPageResult
 } from '../../shared/generated'
 import { SharedModule } from '../../shared/shared.module'
-import { sortByLocale } from '../../shared/utils'
+import { sortByLocale, sortSelectItemsByLabel } from '../../shared/utils'
 import { environment } from '../../../environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
+export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
 
 @Component({
   selector: 'app-user-roles-permissions',
@@ -64,10 +66,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
 
   public userAssignments$: Observable<UserAssignment[]> = of([])
+  public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
+  public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
+  public loadingIamRoles = false
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -79,6 +84,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.userService.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
   }
+
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
     this.loading = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
@@ -198,5 +204,41 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         value: null
       }
     ]
+  }
+  // activate TAB
+  public onTabChange($event: any, items: UserAssignment[]) {
+    if ($event.index === 2) this.iamRoles$ = this.getIamRoles(this.extractFilterItems(items, 'roleName'))
+  }
+
+  private getIamRoles(assignedRoles: string[]): Observable<ExtendedSelectItem[]> {
+    this.loadingIamRoles = false
+    this.exceptionKeyIamRoles = undefined
+    console.log('getIamRoles user => ' + this.userId)
+
+    // on admin view the userId is set, otherwise the me services are used
+    if (this.userId) {
+      this.loadingIamRoles = false
+      return of([])
+      // get other user stuff
+    } else {
+      return this.userApi.getTokenRoles().pipe(
+        map((data) => {
+          const roles: ExtendedSelectItem[] = []
+          data.forEach((role) =>
+            roles.push({
+              label: role,
+              isUserAssignedRole: assignedRoles.includes(role)
+            } as ExtendedSelectItem)
+          )
+          return roles.sort(sortSelectItemsByLabel)
+        }),
+        catchError((err) => {
+          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+          console.error('getTokenRoles', err)
+          return of([])
+        }),
+        finalize(() => (this.loadingIamRoles = false))
+      )
+    }
   }
 }

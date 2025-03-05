@@ -2,9 +2,11 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRoute, provideRouter, Router } from '@angular/router'
+import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
+
 import { DataViewModule } from 'primeng/dataview'
 import { FileSelectEvent } from 'primeng/fileupload'
 
@@ -48,8 +50,11 @@ const permission: Permission = {
 describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
-  let mockActivatedRoute: ActivatedRoute
   const mockRouter = { navigate: jasmine.createSpy('navigate') }
+  const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' } }
+  const mockActivatedRoute: Partial<ActivatedRoute> = {
+    snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
+  }
 
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
@@ -58,7 +63,7 @@ describe('AppSearchComponent', () => {
     importAssignments: jasmine.createSpy('importAssignments').and.returnValue(of({})),
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
   beforeEach(waitForAsync(() => {
@@ -103,24 +108,46 @@ describe('AppSearchComponent', () => {
     appApiSpy.searchApplications.and.returnValue(of({}) as any)
   })
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
+  describe('initialize', () => {
+    it('should create', () => {
+      expect(component).toBeTruthy()
+    })
 
-  it('should add filters when component is initialized', (done) => {
-    component.typeFilterValue$.next('filterValue')
-    component.textFilterValue$.next('textFilterValue')
-
-    component.filters$.subscribe({
-      next: (filters) => {
-        expect(filters).toContain(
-          jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', mode: 'equals' })
-        )
-        expect(filters).toContain(
-          jasmine.objectContaining({ columnId: 'displayName', value: 'textFilterValue', mode: 'contains' })
-        )
-        done()
+    it('dataview translations', (done) => {
+      const translationData = {
+        'ACTIONS.SEARCH.SORT_BY': 'sortBy'
       }
+      const translateService = TestBed.inject(TranslateService)
+      spyOn(translateService, 'get').and.returnValue(of(translationData))
+
+      component.ngOnInit()
+
+      component.dataViewControlsTranslations$?.subscribe({
+        next: (data) => {
+          if (data) {
+            expect(data.sortDropdownTooltip).toEqual('sortBy')
+          }
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should add filters when component is initialized', (done) => {
+      component.typeFilterValue$.next('filterValue')
+      component.textFilterValue$.next('textFilterValue')
+
+      component.filters$.subscribe({
+        next: (filters) => {
+          expect(filters).toContain(
+            jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', mode: 'equals' })
+          )
+          expect(filters).toContain(
+            jasmine.objectContaining({ columnId: 'displayName', value: 'textFilterValue', mode: 'contains' })
+          )
+          done()
+        }
+      })
     })
   })
 
@@ -391,10 +418,10 @@ describe('AppSearchComponent', () => {
     const product: App = { appId: 'appId', appType: 'PRODUCT' }
 
     component.onAppClick(app)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
 
     component.onAppClick(product)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
   })
 
   describe('onQuickFilterChange', () => {

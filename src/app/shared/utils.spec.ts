@@ -5,7 +5,7 @@ import {
   limitText,
   copyToClipboard,
   forceFormValidation,
-  dropDownSortItemsByLabel,
+  sortSelectItemsByLabel,
   dropDownGetLabelByValue,
   sortByLocale
 } from './utils'
@@ -60,14 +60,14 @@ describe('util functions', () => {
     })
   })
 
-  describe('dropDownSortItemsByLabel', () => {
+  describe('sortSelectItemsByLabel', () => {
     it('should correctly sort items by label', () => {
       const items: SelectItem[] = [
         { label: 'label2', value: 2 },
         { label: 'label1', value: 1 }
       ]
 
-      const sortedItems = items.sort(dropDownSortItemsByLabel)
+      const sortedItems = items.sort(sortSelectItemsByLabel)
 
       expect(sortedItems[0].label).toEqual('label1')
     })
@@ -78,7 +78,7 @@ describe('util functions', () => {
         { label: 'label1', value: 2 }
       ]
 
-      const sortedItems = items.sort(dropDownSortItemsByLabel)
+      const sortedItems = items.sort(sortSelectItemsByLabel)
 
       expect(sortedItems[0].label).toEqual(undefined)
     })

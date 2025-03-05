@@ -89,7 +89,7 @@
         "OK": "Die Berechtigungen wurden erfolgreich importiert",
         "NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht importiert."
       },
-      "VALIDATION_RESULT": "Die Datei wurde geprüft."
+      "VALIDATION.RESULT": "Die Datei wurde geprüft."
     },
     "NAVIGATION": {
       "CLOSE": "Schließen",
@@ -278,26 +278,16 @@
       "SAVE.TOOLTIP": "Augewählte Rollen übernehmen"
     }
   },
-  "VALIDATION": {
-    "HINTS": {
-      "FORMAT_URL": "Format: "
-    },
-    "ERRORS": {
-      "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
-      "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
-      "ROLE.CREATE_ALREADY_EXISTS": "Rolle konnte nicht erstellt werden, da eine Rolle mit diesem Namen bereits existiert.",
-      "ROLE.EDIT_ALREADY_EXISTS": "Rolle konnte nicht geändert werden, da eine Rolle mit diesem Namen bereits existiert.",
-      "INTERNAL_ERROR": "Interner Fehler",
-      "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
-      "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
-      "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
-      "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
-    }
+  "IAM_ROLES": {
+    "TOKEN_ROLES": "Diese Rollen wurden aus dem Token extrahiert."
   },
   "USER_PERMISSIONS": {
     "TABS": {
       "ROLES_N_MORE": "Rollen & Applikationen",
       "ROLES_N_MORE.TOOLTIP": "Zugewiesene Rollen und Applikationen mit Berechtigungen",
+      "IAM_ROLES": "IAM Rollen",
+      "IAM_ROLES.TOOLTIP": "Zugewiesene Rollen im IAM (Identity Access Management)",
+      "IAM_ROLES.USER_ASSIGNED": "Zugewiesene Rolle im Permission Management",
       "ROLE.TITLE": "Rolle: ",
       "ROLES.TITLE": "Rollen: ",
       "ROLES.FILTER": "Rollenname",
@@ -327,6 +317,22 @@
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",
       "PERMISSIONS_REFRESH_ERROR": "Unbekanntes Problem beim Aktualisieren von Berechtigungen"
+    }
+  },
+  "VALIDATION": {
+    "HINTS": {
+      "FORMAT_URL": "Format: "
+    },
+    "ERRORS": {
+      "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
+      "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
+      "ROLE.CREATE_ALREADY_EXISTS": "Rolle konnte nicht erstellt werden, da eine Rolle mit diesem Namen bereits existiert.",
+      "ROLE.EDIT_ALREADY_EXISTS": "Rolle konnte nicht geändert werden, da eine Rolle mit diesem Namen bereits existiert.",
+      "INTERNAL_ERROR": "Interner Fehler",
+      "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
+      "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
+      "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
+      "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
     }
   },
   "EXCEPTIONS": {

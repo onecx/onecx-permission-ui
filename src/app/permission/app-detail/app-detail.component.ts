@@ -32,7 +32,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { dropDownSortItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
+import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
   isProduct: boolean
@@ -448,7 +448,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.displayName, value: product.productName })
       })
-      this.filterProductItems.sort(dropDownSortItemsByLabel)
+      this.filterProductItems.sort(sortSelectItemsByLabel)
     }
   }
 
@@ -474,7 +474,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
-    this.filterAppItems.sort(dropDownSortItemsByLabel)
+    this.filterAppItems.sort(sortSelectItemsByLabel)
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map

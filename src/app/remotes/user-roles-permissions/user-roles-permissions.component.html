@@ -9,20 +9,7 @@
     {{ displayName }}
   </div>
 
-  <p-message
-    *ngIf="exceptionKey"
-    id="apm_user_assignments_exception"
-    severity="error"
-    [text]="exceptionKey | translate"
-  ></p-message>
-  <p-message
-    *ngIf="loading"
-    id="apm_user_assignments_loading"
-    severity="info"
-    [text]="'ACTIONS.LOADING' | translate"
-  ></p-message>
-
-  <p-tabView *ngIf="!(exceptionKey || loading)">
+  <p-tabView (onChange)="onTabChange($event, items)">
     <p-tabPanel id="apm_user_assignments">
       <ng-template pTemplate="header">
         <span
@@ -33,7 +20,23 @@
           {{ 'USER_PERMISSIONS.TABS.PERMISSIONS' | translate }}
         </span>
       </ng-template>
+      <p-message
+        *ngIf="loading"
+        id="apm_user_assignments_loading"
+        severity="info"
+        styleClass="m-3 p-2"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
+      <p-message
+        *ngIf="exceptionKey"
+        id="apm_user_assignments_exception"
+        severity="error"
+        styleClass="m-3 p-2"
+        [text]="exceptionKey | translate"
+      ></p-message>
+
       <p-table
+        *ngIf="!(exceptionKey || loading)"
         #permissionTable
         id="apm_user_assignments_table"
         [columns]="columns"
@@ -172,7 +175,7 @@
     </p-tabPanel>
 
     <!-- ROLES & MORE -->
-    <p-tabPanel id="apm_user_overview_roles_and_apps" *ngIf="!exceptionKey && !loading">
+    <p-tabPanel id="apm_user_roles_and_apps" *ngIf="!exceptionKey && !loading">
       <ng-template pTemplate="header">
         <span
           [pTooltip]="'USER_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"
@@ -185,53 +188,115 @@
 
       <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
         <!-- ROLES -->
-        <ng-container *ngIf="extractFilterItems(items, 'roleName') as roles">
-          <div class="flex flex-column row-gap-2">
-            <div
-              class="font-bold"
-              [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
-            </div>
-            <p-listbox
-              id="apm_user_roles_list"
-              [listStyle]="{ 'max-height': '300px' }"
-              [options]="roles"
-              [filter]="true"
-              [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
-              [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
-            />
+        <div *ngIf="extractFilterItems(items, 'roleName') as roles" class="flex flex-column row-gap-2">
+          <div
+            class="font-bold"
+            [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+            {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
           </div>
-        </ng-container>
+          <p-listbox
+            id="apm_user_roles_list"
+            [listStyle]="{ 'max-height': '300px' }"
+            [options]="roles"
+            [filter]="true"
+            [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
+            [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
+          />
+        </div>
 
         <!-- PRODUCTS -->
-        <ng-container *ngIf="extractFilterItems(items, 'productName') as products">
-          <div *ngIf="products.length === 1">
-            <div id="apm_user_products_one" class="font-bold">
-              {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products[0] }}
-            </div>
+        <div *ngIf="extractFilterItems(items, 'productName') as products" class="flex flex-column row-gap-2">
+          <div
+            class="font-bold"
+            [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+            {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
           </div>
-          <div *ngIf="products.length > 1" class="flex flex-column row-gap-2">
-            <div
-              class="font-bold"
-              [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
-            </div>
-            <p-listbox
-              id="apm_user_products_list"
-              [listStyle]="{ 'max-height': '300px' }"
-              [options]="products"
-              [filter]="true"
-              [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
-              [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
-            />
+          <p-listbox
+            id="apm_user_products_list"
+            [listStyle]="{ 'max-height': '300px' }"
+            [options]="products"
+            [filter]="true"
+            [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
+            [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
+          />
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- IAM ROLES -->
+    <p-tabPanel id="apm_user_iam_roles" *ngIf="!exceptionKey && !loading">
+      <ng-template pTemplate="header">
+        <span
+          [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ 'USER_PERMISSIONS.TABS.IAM_ROLES' | translate }}
+        </span>
+      </ng-template>
+
+      <p-message
+        *ngIf="loadingIamRoles"
+        id="apm_user_iam_roles_loading"
+        severity="info"
+        styleClass="m-3 p-2"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
+      <p-message
+        *ngIf="exceptionKeyIamRoles"
+        id="apm_user_iam_roles_exception"
+        severity="error"
+        styleClass="m-3 p-2"
+        [text]="exceptionKeyIamRoles | translate"
+      ></p-message>
+
+      <div
+        *ngIf="!exceptionKeyIamRoles && !loadingIamRoles"
+        class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4"
+      >
+        <!-- ROLES -->
+        <div *ngIf="iamRoles$ | async as iamRoles" class="flex flex-column row-gap-2">
+          <div
+            class="font-bold"
+            [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+            {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ iamRoles.length }}
           </div>
-        </ng-container>
+          <p-listbox
+            id="apm_user_iam_roles_list"
+            [listStyle]="{ 'max-height': '300px' }"
+            [options]="iamRoles"
+            [filter]="true"
+            [filterFields]="['label']"
+            [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
+            [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
+            ><ng-template let-role pTemplate="item">
+              <div
+                class="flex align-items-center gap-2"
+                [pTooltip]="
+                  !role.isUserAssignedRole ? '' : ('USER_PERMISSIONS.TABS.IAM_ROLES.USER_ASSIGNED' | translate)
+                "
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              >
+                <span
+                  class="pi text-primary font-bold cursor-auto"
+                  [ngClass]="{ 'pi-check': role.isUserAssignedRole }"
+                  style="width: 18px"
+                ></span>
+                <div class="cursor-auto">{{ role.label }}</div>
+              </div>
+            </ng-template>
+          </p-listbox>
+        </div>
       </div>
     </p-tabPanel>
   </p-tabView>
