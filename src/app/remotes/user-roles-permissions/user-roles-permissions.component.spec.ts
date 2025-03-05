@@ -1,18 +1,18 @@
 import { ElementRef } from '@angular/core'
-import { AsyncPipe, CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { Table, TableModule } from 'primeng/table'
+import { AsyncPipe, CommonModule } from '@angular/common'
+import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
 import { of, ReplaySubject, throwError } from 'rxjs'
+import { Table, TableModule } from 'primeng/table'
 
 import { AppConfigService } from '@onecx/portal-integration-angular'
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 
-import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
-import { provideHttpClient } from '@angular/common/http'
+import { OneCXUserRolesPermissionsComponent, ExtendedSelectItem } from './user-roles-permissions.component'
 
 const userAssignments: UserAssignment[] = [
   {
@@ -33,14 +33,15 @@ class MockTable {
   filterGlobal(value: string, mode: string) {}
 }
 
-describe('OneCXUserRolesPermissionsComponent', () => {
+fdescribe('OneCXUserRolesPermissionsComponent', () => {
   let component: OneCXUserRolesPermissionsComponent
   let fixture: ComponentFixture<OneCXUserRolesPermissionsComponent>
 
-  const userServiceSpy = {
-    getUserAssignments: jasmine.createSpy('getUserAssignments').and.returnValue(of({ stream: userAssignments }))
+  const userApiSpy = {
+    getUserAssignments: jasmine.createSpy('getUserAssignments').and.returnValue(of({ stream: userAssignments })),
+    getTokenRoles: jasmine.createSpy('getTokenRoles').and.returnValue(of([]))
   }
-  const assgnmtApiSpy = {
+  const assApiSpy = {
     searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
 
@@ -60,7 +61,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        { provide: UserAPIService, useValue: userServiceSpy },
+        { provide: UserAPIService, useValue: userApiSpy },
         { provide: Router, useValue: routerMock },
         { provide: Table, useClass: MockTable },
         provideHttpClient(),
@@ -75,8 +76,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         set: {
           imports: [TranslateTestingModule, CommonModule, AsyncPipe],
           providers: [
-            { provide: UserAPIService, useValue: userServiceSpy },
-            { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
+            { provide: UserAPIService, useValue: userApiSpy },
+            { provide: AssignmentAPIService, useValue: assApiSpy },
             { provide: AppConfigService }
           ]
         }
@@ -85,8 +86,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
     baseUrlSubject.next('base_url_mock')
 
-    userServiceSpy.getUserAssignments.calls.reset()
-    assgnmtApiSpy.searchUserAssignments.calls.reset()
+    userApiSpy.getUserAssignments.calls.reset()
+    assApiSpy.searchUserAssignments.calls.reset()
     routerMock.navigateByUrl.calls.reset()
   }))
 
@@ -161,7 +162,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should get another users assignments', () => {
-      assgnmtApiSpy.searchUserAssignments.and.returnValue(of(userAssignments))
+      assApiSpy.searchUserAssignments.and.returnValue(of(userAssignments))
       component.userId = 'id'
 
       component.ngOnChanges()
@@ -173,7 +174,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
     it('should handle error when trying to get another users assignments', () => {
       const errorResponse = { error: 'error', status: 403, statusText: 'No permissions' }
-      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
+      assApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
       component.userId = 'id'
 
@@ -191,7 +192,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         status: 400,
         statusText: 'User does not exist'
       }
-      assgnmtApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
+      assApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
       component.userId = 'id'
 
@@ -204,7 +205,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should get my user assignments', () => {
-      userServiceSpy.getUserAssignments.and.returnValue(of(userAssignments))
+      userApiSpy.getUserAssignments.and.returnValue(of(userAssignments))
       spyOn(console, 'error')
 
       component.ngOnChanges()
@@ -216,7 +217,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
     it('should handle error when trying to get my user assignments', () => {
       const err = { error: 'error' }
-      userServiceSpy.getUserAssignments.and.returnValue(throwError(() => err))
+      userApiSpy.getUserAssignments.and.returnValue(throwError(() => err))
       spyOn(console, 'error')
 
       component.ngOnChanges()
@@ -372,6 +373,45 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       component.permissionTable = undefined
 
       expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
+    })
+  })
+
+  describe('iam roles', () => {
+    it('should getting my iam roles from token - successful', (done) => {
+      component.userId = undefined
+      userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2', 'role3']))
+
+      component.onTabChange({ index: 2 }, userAssignments)
+
+      component.iamRoles$.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(3)
+          expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
+          expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
+          expect(data[2]).toEqual({ label: 'role3', isUserAssignedRole: false } as ExtendedSelectItem)
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should getting my iam roles from token - failed', (done) => {
+      component.userId = undefined
+      const errorResponse = { status: 403, statusText: 'No perissions to see roles from your token' }
+      userApiSpy.getTokenRoles.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component.onTabChange({ index: 2 }, userAssignments)
+
+      component.iamRoles$.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(0)
+          expect(console.error).toHaveBeenCalledWith('getTokenRoles', errorResponse)
+          expect(component.exceptionKeyIamRoles).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
+          done()
+        },
+        error: done.fail
+      })
     })
   })
 })

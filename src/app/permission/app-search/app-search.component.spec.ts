@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { ActivatedRoute, provideRouter, Router } from '@angular/router'
+import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
@@ -50,8 +50,11 @@ const permission: Permission = {
 describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
-  let mockActivatedRoute: ActivatedRoute
   const mockRouter = { navigate: jasmine.createSpy('navigate') }
+  const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' } }
+  const mockActivatedRoute: Partial<ActivatedRoute> = {
+    snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
+  }
 
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
@@ -415,10 +418,10 @@ describe('AppSearchComponent', () => {
     const product: App = { appId: 'appId', appType: 'PRODUCT' }
 
     component.onAppClick(app)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
 
     component.onAppClick(product)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: undefined })
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
   })
 
   describe('onQuickFilterChange', () => {

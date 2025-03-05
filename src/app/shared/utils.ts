@@ -34,7 +34,7 @@ export function forceFormValidation(form: AbstractControl): void {
  */
 export type DropDownChangeEvent = MouseEvent & { value: any }
 
-export function dropDownSortItemsByLabel(a: SelectItem, b: SelectItem): number {
+export function sortSelectItemsByLabel(a: SelectItem, b: SelectItem): number {
   return (a.label ? a.label.toUpperCase() : '').localeCompare(b.label ? b.label.toUpperCase() : '')
 }
 export function dropDownGetLabelByValue(ddArray: SelectItem[], val: string): string | undefined {

@@ -26,12 +26,12 @@ import {
   UserAssignmentPageResult
 } from '../../shared/generated'
 import { SharedModule } from '../../shared/shared.module'
-import { sortByLocale } from '../../shared/utils'
+import { sortByLocale, sortSelectItemsByLabel } from '../../shared/utils'
 import { environment } from '../../../environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
-type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
+export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
 
 @Component({
   selector: 'app-user-roles-permissions',
@@ -210,7 +210,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     if ($event.index === 2) this.iamRoles$ = this.getIamRoles(this.extractFilterItems(items, 'roleName'))
   }
 
-  public getIamRoles(assignedRoles: string[]): Observable<ExtendedSelectItem[]> {
+  private getIamRoles(assignedRoles: string[]): Observable<ExtendedSelectItem[]> {
     this.loadingIamRoles = false
     this.exceptionKeyIamRoles = undefined
     console.log('getIamRoles user => ' + this.userId)
@@ -230,7 +230,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
               isUserAssignedRole: assignedRoles.includes(role)
             } as ExtendedSelectItem)
           )
-          return roles
+          return roles.sort(sortSelectItemsByLabel)
         }),
         catchError((err) => {
           this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
