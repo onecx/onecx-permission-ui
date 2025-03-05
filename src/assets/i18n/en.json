@@ -89,7 +89,7 @@
         "OK": "Permissions were imported successfully",
         "NOK": "An error has occurred. Permissions were not imported."
       },
-      "VALIDATION_RESULT": "The file has been checked."
+      "VALIDATION.RESULT": "The file has been checked."
     },
     "NAVIGATION": {
       "CLOSE": "Close",
@@ -278,26 +278,16 @@
       "SAVE.TOOLTIP": "Add selected roles"
     }
   },
-  "VALIDATION": {
-    "HINTS": {
-      "FORMAT_URL": "Format: "
-    },
-    "ERRORS": {
-      "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
-      "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
-      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
-      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
-      "INTERNAL_ERROR": "Internal error",
-      "EMPTY_REQUIRED_FIELD": "This field is required.",
-      "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
-      "MINIMUM_LENGTH": "At least {{chars}} characters are required.",
-      "PATTERN_ERROR": "Your input does not match the required pattern"
-    }
+  "IAM_ROLES": {
+    "TOKEN_ROLES": "These Roles was extracted from Token."
   },
   "USER_PERMISSIONS": {
     "TABS": {
       "ROLES_N_MORE": "Roles & Applications",
       "ROLES_N_MORE.TOOLTIP": "Assigned Roles and Applications with Permissions",
+      "IAM_ROLES": "IAM Roles",
+      "IAM_ROLES.TOOLTIP": "Assigned Roles in IAM (Identity Access Management)",
+      "IAM_ROLES.USER_ASSIGNED": "Assigned Role in Permission Management",
       "ROLE.TITLE": "Role: ",
       "ROLES.TITLE": "Roles: ",
       "ROLES.FILTER": "Role Name",
@@ -327,6 +317,22 @@
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
       "PERMISSIONS_REFRESH_ERROR": "Error while upating Permissions"
+    }
+  },
+  "VALIDATION": {
+    "HINTS": {
+      "FORMAT_URL": "Format: "
+    },
+    "ERRORS": {
+      "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
+      "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
+      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
+      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
+      "INTERNAL_ERROR": "Internal error",
+      "EMPTY_REQUIRED_FIELD": "This field is required.",
+      "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
+      "MINIMUM_LENGTH": "At least {{chars}} characters are required.",
+      "PATTERN_ERROR": "Your input does not match the required pattern"
     }
   },
   "EXCEPTIONS": {

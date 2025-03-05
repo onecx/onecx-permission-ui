@@ -46,14 +46,13 @@
         <div class="flex flex-wrap justify-content-between row-gap-1 p-1">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
-              class="slim-selectbutton align-items-start filter-selectbutton"
+              class="slim-selectbutton align-items-start search-criteria-selectbutton"
               [pTooltip]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
               <p-selectButton
                 inputid="apm_app_detail_permission_table_quick_filter"
-                styleClass="data-view-control"
                 [options]="(quickFilterItems$ | async) ?? []"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"

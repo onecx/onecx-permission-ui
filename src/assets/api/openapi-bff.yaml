@@ -782,6 +782,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserRolesPageResult'
+  /user/roles/token:
+    get:
+      x-onecx:
+        permissions:
+          role:
+            - read
+      tags:
+        - user
+      description: get token roles
+      operationId: getTokenRoles
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   /user/assignments:
     post:
       x-onecx:
