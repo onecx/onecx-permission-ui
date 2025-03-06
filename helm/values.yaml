@@ -40,6 +40,8 @@ app:
             EDIT: Edit permission app details
             SEARCH: Search permission apps
             VIEW: View app details
+          IAM_ROLE:
+            VIEW: View iam user roles
           PERMISSION:
             GRANT: Assign or remove a permission to a role
             CREATE: Create permission

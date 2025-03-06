@@ -223,7 +223,7 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
       component.ngOnChanges()
 
       component.userAssignments$.subscribe(() => {
-        expect(console.error).toHaveBeenCalledWith('getUserAssignments():', err)
+        expect(console.error).toHaveBeenCalledWith('getUserAssignments', err)
       })
     })
   })

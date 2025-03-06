@@ -135,7 +135,7 @@
             <a
               tabindex="0"
               [id]="'apm_app_search_data_idx_' + i"
-              class="card px-2 p-1 sm:p-2 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
+              class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
               (click)="onAppClick(app)"
             >
               <div
@@ -146,8 +146,9 @@
                 {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
               </div>
               <div
-                class="text-xs sm:text-sm"
+                class="text-xs sm:text-sm mx-2 sm:mx-4 md:mx-5 lg:mx-6 xl:mx-8"
                 [class.bg-primary]="app.appType === 'WORKSPACE'"
+                [style]="'padding-bottom: 2px; padding-top: 1px;'"
                 [id]="'apm_app_search_data_idx_' + i + '_app_type'"
                 [attr.aria-label]="'APP.TYPE_'.concat(app.appType) | translate"
               >

@@ -1,4 +1,14 @@
-import { Component, ElementRef, NO_ERRORS_SCHEMA, Inject, Input, OnChanges, ViewChild } from '@angular/core'
+import {
+  APP_INITIALIZER,
+  Component,
+  ElementRef,
+  EventEmitter,
+  CUSTOM_ELEMENTS_SCHEMA,
+  Inject,
+  Input,
+  OnChanges,
+  ViewChild
+} from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
@@ -13,6 +23,8 @@ import {
   AngularRemoteComponentsModule,
   BASE_URL,
   RemoteComponentConfig,
+  SLOT_SERVICE,
+  SlotService,
   ocxRemoteComponent,
   ocxRemoteWebcomponent,
   provideTranslateServiceForRoot
@@ -33,6 +45,10 @@ import { environment } from '../../../environments/environment'
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
 export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
 
+export function slotInitializer(slotService: SlotService) {
+  return () => slotService.init()
+}
+
 @Component({
   selector: 'app-user-roles-permissions',
   templateUrl: './user-roles-permissions.component.html',
@@ -40,10 +56,9 @@ export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
   standalone: true,
   imports: [AngularRemoteComponentsModule, CommonModule, PortalCoreModule, RouterModule, TranslateModule, SharedModule],
   providers: [
-    {
-      provide: BASE_URL,
-      useValue: new ReplaySubject<string>(1)
-    },
+    { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
+    { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
+    { provide: SLOT_SERVICE, useExisting: SlotService },
     provideTranslateServiceForRoot({
       isolate: true,
       loader: {
@@ -53,7 +68,7 @@ export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
       }
     })
   ],
-  schemas: [NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() userId: string | undefined = undefined
@@ -66,23 +81,40 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
 
   public userAssignments$: Observable<UserAssignment[]> = of([])
+  private userAssignedRoles: string[] = []
   public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
+  public iamRoles: string[] = []
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
   public loadingIamRoles = false
+  public selectedTabIndex = 0
+  public hasViewIamRolePermission = false
+
+  public isComponentDefined$: Observable<boolean> | undefined
+  public slotName = 'onecx-permission-iam-user-roles'
+  public roleListEmitter = new EventEmitter<string[]>()
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
-    private readonly userService: UserService,
+    private readonly user: UserService,
+    private readonly slotService: SlotService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
     private readonly translate: TranslateService
   ) {
-    this.userService.lang$.subscribe((lang) => this.translate.use(lang))
+    this.user.lang$.subscribe((lang) => this.translate.use(lang))
+    // this.hasViewIamRolePermission = this.user.hasPermission('IAM_ROLE#VIEW')
     this.columns = this.prepareColumn()
+    if (!this.userId) {
+      this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
+      this.roleListEmitter.subscribe((list) => {
+        this.iamRoles = list
+        this.iamRoles$ = this.provideIamRoles()
+      })
+    }
   }
 
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
@@ -101,6 +133,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public onReload() {
+    this.iamRoles = []
+    this.userAssignedRoles = []
     this.userAssignments$ = this.searchUserAssignments()
   }
 
@@ -131,7 +165,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         }),
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
-          console.error('getUserAssignments():', err)
+          console.error('getUserAssignments', err)
           return of([])
         }),
         finalize(() => (this.loading = false))
@@ -206,28 +240,36 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     ]
   }
   // activate TAB
-  public onTabChange($event: any, items: UserAssignment[]) {
-    if ($event.index === 2) this.iamRoles$ = this.getIamRoles(this.extractFilterItems(items, 'roleName'))
+  public onTabChange($event: any, uas: UserAssignment[]) {
+    if ($event.index === 2) {
+      this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
+      this.iamRoles$ = this.provideIamRoles()
+    }
   }
 
-  private getIamRoles(assignedRoles: string[]): Observable<ExtendedSelectItem[]> {
+  private provideIamRoles(): Observable<ExtendedSelectItem[]> {
     this.loadingIamRoles = false
     this.exceptionKeyIamRoles = undefined
-    console.log('getIamRoles user => ' + this.userId)
+    const roles: ExtendedSelectItem[] = []
 
-    // on admin view the userId is set, otherwise the me services are used
+    // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
     if (this.userId) {
       this.loadingIamRoles = false
-      return of([])
+      this.iamRoles?.forEach((role) =>
+        roles.push({
+          label: role,
+          isUserAssignedRole: this.userAssignedRoles.includes(role)
+        } as ExtendedSelectItem)
+      )
+      return of(roles)
       // get other user stuff
     } else {
       return this.userApi.getTokenRoles().pipe(
         map((data) => {
-          const roles: ExtendedSelectItem[] = []
           data.forEach((role) =>
             roles.push({
               label: role,
-              isUserAssignedRole: assignedRoles.includes(role)
+              isUserAssignedRole: this.userAssignedRoles.includes(role)
             } as ExtendedSelectItem)
           )
           return roles.sort(sortSelectItemsByLabel)
