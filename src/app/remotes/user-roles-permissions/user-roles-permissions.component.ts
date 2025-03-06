@@ -4,6 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
   Inject,
   Input,
   OnChanges,
@@ -68,7 +69,7 @@ export function slotInitializer(slotService: SlotService) {
       }
     })
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() userId: string | undefined = undefined
