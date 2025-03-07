@@ -72,7 +72,7 @@ export function slotInitializer(slotService: SlotService) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
-  @Input() userId: string | undefined = undefined
+  @Input() public userId: string | undefined = undefined
   @Input() displayName: string | undefined = undefined
   @Input() active: boolean | undefined = undefined // this is set actively on call the component
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
