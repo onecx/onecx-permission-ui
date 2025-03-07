@@ -55,7 +55,6 @@ export type ImportError = {
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
-  public actions$: Observable<Action[]> | undefined
   // data
   public apps$!: Observable<(App & RowListGridData)[]>
   public filteredApps$!: Observable<(App & RowListGridData)[]>
@@ -65,6 +64,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
   // dialog control
+  public actions$: Observable<Action[]> | undefined
   public loading = false
   public exceptionKey: string | undefined = undefined
   public viewMode = 'grid'

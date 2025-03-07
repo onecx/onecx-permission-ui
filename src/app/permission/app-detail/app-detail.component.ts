@@ -236,6 +236,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.location.back()
   }
   public onReload(): void {
+    this.onClearTableFilter()
     this.loadData()
   }
   public onExport(): void {
