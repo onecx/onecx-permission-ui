@@ -8,11 +8,15 @@ import { of, ReplaySubject, throwError } from 'rxjs'
 import { Table, TableModule } from 'primeng/table'
 
 import { AppConfigService } from '@onecx/portal-integration-angular'
-import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
+import { BASE_URL, RemoteComponentConfig, SlotService } from '@onecx/angular-remote-components'
 
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
-import { OneCXUserRolesPermissionsComponent, ExtendedSelectItem } from './user-roles-permissions.component'
+import {
+  OneCXUserRolesPermissionsComponent,
+  ExtendedSelectItem,
+  slotInitializer
+} from './user-roles-permissions.component'
 
 const userAssignments: UserAssignment[] = [
   {
@@ -33,7 +37,7 @@ class MockTable {
   filterGlobal(value: string, mode: string) {}
 }
 
-fdescribe('OneCXUserRolesPermissionsComponent', () => {
+describe('OneCXUserRolesPermissionsComponent', () => {
   let component: OneCXUserRolesPermissionsComponent
   let fixture: ComponentFixture<OneCXUserRolesPermissionsComponent>
 
@@ -44,7 +48,6 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
   const assApiSpy = {
     searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
-
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
   let baseUrlSubject: ReplaySubject<any>
 
@@ -96,6 +99,7 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
     component = fixture.componentInstance
     component.active = true
     fixture.detectChanges()
+    component.roleListEmitter.emit(['role1', 'role2'])
   }
 
   it('should create with correct data', () => {
@@ -129,6 +133,21 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
         expect(item).toEqual('base_url')
         done()
       })
+    })
+  })
+
+  describe('slotInitializer', () => {
+    let slotService: jasmine.SpyObj<SlotService>
+
+    beforeEach(() => {
+      slotService = jasmine.createSpyObj('SlotService', ['init'])
+    })
+
+    it('should call SlotService.init', () => {
+      const initializer = slotInitializer(slotService)
+      initializer()
+
+      expect(slotService.init).toHaveBeenCalled()
     })
   })
 
@@ -223,7 +242,7 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
       component.ngOnChanges()
 
       component.userAssignments$.subscribe(() => {
-        expect(console.error).toHaveBeenCalledWith('getUserAssignments():', err)
+        expect(console.error).toHaveBeenCalledWith('getUserAssignments', err)
       })
     })
   })
@@ -408,6 +427,23 @@ fdescribe('OneCXUserRolesPermissionsComponent', () => {
           expect(data.length).toBe(0)
           expect(console.error).toHaveBeenCalledWith('getTokenRoles', errorResponse)
           expect(component.exceptionKeyIamRoles).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should getting my iam roles from iam - successful', (done) => {
+      component.userId = 'userid'
+      component.iamRoles = ['role1', 'role2']
+
+      component.onTabChange({ index: 2 }, userAssignments)
+
+      component.iamRoles$.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(2)
+          expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
+          expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
           done()
         },
         error: done.fail
