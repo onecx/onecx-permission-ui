@@ -593,7 +593,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
     this.filterAppValue = undefined
     this.onSortPermissionTable()
-    this.permissionTable?.clear()
+    if (this.permissionTable?.clear) this.permissionTable?.clear()
   }
   public onSortPermissionTable() {
     // reset icons
