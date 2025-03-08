@@ -73,8 +73,8 @@ export function slotInitializer(slotService: SlotService) {
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() public userId: string | undefined = undefined
-  @Input() displayName: string | undefined = undefined
-  @Input() active: boolean | undefined = undefined // this is set actively on call the component
+  @Input() public displayName: string | undefined = undefined
+  @Input() public active: boolean | undefined = undefined // this is set actively on call the component
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
@@ -92,8 +92,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public loading = false
   public loadingIamRoles = false
   public selectedTabIndex = 0
-  public hasViewIamRolePermission = false
-
+  // manage slot to get roles from iam
   public isComponentDefined$: Observable<boolean> | undefined
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<string[]>()
@@ -107,17 +106,18 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     private readonly translate: TranslateService
   ) {
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
-    // this.hasViewIamRolePermission = this.user.hasPermission('IAM_ROLE#VIEW')
     this.columns = this.prepareColumn()
     if (!this.userId) {
+      // check if the iam component is assigned to the slot
       this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
+      // receive data from remote component
       this.roleListEmitter.subscribe((list) => {
         this.iamRoles = list
         this.iamRoles$ = this.provideIamRoles()
       })
     }
   }
-
+  // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
     this.loading = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
@@ -160,9 +160,10 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           finalize(() => (this.loading = false))
         )
     } else {
+      // on user view get my permissions
       return this.userApi.getUserAssignments({ userCriteria: { pageSize: 1000 } }).pipe(
         map((pageResult: UserAssignmentPageResult) => {
-          return pageResult.stream ?? []
+          return pageResult.stream?.sort(this.sortUserAssignments) ?? []
         }),
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
@@ -185,6 +186,51 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       (a.resource ? a.resource.toUpperCase() : '').localeCompare(b.resource ? b.resource.toUpperCase() : '') ||
       (a.action ? a.action.toUpperCase() : '').localeCompare(b.action ? b.action.toUpperCase() : '')
     )
+  }
+
+  // activate TAB
+  public onTabChange($event: any, uas: UserAssignment[]) {
+    if ($event.index === 2) {
+      this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
+      this.iamRoles$ = this.provideIamRoles()
+    }
+  }
+
+  private provideIamRoles(): Observable<ExtendedSelectItem[]> {
+    this.exceptionKeyIamRoles = undefined
+    const roles: ExtendedSelectItem[] = []
+
+    // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
+    if (this.userId) {
+      this.loadingIamRoles = false
+      this.iamRoles?.forEach((role) =>
+        roles.push({
+          label: role,
+          isUserAssignedRole: this.userAssignedRoles.includes(role)
+        } as ExtendedSelectItem)
+      )
+      return of(roles)
+      // get other user stuff
+    } else {
+      this.loadingIamRoles = true
+      return this.userApi.getTokenRoles().pipe(
+        map((data) => {
+          data.forEach((role) =>
+            roles.push({
+              label: role,
+              isUserAssignedRole: this.userAssignedRoles.includes(role)
+            } as ExtendedSelectItem)
+          )
+          return roles.sort(sortSelectItemsByLabel)
+        }),
+        catchError((err) => {
+          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+          console.error('getTokenRoles', err)
+          return of([])
+        }),
+        finalize(() => (this.loadingIamRoles = false))
+      )
+    }
   }
 
   /* Extract column values to fill drop down filter
@@ -239,49 +285,5 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         value: null
       }
     ]
-  }
-  // activate TAB
-  public onTabChange($event: any, uas: UserAssignment[]) {
-    if ($event.index === 2) {
-      this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
-      this.iamRoles$ = this.provideIamRoles()
-    }
-  }
-
-  private provideIamRoles(): Observable<ExtendedSelectItem[]> {
-    this.loadingIamRoles = false
-    this.exceptionKeyIamRoles = undefined
-    const roles: ExtendedSelectItem[] = []
-
-    // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
-    if (this.userId) {
-      this.loadingIamRoles = false
-      this.iamRoles?.forEach((role) =>
-        roles.push({
-          label: role,
-          isUserAssignedRole: this.userAssignedRoles.includes(role)
-        } as ExtendedSelectItem)
-      )
-      return of(roles)
-      // get other user stuff
-    } else {
-      return this.userApi.getTokenRoles().pipe(
-        map((data) => {
-          data.forEach((role) =>
-            roles.push({
-              label: role,
-              isUserAssignedRole: this.userAssignedRoles.includes(role)
-            } as ExtendedSelectItem)
-          )
-          return roles.sort(sortSelectItemsByLabel)
-        }),
-        catchError((err) => {
-          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-          console.error('getTokenRoles', err)
-          return of([])
-        }),
-        finalize(() => (this.loadingIamRoles = false))
-      )
-    }
   }
 }
