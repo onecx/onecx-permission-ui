@@ -4,6 +4,7 @@
 @include tabview-reduce-padding;
 @include listbox-zebra-rows;
 @include listbox-layout;
+@include dialog-footer-buttons;
 
 :host {
   .border-permission-group {
