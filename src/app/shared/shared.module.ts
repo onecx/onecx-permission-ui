@@ -25,9 +25,10 @@ import { ToastModule } from 'primeng/toast'
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
 import { LabelResolver } from './label.resolver'
+import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
 
 @NgModule({
-  declarations: [],
+  declarations: [OcxChipComponent],
   imports: [
     PortalCoreModule.forMicroFrontend(),
     AutoCompleteModule,
@@ -71,7 +72,8 @@ import { LabelResolver } from './label.resolver'
     TableModule,
     TabViewModule,
     ToastModule,
-    TranslateModule
+    TranslateModule,
+    OcxChipComponent
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [

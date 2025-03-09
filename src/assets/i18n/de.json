@@ -213,6 +213,8 @@
     "TYPE_APP": "App",
     "TYPE_PRODUCT": "Applikation",
     "TYPE_WORKSPACE": "Workspace",
+    "TYPE_PRODUCT.TOOLTIP": "App-Typ: Applikation - umfasst alle Microservices der Applikation",
+    "TYPE_WORKSPACE.TOOLTIP": "App-Typ: Workspace - umfasst alle im Workspace registriete Applikationen",
     "APPS": "Anzahl Apps",
     "DELETE": "App einschließlich aller Berechtigungen und Rollen löschen",
     "DELETE_HEADER": "App löschen",

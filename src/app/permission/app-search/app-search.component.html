@@ -139,21 +139,20 @@
               (click)="onAppClick(app)"
             >
               <div
+                [id]="'apm_app_search_data_idx_' + i + '_name'"
                 class="font-bold text-base md:text-lg text-responsive"
                 [id]="'apm_app_search_data_idx_' + i + '_app_name'"
                 [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
               >
                 {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
               </div>
-              <div
-                class="text-xs sm:text-sm mx-2 sm:mx-4 md:mx-5 lg:mx-6 xl:mx-8 border-round"
-                [class.bg-primary]="app.appType === 'WORKSPACE'"
-                [style]="'padding-bottom: 2px; padding-top: 1px;'"
-                [id]="'apm_app_search_data_idx_' + i + '_app_type'"
-                [attr.aria-label]="'APP.TYPE_'.concat(app.appType) | translate"
-              >
-                {{ 'APP.TYPE_'.concat(app.appType) | translate }}
-              </div>
+              <app-ocx-chip
+                [id]="'apm_app_search_data_idx_' + i + '_type'"
+                class="py-1"
+                [styleClass]="app.appType === 'WORKSPACE' ? 'bg-primary' : ''"
+                [label]="'APP.TYPE_'.concat(app.appType) | translate"
+                [title]="('APP.TYPE_'.concat(app.appType) + '.TOOLTIP') | translate"
+              />
             </a>
           </div>
         </ng-template>
