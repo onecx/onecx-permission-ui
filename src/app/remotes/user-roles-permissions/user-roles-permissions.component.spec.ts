@@ -398,6 +398,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   describe('iam roles', () => {
     it('should getting my iam roles from token - successful', (done) => {
       component.userId = undefined
+      component.loadingIamRoles = false
       userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2', 'role3']))
 
       component.onTabChange({ index: 2 }, userAssignments)

@@ -26,7 +26,7 @@
   <p-tabView
     *ngIf="!(exceptionKey || loading)"
     (onChange)="onTabChange($event, items)"
-    [activeIndex]="selectedTabIndex"
+    [(activeIndex)]="selectedTabIndex"
   >
     <p-tabPanel id="apm_user_assignments">
       <ng-template pTemplate="header">
@@ -257,7 +257,19 @@
         </span>
       </ng-template>
 
-      <ng-container *ngIf="iamRoles$ | async as iamRoles">
+      <!-- start loading if tab is active -->
+      <ng-container *ngIf="selectedTabIndex === 2">
+        <!-- get roles from remote for certain user in admin mode -->
+        <ng-container *ngIf="userId">
+          <ocx-slot
+            *ngIf="isComponentDefined$ | async"
+            [name]="slotName"
+            [inputs]="{ userId: userId }"
+            [outputs]="{ roleList: roleListEmitter }"
+          >
+          </ocx-slot>
+        </ng-container>
+
         <p-message
           *ngIf="loadingIamRoles"
           id="apm_user_iam_roles_loading"
@@ -273,20 +285,9 @@
           [text]="exceptionKeyIamRoles | translate"
         ></p-message>
 
-        <div *ngIf="!(exceptionKeyIamRoles || loadingIamRoles)" class="m-3">
-          <!-- get roles from remote for certain user in admin mode -->
-          <ng-container *ngIf="userId">
-            <ocx-slot
-              *ngIf="isComponentDefined$ | async"
-              [name]="slotName"
-              [inputs]="{ userId: userId }"
-              [outputs]="{ roleList: roleListEmitter }"
-            >
-            </ocx-slot>
-          </ng-container>
-
+        <ng-container *ngIf="iamRoles$ | async as iamRoles">
           <!-- displaying -->
-          <div class="flex flex-row justify-content-start">
+          <div *ngIf="!(exceptionKeyIamRoles || loadingIamRoles)" class="m-3 flex flex-row justify-content-start">
             <div class="flex flex-column row-gap-2">
               <div
                 class="font-bold"
@@ -325,7 +326,7 @@
               </p-listbox>
             </div>
           </div>
-        </div>
+        </ng-container>
       </ng-container>
     </p-tabPanel>
   </p-tabView>

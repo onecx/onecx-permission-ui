@@ -13,6 +13,6 @@
     "src/app/onecx-permission-remote.module.ts",
     "src/app/remotes/user-roles-permissions/user-roles-permissions.component.main.ts"
   ],
-  "include": ["src/**/*.d.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/test.ts", "src/**/*.spec.ts"]
 }

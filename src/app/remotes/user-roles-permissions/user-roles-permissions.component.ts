@@ -3,8 +3,8 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  CUSTOM_ELEMENTS_SCHEMA,
   NO_ERRORS_SCHEMA,
+  CUSTOM_ELEMENTS_SCHEMA,
   Inject,
   Input,
   OnChanges,
@@ -84,14 +84,15 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
   public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public iamRoles: string[] = []
+  public iamRoles: string[] | undefined = undefined
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
-  public loadingIamRoles = false
+  public loadingIamRoles = true
   public selectedTabIndex = 0
+
   // manage slot to get roles from iam
   public isComponentDefined$: Observable<boolean> | undefined
   public slotName = 'onecx-permission-iam-user-roles'
@@ -112,6 +113,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
       // receive data from remote component
       this.roleListEmitter.subscribe((list) => {
+        this.loadingIamRoles = false
         this.iamRoles = list
         this.iamRoles$ = this.provideIamRoles()
       })
@@ -202,7 +204,6 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
     // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
     if (this.userId) {
-      this.loadingIamRoles = false
       this.iamRoles?.forEach((role) =>
         roles.push({
           label: role,
