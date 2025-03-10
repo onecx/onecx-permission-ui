@@ -3,8 +3,8 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  CUSTOM_ELEMENTS_SCHEMA,
   NO_ERRORS_SCHEMA,
+  CUSTOM_ELEMENTS_SCHEMA,
   Inject,
   Input,
   OnChanges,
@@ -192,7 +192,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   // activate TAB
   public onTabChange($event: any, uas: UserAssignment[]) {
-    if ($event.index === 2 && !(this.loadingIamRoles && this.userId)) {
+    if ($event.index === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
       this.iamRoles$ = this.provideIamRoles()
     }
