@@ -51,3 +51,10 @@ app:
             CREATE: Create role
             DELETE: Delete role
             EDIT: Edit role
+    # Slot
+    slot:
+      enabled: true
+      specs:
+        onecx-permission-iam-user-roles:
+          name: 'onecx-permission-iam-user-roles'
+          description: 'Display iam user permissions'
