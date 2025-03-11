@@ -129,13 +129,14 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isIamComponentDefined = def
           this.loadingIamRoles = true
-          if (this.isIamComponentDefined)
+          if (this.isIamComponentDefined) {
             // receive data from remote component
             this.roleListEmitter.subscribe((list) => {
               this.loadingIamRoles = false
               this.iamRoles = list
               this.iamRoles$ = this.provideIamRoles()
             })
+          }
         })
       }
       this.onReload()
