@@ -48,6 +48,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   const assApiSpy = {
     searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
+  const slotServiceSpy = {
+    isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(false))
+  }
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
   let baseUrlSubject: ReplaySubject<any>
 
@@ -64,6 +67,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
+        { provide: SlotService, useValue: slotServiceSpy },
         { provide: UserAPIService, useValue: userApiSpy },
         { provide: Router, useValue: routerMock },
         { provide: Table, useClass: MockTable },
@@ -89,15 +93,17 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
     baseUrlSubject.next('base_url_mock')
 
+    slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     userApiSpy.getUserAssignments.calls.reset()
     assApiSpy.searchUserAssignments.calls.reset()
     routerMock.navigateByUrl.calls.reset()
   }))
 
-  function initializeComponent() {
+  function initializeComponent(id?: string) {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
     component = fixture.componentInstance
     component.active = true
+    component.userId = id
     fixture.detectChanges()
     component.roleListEmitter.emit(['role1', 'role2'])
   }
@@ -175,14 +181,13 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     expect(mockTable.filterGlobal).toHaveBeenCalledWith('test', 'contains')
   })
 
-  describe('searchUserAssignments', () => {
+  describe('search user assignments', () => {
     beforeEach(() => {
-      initializeComponent()
+      initializeComponent('id')
     })
 
     it('should get another users assignments', () => {
       assApiSpy.searchUserAssignments.and.returnValue(of(userAssignments))
-      component.userId = 'id'
 
       component.ngOnChanges()
 
@@ -195,7 +200,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       const errorResponse = { error: 'error', status: 403, statusText: 'No permissions' }
       assApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      component.userId = 'id'
 
       component.ngOnChanges()
 
@@ -213,7 +217,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       }
       assApiSpy.searchUserAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      component.userId = 'id'
 
       component.ngOnChanges()
 
@@ -221,6 +224,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         expect(console.error).toHaveBeenCalledWith('searchUserAssignments', errorResponse)
         expect(component.exceptionKey).toEqual('EXCEPTIONS.NOT_FOUND.USER')
       })
+    })
+  })
+
+  describe('search my user assignments', () => {
+    beforeEach(() => {
+      initializeComponent()
     })
 
     it('should get my user assignments', () => {
@@ -397,7 +406,10 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   describe('iam roles', () => {
     it('should getting my iam roles from token - successful', (done) => {
-      component.userId = undefined
+      initializeComponent()
+
+      component.ngOnChanges()
+
       component.loadingIamRoles = false
       userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2', 'role3']))
 
@@ -416,7 +428,10 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should getting my iam roles from token - failed', (done) => {
-      component.userId = undefined
+      initializeComponent()
+
+      component.ngOnChanges()
+
       const errorResponse = { status: 403, statusText: 'No perissions to see roles from your token' }
       userApiSpy.getTokenRoles.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
@@ -435,8 +450,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should getting my iam roles from iam - successful', (done) => {
-      component.userId = 'userid'
-      component.iamRoles = ['role1', 'role2']
+      initializeComponent('userid')
+      slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
+
+      component.ngOnChanges()
+
+      component.roleListEmitter.emit(['role1', 'role2'])
 
       component.onTabChange({ index: 2 }, userAssignments)
 

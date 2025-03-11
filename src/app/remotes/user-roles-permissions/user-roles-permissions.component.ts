@@ -72,7 +72,7 @@ export function slotInitializer(slotService: SlotService) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
-  @Input() public userId: string | undefined = undefined
+  @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public displayName: string | undefined = undefined
   @Input() public active: boolean | undefined = undefined // this is set actively on call the component
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -90,8 +90,9 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
-  public loadingIamRoles = true
+  public loadingIamRoles = false
   public selectedTabIndex = 0
+  public isIamComponentDefined = false
 
   // manage slot to get roles from iam
   public isComponentDefined$: Observable<boolean> | undefined
@@ -108,16 +109,6 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   ) {
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
-    if (!this.userId) {
-      // check if the iam component is assigned to the slot
-      this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
-      // receive data from remote component
-      this.roleListEmitter.subscribe((list) => {
-        this.loadingIamRoles = false
-        this.iamRoles = list
-        this.iamRoles$ = this.provideIamRoles()
-      })
-    }
   }
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
@@ -132,7 +123,24 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public ngOnChanges(): void {
-    if (this.active !== undefined) this.onReload()
+    if (this.active !== undefined) {
+      if (this.userId) {
+        // check if the iam component is assigned to the slot
+        this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
+          this.isIamComponentDefined = def
+          this.loadingIamRoles = true
+          if (this.isIamComponentDefined) {
+            // receive data from remote component
+            this.roleListEmitter.subscribe((list) => {
+              this.loadingIamRoles = false
+              this.iamRoles = list
+              this.iamRoles$ = this.provideIamRoles()
+            })
+          }
+        })
+      }
+      this.onReload()
+    }
   }
 
   public onReload() {
