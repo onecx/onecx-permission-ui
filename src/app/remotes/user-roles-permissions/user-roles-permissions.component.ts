@@ -92,12 +92,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public loading = false
   public loadingIamRoles = false
   public selectedTabIndex = 0
-  public isIamComponentDefined = false
 
   // manage slot to get roles from iam
+  public isComponentDefined = false
   public isComponentDefined$: Observable<boolean> | undefined
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<string[]>()
+  public componentPermissions: string[] = []
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -120,6 +121,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.assgnmtApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
+    this.componentPermissions = remoteComponentConfig.permissions
   }
 
   public ngOnChanges(): void {
@@ -127,9 +129,9 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       if (this.userId) {
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
-          this.isIamComponentDefined = def
+          this.isComponentDefined = def
           this.loadingIamRoles = true
-          if (this.isIamComponentDefined) {
+          if (this.isComponentDefined) {
             // receive data from remote component
             this.roleListEmitter.subscribe((list) => {
               this.loadingIamRoles = false
