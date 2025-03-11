@@ -262,16 +262,30 @@
         <!-- get roles from remote for certain user in admin mode -->
         <ng-container *ngIf="userId">
           <ocx-slot
-            *ngIf="isComponentDefined$ | async"
+            *ngIf="isIamComponentDefined"
             [name]="slotName"
             [inputs]="{ userId: userId }"
             [outputs]="{ roleList: roleListEmitter }"
           >
           </ocx-slot>
+          <p-message
+            *ngIf="isIamComponentDefined && loadingIamRoles"
+            id="apm_user_iam_roles_loading"
+            severity="info"
+            styleClass="m-3"
+            [text]="'ACTIONS.LOADING' | translate"
+          ></p-message>
+          <p-message
+            *ngIf="!isIamComponentDefined"
+            id="apm_user_iam_roles_exception_component_not_exist"
+            severity="error"
+            styleClass="m-3"
+            [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
+          ></p-message>
         </ng-container>
 
         <p-message
-          *ngIf="loadingIamRoles"
+          *ngIf="loadingIamRoles && !userId"
           id="apm_user_iam_roles_loading"
           severity="info"
           styleClass="m-3"

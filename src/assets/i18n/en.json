@@ -339,6 +339,7 @@
   },
   "EXCEPTIONS": {
     "NOT_FOUND": {
+      "IAM_COMPONENT": "No component was provided that could provide this data.",
       "PRODUCT": "No data could be found for this Application.",
       "USER": "The user no longer exist in IAM (Identity Access Management).",
       "WORKSPACE": "No data could be found for this Workspace."
