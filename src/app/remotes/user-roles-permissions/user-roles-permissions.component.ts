@@ -34,6 +34,7 @@ import {
 import {
   AssignmentAPIService,
   Configuration,
+  Role,
   UserAPIService,
   UserAssignment,
   UserAssignmentPageResult
@@ -84,21 +85,20 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
   public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public iamRoles: string[] | undefined = undefined
+  public iamRoles: Role[] | undefined = undefined
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIamRoles: string | undefined = undefined
   public loading = false
-  public loadingIamRoles = false
   public selectedTabIndex = 0
 
   // manage slot to get roles from iam
+  public loadingIamRoles = false
   public isComponentDefined = false
-  public isComponentDefined$: Observable<boolean> | undefined
-  public slotName = 'onecx-permission-iam-user-roles'
-  public roleListEmitter = new EventEmitter<string[]>()
   public componentPermissions: string[] = []
+  public slotName = 'onecx-permission-iam-user-roles'
+  public roleListEmitter = new EventEmitter<Role[]>()
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -133,7 +133,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           this.loadingIamRoles = true
           if (this.isComponentDefined) {
             // receive data from remote component
-            this.roleListEmitter.subscribe((list) => {
+            this.roleListEmitter.subscribe((list: Role[]) => {
               this.loadingIamRoles = false
               this.iamRoles = list
               this.iamRoles$ = this.provideIamRoles()
@@ -216,8 +216,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     if (this.userId) {
       this.iamRoles?.forEach((role) =>
         roles.push({
-          label: role,
-          isUserAssignedRole: this.userAssignedRoles.includes(role)
+          label: role.name,
+          isUserAssignedRole: this.userAssignedRoles.includes(role.name!)
         } as ExtendedSelectItem)
       )
       return of(roles)

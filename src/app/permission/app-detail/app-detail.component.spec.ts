@@ -437,6 +437,22 @@ describe('AppDetailComponent', () => {
       expect(console.error).toHaveBeenCalledWith('searchRoles', errorResponse)
     })
 
+    it('should go if no roles are loaded', () => {
+      roleApiSpy.searchRoles.and.returnValue(of({}) as any)
+      component.urlParamAppType = 'WORKSPACE'
+
+      component.ngOnInit()
+    })
+    it('should go if no roles are loaded', () => {
+      permApiSpy.searchPermissions.and.returnValue(of({}) as any)
+      component.urlParamAppType = 'WORKSPACE'
+      spyOn(console, 'warn')
+
+      component.ngOnInit()
+
+      expect(console.warn).toHaveBeenCalledWith('No permissions found for the apps - stop processing')
+    })
+
     it('should display error when loading permissions fails', () => {
       const errorResponse = { status: '404', statusText: 'Not Found' }
       permApiSpy.searchPermissions.and.returnValue(throwError(() => errorResponse))

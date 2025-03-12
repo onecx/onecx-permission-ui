@@ -99,7 +99,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public listedProductsHeaderKey: string = ''
 
   // permission management
-  private permissions$!: Observable<PermissionPageResult>
+  private permissions$!: Observable<Permission[]>
   public permissions!: Permission[]
   public permission: PermissionViewRow | undefined
   public permissionRows!: PermissionViewRow[]
@@ -114,7 +114,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public protectedAssignments: Array<string> = []
 
   // role management
-  private roles$!: Observable<RolePageResult>
+  private roles$!: Observable<PermissionRole[]>
   public roles: PermissionRole[] = []
   public role: Role | undefined
   public rolesFiltered: PermissionRole[] = []
@@ -339,21 +339,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
-  private searchRoles(): Observable<PermissionRole[]> {
+  private prepareSearchRolesAndPermissions(): void {
     this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
+      map((result: RolePageResult) => {
+        return result.stream ? result.stream?.map((role) => role as PermissionRole) : []
+      }),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
         console.error('searchRoles', err)
-        return of({} as RolePageResult)
+        return of([])
       })
     )
-    return this.roles$.pipe(
-      map((result: any) => {
-        return result.stream ? result.stream?.map((role: PermissionRole) => role) : []
-      })
-    )
-  }
-  private searchPermissions(): Observable<Permission[]> {
+    // search permissions for products (from app or workspace)
     const productNames: string[] = []
     if (this.currentApp.isProduct) {
       productNames.push(this.currentApp.productName!)
@@ -363,30 +360,24 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
     this.permissions$ = this.permApi
       .searchPermissions({
-        permissionSearchCriteria: {
-          productNames: productNames,
-          pageSize: this.pageSize
-        }
+        permissionSearchCriteria: { productNames: productNames, pageSize: this.pageSize }
       })
       .pipe(
+        map((result: PermissionPageResult) => result.stream ?? []),
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
           console.error('searchPermissions', err)
-          return of({} as PermissionPageResult)
+          return of([])
         })
       )
-    return this.permissions$.pipe(
-      map((result: any) => {
-        return result.stream ?? []
-      })
-    )
   }
 
   private loadRolesAndPermissions(): void {
     this.roles = []
     this.permissions = []
     this.loadingPermissions = true
-    combineLatest([this.searchRoles(), this.searchPermissions()]).subscribe(([roles, permissions]) => {
+    this.prepareSearchRolesAndPermissions()
+    combineLatest([this.roles$, this.permissions$]).subscribe(([roles, permissions]) => {
       // filter
       this.prepareFilterProducts()
       this.prepareFilterApps()

@@ -1,17 +1,26 @@
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
+import { APP_INITIALIZER, Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
-import { catchError, finalize, map, of, Observable } from 'rxjs'
+import { of, Observable } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 import { Role, CreateRoleRequest, IAMRole, UpdateRoleRequest, RoleAPIService } from 'src/app/shared/generated'
 import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
+export function slotInitializer(slotService: SlotService) {
+  return () => slotService.init()
+}
+
 @Component({
   selector: 'app-role-detail',
   templateUrl: './role-detail.component.html',
-  styleUrls: ['./role-detail.component.scss']
+  styleUrls: ['./role-detail.component.scss'],
+  providers: [
+    { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
+    { provide: SLOT_SERVICE, useExisting: SlotService }
+  ]
 })
 export class RoleDetailComponent implements OnChanges {
   @Input() currentApp!: App
@@ -25,19 +34,24 @@ export class RoleDetailComponent implements OnChanges {
 
   public loading = true
   public exceptionKey: string | undefined = undefined
-  public myPermissions = new Array<string>() // permissions of the user
   public formGroup: FormGroup
   public iamRoles$!: Observable<IAMRole[]>
   public selectedIamRoles: IAMRole[] = []
+
+  // manage slot to get roles from iam
+  public loadingIamRoles = false
+  public isComponentDefined = false
+  public slotName = 'onecx-permission-iam-user-roles'
+  public roleListEmitter = new EventEmitter<IAMRole[]>()
+  public componentPermissions: string[] = []
 
   constructor(
     private readonly roleApi: RoleAPIService,
     private readonly translate: TranslateService,
     private readonly msgService: PortalMessageService,
+    private readonly slotService: SlotService,
     private readonly userService: UserService
   ) {
-    if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
-    if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
     this.formGroup = new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
@@ -51,7 +65,22 @@ export class RoleDetailComponent implements OnChanges {
       this.formGroup.controls['name'].patchValue(this.role.name)
       this.formGroup.controls['description'].patchValue(this.role.description)
     }
-    if (this.showIamRolesDialog) this.searchIamRoles()
+    // initialize receiving data - once
+    if (this.showIamRolesDialog && !this.isComponentDefined) {
+      // check if the IAM component is assigned to the slot
+      this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
+        this.isComponentDefined = def
+        this.loading = true
+        if (this.isComponentDefined) {
+          // receive data from remote component
+          this.roleListEmitter.subscribe((list) => {
+            this.loading = false
+            // exclude roles which already exists in Permission Mgmt
+            this.iamRoles$ = of(list.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0))
+          })
+        }
+      })
+    }
   }
 
   public onClose(): void {
@@ -132,28 +161,6 @@ export class RoleDetailComponent implements OnChanges {
         console.error('deleteRole', err)
       }
     })
-  }
-
-  /**
-   * Select IAM Roles to be added
-   */
-  public searchIamRoles(): void {
-    this.loading = true
-    this.selectedIamRoles = []
-    this.iamRoles$ = this.roleApi.searchAvailableRoles({ iAMRoleSearchCriteria: { pageSize: 1000 } }).pipe(
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-        console.error('searchAvailableRoles', err)
-        return of([])
-      }),
-      map((result: any) => {
-        return result.stream ?? []
-      }),
-      finalize(() => (this.loading = false))
-    )
-  }
-  public sortRoleByName(a: IAMRole, b: IAMRole): number {
-    return (a.name ? a.name.toUpperCase() : '').localeCompare(b.name ? b.name.toUpperCase() : '')
   }
 
   public onAddIamRoles() {
