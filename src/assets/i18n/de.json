@@ -273,7 +273,7 @@
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "IAM": {
       "HEADER": "IAM Rollen auswählen",
-      "LIST": "Fehlende Rollen:",
+      "LIST": "Fehlende Rollen",
       "INFO": "(IAM: Identity Access Management = Benutzer und Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",

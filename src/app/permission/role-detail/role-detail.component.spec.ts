@@ -6,10 +6,11 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
+import { SlotService } from '@onecx/angular-remote-components'
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 
 import { Role, IAMRole, RoleAPIService } from 'src/app/shared/generated'
-import { RoleDetailComponent } from './role-detail.component'
+import { RoleDetailComponent, slotInitializer } from './role-detail.component'
 
 const role: Role = {
   id: 'roleId',
@@ -33,13 +34,15 @@ describe('RoleDetailComponent', () => {
     updateRole: jasmine.createSpy('updateRole').and.returnValue(of({})),
     deleteRole: jasmine.createSpy('deleteRole').and.returnValue(of({}))
   }
-
+  const slotServiceSpy = {
+    isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(true))
+  }
   const mockUserService = {
     lang$: {
       getValue: jasmine.createSpy('getValue').and.returnValue('en')
     },
-    hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
-      return permissionName === 'ROLE#EDIT' || permissionName === 'ROLE#DELETE'
+    hasPermission: jasmine.createSpy('hasPermission').and.callFake((permission) => {
+      return permission === 'ROLE#EDIT' || permission === 'ROLE#DELETE'
     })
   }
 
@@ -55,6 +58,7 @@ describe('RoleDetailComponent', () => {
       providers: [
         provideHttpClientTesting(),
         provideHttpClient(),
+        { provide: SlotService, useValue: slotServiceSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: UserService, useValue: mockUserService }
@@ -73,6 +77,7 @@ describe('RoleDetailComponent', () => {
   afterEach(() => {
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
+    slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     roleApiSpy.searchAvailableRoles.calls.reset()
     roleApiSpy.createRole.calls.reset()
     roleApiSpy.updateRole.calls.reset()
@@ -83,18 +88,18 @@ describe('RoleDetailComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should enable formGroup if user has permissions: edit mode', () => {
-    component.changeMode = 'EDIT'
-    component.formGroup = formGroup
-    component.showIamRolesDialog = true
-    spyOn(component, 'searchIamRoles')
+  describe('form', () => {
+    it('should enable formGroup if user has permissions: edit mode', () => {
+      component.changeMode = 'EDIT'
+      component.formGroup = formGroup
+      component.showIamRolesDialog = false
 
-    component.ngOnChanges()
+      component.ngOnChanges()
 
-    expect(component.formGroup.enabled).toBeTrue()
-    expect(component.formGroup.controls['name'].value).toEqual(role.name)
-    expect(component.formGroup.controls['description'].value).toBeUndefined()
-    expect(component.searchIamRoles).toHaveBeenCalled()
+      expect(component.formGroup.enabled).toBeTrue()
+      expect(component.formGroup.controls['name'].value).toEqual(role.name)
+      expect(component.formGroup.controls['description'].value).toBeUndefined()
+    })
   })
 
   it('should notify parent that nothing has changed after closing the dialog', () => {
@@ -212,104 +217,44 @@ describe('RoleDetailComponent', () => {
     })
   })
 
-  /**
-   * Select IAM Roles to be added
-   */
-  describe('searchIamRoles', () => {
-    it('should clear selected IAM roles', () => {
-      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: [] }))
-      component.selectedIamRoles = [{ name: 'role1' }, { name: 'role2' }] as IAMRole[]
+  describe('slotInitializer', () => {
+    let slotService: jasmine.SpyObj<SlotService>
 
-      component.searchIamRoles()
-
-      expect(component.selectedIamRoles).toEqual([])
+    beforeEach(() => {
+      slotService = jasmine.createSpyObj('SlotService', ['init'])
     })
 
-    it('should call searchAvailableRoles with correct parameters', () => {
-      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: [] }))
-      component.searchIamRoles()
-      expect(roleApiSpy.searchAvailableRoles).toHaveBeenCalledWith({ iAMRoleSearchCriteria: { pageSize: 1000 } })
-    })
+    it('should call SlotService.init', () => {
+      const initializer = slotInitializer(slotService)
+      initializer()
 
-    it('should handle successful response', () => {
-      const mockRoles = [
-        { id: '1', name: 'Role 1' },
-        { id: '2', name: 'Role 2' }
-      ]
-      roleApiSpy.searchAvailableRoles.and.returnValue(of({ stream: mockRoles }))
-
-      component.searchIamRoles()
-
-      component.iamRoles$.subscribe((roles) => {
-        expect(roles).toEqual(mockRoles)
-      })
-    })
-
-    it('should handle error response', () => {
-      const errorResponse = { status: 400, statusText: 'Error on retrieving IAM roles' }
-      roleApiSpy.searchAvailableRoles.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-
-      component.searchIamRoles()
-
-      component.iamRoles$.subscribe(() => {
-        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
-        expect(console.error).toHaveBeenCalledWith('searchAvailableRoles', errorResponse)
-      })
-    })
-
-    it('should handle empty stream in response', () => {
-      roleApiSpy.searchAvailableRoles.and.returnValue(of({}))
-
-      component.searchIamRoles()
-
-      component.iamRoles$.subscribe((roles) => {
-        expect(roles).toEqual([])
-      })
+      expect(slotService.init).toHaveBeenCalled()
     })
   })
 
-  describe('sortRoleByName', () => {
-    it('should return negative value when first role name comes before second alphabetically', () => {
-      const roleA = { name: 'Admin' }
-      const roleB = { name: 'User' }
-      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
-    })
+  /**
+   * Get IAM Roles from Remote Component
+   */
+  describe('get IAM roles', () => {
+    it('should get IAM roles', (done) => {
+      component.showIamRolesDialog = true
+      component.isComponentDefined = false
+      component.roles = [role]
+      slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
 
-    it('should return positive value when first role name comes after second alphabetically', () => {
-      const roleA = { name: 'User' }
-      const roleB = { name: 'Admin' }
-      expect(component.sortRoleByName(roleA, roleB)).toBeGreaterThan(0)
-    })
+      component.ngOnChanges()
 
-    it('should return zero when role names are the same', () => {
-      const roleA = { name: 'Admin' }
-      const roleB = { name: 'Admin' }
-      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
-    })
+      component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-    it('should be case-insensitive', () => {
-      const roleA = { name: 'admin' }
-      const roleB = { name: 'Admin' }
-      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
-    })
-
-    it('should handle undefined names', () => {
-      const roleA = { name: undefined }
-      const roleB = { name: 'Admin' }
-      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
-    })
-
-    it('should handle empty string names', () => {
-      const roleA = { name: '' }
-      const roleB = { name: 'Admin' }
-      expect(component.sortRoleByName(roleA, roleB)).toBeLessThan(0)
-    })
-
-    it('should handle both names being undefined', () => {
-      const roleA = { name: undefined }
-      const roleB = { name: undefined }
-      expect(component.sortRoleByName(roleA, roleB)).toBe(0)
+      component.iamRoles$.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(2)
+          expect(data[0]).toEqual({ name: 'role1' } as IAMRole)
+          expect(data[1]).toEqual({ name: 'role2' } as IAMRole)
+          done()
+        },
+        error: done.fail
+      })
     })
   })
 

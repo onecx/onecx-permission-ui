@@ -128,39 +128,51 @@
   [draggable]="true"
   [resizable]="true"
   [dismissableMask]="true"
-  *ngIf="(iamRoles$ | async)?.sort(sortRoleByName) ?? [] as roles"
 >
   <p-message
-    *ngIf="exceptionKey"
-    id="apm_iam_roles_data_access_issue"
+    *ngIf="!isComponentDefined"
+    id="apm_iam_roles_exception_component_not_exist"
     severity="error"
-    [text]="exceptionKey | translate"
-  ></p-message>
-  <p-message
-    *ngIf="loading"
-    id="apm_iam_roles_loading"
-    severity="info"
-    [text]="'ACTIONS.LOADING' | translate"
+    [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
   ></p-message>
 
-  <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
-    <div>{{ 'ROLE.IAM.LIST' | translate }}</div>
-    <p-listbox
-      id="apm_iam_roles_list"
-      [options]="roles"
-      [(ngModel)]="selectedIamRoles"
-      optionLabel="name"
-      [filter]="true"
-      [checkbox]="true"
-      [multiple]="true"
-      [metaKeySelection]="false"
-      [showToggleAll]="false"
-      [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-      [listStyle]="{ 'max-height': '300px' }"
-      [ariaLabel]="'ROLE.IAM.LIST' | translate"
-    />
-    <div class="text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
-  </div>
+  <ng-container *ngIf="isComponentDefined">
+    <ocx-slot [name]="slotName" [outputs]="{ roleList: roleListEmitter }"> </ocx-slot>
+
+    <ng-container *ngIf="(iamRoles$ | async) ?? [] as roles">
+      <p-message
+        *ngIf="exceptionKey"
+        id="apm_iam_roles_data_access_issue"
+        severity="error"
+        [text]="exceptionKey | translate"
+      ></p-message>
+      <p-message
+        *ngIf="loading"
+        id="apm_iam_roles_loading"
+        severity="info"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
+
+      <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
+        <div>{{ 'ROLE.IAM.LIST' | translate }} ({{ roles.length }}):</div>
+        <p-listbox
+          id="apm_iam_roles_list"
+          [options]="roles"
+          [(ngModel)]="selectedIamRoles"
+          optionLabel="name"
+          [filter]="true"
+          [checkbox]="true"
+          [multiple]="true"
+          [metaKeySelection]="false"
+          [showToggleAll]="false"
+          [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+          [listStyle]="{ 'max-height': '300px' }"
+          [ariaLabel]="'ROLE.IAM.LIST' | translate"
+        />
+        <div class="text-xs">{{ 'ROLE.IAM.INFO' | translate }}</div>
+      </div>
+    </ng-container>
+  </ng-container>
 
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">

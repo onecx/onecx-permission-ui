@@ -105,7 +105,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     component.active = true
     component.userId = id
     fixture.detectChanges()
-    component.roleListEmitter.emit(['role1', 'role2'])
+    component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
   }
 
   it('should create with correct data', () => {
@@ -455,7 +455,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.ngOnChanges()
 
-      component.roleListEmitter.emit(['role1', 'role2'])
+      component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
       component.onTabChange({ index: 2 }, userAssignments)
 
