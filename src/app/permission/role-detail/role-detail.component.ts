@@ -71,16 +71,18 @@ export class RoleDetailComponent implements OnChanges {
       this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
         this.isComponentDefined = def
         this.loading = true
-        if (this.isComponentDefined) {
-          // receive data from remote component
-          this.roleListEmitter.subscribe((list) => {
-            this.loading = false
-            // exclude roles which already exists in Permission Mgmt
-            this.iamRoles$ = of(list.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0))
-          })
-        }
+        if (this.isComponentDefined) this.prepareRoleListEmitter()
       })
     }
+  }
+  // Hommage to SonarCloud: separate this
+  private prepareRoleListEmitter() {
+    // receive data from remote component
+    this.roleListEmitter.subscribe((list) => {
+      this.loading = false
+      // exclude roles which already exists in Permission Mgmt
+      this.iamRoles$ = of(list.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0))
+    })
   }
 
   public onClose(): void {
