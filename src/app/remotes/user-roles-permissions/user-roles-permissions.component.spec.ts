@@ -425,6 +425,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         },
         error: done.fail
       })
+      // do it again without extra data call
+      component.onTabChange({ index: 2 }, userAssignments)
     })
 
     it('should getting my iam roles from token - failed', (done) => {
@@ -449,7 +451,33 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       })
     })
 
-    it('should getting my iam roles from iam - successful', (done) => {
+    xit('should getting my iam roles - already done', (done) => {
+      initializeComponent()
+
+      component.ngOnChanges()
+
+      component.loadingIamRoles = false
+      userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2']))
+
+      //component.iamRoles = [{ name: 'role1' }, { name: 'role2' }]
+
+      component.onTabChange({ index: 2 }, userAssignments)
+
+      component.iamRoles$.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(3)
+          expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
+          expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
+          expect(data[2]).toEqual({ label: 'role3', isUserAssignedRole: false } as ExtendedSelectItem)
+          done()
+        },
+        error: done.fail
+      })
+
+      component.onTabChange({ index: 2 }, userAssignments)
+    })
+
+    it('should getting iam roles from iam - successful', (done) => {
       initializeComponent('userid')
       slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
 

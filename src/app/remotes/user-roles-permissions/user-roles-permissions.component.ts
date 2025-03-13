@@ -85,7 +85,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
   public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public iamRoles: Role[] | undefined = undefined
+  public iamRoles: Role[] = []
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
@@ -126,12 +126,12 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public ngOnChanges(): void {
     if (this.active !== undefined) {
-      if (this.userId) {
+      if (!this.isComponentDefined) {
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
-          this.loadingIamRoles = true
           if (this.isComponentDefined) {
+            this.loadingIamRoles = true
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
               this.loadingIamRoles = false
@@ -204,7 +204,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public onTabChange($event: any, uas: UserAssignment[]) {
     if ($event.index === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
-      this.iamRoles$ = this.provideIamRoles()
+      this.iamRoles$ = this.provideIamRoles() // used for me permissions
     }
   }
 
@@ -214,24 +214,35 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
     // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
     if (this.userId) {
-      this.iamRoles?.forEach((role) =>
+      this.iamRoles.forEach((role) =>
         roles.push({
           label: role.name,
           isUserAssignedRole: this.userAssignedRoles.includes(role.name!)
         } as ExtendedSelectItem)
       )
       return of(roles)
-      // get other user stuff
+    }
+    // user in private context: get roles from token (if not yet done)
+    if (this.iamRoles.length > 0) {
+      this.iamRoles?.forEach((r) => {
+        roles.push({
+          label: r.name,
+          isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
+        } as ExtendedSelectItem)
+      })
+      roles.sort(sortSelectItemsByLabel)
+      return of(roles)
     } else {
       this.loadingIamRoles = true
       return this.userApi.getTokenRoles().pipe(
         map((data) => {
-          data.forEach((role) =>
+          data.forEach((role) => {
+            this.iamRoles?.push({ name: role })
             roles.push({
               label: role,
               isUserAssignedRole: this.userAssignedRoles.includes(role)
             } as ExtendedSelectItem)
-          )
+          })
           return roles.sort(sortSelectItemsByLabel)
         }),
         catchError((err) => {
