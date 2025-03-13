@@ -221,38 +221,37 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         } as ExtendedSelectItem)
       )
       return of(roles)
+    }
+    // user in private context: get roles from token (if not yet done)
+    if (this.iamRoles.length > 0) {
+      this.iamRoles?.forEach((r) => {
+        roles.push({
+          label: r.name,
+          isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
+        } as ExtendedSelectItem)
+      })
+      roles.sort(sortSelectItemsByLabel)
+      return of(roles)
     } else {
-      // user in private context: get roles from token (if not yet done)
-      if (this.iamRoles.length > 0) {
-        this.iamRoles?.forEach((r) => {
-          roles.push({
-            label: r.name,
-            isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
-          } as ExtendedSelectItem)
-        })
-        return of(roles.sort(sortSelectItemsByLabel))
-      } else {
-        this.loadingIamRoles = true
-        return this.userApi.getTokenRoles().pipe(
-          map((data) => {
-            this.iamRoles
-            data.forEach((role) => {
-              this.iamRoles?.push({ name: role })
-              roles.push({
-                label: role,
-                isUserAssignedRole: this.userAssignedRoles.includes(role)
-              } as ExtendedSelectItem)
-            })
-            return roles.sort(sortSelectItemsByLabel)
-          }),
-          catchError((err) => {
-            this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
-            console.error('getTokenRoles', err)
-            return of([])
-          }),
-          finalize(() => (this.loadingIamRoles = false))
-        )
-      }
+      this.loadingIamRoles = true
+      return this.userApi.getTokenRoles().pipe(
+        map((data) => {
+          data.forEach((role) => {
+            this.iamRoles?.push({ name: role })
+            roles.push({
+              label: role,
+              isUserAssignedRole: this.userAssignedRoles.includes(role)
+            } as ExtendedSelectItem)
+          })
+          return roles.sort(sortSelectItemsByLabel)
+        }),
+        catchError((err) => {
+          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+          console.error('getTokenRoles', err)
+          return of([])
+        }),
+        finalize(() => (this.loadingIamRoles = false))
+      )
     }
   }
 
