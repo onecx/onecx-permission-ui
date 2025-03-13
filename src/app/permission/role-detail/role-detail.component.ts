@@ -1,7 +1,6 @@
 import { APP_INITIALIZER, Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
-import { of, Observable } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
@@ -35,7 +34,8 @@ export class RoleDetailComponent implements OnChanges {
   public loading = true
   public exceptionKey: string | undefined = undefined
   public formGroup: FormGroup
-  public iamRoles$!: Observable<IAMRole[]>
+  public iamRoles: IAMRole[] = []
+  public iamRolesOrg: IAMRole[] = []
   public selectedIamRoles: IAMRole[] = []
 
   // manage slot to get roles from iam
@@ -66,22 +66,29 @@ export class RoleDetailComponent implements OnChanges {
       this.formGroup.controls['description'].patchValue(this.role.description)
     }
     // initialize receiving data - once
-    if (this.showIamRolesDialog && !this.isComponentDefined) {
-      // check if the IAM component is assigned to the slot
-      this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
-        this.isComponentDefined = def
-        this.loading = true
-        if (this.isComponentDefined) this.prepareRoleListEmitter()
-      })
+    if (this.showIamRolesDialog) {
+      if (!this.isComponentDefined) {
+        // check if the IAM component is assigned to the slot
+        this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
+          this.isComponentDefined = def
+          this.loading = true
+          if (this.isComponentDefined) this.prepareRoleListEmitter()
+        })
+      } else {
+        // refresh missing roles
+        this.iamRoles = this.iamRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
+      }
     }
   }
+
   // Hommage to SonarCloud: separate this
   private prepareRoleListEmitter() {
     // receive data from remote component
     this.roleListEmitter.subscribe((list) => {
       this.loading = false
       // exclude roles which already exists in Permission Mgmt
-      this.iamRoles$ = of(list.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0))
+      this.iamRolesOrg = list
+      this.iamRoles = this.iamRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
     })
   }
 
@@ -169,6 +176,7 @@ export class RoleDetailComponent implements OnChanges {
     if (this.selectedIamRoles.length > 0)
       this.roleApi.createRole({ createRolesRequest: { roles: this.selectedIamRoles } }).subscribe({
         next: () => {
+          this.selectedIamRoles = []
           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
           this.dataChanged.emit(true)
         },

@@ -236,7 +236,7 @@ describe('RoleDetailComponent', () => {
    * Get IAM Roles from Remote Component
    */
   describe('get IAM roles', () => {
-    it('should get IAM roles', (done) => {
+    it('should get IAM roles - with getting data', () => {
       component.showIamRolesDialog = true
       component.isComponentDefined = false
       component.roles = [role]
@@ -246,15 +246,24 @@ describe('RoleDetailComponent', () => {
 
       component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-      component.iamRoles$.subscribe({
-        next: (data) => {
-          expect(data.length).toBe(2)
-          expect(data[0]).toEqual({ name: 'role1' } as IAMRole)
-          expect(data[1]).toEqual({ name: 'role2' } as IAMRole)
-          done()
-        },
-        error: done.fail
-      })
+      expect(component.iamRoles.length).toBe(2)
+      expect(component.iamRoles[0]).toEqual({ name: 'role1' } as IAMRole)
+      expect(component.iamRoles[1]).toEqual({ name: 'role2' } as IAMRole)
+    })
+
+    it('should get IAM roles - reuse existing data', () => {
+      component.showIamRolesDialog = true
+      component.isComponentDefined = true
+      component.roles = [role]
+      component.iamRolesOrg = [{ name: 'role1' }, { name: 'role2' }]
+
+      component.ngOnChanges()
+
+      component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
+
+      expect(component.iamRoles.length).toBe(2)
+      expect(component.iamRoles[0]).toEqual({ name: 'role1' } as IAMRole)
+      expect(component.iamRoles[1]).toEqual({ name: 'role2' } as IAMRole)
     })
   })
 
