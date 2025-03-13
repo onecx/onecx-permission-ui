@@ -144,7 +144,7 @@
     >
     </ocx-slot>
 
-    <ng-container *ngIf="(iamRoles$ | async) ?? [] as roles">
+    <ng-container *ngIf="iamRoles.length > 0">
       <p-message
         *ngIf="exceptionKey"
         id="apm_iam_roles_data_access_issue"
@@ -162,7 +162,7 @@
         <div>{{ 'ROLE.IAM.LIST' | translate }}: {{ roles.length }}</div>
         <p-listbox
           id="apm_iam_roles_list"
-          [options]="roles"
+          [options]="iamRoles"
           [(ngModel)]="selectedIamRoles"
           optionLabel="name"
           [filter]="true"
