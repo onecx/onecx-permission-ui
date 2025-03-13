@@ -137,7 +137,12 @@
   ></p-message>
 
   <ng-container *ngIf="isComponentDefined">
-    <ocx-slot [name]="slotName" [outputs]="{ roleList: roleListEmitter }"> </ocx-slot>
+    <ocx-slot
+      [name]="slotName"
+      [inputs]="{ userId: '$$ocx-iam-roles-search-all-indicator$$' }"
+      [outputs]="{ roleList: roleListEmitter }"
+    >
+    </ocx-slot>
 
     <ng-container *ngIf="(iamRoles$ | async) ?? [] as roles">
       <p-message
@@ -154,7 +159,7 @@
       ></p-message>
 
       <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
-        <div>{{ 'ROLE.IAM.LIST' | translate }} ({{ roles.length }}):</div>
+        <div>{{ 'ROLE.IAM.LIST' | translate }}: {{ roles.length }}</div>
         <p-listbox
           id="apm_iam_roles_list"
           [options]="roles"
