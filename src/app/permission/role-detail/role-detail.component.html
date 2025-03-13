@@ -159,7 +159,7 @@
       ></p-message>
 
       <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
-        <div>{{ 'ROLE.IAM.LIST' | translate }}: {{ roles.length }}</div>
+        <div>{{ 'ROLE.IAM.LIST' | translate }}: {{ iamRoles.length }}</div>
         <p-listbox
           id="apm_iam_roles_list"
           [options]="iamRoles"
