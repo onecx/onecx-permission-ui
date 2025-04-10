@@ -31,6 +31,18 @@ app:
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-permission
           tagName: ocx-user-roles-permissions-component
+    # Microservice
+    microservice:
+      spec:
+        name: OneCX Permission UI
+        description: OneCX Permission Frontend
+    # Slot
+    slot:
+      enabled: true
+      specs:
+        onecx-permission-iam-user-roles:
+          name: 'onecx-permission-iam-user-roles'
+          description: 'Receive IAM user roles'
     # Permission
     permission:
       enabled: true
@@ -51,10 +63,3 @@ app:
             CREATE: Create role
             DELETE: Delete role
             EDIT: Edit role
-    # Slot
-    slot:
-      enabled: true
-      specs:
-        onecx-permission-iam-user-roles:
-          name: 'onecx-permission-iam-user-roles'
-          description: 'Receive IAM user roles'
