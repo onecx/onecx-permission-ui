@@ -20,6 +20,7 @@
             formControlName="appType"
             [options]="(appTypeItems$ | async) ?? []"
             (onChange)="onAppTypeCriteriaChange($event)"
+            [allowEmpty]="false"
             [ariaLabel]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
           >
             <ng-template let-item pTemplate
@@ -28,7 +29,9 @@
           </p-selectButton>
           <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-90">
             <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
-            <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appTypeFilterValue | translate }}</span>
+            <span>
+              {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteriaGroup.controls['appType'].value | translate }}</span
+            >
           </div>
         </div>
       </div>
@@ -86,6 +89,7 @@
               inputid="apm_app_search_quick_filter"
               [options]="(quickFilterItems$ | async) ?? []"
               [(ngModel)]="quickFilterValue"
+              [allowEmpty]="false"
               (onChange)="onQuickFilterChange($event)"
               [ariaLabel]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
             >

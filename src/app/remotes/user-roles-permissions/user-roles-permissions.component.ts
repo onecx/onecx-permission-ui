@@ -113,7 +113,6 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.loading = true
     this.baseUrl.next(remoteComponentConfig.baseUrl)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
@@ -131,7 +130,6 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
           if (this.isComponentDefined) {
-            this.loadingIamRoles = true
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
               this.loadingIamRoles = false
