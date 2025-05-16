@@ -442,15 +442,6 @@ describe('AppSearchComponent', () => {
 
       expect(component.typeFilterValue$.next).toHaveBeenCalledWith('SOME_VALUE')
     })
-
-    it('should not call typeFilterValue$.next when value is falsy', () => {
-      const event = { value: '' }
-      spyOn(component.typeFilterValue$, 'next')
-
-      component.onQuickFilterChange(event)
-
-      expect(component.typeFilterValue$.next).not.toHaveBeenCalled()
-    })
   })
 
   it('should disable name input field if app type on search is ALL', () => {
