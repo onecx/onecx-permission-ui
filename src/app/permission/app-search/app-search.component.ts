@@ -69,9 +69,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public exceptionKey: string | undefined = undefined
   public viewMode = 'grid'
   public appTypeItems$: Observable<SelectItem[]> | undefined
-  public appTypeFilterValue: string = 'ALL'
-  public quickFilterValue: AppFilterType = 'ALL'
   public quickFilterItems$: Observable<SelectItem[]> | undefined
+  public quickFilterValue: AppFilterType = 'ALL'
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public sortField = 'displayName'
@@ -413,13 +412,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
   }
   public onAppTypeCriteriaChange(ev: any): void {
-    if (ev.value) this.appTypeFilterValue = ev.value
+    if (ev.value) this.appSearchCriteriaGroup.controls['appType'].setValue(ev.value)
     if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
     else this.appSearchCriteriaGroup.controls['name'].enable()
   }
   public onQuickFilterChange(ev: any): void {
-    if (ev.value === 'ALL') this.typeFilterValue$.next('')
-    else if (ev.value) this.typeFilterValue$.next(ev.value)
+    if (ev.value) this.quickFilterValue = ev.value
+    if (this.quickFilterValue === 'ALL') this.typeFilterValue$.next('')
+    else this.typeFilterValue$.next(this.quickFilterValue)
   }
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
