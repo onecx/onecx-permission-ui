@@ -56,6 +56,7 @@
                 [options]="(quickFilterItems$ | async) ?? []"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
+                [allowEmpty]="false"
                 [ariaLabel]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
               >
                 <ng-template let-item pTemplate
