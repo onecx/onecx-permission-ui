@@ -8,7 +8,7 @@ import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Action } from '@onecx/portal-integration-angular'
+import { Action } from '@onecx/angular-accelerator'
 
 import {
   Role,
