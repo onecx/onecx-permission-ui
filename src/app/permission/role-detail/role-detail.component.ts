@@ -2,8 +2,8 @@ import { APP_INITIALIZER, Component, EventEmitter, Input, Output, OnChanges } fr
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
-import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import { Role, CreateRoleRequest, IAMRole, UpdateRoleRequest, RoleAPIService } from 'src/app/shared/generated'
 import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'

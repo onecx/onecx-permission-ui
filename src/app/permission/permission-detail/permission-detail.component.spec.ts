@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import { Permission, PermissionAPIService } from 'src/app/shared/generated'
 import { PermissionDetailComponent } from './permission-detail.component'

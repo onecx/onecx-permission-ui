@@ -7,6 +7,7 @@ import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 import {
   Action,
   ColumnType,
@@ -15,7 +16,6 @@ import {
   DataViewControlTranslations,
   Filter,
   ObjectUtils,
-  PortalMessageService,
   RowListGridData
 } from '@onecx/portal-integration-angular'
 

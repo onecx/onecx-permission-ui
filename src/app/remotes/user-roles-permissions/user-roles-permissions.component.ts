@@ -18,8 +18,6 @@ import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
-import { UserService } from '@onecx/angular-integration-interface'
-import { PortalCoreModule, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -30,6 +28,9 @@ import {
   ocxRemoteWebcomponent,
   provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
+import { UserService } from '@onecx/angular-integration-interface'
+import { createRemoteComponentTranslateLoader } from '@onecx/angular-accelerator'
+import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
 import {
   AssignmentAPIService,
