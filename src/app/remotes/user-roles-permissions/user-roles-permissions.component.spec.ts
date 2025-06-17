@@ -4,13 +4,13 @@ import { AsyncPipe, CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, ReplaySubject, throwError } from 'rxjs'
 import { Table, TableModule } from 'primeng/table'
 
-import { AppConfigService } from '@onecx/portal-integration-angular'
 import { BASE_URL, RemoteComponentConfig, SlotService } from '@onecx/angular-remote-components'
+import { AppConfigService } from '@onecx/angular-integration-interface'
 
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import {
   OneCXUserRolesPermissionsComponent,

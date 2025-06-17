@@ -1,13 +1,14 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
+import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, map, of, Observable } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
-import { Action, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { Action } from '@onecx/angular-accelerator'
 
 import {
   Role,

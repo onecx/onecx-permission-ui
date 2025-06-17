@@ -1,11 +1,16 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DataViewModule } from 'primeng/dataview'
 import { of, throwError } from 'rxjs'
+import { DataViewModule } from 'primeng/dataview'
+import { FilterMatchMode } from 'primeng/api'
+import { Table } from 'primeng/table'
+
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import {
   Application,
@@ -25,10 +30,6 @@ import {
   Assignment
 } from 'src/app/shared/generated'
 import { App, AppDetailComponent, PermissionViewRow } from './app-detail.component'
-import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
-import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
-import { Table } from 'primeng/table'
-import { FilterMatchMode } from 'primeng/api'
 
 // this application can be a workspace or product: set appType on your tests
 const app1: Application = {

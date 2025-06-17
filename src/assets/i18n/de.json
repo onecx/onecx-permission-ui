@@ -17,8 +17,8 @@
       "PERMISSION.TOOLTIP": "Eine neue Berechtigung erstellen",
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
-      "IAM_ROLES": "IAM Rollen auswählen",
-      "IAM_ROLES.TOOLTIP": "IAM Rollen auswählen damit sie hier verwendet werden können",
+      "IAM_ROLES": "IDM Rollen auswählen",
+      "IAM_ROLES.TOOLTIP": "IDM Rollen auswählen damit sie hier verwendet werden können",
       "WORKSPACE_ROLES.TOOLTIP": "Fehlende Workspace Rollen übernehmen damit sie hier verwendet werden können",
       "MESSAGE": {
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
@@ -272,12 +272,12 @@
     "DESCRIPTION": "Beschreibung",
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "IAM": {
-      "HEADER": "IAM Rollen auswählen",
+      "HEADER": "IDM Rollen auswählen",
       "LIST": "Fehlende Rollen",
-      "INFO": "(IAM: Identity Access Management = Benutzer und Rollen)",
+      "INFO": "(IDM: Identity Management = Benutzer und Rollen)",
       "Filter": "Filter",
       "SAVE": "Auswahl übernehmen",
-      "SAVE.TOOLTIP": "Augewählte Rollen übernehmen"
+      "SAVE.TOOLTIP": "Ausgewählte Rollen übernehmen"
     }
   },
   "IAM_ROLES": {
@@ -287,8 +287,8 @@
     "TABS": {
       "ROLES_N_MORE": "Rollen & Applikationen",
       "ROLES_N_MORE.TOOLTIP": "Zugewiesene Rollen und Applikationen mit Berechtigungen",
-      "IAM_ROLES": "IAM Rollen",
-      "IAM_ROLES.TOOLTIP": "Zugewiesene Rollen im IAM (Identity Access Management)",
+      "IAM_ROLES": "IDM Rollen",
+      "IAM_ROLES.TOOLTIP": "Zugewiesene Rollen im IDM (Identity Management)",
       "IAM_ROLES.USER_ASSIGNED": "Zugewiesene Rolle im Permission Management",
       "ROLE.TITLE": "Rolle: ",
       "ROLES.TITLE": "Rollen: ",
@@ -314,7 +314,7 @@
       "PRODUCT": "Name der Applikation, die die Berechtigung definiert hat",
       "ACTION": "Aktion die auf der Ressource erlaubt ist",
       "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
-      "ROLE": "Rolle aus dem IAM (Identity Access Management) der die Berechtigung zugewiesen wurde"
+      "ROLE": "Rolle aus dem IDM (Identity Management) der die Berechtigung zugewiesen wurde"
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",
@@ -341,7 +341,7 @@
     "NOT_FOUND": {
       "IAM_COMPONENT": "Es wurde keine Komponente bereitgestellt die diese Daten liefern könnte.",
       "PRODUCT": "Es konnten keine Daten zu dieser Applikation gefunden werden.",
-      "USER": "Der Benutzer existiert nicht mehr im IAM (Identity Access Management).",
+      "USER": "Der Benutzer existiert nicht mehr im IDM (Identity Management).",
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden."
     },
     "HTTP_MISSING_PARAMETER": "Parameter aus der URL konnten nicht ermittelt werden",
@@ -383,7 +383,7 @@
       "PERMISSIONS": "Datei konnte nicht importiert werden."
     },
     "HTTP_STATUS_418": {
-      "ROLES": "Eine Rollenauswahl ist nicht möglich da IAM nicht zur Verfügung steht."
+      "ROLES": "Eine Rollenauswahl ist nicht möglich da das IDM nicht zur Verfügung steht."
     },
     "HTTP_STATUS_500": {
       "APP": "Unbekanntes Problem beim Abrufen von Apps. Bitte versuchen sie es erneut.",

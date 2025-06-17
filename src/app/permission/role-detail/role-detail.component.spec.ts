@@ -7,7 +7,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { SlotService } from '@onecx/angular-remote-components'
-import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import { Role, IAMRole, RoleAPIService } from 'src/app/shared/generated'
 import { RoleDetailComponent, slotInitializer } from './role-detail.component'

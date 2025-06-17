@@ -7,19 +7,17 @@ import { SelectItem } from 'primeng/api'
 import { DataView } from 'primeng/dataview'
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 import {
   Action,
-  ColumnType,
+  RowListGridData,
   DataSortDirection,
   DataTableColumn,
-  DataViewControlTranslations,
   Filter,
-  ObjectUtils,
-  PortalMessageService,
-  RowListGridData
-} from '@onecx/portal-integration-angular'
+  ObjectUtils
+} from '@onecx/angular-accelerator'
+import { ColumnType, DataViewControlTranslations } from '@onecx/portal-integration-angular'
 
-import { limitText, sortByLocale } from 'src/app/shared/utils'
 import {
   Application,
   ApplicationAPIService,
@@ -30,6 +28,7 @@ import {
   ApplicationPageResult,
   Permission
 } from 'src/app/shared/generated'
+import { limitText, sortByLocale } from 'src/app/shared/utils'
 
 export interface AppSearchCriteria {
   appId: FormControl<string | null>

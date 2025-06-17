@@ -17,8 +17,8 @@
       "PERMISSION.TOOLTIP": "Create a new Permission",
       "ROLE": "Create Role",
       "ROLE.TOOLTIP": "Create a new Role",
-      "IAM_ROLES": "Select missing IAM Roles",
-      "IAM_ROLES.TOOLTIP": "Select IAM Roles to be used here",
+      "IAM_ROLES": "Select missing IDM Roles",
+      "IAM_ROLES.TOOLTIP": "Select IDM Roles to be used here",
       "WORKSPACE_ROLES.TOOLTIP": "Create missing Workspace Roles to be used here",
       "MESSAGE": {
         "APPLICATION_OK": "The App was created successfully",
@@ -272,9 +272,9 @@
     "DESCRIPTION": "Description",
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
     "IAM": {
-      "HEADER": "Select IAM Roles",
+      "HEADER": "Select IDM Roles",
       "LIST": "Missing Roles",
-      "INFO": "(IAM: Identity Access Management => Users & Roles)",
+      "INFO": "(IDM: Identity Management => Users & Roles)",
       "Filter": "Filter",
       "SAVE": "Add selection",
       "SAVE.TOOLTIP": "Add selected roles"
@@ -287,8 +287,8 @@
     "TABS": {
       "ROLES_N_MORE": "Roles & Applications",
       "ROLES_N_MORE.TOOLTIP": "Assigned Roles and Applications with Permissions",
-      "IAM_ROLES": "IAM Roles",
-      "IAM_ROLES.TOOLTIP": "Assigned Roles in IAM (Identity Access Management)",
+      "IAM_ROLES": "IDM Roles",
+      "IAM_ROLES.TOOLTIP": "Assigned Roles in IDM (Identity Management)",
       "IAM_ROLES.USER_ASSIGNED": "Assigned Role in Permission Management",
       "ROLE.TITLE": "Role: ",
       "ROLES.TITLE": "Roles: ",
@@ -314,7 +314,7 @@
       "PRODUCT": "Name of the Application that defined the Permission",
       "ACTION": "Action that is allowed on the Resource",
       "RESOURCE": "Name of the Resource that can be worked on",
-      "ROLE": "Role from IAM (Identity Access Management) to which the Permission was assigned"
+      "ROLE": "Role from IDM (Identity Management) to which the Permission was assigned"
     },
     "MSG": {
       "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
@@ -341,7 +341,7 @@
     "NOT_FOUND": {
       "IAM_COMPONENT": "No component was provided that could provide this data.",
       "PRODUCT": "No data could be found for this Application.",
-      "USER": "The user no longer exist in IAM (Identity Access Management).",
+      "USER": "The user no longer exist in IDM (Identity Management).",
       "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_MISSING_PARAMETER": "Parameters from the URL could not be determined",
@@ -383,7 +383,7 @@
       "PERMISSIONS": "File could not be imported."
     },
     "HTTP_STATUS_418": {
-      "ROLES": "A role selection is not possible because IAM is not available."
+      "ROLES": "A role selection is not possible because IDM is not available."
     },
     "HTTP_STATUS_500": {
       "APP": "Unknown problem retrieving Application data. Please try again.",
