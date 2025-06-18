@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
@@ -9,8 +9,8 @@ import { of, throwError } from 'rxjs'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
-import { Role, IAMRole, RoleAPIService } from 'src/app/shared/generated'
-import { RoleDetailComponent, slotInitializer } from './role-detail.component'
+import { Role, RoleAPIService } from 'src/app/shared/generated'
+import { IDMRole, RoleDetailComponent, slotInitializer } from './role-detail.component'
 
 const role: Role = {
   id: 'roleId',
@@ -236,50 +236,51 @@ describe('RoleDetailComponent', () => {
    * Get IAM Roles from Remote Component
    */
   describe('get IAM roles', () => {
-    it('should get IAM roles - with getting data', () => {
+    it('should get IAM roles - with getting data', fakeAsync(() => {
       component.showIamRolesDialog = true
       component.isComponentDefined = false
       component.roles = [role]
       slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
 
       component.ngOnChanges()
+      tick(5000)
 
       component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-      expect(component.iamRoles.length).toBe(2)
-      expect(component.iamRoles[0]).toEqual({ name: 'role1' } as IAMRole)
-      expect(component.iamRoles[1]).toEqual({ name: 'role2' } as IAMRole)
-    })
+      expect(component.idmRoles.length).toBe(2)
+      expect(component.idmRoles[0]).toEqual({ name: 'role1' } as IDMRole)
+      expect(component.idmRoles[1]).toEqual({ name: 'role2' } as IDMRole)
+    }))
 
     it('should get IAM roles - reuse existing data', () => {
       component.showIamRolesDialog = true
       component.isComponentDefined = true
       component.roles = [role]
-      component.iamRolesOrg = [{ name: 'role1' }, { name: 'role2' }]
+      component.idmRolesOrg = [{ name: 'role1' }, { name: 'role2' }]
 
       component.ngOnChanges()
 
       component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-      expect(component.iamRoles.length).toBe(2)
-      expect(component.iamRoles[0]).toEqual({ name: 'role1' } as IAMRole)
-      expect(component.iamRoles[1]).toEqual({ name: 'role2' } as IAMRole)
+      expect(component.idmRoles.length).toBe(2)
+      expect(component.idmRoles[0]).toEqual({ name: 'role1' } as IDMRole)
+      expect(component.idmRoles[1]).toEqual({ name: 'role2' } as IDMRole)
     })
   })
 
   describe('onAddIamRoles', () => {
-    it('should emit false if selectedIamRoles is empty', () => {
+    it('should emit false if idmRolesSelected is empty', () => {
       spyOn(component.dataChanged, 'emit')
-      component.selectedIamRoles = []
+      component.idmRolesSelected = []
 
       component.onAddIamRoles()
 
       expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
     })
-    it('should emit false if selectedIamRoles is undefined', () => {
+    it('should emit false if idmRolesSelected is undefined', () => {
       spyOn(component.dataChanged, 'emit')
 
-      component.selectedIamRoles = []
+      component.idmRolesSelected = []
       component.onAddIamRoles()
 
       expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
@@ -291,7 +292,7 @@ describe('RoleDetailComponent', () => {
       spyOn(component.dataChanged, 'emit')
       roleApiSpy.createRole.and.returnValue(of({}))
 
-      component.selectedIamRoles = [{ name: 'role1' }]
+      component.idmRolesSelected = [{ name: 'role1' }]
       component.onAddIamRoles()
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
@@ -304,7 +305,7 @@ describe('RoleDetailComponent', () => {
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.selectedIamRoles = [{ name: 'role1' }]
+      component.idmRolesSelected = [{ name: 'role1' }]
       component.onAddIamRoles()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })

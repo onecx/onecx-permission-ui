@@ -104,6 +104,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     component = fixture.componentInstance
     component.active = true
     component.userId = id
+    component.issuer = 'issuer'
     fixture.detectChanges()
     component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
   }
