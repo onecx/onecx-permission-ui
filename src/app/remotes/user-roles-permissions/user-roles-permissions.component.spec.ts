@@ -410,12 +410,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.ngOnChanges()
 
-      component.loadingIamRoles = false
+      component.loadingIdmRoles = false
       userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2', 'role3']))
 
       component.onTabChange({ index: 2 }, userAssignments)
 
-      component.iamRoles$.subscribe({
+      component.idmRoles$.subscribe({
         next: (data) => {
           expect(data.length).toBe(3)
           expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
@@ -440,7 +440,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.onTabChange({ index: 2 }, userAssignments)
 
-      component.iamRoles$.subscribe({
+      component.idmRoles$.subscribe({
         next: (data) => {
           expect(data.length).toBe(0)
           expect(console.error).toHaveBeenCalledWith('getTokenRoles', errorResponse)
@@ -456,14 +456,14 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.ngOnChanges()
 
-      component.loadingIamRoles = false
+      component.loadingIdmRoles = false
       userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2']))
 
-      //component.iamRoles = [{ name: 'role1' }, { name: 'role2' }]
+      //component.idmRoles = [{ name: 'role1' }, { name: 'role2' }]
 
       component.onTabChange({ index: 2 }, userAssignments)
 
-      component.iamRoles$.subscribe({
+      component.idmRoles$.subscribe({
         next: (data) => {
           expect(data.length).toBe(3)
           expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
@@ -487,7 +487,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.onTabChange({ index: 2 }, userAssignments)
 
-      component.iamRoles$.subscribe({
+      component.idmRoles$.subscribe({
         next: (data) => {
           expect(data.length).toBe(2)
           expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
