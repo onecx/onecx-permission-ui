@@ -445,7 +445,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         next: (data) => {
           expect(data.length).toBe(0)
           expect(console.error).toHaveBeenCalledWith('getTokenRoles', errorResponse)
-          expect(component.exceptionKeyIamRoles).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
+          expect(component.exceptionKeyIdmRoles).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
           done()
         },
         error: done.fail
