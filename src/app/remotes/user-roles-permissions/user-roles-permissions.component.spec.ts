@@ -99,12 +99,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     routerMock.navigateByUrl.calls.reset()
   }))
 
-  function initializeComponent(id?: string) {
+  function initializeComponent(id?: string, issuer?: string) {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
     component = fixture.componentInstance
     component.active = true
     component.userId = id
-    component.issuer = 'issuer'
+    component.issuer = issuer
     fixture.detectChanges()
     component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
   }
@@ -130,7 +130,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
 
     it('should initialize the remote component', (done: DoneFn) => {
-      initializeComponent()
+      initializeComponent('userid')
 
       component.ocxInitRemoteComponent({
         baseUrl: 'base_url'
@@ -160,7 +160,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   describe('initial load', () => {
     beforeEach(() => {
-      initializeComponent()
+      initializeComponent('userid', 'issuer')
     })
 
     it('should search user assignments on reload', () => {
@@ -184,7 +184,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   describe('search user assignments', () => {
     beforeEach(() => {
-      initializeComponent('id')
+      initializeComponent('userid', 'issuer')
     })
 
     it('should get another users assignments', () => {
@@ -405,8 +405,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
   })
 
-  describe('iam roles', () => {
-    it('should getting my iam roles from token - successful', (done) => {
+  describe('idm roles', () => {
+    it('should getting my idm roles from token - successful', (done) => {
       initializeComponent()
 
       component.ngOnChanges()
@@ -430,7 +430,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       component.onTabChange({ index: 2 }, userAssignments)
     })
 
-    it('should getting my iam roles from token - failed', (done) => {
+    it('should getting my idm roles from token - failed', (done) => {
       initializeComponent()
 
       component.ngOnChanges()
@@ -452,34 +452,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       })
     })
 
-    xit('should getting my iam roles - already done', (done) => {
-      initializeComponent()
-
-      component.ngOnChanges()
-
-      component.loadingIdmRoles = false
-      userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2']))
-
-      //component.idmRoles = [{ name: 'role1' }, { name: 'role2' }]
-
-      component.onTabChange({ index: 2 }, userAssignments)
-
-      component.idmRoles$.subscribe({
-        next: (data) => {
-          expect(data.length).toBe(3)
-          expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
-          expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
-          expect(data[2]).toEqual({ label: 'role3', isUserAssignedRole: false } as ExtendedSelectItem)
-          done()
-        },
-        error: done.fail
-      })
-
-      component.onTabChange({ index: 2 }, userAssignments)
-    })
-
-    it('should getting iam roles from iam - successful', (done) => {
-      initializeComponent('userid')
+    it('should getting idm roles from idm - successful', (done) => {
+      initializeComponent('userid', 'issuer')
       slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
 
       component.ngOnChanges()
@@ -497,6 +471,14 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         },
         error: done.fail
       })
+    })
+
+    it('should decline getting idm roles - missing issuer', () => {
+      initializeComponent('userid')
+
+      component.ngOnChanges()
+
+      expect(component.exceptionKey).toBe('EXCEPTIONS.MISSING_ISSUER')
     })
   })
 })
