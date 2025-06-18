@@ -127,8 +127,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public ngOnChanges(): void {
     if (this.active !== undefined) {
-      console.error('user-roles  this.issuer' + this.issuer)
-      if (!this.issuer) {
+      if (this.userId && !this.issuer) {
         this.exceptionKey = 'EXCEPTIONS.MISSING_ISSUER'
         return
       }
