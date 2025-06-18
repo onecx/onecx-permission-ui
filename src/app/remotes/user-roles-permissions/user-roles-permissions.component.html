@@ -268,13 +268,17 @@
         ></p-message>
 
         <!-- get roles from remote for a user in admin mode -->
-        <ng-container *ngIf="isComponentDefined && iamRoles.length === 0">
-          <ocx-slot [name]="slotName" [inputs]="{ userId: userId }" [outputs]="{ roleList: roleListEmitter }">
+        <ng-container *ngIf="isComponentDefined && idmRoles.length === 0">
+          <ocx-slot
+            [name]="slotName"
+            [inputs]="{ userId: userId, issuer: this.issuer }"
+            [outputs]="{ roleList: roleListEmitter }"
+          >
           </ocx-slot>
         </ng-container>
 
         <p-message
-          *ngIf="loadingIamRoles"
+          *ngIf="loadingIdmRoles"
           id="apm_user_iam_roles_loading"
           severity="info"
           styleClass="m-3"
@@ -288,9 +292,9 @@
           [text]="exceptionKeyIamRoles | translate"
         ></p-message>
 
-        <ng-container *ngIf="isComponentDefined && (iamRoles$ | async) as iamRoles">
+        <ng-container *ngIf="isComponentDefined && (idmRoles$ | async) as idmRoles">
           <!-- displaying -->
-          <div *ngIf="!(exceptionKeyIamRoles || loadingIamRoles)" class="m-3 flex flex-row justify-content-start">
+          <div *ngIf="!(exceptionKeyIamRoles || loadingIdmRoles)" class="m-3 flex flex-row justify-content-start">
             <div class="flex flex-column row-gap-2">
               <div
                 class="font-bold"
@@ -298,12 +302,12 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-                {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ iamRoles.length }}
+                {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ idmRoles.length }}
               </div>
               <p-listbox
                 id="apm_user_iam_roles_list"
                 [listStyle]="{ 'max-height': '300px' }"
-                [options]="iamRoles"
+                [options]="idmRoles"
                 [filter]="true"
                 [filterFields]="['label']"
                 [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"

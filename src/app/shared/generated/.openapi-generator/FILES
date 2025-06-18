@@ -28,9 +28,6 @@ model/createRoleProductsAssignmentRequest.ts
 model/createRoleRequest.ts
 model/createRolesRequest.ts
 model/exportAssignmentsRequest.ts
-model/iAMRole.ts
-model/iAMRolePageResult.ts
-model/iAMRoleSearchCriteria.ts
 model/mfeMsAbstract.ts
 model/models.ts
 model/permission.ts

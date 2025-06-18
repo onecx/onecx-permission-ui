@@ -13,6 +13,7 @@
 
 export interface AssignmentUserSearchCriteria { 
     userId: string;
+    issuer: string;
     /**
      * The number of page.
      */

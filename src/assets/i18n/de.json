@@ -271,7 +271,7 @@
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
-    "IAM": {
+    "IDM": {
       "HEADER": "IDM Rollen auswählen",
       "LIST": "Fehlende Rollen",
       "INFO": "(IDM: Identity Management = Benutzer und Rollen)",

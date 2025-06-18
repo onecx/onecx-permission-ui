@@ -271,7 +271,7 @@
     "NAME": "Name",
     "DESCRIPTION": "Description",
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
-    "IAM": {
+    "IDM": {
       "HEADER": "Select IDM Roles",
       "LIST": "Missing Roles",
       "INFO": "(IDM: Identity Management => Users & Roles)",

@@ -75,6 +75,7 @@ export function slotInitializer(slotService: SlotService) {
 })
 export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
+  @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
   @Input() public active: boolean | undefined = undefined // this is set actively on call the component
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -85,8 +86,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
-  public iamRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public iamRoles: Role[] = []
+  public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
+  public idmRoles: Role[] = []
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
@@ -95,7 +96,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public selectedTabIndex = 0
 
   // manage slot to get roles from iam
-  public loadingIamRoles = false
+  public loadingIdmRoles = false
   public isComponentDefined = false
   public componentPermissions: string[] = []
   public slotName = 'onecx-permission-iam-user-roles'
@@ -133,9 +134,9 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           if (this.isComponentDefined) {
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
-              this.loadingIamRoles = false
-              this.iamRoles = list
-              this.iamRoles$ = this.provideIamRoles()
+              this.loadingIdmRoles = false
+              this.idmRoles = list
+              this.idmRoles$ = this.provideIamRoles()
             })
           }
         })
@@ -145,7 +146,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   public onReload() {
-    this.iamRoles = []
+    this.idmRoles = []
     this.userAssignedRoles = []
     this.userAssignments$ = this.searchUserAssignments()
   }
@@ -154,9 +155,11 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.loading = true
     this.exceptionKey = undefined
     // on admin view the userId is set, otherwise the me services are used
-    if (this.userId) {
+    if (this.userId && this.issuer) {
       return this.assgnmtApi
-        .searchUserAssignments({ assignmentUserSearchCriteria: { userId: this.userId, pageSize: 1000 } })
+        .searchUserAssignments({
+          assignmentUserSearchCriteria: { userId: this.userId, issuer: this.issuer, pageSize: 1000 }
+        })
         .pipe(
           map((pageResult: UserAssignmentPageResult) => {
             return pageResult.stream ?? []
@@ -203,7 +206,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public onTabChange($event: any, uas: UserAssignment[]) {
     if ($event.index === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
-      this.iamRoles$ = this.provideIamRoles() // used for me permissions
+      this.idmRoles$ = this.provideIamRoles() // used for me permissions
     }
   }
 
@@ -213,7 +216,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
     // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
     if (this.userId) {
-      this.iamRoles.forEach((role) =>
+      this.idmRoles.forEach((role) =>
         roles.push({
           label: role.name,
           isUserAssignedRole: this.userAssignedRoles.includes(role.name!)
@@ -222,8 +225,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       return of(roles)
     }
     // user in private context: get roles from token (if not yet done)
-    if (this.iamRoles.length > 0) {
-      this.iamRoles?.forEach((r) => {
+    if (this.idmRoles.length > 0) {
+      this.idmRoles?.forEach((r) => {
         roles.push({
           label: r.name,
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
@@ -232,11 +235,11 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       roles.sort(sortSelectItemsByLabel)
       return of(roles)
     } else {
-      this.loadingIamRoles = true
+      this.loadingIdmRoles = true
       return this.userApi.getTokenRoles().pipe(
         map((data) => {
           data.forEach((role) => {
-            this.iamRoles?.push({ name: role })
+            this.idmRoles?.push({ name: role })
             roles.push({
               label: role,
               isUserAssignedRole: this.userAssignedRoles.includes(role)
@@ -249,7 +252,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           console.error('getTokenRoles', err)
           return of([])
         }),
-        finalize(() => (this.loadingIamRoles = false))
+        finalize(() => (this.loadingIdmRoles = false))
       )
     }
   }

@@ -21,10 +21,6 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { CreateRolesRequest } from '../model/createRolesRequest';
 // @ts-ignore
-import { IAMRolePageResult } from '../model/iAMRolePageResult';
-// @ts-ignore
-import { IAMRoleSearchCriteria } from '../model/iAMRoleSearchCriteria';
-// @ts-ignore
 import { ProblemDetailResponse } from '../model/problemDetailResponse';
 // @ts-ignore
 import { Role } from '../model/role';
@@ -50,10 +46,6 @@ export interface DeleteRoleRequestParams {
 
 export interface GetRoleByIdRequestParams {
     id: string;
-}
-
-export interface SearchAvailableRolesRequestParams {
-    iAMRoleSearchCriteria: IAMRoleSearchCriteria;
 }
 
 export interface SearchRolesRequestParams {
@@ -307,75 +299,6 @@ export class RoleAPIService {
         return this.httpClient.request<Role>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
-                withCredentials: this.configuration.withCredentials,
-                headers: localVarHeaders,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Search for available roles in iam
-     * @param requestParameters
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public searchAvailableRoles(requestParameters: SearchAvailableRolesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<IAMRolePageResult>;
-    public searchAvailableRoles(requestParameters: SearchAvailableRolesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<IAMRolePageResult>>;
-    public searchAvailableRoles(requestParameters: SearchAvailableRolesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<IAMRolePageResult>>;
-    public searchAvailableRoles(requestParameters: SearchAvailableRolesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const iAMRoleSearchCriteria = requestParameters.iAMRoleSearchCriteria;
-        if (iAMRoleSearchCriteria === null || iAMRoleSearchCriteria === undefined) {
-            throw new Error('Required parameter iAMRoleSearchCriteria was null or undefined when calling searchAvailableRoles.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (localVarHttpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                'application/json'
-            ];
-            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        let localVarHttpContext: HttpContext | undefined = options && options.context;
-        if (localVarHttpContext === undefined) {
-            localVarHttpContext = new HttpContext();
-        }
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/roles/iam/search`;
-        return this.httpClient.request<IAMRolePageResult>('post', `${this.configuration.basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: iAMRoleSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

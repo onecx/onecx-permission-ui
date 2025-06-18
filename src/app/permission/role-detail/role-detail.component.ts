@@ -5,12 +5,13 @@ import { TranslateService } from '@ngx-translate/core'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
-import { Role, CreateRoleRequest, IAMRole, UpdateRoleRequest, RoleAPIService } from 'src/app/shared/generated'
+import { CreateRoleRequest, Role, RoleAPIService, UpdateRoleRequest } from 'src/app/shared/generated'
 import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
 export function slotInitializer(slotService: SlotService) {
   return () => slotService.init()
 }
+export type IDMRole = { name?: string } // replica from a IAM role
 
 @Component({
   selector: 'app-role-detail',
@@ -34,15 +35,15 @@ export class RoleDetailComponent implements OnChanges {
   public loading = true
   public exceptionKey: string | undefined = undefined
   public formGroup: FormGroup
-  public iamRoles: IAMRole[] = []
-  public iamRolesOrg: IAMRole[] = []
-  public selectedIamRoles: IAMRole[] = []
+  public idmRoles: IDMRole[] = []
+  public idmRolesOrg: IDMRole[] = []
+  public idmRolesSelected: IDMRole[] = []
 
   // manage slot to get roles from iam
   public loadingIamRoles = false
   public isComponentDefined = false
   public slotName = 'onecx-permission-iam-user-roles'
-  public roleListEmitter = new EventEmitter<IAMRole[]>()
+  public roleListEmitter = new EventEmitter<IDMRole[]>()
   public componentPermissions: string[] = []
 
   constructor(
@@ -71,24 +72,29 @@ export class RoleDetailComponent implements OnChanges {
         // check if the IAM component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
-          this.loading = true
           if (this.isComponentDefined) this.prepareRoleListEmitter()
         })
       } else {
         // refresh missing roles
-        this.iamRoles = this.iamRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
+        this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
       }
     }
   }
 
   // Hommage to SonarCloud: separate this
   private prepareRoleListEmitter() {
+    this.loading = true
+    // after 5s we assume IAM product is not running
+    setTimeout(() => {
+      if (this.loading) this.loading = false
+    }, 5000)
+
     // receive data from remote component
     this.roleListEmitter.subscribe((list) => {
       this.loading = false
       // exclude roles which already exists in Permission Mgmt
-      this.iamRolesOrg = list
-      this.iamRoles = this.iamRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
+      this.idmRolesOrg = list
+      this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
     })
   }
 
@@ -173,10 +179,10 @@ export class RoleDetailComponent implements OnChanges {
   }
 
   public onAddIamRoles() {
-    if (this.selectedIamRoles.length > 0)
-      this.roleApi.createRole({ createRolesRequest: { roles: this.selectedIamRoles } }).subscribe({
+    if (this.idmRolesSelected.length > 0)
+      this.roleApi.createRole({ createRolesRequest: { roles: this.idmRolesSelected } }).subscribe({
         next: () => {
-          this.selectedIamRoles = []
+          this.idmRolesSelected = []
           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
           this.dataChanged.emit(true)
         },
