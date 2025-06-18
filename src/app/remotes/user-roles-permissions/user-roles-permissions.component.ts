@@ -87,11 +87,11 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
   public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public idmRoles: Role[] = []
+  public idmRoles: Role[] = [] // empty list is indicator to init slot
   public columns
   public environment = environment
   public exceptionKey: string | undefined = undefined
-  public exceptionKeyIamRoles: string | undefined = undefined
+  public exceptionKeyIdmRoles: string | undefined = undefined
   public loading = false
   public selectedTabIndex = 0
 
@@ -127,6 +127,12 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
 
   public ngOnChanges(): void {
     if (this.active !== undefined) {
+      console.error('user-roles  this.issuer' + this.issuer)
+      if (!this.issuer) {
+        this.exceptionKey = 'EXCEPTIONS.MISSING_ISSUER'
+        return
+      }
+      this.loadingIdmRoles = true
       if (!this.isComponentDefined) {
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
@@ -211,7 +217,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   private provideIamRoles(): Observable<ExtendedSelectItem[]> {
-    this.exceptionKeyIamRoles = undefined
+    this.exceptionKeyIdmRoles = undefined
     const roles: ExtendedSelectItem[] = []
 
     // on admin view the userId is set and iam roles will get from remote, otherwise the me services are used
@@ -248,7 +254,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           return roles.sort(sortSelectItemsByLabel)
         }),
         catchError((err) => {
-          this.exceptionKeyIamRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
+          this.exceptionKeyIdmRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
           console.error('getTokenRoles', err)
           return of([])
         }),
