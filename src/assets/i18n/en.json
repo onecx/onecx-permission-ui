@@ -338,6 +338,7 @@
     }
   },
   "EXCEPTIONS": {
+    "MISSING_ISSUER": "Permissions and Roles cannot be determined because the User lacks the IDM issuer. The IDM issuer is determined when the user logs in for the first time.",
     "NOT_FOUND": {
       "IAM_COMPONENT": "No component was provided that could provide this data.",
       "PRODUCT": "No data could be found for this Application.",

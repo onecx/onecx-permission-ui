@@ -338,6 +338,7 @@
     }
   },
   "EXCEPTIONS": {
+    "MISSING_ISSUER": "Berechtigungen und Rollen können nicht ermittelt, weil beim Benutzer der IDM Issuer fehlt. Der IDM Issuer wird bei der ersten Anmeldung des Benutzers erfasst.",
     "NOT_FOUND": {
       "IAM_COMPONENT": "Es wurde keine Komponente bereitgestellt die diese Daten liefern könnte.",
       "PRODUCT": "Es konnten keine Daten zu dieser Applikation gefunden werden.",
