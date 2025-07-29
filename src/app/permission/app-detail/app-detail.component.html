@@ -2,7 +2,7 @@
   <ocx-page-header
     [loadingApp]="loadingApp"
     [actions]="(actions$ | async) ?? []"
-    [header]="loadingApp ? '' : ('DIALOG.DETAIL.HEADER_' + currentApp.appType | translate) + currentApp.name"
+    [header]="loadingApp ? '' : ('DIALOG.DETAIL.HEADER.' + currentApp.appType | translate) + currentApp.name"
     [subheader]="loadingApp ? '' : ('DIALOG.DETAIL.SUBHEADER_' + currentApp.appType | translate)"
     [manualBreadcrumbs]="false"
   >
@@ -149,24 +149,37 @@
             id="apm_app_detail_permission_table_header_permissions"
             [attr.colspan]="(currentApp.isProduct ? 2 : 3) + (showPermissionTools ? 2 : 0)"
             class="py-2 px-0 border-right-primary"
+            role="none"
           >
             <!-- summary -->
-            <div *ngIf="!currentApp.isProduct" class="absolute pl-2 flex flex-column row-gap-1 text-sm">
-              <div>{{ 'PERMISSION.LABEL' | translate }}: {{ permissions.length }}</div>
-              <div>
-                {{ 'DIALOG.DETAIL.HEADER_PRODUCTS' | translate }}{{ currentApp.workspaceDetails?.products?.length }}
+            <div
+              *ngIf="!currentApp.isProduct"
+              class="absolute pl-2 flex flex-column row-gap-1 text-sm"
+              role="list"
+              [aria-label]="'DIALOG.DETAIL.HEADER.SUMMARY' | translate"
+            >
+              <div role="listitem" [aria-label]="'DIALOG.DETAIL.HEADER.PERMISSIONS' | translate">
+                {{ 'DIALOG.DETAIL.HEADER.PERMISSIONS' | translate }}: {{ permissions.length }}
+              </div>
+              <div role="listitem" [aria-label]="'DIALOG.DETAIL.HEADER.PRODUCTS' | translate">
+                {{ 'DIALOG.DETAIL.HEADER.PRODUCTS' | translate }}{{ currentApp.workspaceDetails?.products?.length }}
               </div>
             </div>
-            <div class="flex flex-row justify-content-evenly">
-              <div class="flex flex-row align-items-center column-gap-2">
-                <span
-                  class="p-2 inline-block font-bold text-xl"
+            <div
+              class="flex flex-row justify-content-evenly"
+              role="note"
+              [aria-label]="'DIALOG.DETAIL.HEADER.PERMISSIONS.MANAGE' | translate"
+            >
+              <div class="flex flex-row align-items-center column-gap-2 text-base">
+                <h2
+                  class="my-0 p-2 inline-block text-base"
                   [attr.aria-label]="'PERMISSION.LABEL' | translate"
                   [pTooltip]="'PERMISSION.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                  >{{ 'PERMISSION.LABEL' | translate }}</span
                 >
+                  {{ 'PERMISSION.LABEL' | translate }}
+                </h2>
                 <button
                   pbutton
                   type="button"
@@ -213,16 +226,21 @@
           </th>
           <!-- 1. HEADER ROW - ROLES -->
           <th id="apm_app_detail_permission_table_header_roles" class="py-2" [attr.colspan]="roles ? roles.length : 0">
-            <div class="flex flex-row justify-content-evenly">
-              <div class="flex flex-row align-items-center column-gap-2">
-                <span
-                  class="p-2 inline-block font-bold text-xl"
+            <div
+              class="flex flex-row justify-content-evenly"
+              role="group"
+              [aria-label]="'DIALOG.DETAIL.HEADER.ROLES.MANAGE' | translate"
+            >
+              <div class="flex flex-row align-items-center column-gap-2 text-base">
+                <h2
+                  class="my-0 p-2 inline-block text-base"
                   [attr.aria-label]="'ROLE.LABEL' | translate"
                   [pTooltip]="'ROLE.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                  >{{ 'ROLE.LABEL' | translate }}</span
                 >
+                  {{ 'ROLE.LABEL' | translate }}
+                </h2>
                 <div class="flex flex-row column-gap-2">
                   <button
                     *ngIf="myPermissions.includes('ROLE#MANAGE')"
@@ -569,7 +587,7 @@
             </td>
           </ng-container>
           <td pFrozenColumn [id]="'app_detail_permission_table_row_' + row + '_permission_key'" class="p-2">
-            <div class="font-bold text-sm sm:text-base">{{ rowData.resource }} # {{ rowData.action }}</div>
+            <div class="text-sm sm:text-base">{{ rowData.resource }} # {{ rowData.action }}</div>
             <div *ngIf="displayAdditionalRowData" class="mt-1 text-xs hidden lg:block">{{ rowData.description }}</div>
           </td>
           <td
