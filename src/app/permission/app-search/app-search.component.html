@@ -11,16 +11,14 @@
       [formGroup]="appSearchCriteria"
       class="flex flex-wrap flex-row gap-4 row-gap-3 md:px-2"
       [attr.aria-label]="'DIALOG.SEARCH.CRITERIA' | translate"
-      role="region"
     >
       <div class="flex flex-wrap flex-row align-items-center gap-2">
-        <div
+        <section
           class="slim-selectbutton search-criteria-selectbutton"
           [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
           [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
-          role="region"
         >
           <p-selectButton
             inputid="apm_app_search_criteria_app_type"
@@ -38,7 +36,7 @@
             <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
             <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteria.controls['appType'].value | translate }}</span>
           </div>
-        </div>
+        </section>
       </div>
       <div>
         <span class="p-float-label">

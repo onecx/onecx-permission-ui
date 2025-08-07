@@ -198,14 +198,13 @@
     >
       <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
         <!-- ROLES -->
-        <div
+        <section
           *ngIf="extractFilterItems(items, 'roleName') as roles"
           class="flex flex-column row-gap-2"
           [attr.aria-label]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
           [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
-          role="region"
         >
           <div class="font-bold" role="note">
             {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ roles.length }}
@@ -219,17 +218,16 @@
             [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
             [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
           />
-        </div>
+        </section>
 
         <!-- PRODUCTS -->
-        <div
+        <section
           *ngIf="extractFilterItems(items, 'productName') as products"
           class="flex flex-column row-gap-2"
           [attr.aria-label]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
           [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
-          role="region"
         >
           <div class="font-bold" role="note">
             {{ 'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate }} {{ products.length }}
@@ -243,7 +241,7 @@
             [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
             [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
           />
-        </div>
+        </section>
       </div>
     </p-tabPanel>
 
@@ -293,11 +291,7 @@
 
         <ng-container *ngIf="isComponentDefined && (idmRoles$ | async) as idmRoles">
           <!-- displaying -->
-          <div
-            *ngIf="!(exceptionKeyIdmRoles || loadingIdmRoles)"
-            class="m-3 flex flex-row justify-content-start"
-            role="region"
-          >
+          <section *ngIf="!(exceptionKeyIdmRoles || loadingIdmRoles)" class="m-3 flex flex-row justify-content-start">
             <div class="flex flex-column row-gap-2">
               <div
                 class="font-bold"
@@ -337,7 +331,7 @@
                 </ng-template>
               </p-listbox>
             </div>
-          </div>
+          </section>
         </ng-container>
       </ng-container>
     </p-tabPanel>

@@ -152,14 +152,17 @@
           >
             <!-- summary -->
             <ul
-              *ngIf="!currentApp.isProduct"
               class="absolute m-0 pl-2 flex flex-column row-gap-1 text-sm"
               [attr.aria-label]="'DIALOG.DETAIL.HEADER.SUMMARY' | translate"
             >
               <li class="list-none" [attr.aria-label]="'DIALOG.DETAIL.HEADER.PERMISSIONS' | translate">
                 {{ 'DIALOG.DETAIL.HEADER.PERMISSIONS' | translate }}{{ permissions.length }}
               </li>
-              <li class="list-none" [attr.aria-label]="'DIALOG.DETAIL.HEADER.PRODUCTS' | translate">
+              <li
+                *ngIf="!currentApp.isProduct"
+                class="list-none"
+                [attr.aria-label]="'DIALOG.DETAIL.HEADER.PRODUCTS' | translate"
+              >
                 {{ 'DIALOG.DETAIL.HEADER.PRODUCTS' | translate }}{{ currentApp.workspaceDetails?.products?.length }}
               </li>
             </ul>
