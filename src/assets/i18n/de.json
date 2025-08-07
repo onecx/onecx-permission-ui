@@ -151,6 +151,7 @@
     "SEARCH": {
       "HEADER": "Berechtigungsverwaltung",
       "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
+      "CRITERIA": "Suchfelder",
       "QUICK_FILTER": {
         "LABEL": "Quickfilter für Typ",
         "TOOLTIP": "Quickfilter für Typ",

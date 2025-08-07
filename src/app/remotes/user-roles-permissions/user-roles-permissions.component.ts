@@ -15,8 +15,8 @@ import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
-import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
+import { Table } from 'primeng/table'
 
 import {
   AngularRemoteComponentsModule,

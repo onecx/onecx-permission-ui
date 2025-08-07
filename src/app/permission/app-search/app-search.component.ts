@@ -61,7 +61,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public products$!: Observable<(App & RowListGridData)[]>
   public productNames: string[] = []
   private workspaces$!: Observable<WorkspacePageResult>
-  public appSearchCriteriaGroup!: FormGroup<AppSearchCriteria>
+  public appSearchCriteria!: FormGroup<AppSearchCriteria>
   // dialog control
   public actions$: Observable<Action[]> | undefined
   public loading = false
@@ -106,13 +106,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private readonly workspaceApi: WorkspaceAPIService
   ) {
     // search criteria
-    this.appSearchCriteriaGroup = new FormGroup<AppSearchCriteria>({
+    this.appSearchCriteria = new FormGroup<AppSearchCriteria>({
       appId: new FormControl<string | null>(null),
       appType: new FormControl<AppFilterType | null>('WORKSPACE'),
       name: new FormControl<string | null>(null)
     })
-    this.appSearchCriteriaGroup.controls['appType'].setValue('ALL') // default: all app types
-    this.appSearchCriteriaGroup.controls['name'].disable()
+    this.appSearchCriteria.controls['appType'].setValue('ALL') // default: all app types
+    this.appSearchCriteria.controls['name'].disable()
     this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
       map(([typeValue, textFilter]) => {
         const filters: (Filter & { mode: 'contains' | 'equals' })[] = []
@@ -147,8 +147,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.workspaces$ = this.workspaceApi
       .searchWorkspaces({
         workspaceSearchCriteria: {
-          workspaceName:
-            appType === 'WORKSPACE' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined
+          workspaceName: appType === 'WORKSPACE' ? (this.appSearchCriteria.controls['name'].value ?? '') : undefined
         }
       })
       .pipe(
@@ -181,9 +180,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.papps$ = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
-          appId: searchAppType === 'APP' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined,
-          productName:
-            searchAppType === 'PRODUCT' ? (this.appSearchCriteriaGroup.controls['name'].value ?? '') : undefined,
+          appId: searchAppType === 'APP' ? (this.appSearchCriteria.controls['name'].value ?? '') : undefined,
+          productName: searchAppType === 'PRODUCT' ? (this.appSearchCriteria.controls['name'].value ?? '') : undefined,
           pageSize: 1000
         }
       })
@@ -215,7 +213,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public searchApps(): void {
     this.loading = true
     this.exceptionKey = undefined
-    switch (this.appSearchCriteriaGroup.controls['appType'].value) {
+    switch (this.appSearchCriteria.controls['appType'].value) {
       case 'ALL':
         this.apps$ = combineLatest([this.searchWorkspaces(), this.searchProducts('PRODUCT')]).pipe(
           map(([w, a]: [(App & RowListGridData)[], (App & RowListGridData)[]]) =>
@@ -228,7 +226,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         break
       case 'APP':
       case 'PRODUCT':
-        this.apps$ = this.searchProducts(this.appSearchCriteriaGroup.controls['appType'].value)
+        this.apps$ = this.searchProducts(this.appSearchCriteria.controls['appType'].value)
         break
     }
     this.filteredApps$ = combineLatest([this.apps$, this.filters$]).pipe(
@@ -411,9 +409,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
   }
   public onAppTypeCriteriaChange(ev: any): void {
-    if (ev.value) this.appSearchCriteriaGroup.controls['appType'].setValue(ev.value)
-    if (ev.value === 'ALL') this.appSearchCriteriaGroup.controls['name'].disable()
-    else this.appSearchCriteriaGroup.controls['name'].enable()
+    if (ev.value) this.appSearchCriteria.controls['appType'].setValue(ev.value)
+    if (ev.value === 'ALL') this.appSearchCriteria.controls['name'].disable()
+    else this.appSearchCriteria.controls['name'].enable()
   }
   public onQuickFilterChange(ev: any): void {
     if (ev.value) this.quickFilterValue = ev.value
@@ -434,7 +432,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.searchApps()
   }
   public onSearchReset() {
-    this.appSearchCriteriaGroup.reset({ appType: 'ALL' })
+    this.appSearchCriteria.reset({ appType: 'ALL' })
     this.apps$ = of([] as (App & RowListGridData)[])
     this.filteredApps$ = of([] as (App & RowListGridData)[])
   }

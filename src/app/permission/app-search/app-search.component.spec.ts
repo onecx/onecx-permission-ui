@@ -156,8 +156,8 @@ describe('AppSearchComponent', () => {
    */
   describe('search', () => {
     it('should search workspaces', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
-      component.appSearchCriteriaGroup.controls['name'].setValue('wsName')
+      component.appSearchCriteria.controls['appType'].setValue('WORKSPACE')
+      component.appSearchCriteria.controls['name'].setValue('wsName')
 
       component.searchApps()
 
@@ -174,7 +174,7 @@ describe('AppSearchComponent', () => {
     })
 
     it('should search workspaces: empty', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+      component.appSearchCriteria.controls['appType'].setValue('WORKSPACE')
       wsApiSpy.searchWorkspaces.and.returnValue(of({}) as any)
 
       component.searchApps()
@@ -189,7 +189,7 @@ describe('AppSearchComponent', () => {
     })
 
     it('should catch error on searchApps: ws', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('WORKSPACE')
+      component.appSearchCriteria.controls['appType'].setValue('WORKSPACE')
       const errorResponse = { status: 404, statusText: 'Not Found' }
       wsApiSpy.searchWorkspaces.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
@@ -210,8 +210,8 @@ describe('AppSearchComponent', () => {
 
   describe('search products', () => {
     it('should search products - ok', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteria.controls['name'].setValue('app')
 
       component.searchApps()
 
@@ -228,8 +228,8 @@ describe('AppSearchComponent', () => {
     })
 
     it('should search products with equals filter', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteria.controls['name'].setValue('app')
       component.typeFilterValue$.next('filterValue')
 
       component.searchApps()
@@ -247,8 +247,8 @@ describe('AppSearchComponent', () => {
     })
 
     it('should search products with contains filter', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteria.controls['name'].setValue('app')
       component.textFilterValue$.next('textFilterValue')
 
       component.searchApps()
@@ -277,8 +277,8 @@ describe('AppSearchComponent', () => {
           ]
         } as any)
       )
-      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteria.controls['name'].setValue('app')
 
       component.searchApps()
 
@@ -295,8 +295,8 @@ describe('AppSearchComponent', () => {
     })
 
     it('should search products without search criteria', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-      component.appSearchCriteriaGroup.controls['name'].setValue(null)
+      component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+      component.appSearchCriteria.controls['name'].setValue(null)
 
       component.searchApps()
 
@@ -315,8 +315,8 @@ describe('AppSearchComponent', () => {
 
   describe('search apps', () => {
     it('should search apps', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
-      component.appSearchCriteriaGroup.controls['name'].setValue('app')
+      component.appSearchCriteria.controls['appType'].setValue('APP')
+      component.appSearchCriteria.controls['name'].setValue('app')
 
       component.searchApps()
 
@@ -333,8 +333,8 @@ describe('AppSearchComponent', () => {
     })
 
     it('should search apps without criteria', (done) => {
-      component.appSearchCriteriaGroup.controls['appType'].setValue('APP')
-      component.appSearchCriteriaGroup.controls['name'].setValue(null)
+      component.appSearchCriteria.controls['appType'].setValue('APP')
+      component.appSearchCriteria.controls['name'].setValue(null)
 
       component.searchApps()
 
@@ -357,8 +357,8 @@ describe('AppSearchComponent', () => {
         const appPageRes2: ApplicationPageResult = { stream: [app3, app4] }
 
         appApiSpy.searchApplications.and.returnValue(of(appPageRes2 as any))
-        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
-        component.appSearchCriteriaGroup.controls['name'].setValue('app')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+        component.appSearchCriteria.controls['name'].setValue('app')
 
         component.searchApps()
 
@@ -375,7 +375,7 @@ describe('AppSearchComponent', () => {
       })
 
       it('should search products: empty', (done) => {
-        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
         appApiSpy.searchApplications.and.returnValue(of({}) as any)
 
         component.searchApps()
@@ -390,7 +390,7 @@ describe('AppSearchComponent', () => {
       })
 
       it('should catch error on searchApps: products', (done) => {
-        component.appSearchCriteriaGroup.controls['appType'].setValue('PRODUCT')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
         const errorResponse = { status: 404, statusText: 'Not Found' }
         appApiSpy.searchApplications.and.returnValue(throwError(() => errorResponse))
         spyOn(console, 'error')
@@ -446,10 +446,10 @@ describe('AppSearchComponent', () => {
 
   it('should disable name input field if app type on search is ALL', () => {
     component.onAppTypeCriteriaChange({ value: 'ALL' })
-    expect(component.appSearchCriteriaGroup.controls['name'].disabled).toBeTrue()
+    expect(component.appSearchCriteria.controls['name'].disabled).toBeTrue()
 
     component.onAppTypeCriteriaChange({ value: 'Apps' })
-    expect(component.appSearchCriteriaGroup.controls['name'].enabled).toBeTrue()
+    expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
   })
 
   it('should update textFilterValue$ when onFilterChange is called', () => {
@@ -491,11 +491,11 @@ describe('AppSearchComponent', () => {
     })
 
     it('should reset search criteria group and assign empty array to apps observable', (done) => {
-      spyOn(component.appSearchCriteriaGroup, 'reset')
+      spyOn(component.appSearchCriteria, 'reset')
 
       component.onSearchReset()
 
-      expect(component.appSearchCriteriaGroup.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
+      expect(component.appSearchCriteria.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
       component.apps$.subscribe({
         next: (res) => {
           if (res) {
