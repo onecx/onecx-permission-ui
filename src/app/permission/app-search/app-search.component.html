@@ -7,11 +7,16 @@
     (resetted)="onSearchReset()"
     [manualBreadcrumbs]="false"
   >
-    <div [formGroup]="appSearchCriteriaGroup" class="flex flex-wrap flex-row gap-4 row-gap-3 md:px-2">
+    <form
+      [formGroup]="appSearchCriteria"
+      class="flex flex-wrap flex-row gap-4 row-gap-3 md:px-2"
+      [attr.aria-label]="'DIALOG.SEARCH.CRITERIA' | translate"
+    >
       <div class="flex flex-wrap flex-row align-items-center gap-2">
-        <div
+        <section
           class="slim-selectbutton search-criteria-selectbutton"
-          [pTooltip]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
+          [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
+          [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         >
@@ -23,17 +28,15 @@
             [allowEmpty]="false"
             [ariaLabel]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
           >
-            <ng-template let-item pTemplate
-              ><span [id]="'apm_app_search_criteria_app_type_' + item.value"> {{ item.label }}</span></ng-template
-            >
+            <ng-template let-item pTemplate>
+              <span [id]="'apm_app_search_criteria_app_type_' + item.value"> {{ item.label }}</span>
+            </ng-template>
           </p-selectButton>
-          <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-90">
+          <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-90" aria-hidden="true">
             <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
-            <span>
-              {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteriaGroup.controls['appType'].value | translate }}</span
-            >
+            <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteria.controls['appType'].value | translate }}</span>
           </div>
-        </div>
+        </section>
       </div>
       <div>
         <span class="p-float-label">
@@ -43,16 +46,15 @@
             type="text"
             formControlName="name"
             class="w-15rem"
-            [clear]="true"
-            [ariaLabel]="'APP.SEARCH.NAME.TOOLTIP' | translate"
+            [attr.aria-label]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             [pTooltip]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
           />
-          <label for="apm_app_search_criteria_name">{{ 'APP.SEARCH.NAME' | translate }}</label>
+          <label for="apm_app_search_criteria_name" aria-hidden="true">{{ 'APP.SEARCH.NAME' | translate }}</label>
         </span>
       </div>
-    </div>
+    </form>
   </ocx-search-header>
 
   <ocx-page-content *ngIf="(filteredApps$ | async) ?? [] as applications">
@@ -93,9 +95,9 @@
               (onChange)="onQuickFilterChange($event)"
               [ariaLabel]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
             >
-              <ng-template let-item pTemplate
-                ><span [id]="'apm_app_search_quick_filter_' + item.value"> {{ item.label }}</span></ng-template
-              >
+              <ng-template let-item pTemplate>
+                <span [id]="'apm_app_search_quick_filter_' + item.value"> {{ item.label }}</span>
+              </ng-template>
             </p-selectButton>
             <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-80">
               <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
@@ -128,19 +130,23 @@
         [data]="applications"
         [paginator]="true"
         [pageSizes]="[20, 40, 100]"
-        [rows]="20"
+        [pageSize]="20"
         [layout]="'grid'"
         [columns]="columnTypes"
         [sortDirection]="sortDirection"
         [sortField]="sortField"
       >
         <ng-template let-app let-i="rowIndex" #gridItem>
-          <div class="col-6 md:col-4 xl:col-3 p-2 md:p-3">
+          <article
+            class="col-6 md:col-4 xl:col-3 p-2 md:p-3"
+            [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+          >
             <a
               tabindex="0"
               [id]="'apm_app_search_data_idx_' + i"
               class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
               (click)="onAppClick(app)"
+              role="link"
             >
               <div
                 [id]="'apm_app_search_data_idx_' + i + '_name'"
@@ -158,7 +164,7 @@
                 [title]="'APP.TYPE_'.concat(app.appType) + '.TOOLTIP' | translate"
               />
             </a>
-          </div>
+          </article>
         </ng-template>
       </ocx-data-list-grid>
     </div>
@@ -243,6 +249,6 @@
 <!-- EXPORT -->
 <app-permission-export
   [products]="productNames"
-  [listedProductsHeader]="'ACTIONS.EXPORT.APPLICATION_LIST'"
+  [listedProductsHeaderKey]="'ACTIONS.EXPORT.APPLICATION_LIST'"
   [(displayExportDialog)]="displayExportDialog"
 ></app-permission-export>

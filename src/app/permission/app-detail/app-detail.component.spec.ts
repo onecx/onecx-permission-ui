@@ -395,18 +395,6 @@ describe('AppDetailComponent', () => {
       expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName', errorResponse)
     })
 
-    xit('should catch non-HttpErrorResponse error if workspace detail load fails', () => {
-      component.urlParamAppType = 'WORKSPACE'
-      const errorResponse = { message: 'non-HTTP error' }
-      wsApiSpy.getDetailsByWorkspaceName.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-
-      component.ngOnInit()
-
-      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.WORKSPACE')
-      expect(console.error).toHaveBeenCalledWith('getDetailsByWorkspaceName', errorResponse)
-    })
-
     it('should load roles and permissions', () => {
       component.urlParamAppType = 'WORKSPACE'
 

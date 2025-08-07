@@ -151,6 +151,7 @@
     "SEARCH": {
       "HEADER": "Berechtigungsverwaltung",
       "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
+      "CRITERIA": "Suchfelder",
       "QUICK_FILTER": {
         "LABEL": "Quickfilter für Typ",
         "TOOLTIP": "Quickfilter für Typ",
@@ -169,10 +170,17 @@
       }
     },
     "DETAIL": {
-      "HEADER_WORKSPACE": "Workspace: ",
-      "HEADER_PRODUCT": "Applikation: ",
-      "HEADER_PRODUCTS": "Applikationen: ",
-      "HEADER_APP": "App: ",
+      "HEADER": {
+        "SUMMARY": "Übersicht",
+        "WORKSPACE": "Workspace: ",
+        "PRODUCT": "Applikation: ",
+        "PRODUCTS": "Applikationen: ",
+        "PERMISSIONS": "Berechtigungen: ",
+        "PERMISSIONS.MANAGE": "Berechtigungen verwalten",
+        "ROLES": "Rollen: ",
+        "ROLES.MANAGE": "Rollen verwalten",
+        "APP": "App: "
+      },
       "SUBHEADER_WORKSPACE": "Verwalten von Berechtigungen für den Workspace und den Apps der registrierten Applikationen",
       "SUBHEADER_PRODUCT": "Verwalten von Berechtigungen für die Applikation und deren Apps",
       "SUBHEADER_APP": "Verwalten von Berechtigungen für die App",

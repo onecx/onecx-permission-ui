@@ -7,6 +7,7 @@ import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, ReplaySubject, throwError } from 'rxjs'
 import { Table, TableModule } from 'primeng/table'
+import { TabViewModule } from 'primeng/tabview'
 
 import { BASE_URL, RemoteComponentConfig, SlotService } from '@onecx/angular-remote-components'
 import { AppConfigService } from '@onecx/angular-integration-interface'
@@ -61,6 +62,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       declarations: [],
       imports: [
         TableModule,
+        TabViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
