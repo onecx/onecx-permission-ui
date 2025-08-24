@@ -152,6 +152,7 @@
       "HEADER": "Permission Management",
       "SUBHEADER": "Management of Application and Workspace Permissions",
       "CRITERIA": "Search Criteria",
+      "RESULTS": "Search Results",
       "QUICK_FILTER": {
         "LABEL": "Type",
         "TOOLTIP": "Quick Filter for App type",
