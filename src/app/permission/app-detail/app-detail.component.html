@@ -363,6 +363,7 @@
                   [(ngModel)]="filterProductValue"
                   (onChange)="onFilterItemChangeProduct($event)"
                   [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  [ariaLabel]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   [pTooltip]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
@@ -377,11 +378,12 @@
                 id="app_detail_permission_table_sort_product_name"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onFilterItemSortIcon($event, sortIconProduct, 'product')"
+                [ariaLabel]="'PERMISSION.SORT.PRODUCT' | translate"
                 [pTooltip]="'PERMISSION.SORT.PRODUCT' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-                <span #sortIconProduct class="pi pi-sort-alt"></span>
+                <span #sortIconProduct class="pi pi-sort-alt" aria-hidden="true"></span>
               </button>
             </div>
           </th>
@@ -465,10 +467,11 @@
                 <span
                   *ngIf="role.mandatory"
                   class="danger-action-text pi pi-lock"
-                  aria-hidden="true"
+                  [attr.aria-label]="'ROLE.MANDATORY' | translate"
                   [pTooltip]="'ROLE.MANDATORY' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
+                  role="note"
                 ></span>
                 <button
                   pbutton
