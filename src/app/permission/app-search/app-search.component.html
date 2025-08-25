@@ -81,8 +81,9 @@
     <div *ngIf="!(loading || exceptionKey)" class="py-2 px-3">
       <div class="flex flex-wrap align-items-center mt-1 mx-1">
         <div class="flex flex-wrap align-items-center ml-1 gap-2">
-          <div
+          <section
             class="slim-selectbutton align-items-start search-criteria-selectbutton"
+            [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
             [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -103,7 +104,7 @@
               <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
               <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + quickFilterValue | translate }}</span>
             </div>
-          </div>
+          </section>
         </div>
         <ocx-data-view-controls
           class="flex-grow-1"
@@ -125,48 +126,54 @@
         >
         </ocx-data-view-controls>
       </div>
-      <ocx-data-list-grid
-        id="apm_app_search_dataview"
-        [data]="applications"
-        [paginator]="true"
-        [pageSizes]="[20, 40, 100]"
-        [pageSize]="20"
-        [layout]="'grid'"
-        [columns]="columnTypes"
-        [sortDirection]="sortDirection"
-        [sortField]="sortField"
+      <section
+        [attr.aria-label]="
+          ('DIALOG.SEARCH.RESULTS' | translate) + ': ' + ('DIALOG.QUICK_FILTER.SEARCH.PRODUCT' | translate)
+        "
       >
-        <ng-template let-app let-i="rowIndex" #gridItem>
-          <article
-            class="col-6 md:col-4 xl:col-3 p-2 md:p-3"
-            [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
-          >
-            <a
-              tabindex="0"
-              [id]="'apm_app_search_data_idx_' + i"
-              class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
-              (click)="onAppClick(app)"
-              role="link"
+        <ocx-data-list-grid
+          id="apm_app_search_dataview"
+          [data]="applications"
+          [paginator]="true"
+          [pageSizes]="[20, 40, 100]"
+          [pageSize]="20"
+          [layout]="'grid'"
+          [columns]="columnTypes"
+          [sortDirection]="sortDirection"
+          [sortField]="sortField"
+        >
+          <ng-template let-app let-i="rowIndex" #gridItem>
+            <article
+              class="col-6 md:col-4 lg:col-4 xl:col-3 p-2 md:p-3"
+              [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
             >
-              <div
-                [id]="'apm_app_search_data_idx_' + i + '_name'"
-                class="font-bold text-base md:text-lg text-responsive"
-                [id]="'apm_app_search_data_idx_' + i + '_app_name'"
-                [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+              <a
+                tabindex="0"
+                [id]="'apm_app_search_data_idx_' + i"
+                class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
+                (click)="onAppClick(app)"
+                role="link"
               >
-                {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
-              </div>
-              <app-ocx-chip
-                [id]="'apm_app_search_data_idx_' + i + '_type'"
-                class="py-1"
-                [styleClass]="app.appType === 'WORKSPACE' ? 'bg-primary' : ''"
-                [label]="'APP.TYPE_'.concat(app.appType) | translate"
-                [title]="'APP.TYPE_'.concat(app.appType) + '.TOOLTIP' | translate"
-              />
-            </a>
-          </article>
-        </ng-template>
-      </ocx-data-list-grid>
+                <div
+                  [id]="'apm_app_search_data_idx_' + i + '_name'"
+                  class="font-bold text-sm md:text-base lg:text-lg text-responsive"
+                  [id]="'apm_app_search_data_idx_' + i + '_app_name'"
+                  [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+                >
+                  {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
+                </div>
+                <app-ocx-chip
+                  [id]="'apm_app_search_data_idx_' + i + '_type'"
+                  class="py-1"
+                  [styleClass]="app.appType === 'WORKSPACE' ? 'bg-primary' : ''"
+                  [label]="'APP.TYPE_'.concat(app.appType) | translate"
+                  [title]="'APP.TYPE_'.concat(app.appType) + '.TOOLTIP' | translate"
+                />
+              </a>
+            </article>
+          </ng-template>
+        </ocx-data-list-grid>
+      </section>
     </div>
   </ocx-page-content>
 </ocx-portal-page>

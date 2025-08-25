@@ -2,6 +2,7 @@
 
 @include danger-action;
 @include prepare-inputgroup;
+@include displaying-text-responsive;
 @include correct-data-view-control;
 @include correct-select-button;
 @include search-criteria-select-button;
@@ -11,6 +12,7 @@
 @include dataview-list-zebra-rows;
 @include table-zebra-rows;
 @include table-inline-buttons;
+@include table-responsive-columns;
 
 :host ::ng-deep {
   .word-break-all {
@@ -24,24 +26,18 @@
     .p-datatable-wrapper {
       margin-top: 0.5rem;
     }
-    .p-datatable-thead > tr:first-of-type > th {
-      border-bottom: unset;
-    }
     .p-datatable-thead > tr > th:last-of-type,
     .p-datatable-tbody > tr > td:last-of-type {
       border-right: unset;
     }
   }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0 0.5rem;
+    height: 3rem;
+  }
+
   .button-letter-icon {
     padding: 1px 4px !important;
-  }
-  .border-right-primary {
-    border-right-color: var(--primary-color) !important;
-    border-right-width: 2px !important;
-  }
-  .border-bottom-primary {
-    border-bottom-color: var(--primary-color) !important;
-    border-bottom-width: 2px !important;
   }
   .p-inputtext.middle-of-inputgroup {
     border-left: 0;

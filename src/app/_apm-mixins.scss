@@ -513,14 +513,16 @@
 @mixin table-inline-buttons {
   :host ::ng-deep {
     /* reduce the size of buttons used inside a table row */
+
     th button.p-button,
-    td button.p-button {
+    td button.p-button,
+    button.p-button.inline-button {
       &.p-button-icon-only {
         padding: 0.5rem;
-        width: unset !important;
+        width: 2rem !important;
       }
       &.p-button-rounded {
-        height: unset !important;
+        height: 2rem !important;
       }
       &:disabled {
         opacity: 0.38 !important;
