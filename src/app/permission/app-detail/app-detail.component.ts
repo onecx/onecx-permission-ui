@@ -110,7 +110,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public displayPermissionDetailDialog = false
   public displayPermissionDeleteDialog = false
   public displayPermissionExportDialog = false
-  public displayAdditionalRowData = false
   public showPermissionTools = false
   public protectedAssignments: Array<string> = []
 
@@ -254,10 +253,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayPermissionExportDialog = true
   }
   public onRoleFilterChange(val: string): void {
-    if (this.rolesFiltered && this.roles.length > 0)
+    if (val !== '' && this.rolesFiltered && this.roles.length > 0)
       this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
+    else this.rolesFiltered = this.roles
   }
-
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
       this.exceptionKey = 'EXCEPTIONS.HTTP_MISSING_PARAMETER'
@@ -589,8 +588,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onSortPermissionTable() {
     // reset icons
-    if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-fw pi-sort-alt'
-    if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-fw pi-sort-alt'
+    if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-sort-alt'
+    if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-sort-alt'
   }
   /**
    * Filter: Product, AppId
@@ -599,15 +598,15 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev.stopPropagation()
     this.permissionTable?.clear()
     switch (icon.className) {
-      case 'pi pi-fw pi-sort-amount-down':
-        icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+      case 'pi pi-sort-amount-down':
+        icon.className = 'pi pi-sort-amount-up-alt'
         this.permissionTable?._value.sort(
           field === 'appId' ? this.sortPermissionRowByAppIdAsc : this.sortPermissionRowByProductAsc
         )
         break
-      case 'pi pi-fw pi-sort-alt': // init
-      case 'pi pi-fw pi-sort-amount-up-alt':
-        icon.className = 'pi pi-fw pi-sort-amount-down'
+      case 'pi pi-sort-alt': // init
+      case 'pi pi-sort-amount-up-alt':
+        icon.className = 'pi pi-sort-amount-down'
         this.permissionTable?._value.sort(
           field === 'appId' ? this.sortPermissionRowByAppIdDesc : this.sortPermissionRowByProductDesc
         )

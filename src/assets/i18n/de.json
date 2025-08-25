@@ -199,6 +199,7 @@
         "OTHERS": "OTHERS"
       },
       "FILTER": {
+        "PERMISSION.LABEL": "Filter für Berechtigungen",
         "APPS": "App",
         "APPS.TOOLTIP": "Liste von Apps entsprechend der Applikationsauswahl",
         "APP_TYPE": "Typ",
