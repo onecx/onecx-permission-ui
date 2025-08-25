@@ -405,13 +405,22 @@ describe('AppDetailComponent', () => {
     })
 
     it('should filter roles', () => {
-      component.urlParamAppType = 'WORKSPACE'
+      component.roles = [
+        { name: 'role1', isWorkspaceRole: true },
+        { name: 'role2', isWorkspaceRole: false }
+      ]
+      component.rolesFiltered = []
 
-      component.ngOnInit()
-      component.onRoleFilterChange('roleName1')
+      component.onRoleFilterChange('role1')
 
       expect(component.roles.length).toBe(2)
       expect(component.rolesFiltered.length).toBe(1)
+
+      component.rolesFiltered = []
+
+      component.onRoleFilterChange('')
+
+      expect(component.rolesFiltered.length).toBe(2)
     })
 
     it('should display error when loading roles fails', () => {
