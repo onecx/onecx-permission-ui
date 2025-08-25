@@ -651,8 +651,8 @@ describe('AppDetailComponent', () => {
 
       component.onSortPermissionTable()
 
-      expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
-      expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-fw pi-sort-alt')
+      expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-sort-alt')
+      expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-sort-alt')
     })
   })
 
@@ -663,7 +663,7 @@ describe('AppDetailComponent', () => {
     it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-alt'
+      icon.className = 'pi pi-sort-alt'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -676,13 +676,13 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+      expect(icon.className).toBe('pi pi-sort-amount-down')
     })
 
     it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-amount-down'
+      icon.className = 'pi pi-sort-amount-down'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -695,13 +695,13 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+      expect(icon.className).toBe('pi pi-sort-amount-up-alt')
     })
 
     it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+      icon.className = 'pi pi-sort-amount-up-alt'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -714,14 +714,14 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+      expect(icon.className).toBe('pi pi-sort-amount-down')
     })
 
     /* same tests for sortByProduct */
     it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-alt'
+      icon.className = 'pi pi-sort-alt'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -734,13 +734,13 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+      expect(icon.className).toBe('pi pi-sort-amount-down')
     })
 
     it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-amount-down'
+      icon.className = 'pi pi-sort-amount-down'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -753,13 +753,13 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-up-alt')
+      expect(icon.className).toBe('pi pi-sort-amount-up-alt')
     })
 
     it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
       const event = new MouseEvent('click')
       const icon = document.createElement('span')
-      icon.className = 'pi pi-fw pi-sort-amount-up-alt'
+      icon.className = 'pi pi-sort-amount-up-alt'
 
       spyOn(event, 'stopPropagation')
       component.permissionTable = {
@@ -772,7 +772,7 @@ describe('AppDetailComponent', () => {
 
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
-      expect(icon.className).toBe('pi pi-fw pi-sort-amount-down')
+      expect(icon.className).toBe('pi pi-sort-amount-down')
     })
   })
 
