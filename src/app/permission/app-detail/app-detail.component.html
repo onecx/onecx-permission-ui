@@ -343,7 +343,9 @@
             id="apm_app_detail_permission_table_header_permission_key"
             class="sm:p-2 vertical-align-bottom border-bottom-2"
           >
-            <div class="pb-2 sm:pb-0 flex flex-column align-items-start sm:flex-row sm:align-items-center row-gap-2">
+            <div
+              class="pb-2 sm:pb-0 flex flex-column align-items-start sm:flex-row sm:align-items-center row-gap-2 xs:w-6rem"
+            >
               <span class="text-sm sm:text-base sm:white-space-nowrap">{{ 'PERMISSION.KEY' | translate }}</span>
               <p-sortIcon field="key"></p-sortIcon>
             </div>
@@ -396,7 +398,7 @@
             class="sm:p-2 vertical-align-bottom border-bottom-2 border-right-2"
           >
             <div class="flex flex-wrap sm:white-space-nowrap align-items-center">
-              <span #filterApp class="p-float-label inline-block">
+              <span #filterApp class="flex-grow-1 p-float-label inline-block">
                 <p-dropdown
                   id="apm_app_detail_permission_table_filter_app_id"
                   styleClass="w-10rem md:w-full clear-icon-used"
@@ -593,7 +595,7 @@
           </ng-container>
           <td pFrozenColumn [id]="'app_detail_permission_table_row_' + row + '_permission_key'">
             <div
-              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+              class="word-break-all text-sm sm:text-base text-ellipsis-3-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
             >
               {{ rowData.resource }} # {{ rowData.action }}
             </div>
@@ -605,14 +607,14 @@
             class="hidden xl:table-cell"
           >
             <div
-              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+              class="word-break-all text-sm sm:text-base text-ellipsis-3-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
             >
               {{ rowData.productDisplayName }}
             </div>
           </td>
           <td pFrozenColumn id="apm_app_detail_permission_table_data_app_id" class="border-right-2">
             <div
-              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+              class="word-break-all text-sm sm:text-base text-ellipsis-3-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
             >
               {{ rowData.appDisplayName }}
             </div>
