@@ -136,7 +136,7 @@
           ></p-button>
         </div>
         <div
-          class="relative flex flex-wrap sm:justify-content-between md:justify-content-around row-gap-1 column-gap-3 pt-3 px-1"
+          class="relative sm:pt-3 px-1 flex flex-wrap sm:justify-content-between md:justify-content-around row-gap-1 column-gap-3"
         >
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-2">
@@ -326,7 +326,7 @@
             >
               {{ 'PERMISSION.ACTIONS' | translate }}
             </th>
-            <th pFrozenColumn class="py-2 vertical-align-bottom border-bottom-2">
+            <th pFrozenColumn class="py-2 hidden xl:table-cell vertical-align-bottom border-bottom-2">
               <span
                 class="pi pi-exclamation-circle"
                 [attr.aria-label]="'PERMISSION.MANDATORY.COLUMN' | translate"
@@ -340,10 +340,10 @@
             pFrozenColumn
             pSortableColumn="key"
             id="apm_app_detail_permission_table_header_permission_key"
-            class="p-2 vertical-align-bottom border-bottom-2 sm:white-space-nowrap"
+            class="sm:p-2 vertical-align-bottom border-bottom-2"
           >
-            <div class="flex flex-column sm:flex-row justify-content-end sm:justify-content-start">
-              <span class="pb-4 sm:pb-0 white-space-nowrap">{{ 'PERMISSION.KEY' | translate }}</span>
+            <div class="pb-2 sm:pb-0 flex flex-column align-items-start sm:flex-row sm:align-items-center row-gap-2">
+              <span class="text-sm sm:text-base sm:white-space-nowrap">{{ 'PERMISSION.KEY' | translate }}</span>
               <p-sortIcon field="key"></p-sortIcon>
             </div>
           </th>
@@ -351,7 +351,7 @@
             pFrozenColumn
             *ngIf="currentApp.appType === 'WORKSPACE'"
             id="apm_app_detail_permission_table_header_permission_filter_product"
-            class="p-2 hidden xl:table-cell vertical-align-bottom border-bottom-2 white-space-nowrap"
+            class="sm:p-2 hidden xl:table-cell vertical-align-bottom border-bottom-2 sm:white-space-nowrap"
           >
             <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
             <div *ngIf="!currentApp.isProduct" class="flex flex-wrap sm:flex-nowrap align-items-center">
@@ -392,13 +392,13 @@
           <th
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permission_filter_app_id"
-            class="p-2 vertical-align-bottom border-bottom-2 white-space-nowrap border-right-2"
+            class="sm:p-2 vertical-align-bottom border-bottom-2 m:white-space-nowrap border-right-2"
           >
             <div class="flex flex-wrap sm:white-space-nowrap align-items-center">
               <span #filterApp class="p-float-label inline-block">
                 <p-dropdown
                   id="apm_app_detail_permission_table_filter_app_id"
-                  styleClass="w-full clear-icon-used"
+                  styleClass="max-w-10rem md:w-full clear-icon-used"
                   [appendTo]="'body'"
                   [showClear]="true"
                   [options]="filterAppItems"
@@ -410,7 +410,11 @@
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 ></p-dropdown>
-                <label for="apm_app_detail_permission_table_filter_app_id" aria-hidden="true">
+                <label
+                  for="apm_app_detail_permission_table_filter_app_id"
+                  class="text-sm sm:text-base"
+                  aria-hidden="true"
+                >
                   {{ 'DIALOG.DETAIL.FILTER.APPS' | translate }}</label
                 >
               </span>
@@ -434,7 +438,7 @@
           <th
             id="apm_app_detail_permission_table_header_roles"
             *ngFor="let role of columns"
-            class="p-2 text-center border-bottom-2 border-right-1 vertical-align-top"
+            class="p-2 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
           >
             <div class="flex flex-row gap-0 justify-content-center align-items-center white-space-nowrap">
               <button
@@ -506,7 +510,7 @@
               </ng-container>
             </div>
             <div
-              [class.word-break-all]="role.name.length > 15"
+              class="word-break-all max-w-8rem text-sm sm:text-base"
               [pTooltip]="role.description ? role.description : ''"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -575,7 +579,7 @@
                 <span class="danger-action-text p-button-icon pi pi-trash" aria-hidden="true"></span>
               </button>
             </td>
-            <td pFrozenColumn>
+            <td pFrozenColumn class="hidden xl:table-cell">
               <span
                 *ngIf="rowData.mandatory"
                 class="pi pi-lock"
@@ -587,7 +591,7 @@
             </td>
           </ng-container>
           <td pFrozenColumn [id]="'app_detail_permission_table_row_' + row + '_permission_key'">
-            <div class="text-sm sm:text-base text-ellipsis-2-lines min-w-13rem">
+            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
               {{ rowData.resource }} # {{ rowData.action }}
             </div>
           </td>
@@ -597,10 +601,12 @@
             [id]="'app_detail_permission_table_row_' + row + '_product_name'"
             class="hidden xl:table-cell"
           >
-            <div class="text-sm sm:text-base">{{ rowData.productDisplayName }}</div>
+            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
+              {{ rowData.productDisplayName }}
+            </div>
           </td>
           <td pFrozenColumn id="apm_app_detail_permission_table_data_app_id" class="border-right-2">
-            <div class="text-sm sm:text-base text-responsive text-ellipsis-2-lines min-w-13rem">
+            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
               {{ rowData.appDisplayName }}
             </div>
           </td>
