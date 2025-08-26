@@ -63,7 +63,13 @@
     }
   }
 
-  .text-ellipsis-2-lines {
-    @include displaying-text-ellipsis(2);
+  .text-ellipsis-3-lines {
+    @include displaying-text-ellipsis(3);
+  }
+
+  @media screen and (max-width: 576px) {
+    &.xs\:w-6rem {
+      width: 6rem !important;
+    }
   }
 }
