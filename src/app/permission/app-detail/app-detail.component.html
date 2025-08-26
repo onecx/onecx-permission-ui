@@ -28,7 +28,7 @@
       *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
-      styleClass="pb-2 px-3"
+      styleClass="pb-2 px-2 sm:px-3"
       [columns]="rolesFiltered"
       [value]="permissionRows"
       [globalFilterFields]="filterBy"
@@ -53,6 +53,7 @@
             >
               <p-selectButton
                 inputid="apm_app_detail_permission_table_quick_filter"
+                styleClass="text-sm sm:text-base"
                 [options]="(quickFilterItems$ | async) ?? []"
                 [(ngModel)]="quickFilterValue"
                 (onChange)="onQuickFilterChange($event)"
@@ -67,7 +68,7 @@
             </div>
           </div>
 
-          <div class="p-inputgroup w-22rem lg:mx-3">
+          <div class="p-inputgroup w-18rem sm:w-22rem lg:mx-3">
             <button
               id="apm_app_detail_permission_table_filter_contains"
               class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border"
@@ -98,7 +99,7 @@
                 id="apm_app_detail_permission_table_filter"
                 pInputText
                 type="text"
-                class="w-15rem data-view-control-border text-responsive"
+                class="w-13rem sm:w-15rem data-view-control-border text-responsive"
                 (input)="tableFilter($any($event.target).value)"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                 [pTooltip]="
@@ -392,13 +393,13 @@
           <th
             pFrozenColumn
             id="apm_app_detail_permission_table_header_permission_filter_app_id"
-            class="sm:p-2 vertical-align-bottom border-bottom-2 m:white-space-nowrap border-right-2"
+            class="sm:p-2 vertical-align-bottom border-bottom-2 border-right-2"
           >
             <div class="flex flex-wrap sm:white-space-nowrap align-items-center">
               <span #filterApp class="p-float-label inline-block">
                 <p-dropdown
                   id="apm_app_detail_permission_table_filter_app_id"
-                  styleClass="max-w-10rem md:w-full clear-icon-used"
+                  styleClass="w-10rem md:w-full clear-icon-used"
                   [appendTo]="'body'"
                   [showClear]="true"
                   [options]="filterAppItems"
@@ -591,7 +592,9 @@
             </td>
           </ng-container>
           <td pFrozenColumn [id]="'app_detail_permission_table_row_' + row + '_permission_key'">
-            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
+            <div
+              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+            >
               {{ rowData.resource }} # {{ rowData.action }}
             </div>
           </td>
@@ -601,12 +604,16 @@
             [id]="'app_detail_permission_table_row_' + row + '_product_name'"
             class="hidden xl:table-cell"
           >
-            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
+            <div
+              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+            >
               {{ rowData.productDisplayName }}
             </div>
           </td>
           <td pFrozenColumn id="apm_app_detail_permission_table_data_app_id" class="border-right-2">
-            <div class="text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem">
+            <div
+              class="word-break-all text-sm sm:text-base text-ellipsis-2-lines max-w-9rem sm:max-w-full sm:min-w-13rem"
+            >
               {{ rowData.appDisplayName }}
             </div>
           </td>
