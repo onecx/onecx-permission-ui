@@ -136,7 +136,7 @@
             tooltipEvent="hover"
           ></p-button>
         </div>
-        <div class="relative sm:pt-3 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3">
+        <div class="relative pt-1 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3">
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">
             <ul
@@ -161,7 +161,7 @@
           </div>
           <!-- permissions -->
           <section
-            class="xl:ml-5 flex flex-row align-items-center column-gap-1"
+            class="my-2 xl:ml-5 flex flex-row align-items-center column-gap-1"
             role="note"
             [attr.aria-label]="'DIALOG.DETAIL.HEADER.PERMISSIONS.MANAGE' | translate"
           >
@@ -277,7 +277,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   >
-                    <span class="text-sm letter-icon" aria-hidden="true">w</span>
+                    <span class="text-lg letter-icon" aria-hidden="true">w</span>
                   </button>
                 </ng-container>
               </div>
@@ -439,7 +439,7 @@
           <th
             id="apm_app_detail_permission_table_header_roles"
             *ngFor="let role of columns"
-            class="p-2 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
+            class="p-1 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
           >
             <div
               *ngIf="myPermissions.includes('PERMISSION#MANAGE')"

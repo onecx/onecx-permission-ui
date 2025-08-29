@@ -495,7 +495,7 @@ describe('AppDetailComponent', () => {
       component.onCreateWorkspaceRoles(ev)
 
       expect(ev.stopPropagation).toHaveBeenCalled()
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.WORKSPACE_ROLES_OK' })
     })
 
     it('should display error msg if create role fails', () => {
