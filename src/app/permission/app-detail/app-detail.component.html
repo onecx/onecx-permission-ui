@@ -43,7 +43,7 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
-        <div class="flex flex-wrap justify-content-between row-gap-2 p-1">
+        <div class="py-1 px-0 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
               class="slim-selectbutton align-items-start search-criteria-selectbutton"
@@ -67,8 +67,8 @@
               <div class="p-selectbutton-subtitle opacity-80">{{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}</div>
             </div>
           </div>
-
-          <div class="p-inputgroup w-18rem sm:w-22rem lg:mx-3">
+          <!-- Permission Filter -->
+          <div class="p-inputgroup w-18rem sm:w-22rem sm:mx-1">
             <button
               id="apm_app_detail_permission_table_filter_contains"
               class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border"
@@ -136,11 +136,9 @@
             tooltipEvent="hover"
           ></p-button>
         </div>
-        <div
-          class="relative sm:pt-3 px-1 flex flex-wrap sm:justify-content-between md:justify-content-around row-gap-1 column-gap-3"
-        >
+        <div class="relative sm:pt-3 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3">
           <!-- summary -->
-          <div class="xl:absolute hidden xl:block left-0 my-0 mx-2">
+          <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">
             <ul
               *ngIf="!showPermissionTools"
               class="p-0 m-0 flex flex-column row-gap-0 text-sm"
@@ -443,7 +441,10 @@
             *ngFor="let role of columns"
             class="p-2 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
           >
-            <div class="flex flex-row gap-0 justify-content-center align-items-center white-space-nowrap">
+            <div
+              *ngIf="myPermissions.includes('PERMISSION#MANAGE')"
+              class="flex flex-row gap-0 justify-content-center align-items-center white-space-nowrap"
+            >
               <button
                 pbutton
                 type="button"
@@ -473,15 +474,15 @@
                 <span class="pi pi-circle" aria-hidden="true"></span>
               </button>
               <ng-container *ngIf="showRoleTools">
-                <span
+                <div
                   *ngIf="role.mandatory"
-                  class="danger-action-text pi pi-lock"
+                  class="p-2 danger-action-text pi pi-lock"
                   [attr.aria-label]="'ROLE.MANDATORY' | translate"
                   [pTooltip]="'ROLE.MANDATORY' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                   role="note"
-                ></span>
+                ></div>
                 <button
                   pbutton
                   type="button"
@@ -513,12 +514,12 @@
               </ng-container>
             </div>
             <div
-              class="word-break-all max-w-8rem text-sm sm:text-base"
+              class="word-break-all text-sm sm:text-base flex flex-row justify-content-center"
               [pTooltip]="role.description ? role.description : ''"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
-              {{ role.name + (role.isWorkspaceRole ? ' (w)' : '') }}
+              <div class="max-w-8rem">{{ role.name + (role.isWorkspaceRole ? ' (w)' : '') }}</div>
             </div>
           </th>
         </tr>
