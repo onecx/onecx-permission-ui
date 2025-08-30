@@ -19,10 +19,11 @@
   .p-datatable .p-datatable-header {
     padding-left: 0;
     padding-right: 0;
+    padding-bottom: 0.5rem;
   }
   .p-datatable {
     .p-datatable-wrapper {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
     }
     .p-datatable-thead > tr > th:last-of-type,
     .p-datatable-tbody > tr > td:last-of-type {

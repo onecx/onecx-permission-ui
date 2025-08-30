@@ -414,7 +414,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     })
     this.roleApi.createRole({ createRolesRequest: { roles: mwr } }).subscribe({
       next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_OK' })
+        this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.WORKSPACE_ROLES_OK' })
         this.loadRolesAndPermissions()
       },
       error: (err) => {
