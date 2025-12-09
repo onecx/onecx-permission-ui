@@ -1,4 +1,3 @@
-
-== onecx-permission-ui
+= OneCX Permission UI
 
 include::onecx-permission-ui-docs.adoc[opts=optional]
