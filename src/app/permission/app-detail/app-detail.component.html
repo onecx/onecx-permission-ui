@@ -203,6 +203,18 @@
               >
                 <span class="pi pi-plus-circle" aria-hidden="true"></span>
               </button>
+              <p-checkbox
+                type="text"
+                inputId="apm_app_detail_permission_table_header_display_additional_row_data"
+                styleClass="ml-2 cursor-auto shadow-none"
+                [(ngModel)]="displayAdditionalRowData"
+                [binary]="true"
+                [label]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
+                [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
+                [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-checkbox>
             </ng-container>
           </section>
           <!-- roles -->
@@ -600,6 +612,7 @@
             >
               {{ rowData.resource }} # {{ rowData.action }}
             </div>
+            <div *ngIf="displayAdditionalRowData" class="mt-1 text-xs hidden lg:block">{{ rowData.description }}</div>
           </td>
           <td
             *ngIf="currentApp.appType === 'WORKSPACE'"

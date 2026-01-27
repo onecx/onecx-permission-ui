@@ -111,6 +111,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public displayPermissionDeleteDialog = false
   public displayPermissionExportDialog = false
   public showPermissionTools = false
+  public displayAdditionalRowData = false
   public protectedAssignments: Array<string> = []
 
   // role management
@@ -685,6 +686,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
+    console.log('onDeletePermission', perm)
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = 'DELETE'
