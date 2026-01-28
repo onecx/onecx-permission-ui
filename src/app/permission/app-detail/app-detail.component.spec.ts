@@ -114,10 +114,13 @@ const permRow2: PermissionViewRow = {
 const assgmt1: Assignment = {
   appId: 'appId1',
   mandatory: true,
-  permissionId: 'permId1'
+  permissionId: 'permId1',
+  roleId: 'roleId1'
 }
 const assgmt2: Assignment = {
-  appId: 'appId2'
+  appId: 'appId2',
+  permissionId: 'permId2',
+  roleId: 'roleId1'
 }
 const assgmtPageRes: AssignmentPageResult = {
   stream: [assgmt1, assgmt2]
@@ -985,9 +988,7 @@ describe('AppDetailComponent', () => {
    ****************************************************************************
    */
   it('should create an assignment', () => {
-    const ev = new MouseEvent('click')
-
-    component.onAssignPermission(ev, permRow, role1)
+    component.onAssignPermission(permRow, role1)
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
   })
@@ -996,18 +997,15 @@ describe('AppDetailComponent', () => {
     const errorResponse = { error: 'Error on creating an assignment', status: 400 }
     assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
     spyOn(console, 'error')
-    const ev = new MouseEvent('click')
 
-    component.onAssignPermission(ev, permRow, role1)
+    component.onAssignPermission(permRow, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
     expect(console.error).toHaveBeenCalledWith('createAssignment', errorResponse)
   })
 
   it('should delete an assignment', () => {
-    const ev = new MouseEvent('click')
-
-    component.onRemovePermission(ev, permRow, role1)
+    component.onRemovePermission(permRow, role1)
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
   })
@@ -1016,9 +1014,8 @@ describe('AppDetailComponent', () => {
     const errorResponse = { error: 'Error on removing a permission', status: 400 }
     assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
     spyOn(console, 'error')
-    const ev = new MouseEvent('click')
 
-    component.onRemovePermission(ev, permRow, role1)
+    component.onRemovePermission(permRow, role1)
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
     expect(console.error).toHaveBeenCalledWith('deleteAssignment', errorResponse)

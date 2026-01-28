@@ -211,7 +211,10 @@
       },
       "ROLES": {
         "FILTER": "Rollenfilter",
-        "FILTER.TOOLTIP": "Filter für Rollenname"
+        "FILTER.TOOLTIP": "Filter für Rollenname",
+        "EMPTY_ROLE": "Rolle hat keine zugewiesenen Berechtigungen",
+        "HIDE_EMPTY_ROLES": "Nicht zugewiesene Rollen ausblenden",
+        "HIDE_EMPTY_ROLES.TOOLTIP": "Rollen ohne zugewiesene Berechtigungen ausblenden"
       }
     }
   },

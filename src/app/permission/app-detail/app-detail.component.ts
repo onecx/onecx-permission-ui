@@ -52,7 +52,7 @@ export type PermissionViewRow = Permission & {
   appDisplayName: string
   productDisplayName: string
 }
-export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined }
+export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
 
 @Component({
   templateUrl: './app-detail.component.html',
@@ -112,6 +112,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public displayPermissionExportDialog = false
   public showPermissionTools = false
   public displayAdditionalRowData = false
+  public hideEmptyRoles = false
   public protectedAssignments: Array<string> = []
 
   // role management
@@ -521,6 +522,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private searchAssignments(init: boolean, appList: string[], roleId?: string) {
+    if (this.roles.length === 0 || this.permissions.length === 0) return
     this.assApi
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, roleId: roleId, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
@@ -530,12 +532,18 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           console.error('searchAssignments', result)
         } else if (result instanceof Object && result.stream) {
           if (init) this.protectedAssignments = [] // ids of mandatory assignments
+          if (roleId) this.roles.filter((r) => r.id === roleId).forEach((role) => (role.hasAssignments = false))
           // result.stream => assignments => roleId, permissionId, appId
           // this.permissionRows => Permission + key, roles
           // Permission (row): id, appId, resource, action
+          let lastRoleId = ''
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
             if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
+            if (assignment.roleId && lastRoleId !== assignment.roleId!) {
+              this.roles.find((r) => r.id === assignment.roleId)!.hasAssignments = true
+            }
+            lastRoleId = assignment.roleId!
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
         } else {
@@ -686,7 +694,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
-    console.log('onDeletePermission', perm)
     ev.stopPropagation()
     this.permission = perm
     this.changeMode = 'DELETE'
@@ -697,7 +704,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *  ASSIGNMENTS    => grant + revoke permissions => assign roles
    ****************************************************************************
    */
-  public onAssignPermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
+  public onAssignPermission(permRow: PermissionViewRow, role: Role): void {
     this.assApi
       .createAssignment({
         createAssignmentRequest: {
@@ -709,6 +716,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
           permRow.roles[role.id!] = data.id
+          this.roles.find((r) => r.id === role.id)!.hasAssignments = true
         },
         error: (err) => {
           this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
@@ -716,11 +724,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         }
       })
   }
-  public onRemovePermission(ev: MouseEvent, permRow: PermissionViewRow, role: Role): void {
+  public onRemovePermission(permRow: PermissionViewRow, role: Role): void {
     this.assApi.deleteAssignment({ id: permRow.roles[role.id!] } as DeleteAssignmentRequestParams).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
         permRow.roles[role.id!] = undefined
+        this.roles.find((r) => r.id === role.id)!.hasAssignments = false
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })

@@ -320,7 +320,30 @@
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 ></button>
+                <button
+                  id="apm_app_detail_permission_table_header_role_filter_clear"
+                  class="p-inputgroup-addon pseudo-button pi pi-times-circle"
+                  [ngClass]="{ 'bg-primary': hideEmptyRoles }"
+                  (click)="hideEmptyRoles = !hideEmptyRoles"
+                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  [pTooltip]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES.TOOLTIP' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                ></button>
               </div>
+              <p-checkbox
+                type="text"
+                inputId="apm_app_detail_permission_table_header_hide_empty_roles"
+                styleClass="ml-2 cursor-auto shadow-none hidden"
+                labelStyleClass="white-space-nowrap hidden"
+                [(ngModel)]="hideEmptyRoles"
+                [binary]="true"
+                [label]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES' | translate"
+                [ariaLabel]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES' | translate"
+                [pTooltip]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES.TOOLTIP' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-checkbox>
             </div>
           </section>
         </div>
@@ -449,9 +472,10 @@
 
           <!-- HEADER ROW - ROLES -->
           <th
-            id="apm_app_detail_permission_table_header_roles"
             *ngFor="let role of columns"
+            id="apm_app_detail_permission_table_header_roles"
             class="p-1 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
+            [ngClass]="{ hidden: hideEmptyRoles && !role.hasAssignments }"
           >
             <div
               *ngIf="myPermissions.includes('PERMISSION#MANAGE')"
@@ -471,20 +495,30 @@
               >
                 <span class="pi pi-circle-fill" aria-hidden="true"></span>
               </button>
-              <button
-                pbutton
-                type="button"
-                *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
-                [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
-                class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                (click)="onRevokeAllPermissions($event, role)"
-                [ariaLabel]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
-                [pTooltip]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              >
-                <span class="pi pi-circle" aria-hidden="true"></span>
-              </button>
+              @if (role.hasAssignments) {
+                <button
+                  pbutton
+                  type="button"
+                  *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
+                  [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
+                  class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
+                  (click)="onRevokeAllPermissions($event, role)"
+                  [ariaLabel]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
+                  [pTooltip]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                  <span class="pi pi-circle" aria-hidden="true"></span>
+                </button>
+              } @else {
+                <span
+                  class="pi pi-times-circle"
+                  aria-hidden="true"
+                  [pTooltip]="'DIALOG.DETAIL.ROLES.EMPTY_ROLE' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                ></span>
+              }
               <ng-container *ngIf="showRoleTools">
                 <div
                   *ngIf="role.mandatory"
@@ -637,8 +671,9 @@
           <!-- ASSIGNMENTS -->
           <td
             *ngFor="let role of columns"
-            class="text-center border-right-1"
             [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key"
+            class="text-center border-right-1"
+            [ngClass]="{ hidden: hideEmptyRoles && !role.hasAssignments }"
           >
             <!-- mandatory = display only -->
             <div *ngIf="protectedAssignments.includes(rowData.roles[role.id])">
@@ -686,7 +721,7 @@
                   pbutton
                   type="button"
                   class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                  (click)="onAssignPermission($event, rowData, role)"
+                  (click)="onAssignPermission(rowData, role)"
                   [id]="
                     'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_not_assigned'
                   "
@@ -704,7 +739,7 @@
                   pbutton
                   type="button"
                   class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                  (click)="onRemovePermission($event, rowData, role)"
+                  (click)="onRemovePermission(rowData, role)"
                   [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
                   [ariaLabel]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   [pTooltip]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
