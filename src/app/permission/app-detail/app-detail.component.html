@@ -83,7 +83,7 @@
             </button>
             <button
               id="apm_app_detail_permission_table_filter_not_contains"
-              class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border"
+              class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border white-space-nowrap"
               [class.p-highlight]="this.filterMode === 'notContains'"
               (click)="onFilterModeChange('!=')"
               [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
@@ -233,7 +233,7 @@
               >
                 {{ 'ROLE.LABEL' | translate }}
               </div>
-              <div class="flex flex-row column-gap-0">
+              <div class="flex flex-row column-gap-1">
                 <button
                   *ngIf="myPermissions.includes('ROLE#MANAGE')"
                   pbutton
@@ -313,7 +313,7 @@
                 </span>
                 <button
                   id="apm_app_detail_permission_table_header_role_filter_clear"
-                  class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
+                  class="p-inputgroup-addon pseudo-button bg-primary data-view-control-border pi pi-filter-slash"
                   (click)="roleFilter.value = ''; onRoleFilterChange('')"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -322,7 +322,7 @@
                 ></button>
                 <button
                   id="apm_app_detail_permission_table_header_role_hide_empty_roles"
-                  class="p-inputgroup-addon pseudo-button pi pi-times-circle"
+                  class="p-inputgroup-addon pseudo-button data-view-control-border pi pi-times-circle"
                   [ngClass]="{ 'bg-primary': hideEmptyRoles }"
                   (click)="hideEmptyRoles = !hideEmptyRoles"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -512,7 +512,7 @@
                 </button>
               } @else {
                 <span
-                  class="pi pi-times-circle"
+                  class="w-2rem pi pi-times-circle"
                   aria-hidden="true"
                   [pTooltip]="'DIALOG.DETAIL.ROLES.EMPTY_ROLE' | translate"
                   tooltipPosition="top"
