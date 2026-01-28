@@ -211,7 +211,10 @@
       },
       "ROLES": {
         "FILTER": "Role filter",
-        "FILTER.TOOLTIP": "Filter for Role name"
+        "FILTER.TOOLTIP": "Filter for Role name",
+        "EMPTY_ROLE": "Role has no assigned Permissions",
+        "HIDE_EMPTY_ROLES": "Hide unassigned Roles",
+        "HIDE_EMPTY_ROLES.TOOLTIP": "Hide Roles without assigned Permissions"
       }
     }
   },
