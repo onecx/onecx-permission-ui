@@ -540,7 +540,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           result.stream?.forEach((assignment: Assignment) => {
             const permissions = this.permissionRows.filter((p) => p.id === assignment.permissionId)
             if (assignment.mandatory) this.protectedAssignments.push(assignment.id!)
-            if (assignment.roleId && lastRoleId !== assignment.roleId!) {
+            if (assignment.roleId && lastRoleId !== assignment.roleId) {
               this.roles.find((r) => r.id === assignment.roleId)!.hasAssignments = true
             }
             lastRoleId = assignment.roleId!
