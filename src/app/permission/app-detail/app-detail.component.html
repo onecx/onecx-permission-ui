@@ -43,6 +43,7 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
+        @let filterEmptyStyle = { 'background-color': 'var(--emphasis-lower)', opacity: 'var(--disabled-opacity)' };
         <div class="py-1 px-0 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
@@ -95,7 +96,7 @@
             </button>
             <span class="p-float-label">
               <input
-                #permissionTableFilterInput
+                #permissionNameFilter
                 id="apm_app_detail_permission_table_filter"
                 pInputText
                 type="text"
@@ -118,6 +119,11 @@
             <button
               id="apm_app_detail_permission_table_filter_clear"
               class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
+              [ngClass]="{
+                'bg-primary': permissionNameFilter.value !== '',
+                'p-disabled': permissionNameFilter.value === ''
+              }"
+              [ngStyle]="permissionNameFilter.value === '' ? filterEmptyStyle : null"
               (click)="onClearTableFilter()"
               [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
               [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -293,15 +299,15 @@
                   </button>
                 </ng-container>
               </div>
-              <div *ngIf="roles.length > 3" class="ml-2 p-inputgroup">
+              <div *ngIf="roles.length > 3 || emptyRolesExist" class="ml-2 p-inputgroup">
                 <span class="p-float-label">
                   <input
-                    #roleFilter
+                    #roleNameFilter
                     pInputText
                     type="text"
                     id="apm_app_detail_permission_table_header_role_filter"
                     class="w-15rem data-view-control-border text-responsive"
-                    (input)="onRoleFilterChange(roleFilter.value)"
+                    (input)="onRoleFilterChange(roleNameFilter.value)"
                     [ariaLabel]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     [pTooltip]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     tooltipPosition="top"
@@ -313,8 +319,13 @@
                 </span>
                 <button
                   id="apm_app_detail_permission_table_header_role_filter_clear"
-                  class="p-inputgroup-addon pseudo-button bg-primary data-view-control-border pi pi-filter-slash"
-                  (click)="roleFilter.value = ''; onRoleFilterChange('')"
+                  class="p-inputgroup-addon pseudo-button bg-primary pi pi-filter-slash border-left-1"
+                  [ngClass]="{
+                    'bg-primary': roleNameFilter.value !== '',
+                    'p-disabled': roleNameFilter.value === ''
+                  }"
+                  [ngStyle]="roleNameFilter.value === '' ? filterEmptyStyle : null"
+                  (click)="roleNameFilter.value = ''; onRoleFilterChange('')"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   tooltipPosition="top"
@@ -322,11 +333,13 @@
                 ></button>
                 <button
                   id="apm_app_detail_permission_table_header_role_hide_empty_roles"
-                  class="p-inputgroup-addon pseudo-button data-view-control-border pi pi-times-circle"
-                  [ngClass]="{ 'bg-primary': hideEmptyRoles }"
+                  class="p-inputgroup-addon pseudo-button pi pi-times-circle"
+                  [ngClass]="{ 'bg-primary': hideEmptyRoles, 'p-disabled': !emptyRolesExist }"
                   (click)="hideEmptyRoles = !hideEmptyRoles"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-                  [pTooltip]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES.TOOLTIP' | translate"
+                  [pTooltip]="
+                    'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES.TOOLTIP' | translate
+                  "
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 ></button>

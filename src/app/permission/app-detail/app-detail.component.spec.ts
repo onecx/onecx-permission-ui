@@ -589,7 +589,7 @@ describe('AppDetailComponent', () => {
 
     it('should call tableFilter with the input value', () => {
       spyOn(component, 'tableFilter')
-      component.permissionTableFilterInput = { nativeElement: { value: 'test' } }
+      component.permissionNameFilter = { nativeElement: { value: 'test' } }
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
       component.onFilterModeChange('=')
@@ -598,7 +598,7 @@ describe('AppDetailComponent', () => {
       expect(component.tableFilter).toHaveBeenCalledWith('test')
     })
 
-    it('should not call tableFilter when permissionTableFilterInput is not present', () => {
+    it('should not call tableFilter when permissionNameFilter is not present', () => {
       spyOn(component, 'tableFilter')
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
@@ -621,14 +621,14 @@ describe('AppDetailComponent', () => {
       expect(component.filterValue).toBe('VIEW')
     })
 
-    it('should set the permissionTableFilterInput value and call tableFilter', () => {
+    it('should set the permissionNameFilter value and call tableFilter', () => {
       spyOn(component, 'tableFilter')
-      component.permissionTableFilterInput = { nativeElement: { value: '' } }
+      component.permissionNameFilter = { nativeElement: { value: '' } }
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
       component.onQuickFilterChange({ value: 'ALL' })
 
-      expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+      expect(component.permissionNameFilter.nativeElement.value).toBe('')
       expect(component.tableFilter).toHaveBeenCalledWith('')
     })
 
@@ -642,7 +642,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should clear all clear all values onClearTableFilter', () => {
-      component.permissionTableFilterInput = { nativeElement: { value: 'value' } }
+      component.permissionNameFilter = { nativeElement: { value: 'value' } }
       component.quickFilterValue = 'ALL'
       component.filterAppValue = 'value'
       component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
@@ -650,7 +650,7 @@ describe('AppDetailComponent', () => {
 
       component.onClearTableFilter()
 
-      expect(component.permissionTableFilterInput.nativeElement.value).toBe('')
+      expect(component.permissionNameFilter.nativeElement.value).toBe('')
       expect(component.quickFilterValue).toBe('ALL')
       expect(component.filterAppValue).toBeUndefined()
       expect(component.onSortPermissionTable).toHaveBeenCalled()

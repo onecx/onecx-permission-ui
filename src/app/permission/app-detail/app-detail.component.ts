@@ -76,7 +76,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public quickFilterItems$: Observable<SelectItem[]> | undefined
 
   @ViewChild('permissionTable') permissionTable: Table | undefined
-  @ViewChild('permissionTableFilterInput') permissionTableFilterInput: ElementRef | undefined
+  @ViewChild('permissionNameFilter') permissionNameFilter: ElementRef | undefined
   @ViewChild('filterProduct') filterProduct: ElementRef | undefined
   @ViewChild('filterApp') filterApp: ElementRef | undefined
   @ViewChild('sortIconAppId') sortIconAppId: ElementRef | undefined
@@ -110,9 +110,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public displayPermissionDetailDialog = false
   public displayPermissionDeleteDialog = false
   public displayPermissionExportDialog = false
-  public showPermissionTools = false
   public displayAdditionalRowData = false
+  public showPermissionTools = false
   public hideEmptyRoles = false
+  public emptyRolesExist = false
   public protectedAssignments: Array<string> = []
 
   // role management
@@ -527,6 +528,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       .searchAssignments({ assignmentSearchCriteria: { appIds: appList, roleId: roleId, pageSize: this.pageSize } })
       .pipe(catchError((error) => of(error)))
       .subscribe((result) => {
+        this.emptyRolesExist = false
         if (result instanceof HttpErrorResponse) {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + result.status + '.ASSIGNMENTS'
           console.error('searchAssignments', result)
@@ -546,6 +548,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             lastRoleId = assignment.roleId!
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
+          this.emptyRolesExist = this.roles.some((r) => !r.hasAssignments)
+          console.error('searchAssignments ################################ ', this.emptyRolesExist)
         } else {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
           console.error('searchAssignments', result)
@@ -563,8 +567,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (mode === '!=') {
       this.filterMode = FilterMatchMode.NOT_CONTAINS
     }
-    if (this.permissionTableFilterInput && this.permissionTable) {
-      this.filterValue = this.permissionTableFilterInput.nativeElement.value
+    if (this.permissionNameFilter && this.permissionTable) {
+      this.filterValue = this.permissionNameFilter.nativeElement.value
       this.tableFilter(this.filterValue)
     }
   }
@@ -576,8 +580,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.filterBy = ['action']
       this.filterValue = ev.value
     }
-    if (this.permissionTableFilterInput && this.permissionTable) {
-      this.permissionTableFilterInput.nativeElement.value = this.filterValue
+    if (this.permissionNameFilter && this.permissionTable) {
+      this.permissionNameFilter.nativeElement.value = this.filterValue
       this.tableFilter(this.filterValue)
     }
   }
@@ -587,8 +591,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
   public onClearTableFilter(): void {
-    if (this.permissionTableFilterInput) {
-      this.permissionTableFilterInput.nativeElement.value = ''
+    if (this.permissionNameFilter) {
+      this.permissionNameFilter.nativeElement.value = ''
       this.quickFilterValue = 'ALL'
     }
     this.filterAppValue = undefined

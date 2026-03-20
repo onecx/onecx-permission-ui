@@ -63,12 +63,12 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "ASSIGNMENT": "Export Permissions",
-      "ASSIGNMENT.TOOLTIP": "Export of Permissions",
-      "ITEMS_SELECTED.TOOLTIP": "Export selected Permissions (store locally)",
+      "ASSIGNMENT": "Export Permission Assignments",
+      "ASSIGNMENT.TOOLTIP": "Export of Permission Assignments",
+      "ITEMS_SELECTED.TOOLTIP": "Export selected Permission Assignments (store locally)",
       "MESSAGE": {
-        "ASSIGNMENT.EXPORT_OK": "Permissions were exported successfully",
-        "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permissions were not exported."
+        "ASSIGNMENT.EXPORT_OK": "Permission assignments were exported successfully",
+        "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permission assignments were not exported."
       },
       "APPLICATION_LIST": "Select Applications:",
       "WS_APPLICATION_LIST": "Select Workspace Applications:",
@@ -78,16 +78,16 @@
       "LABEL": "Import",
       "CHOOSE": "Choose file",
       "UPLOAD": "Upload file",
-      "ASSIGNMENT": "Import Permissions",
-      "ASSIGNMENT.TOOLTIP": "Import of Permissions",
+      "ASSIGNMENT": "Import Permission Assignments",
+      "ASSIGNMENT.TOOLTIP": "Import of Permissions Assignments from JSON file",
       "ERROR": {
         "PARSER": "Error reading file",
         "CONFLICTS": "Conflicts",
         "PROBLEMS": "Issues"
       },
       "MESSAGE": {
-        "OK": "Permissions were imported successfully",
-        "NOK": "An error has occurred. Permissions were not imported."
+        "OK": "Permission assignments were imported successfully",
+        "NOK": "An error has occurred. Permission assignments were not imported."
       },
       "VALIDATION.RESULT": "The file has been checked."
     },
@@ -214,7 +214,8 @@
         "FILTER.TOOLTIP": "Filter for Role name",
         "EMPTY_ROLE": "Role has no assigned Permissions",
         "HIDE_EMPTY_ROLES": "Hide unassigned Roles",
-        "HIDE_EMPTY_ROLES.TOOLTIP": "Hide Roles without assigned Permissions"
+        "HIDE_EMPTY_ROLES.TOOLTIP": "Hide Roles without assigned Permissions",
+        "SHOW_EMPTY_ROLES.TOOLTIP": "Show Roles without assigned Permissions"
       }
     }
   },

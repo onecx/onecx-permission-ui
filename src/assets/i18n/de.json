@@ -63,8 +63,8 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "ASSIGNMENT": "Berechtigungen exportieren",
-      "ASSIGNMENT.TOOLTIP": "Berechtigungen exportieren",
+      "ASSIGNMENT": "Berechtigungszuordnungen exportieren",
+      "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen exportieren",
       "ITEMS_SELECTED.TOOLTIP": "Die ausgewählten Berechtigungen exportieren (lokal speichern)",
       "MESSAGE": {
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
@@ -78,16 +78,16 @@
       "LABEL": "Import",
       "CHOOSE": "Datei auswählen",
       "UPLOAD": "Datei hochladen",
-      "ASSIGNMENT": "Berechtigungen importieren",
-      "ASSIGNMENT.TOOLTIP": "Berechtigungen importieren",
+      "ASSIGNMENT": "Berechtigungszuordnungen importieren",
+      "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen importieren",
       "ERROR": {
         "PARSER": "Fehler beim Lesen der Datei",
         "CONFLICTS": "Konflikte",
         "PROBLEMS": "Probleme"
       },
       "MESSAGE": {
-        "OK": "Die Berechtigungen wurden erfolgreich importiert",
-        "NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht importiert."
+        "OK": "Die Berechtigungszuordnungen wurden erfolgreich importiert",
+        "NOK": "Ein Fehler ist aufgetreten. Die Berechtigungszuordnungen wurden nicht importiert."
       },
       "VALIDATION.RESULT": "Die Datei wurde geprüft."
     },
@@ -138,7 +138,7 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "IMPORT": "Import Berechtigungen im JSON Format",
+      "IMPORT": "Import Berechtigungszuordnungen im JSON Format",
       "SAVE": "Die Änderungen speichern"
     }
   },
@@ -150,7 +150,7 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Berechtigungsverwaltung",
-      "SUBHEADER": "Berechtigungen von Applikationen und Workspaces verwalten",
+      "SUBHEADER": "Berechtigungen und deren Rollen-Zuordnungen von Applikationen und Workspaces verwalten",
       "CRITERIA": "Suchfelder",
       "RESULTS": "Suchergebnisse",
       "QUICK_FILTER": {
@@ -214,7 +214,8 @@
         "FILTER.TOOLTIP": "Filter für Rollenname",
         "EMPTY_ROLE": "Rolle hat keine zugewiesenen Berechtigungen",
         "HIDE_EMPTY_ROLES": "Nicht zugewiesene Rollen ausblenden",
-        "HIDE_EMPTY_ROLES.TOOLTIP": "Rollen ohne zugewiesene Berechtigungen ausblenden"
+        "HIDE_EMPTY_ROLES.TOOLTIP": "Rollen ohne zugewiesene Berechtigungen ausblenden",
+        "SHOW_EMPTY_ROLES.TOOLTIP": "Rollen ohne zugewiesene Berechtigungen anzeigen"
       }
     }
   },
