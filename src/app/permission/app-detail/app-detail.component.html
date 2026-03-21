@@ -17,7 +17,7 @@
       [text]="exceptionKey | translate"
     ></p-message>
     <p-message
-      *ngIf="loadingApp || loadingPermissions"
+      *ngIf="!exceptionKey && (loadingApp || loadingPermissions)"
       id="apm_app_detail_permission_table_data_loading"
       severity="info"
       styleClass="m-3"
