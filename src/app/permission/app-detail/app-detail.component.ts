@@ -114,6 +114,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public showPermissionTools = false
   public hideEmptyRoles = false
   public emptyRolesExist = false
+  public showNonWorkspaceRoles = false
   public protectedAssignments: Array<string> = []
 
   // role management
@@ -549,10 +550,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             permissions.forEach((perm) => (perm.roles[assignment.roleId!] = assignment.id))
           })
           this.emptyRolesExist = this.roles.some((r) => !r.hasAssignments)
-          console.error('searchAssignments ################################ ', this.emptyRolesExist)
         } else {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
-          console.error('searchAssignments', result)
         }
       })
   }

@@ -306,7 +306,7 @@
                     pInputText
                     type="text"
                     id="apm_app_detail_permission_table_header_role_filter"
-                    class="w-15rem data-view-control-border text-responsive"
+                    class="w-15rem adata-view-control-border text-responsive"
                     (input)="onRoleFilterChange(roleNameFilter.value)"
                     [ariaLabel]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     [pTooltip]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
@@ -319,7 +319,7 @@
                 </span>
                 <button
                   id="apm_app_detail_permission_table_header_role_filter_clear"
-                  class="p-inputgroup-addon pseudo-button bg-primary pi pi-filter-slash border-left-1"
+                  class="p-inputgroup-addon pseudo-button border-right-1 pi pi-filter-slash"
                   [ngClass]="{
                     'bg-primary': roleNameFilter.value !== '',
                     'p-disabled': roleNameFilter.value === ''
@@ -333,30 +333,40 @@
                 ></button>
                 <button
                   id="apm_app_detail_permission_table_header_role_hide_empty_roles"
-                  class="p-inputgroup-addon pseudo-button pi pi-times-circle"
+                  class="p-inputgroup-addon pseudo-button border-right-1 pi pi-times-circle"
                   [ngClass]="{ 'bg-primary': hideEmptyRoles, 'p-disabled': !emptyRolesExist }"
                   (click)="hideEmptyRoles = !hideEmptyRoles"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  [attr.aria-label]="
+                    'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES' | translate
+                  "
                   [pTooltip]="
                     'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES.TOOLTIP' | translate
                   "
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 ></button>
+                @if (!this.currentApp.isProduct) {
+                  <button
+                    id="apm_app_detail_permission_table_header_role_hide_non_workspace_roles"
+                    class="p-inputgroup-addon pseudo-button"
+                    [ngClass]="{ 'bg-primary': showNonWorkspaceRoles, 'p-disabled': !emptyRolesExist }"
+                    (click)="showNonWorkspaceRoles = !showNonWorkspaceRoles"
+                    [attr.aria-label]="
+                      'DIALOG.DETAIL.ROLES.' + (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') + '_NON_WORKSPACE_ROLES'
+                        | translate
+                    "
+                    [pTooltip]="
+                      'DIALOG.DETAIL.ROLES.' +
+                        (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') +
+                        '_NON_WORKSPACE_ROLES.TOOLTIP' | translate
+                    "
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  >
+                    W
+                  </button>
+                }
               </div>
-              <p-checkbox
-                type="text"
-                inputId="apm_app_detail_permission_table_header_hide_empty_roles"
-                styleClass="ml-2 cursor-auto shadow-none hidden"
-                labelStyleClass="white-space-nowrap hidden"
-                [(ngModel)]="hideEmptyRoles"
-                [binary]="true"
-                [label]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES' | translate"
-                [ariaLabel]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES' | translate"
-                [pTooltip]="'DIALOG.DETAIL.ROLES.HIDE_EMPTY_ROLES.TOOLTIP' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              ></p-checkbox>
             </div>
           </section>
         </div>
@@ -488,7 +498,11 @@
             *ngFor="let role of columns"
             id="apm_app_detail_permission_table_header_roles"
             class="p-1 max-w-8rem text-center border-bottom-2 border-right-1 vertical-align-top"
-            [ngClass]="{ hidden: hideEmptyRoles && !role.hasAssignments }"
+            [ngClass]="{
+              hidden:
+                (hideEmptyRoles && !role.hasAssignments) ||
+                (!showNonWorkspaceRoles && !role.isWorkspaceRole && !this.currentApp.isProduct)
+            }"
           >
             <div
               *ngIf="myPermissions.includes('PERMISSION#MANAGE')"
@@ -686,7 +700,11 @@
             *ngFor="let role of columns"
             [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key"
             class="text-center border-right-1"
-            [ngClass]="{ hidden: hideEmptyRoles && !role.hasAssignments }"
+            [ngClass]="{
+              hidden:
+                (hideEmptyRoles && !role.hasAssignments) ||
+                (!showNonWorkspaceRoles && !role.isWorkspaceRole && !this.currentApp.isProduct)
+            }"
           >
             <!-- mandatory = display only -->
             <div *ngIf="protectedAssignments.includes(rowData.roles[role.id])">

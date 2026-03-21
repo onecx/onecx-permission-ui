@@ -150,7 +150,7 @@
   "DIALOG": {
     "SEARCH": {
       "HEADER": "Permission Management",
-      "SUBHEADER": "Management of Application and Workspace Permissions",
+      "SUBHEADER": "Management of Permissions and their Role assignments for Applications and Workspaces",
       "CRITERIA": "Search Criteria",
       "RESULTS": "Search Results",
       "QUICK_FILTER": {
@@ -182,9 +182,9 @@
         "ROLES.MANAGE": "Manage Roles",
         "APP": "App: "
       },
-      "SUBHEADER_WORKSPACE": "Managing Business Roles and Permissions of Workspace and registered Applications",
-      "SUBHEADER_PRODUCT": "Managing Business Roles and Permissions of the Application",
-      "SUBHEADER_APP": "Managing Business Roles and Permissions of the App",
+      "SUBHEADER_WORKSPACE": "Management of Permissions and their Role assignments for Workspace and registered Applications",
+      "SUBHEADER_PRODUCT": "Management of Permissions and their Role assignments for the Application",
+      "SUBHEADER_APP": "Management of Permissions and their Role assignments for the App",
       "ADDITIONAL_INFO": "More data...",
       "ADDITIONAL_INFO.TOOLTIP": "Show additional information per permission",
       "QUICK_FILTER": {
@@ -210,12 +210,17 @@
         "TOOLTIP": "Set filter value"
       },
       "ROLES": {
-        "FILTER": "Role filter",
+        "FILTER": "Filter for Roles",
         "FILTER.TOOLTIP": "Filter for Role name",
         "EMPTY_ROLE": "Role has no assigned Permissions",
         "HIDE_EMPTY_ROLES": "Hide unassigned Roles",
         "HIDE_EMPTY_ROLES.TOOLTIP": "Hide Roles without assigned Permissions",
-        "SHOW_EMPTY_ROLES.TOOLTIP": "Show Roles without assigned Permissions"
+        "SHOW_EMPTY_ROLES": "Show unassigned Roles",
+        "SHOW_EMPTY_ROLES.TOOLTIP": "Show Roles without assigned Permissions",
+        "HIDE_NON_WORKSPACE_ROLES": "Hide non-workspace Roles",
+        "HIDE_NON_WORKSPACE_ROLES.TOOLTIP": "Hide Roles not belonging to the workspace",
+        "SHOW_NON_WORKSPACE_ROLES": "Show non-workspace Roles",
+        "SHOW_NON_WORKSPACE_ROLES.TOOLTIP": "Show Roles not belonging to the workspace"
       }
     }
   },
