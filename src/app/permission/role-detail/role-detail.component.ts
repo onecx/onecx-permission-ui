@@ -68,15 +68,15 @@ export class RoleDetailComponent implements OnChanges {
     }
     // initialize receiving data - once
     if (this.showIamRolesDialog) {
-      if (!this.isComponentDefined) {
+      if (this.isComponentDefined) {
+        // refresh missing roles
+        this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
+      } else {
         // check if the IAM component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
           if (this.isComponentDefined) this.prepareRoleListEmitter()
         })
-      } else {
-        // refresh missing roles
-        this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
       }
     }
   }

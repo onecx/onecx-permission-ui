@@ -259,7 +259,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onRoleFilterChange(val: string): void {
     if (val !== '' && this.rolesFiltered && this.roles.length > 0)
-      this.rolesFiltered = this.roles.filter((r) => r.name!.indexOf(val) >= 0)
+      this.rolesFiltered = this.roles.filter((r) => r.name!.includes(val))
     else this.rolesFiltered = this.roles
   }
   private loadData(): void {

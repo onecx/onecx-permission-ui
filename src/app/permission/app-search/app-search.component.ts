@@ -198,12 +198,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         const productNames: string[] = []
         const apps: (App & RowListGridData)[] = []
         result.stream?.map((app: Application) => {
-          if (!productNames.includes(app.productName!)) {
-            productNames.push(app.productName!)
-            apps.push({ ...app, appType: 'PRODUCT', displayName: app.productName, apps: 1 } as App & RowListGridData)
-          } else {
+          if (productNames.includes(app.productName!)) {
             const ap: App[] = apps.filter((a) => a.productName === app.productName)
             if (ap.length === 1 && ap[0].apps) ap[0].apps++
+          } else {
+            productNames.push(app.productName!)
+            apps.push({ ...app, appType: 'PRODUCT', displayName: app.productName, apps: 1 } as App & RowListGridData)
           }
         })
         return apps.sort(this.sortAppsByDisplayName)
