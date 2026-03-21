@@ -82,7 +82,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.ocxInitRemoteComponent(config)
   }
   @ViewChild('permissionTable') permissionTable: Table | undefined
-  @ViewChild('permissionTableFilterInput') permissionTableFilter: ElementRef | undefined
+  @ViewChild('permissionNameFilter') permissionTableFilter: ElementRef | undefined
 
   public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []

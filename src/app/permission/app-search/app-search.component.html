@@ -228,7 +228,7 @@
             {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError?.error.invalidParams.length }}):
           </div>
           <ul class="m-2 px-3">
-            <li *ngFor="let param of importError?.error.invalidParams.slice(0, 5)">
+            <li *ngFor="let param of importError?.error.invalidParams.slice(0, 10)">
               {{ param.name }}
               <div>{{ param.message }}</div>
             </li>
