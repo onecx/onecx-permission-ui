@@ -232,31 +232,33 @@ describe('AppDetailComponent', () => {
     msgServiceSpy.error.calls.reset()
   })
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
+  describe('initialize', () => {
+    it('should create', () => {
+      expect(component).toBeTruthy()
+    })
 
-  it('should prepare action buttons on init', () => {
-    spyOn(component, 'onExport')
+    it('should prepare action buttons on init', () => {
+      spyOn(component, 'onExport')
 
-    component.ngOnInit()
+      component.ngOnInit()
 
-    let actions: any = []
-    component.actions$!.subscribe((act) => (actions = act))
+      let actions: any = []
+      component.actions$!.subscribe((act) => (actions = act))
 
-    actions[0].actionCallback()
-    actions[1].actionCallback()
+      actions[0].actionCallback()
+      actions[1].actionCallback()
 
-    expect(locationSpy.back).toHaveBeenCalled()
-    expect(component.onExport).toHaveBeenCalled()
-  })
+      expect(locationSpy.back).toHaveBeenCalled()
+      expect(component.onExport).toHaveBeenCalled()
+    })
 
-  it('should loadData onReload', () => {
-    spyOn(component as any, 'loadData')
+    it('should loadData onReload', () => {
+      spyOn(component as any, 'loadData')
 
-    component.onReload()
+      component.onReload()
 
-    expect((component as any).loadData).toHaveBeenCalled()
+      expect((component as any).loadData).toHaveBeenCalled()
+    })
   })
 
   describe('onExport', () => {
@@ -470,9 +472,9 @@ describe('AppDetailComponent', () => {
   })
 
   /**
-   * CREATE
+   * CREATE ROLE
    */
-  describe('create', () => {
+  describe('create role', () => {
     it('should do something onAddIAMRoles', () => {
       component.onAddIAMRoles(new MouseEvent('click'))
 
@@ -521,50 +523,52 @@ describe('AppDetailComponent', () => {
   /**
    * COLUMNS => Roles, ROWS => Permissions
    */
-  it('should handle loading role assignments without apps', () => {
-    component.urlParamAppType = 'WORKSPACE'
-    spyOn(console, 'warn')
-    component.productApps = []
+  describe('role assignments', () => {
+    it('should handle loading role assignments without apps', () => {
+      component.urlParamAppType = 'WORKSPACE'
+      spyOn(console, 'warn')
+      component.productApps = []
 
-    component['loadRoleAssignments'](true)
+      component['loadRoleAssignments'](true)
 
-    expect(console.warn).toHaveBeenCalledWith('No apps found - stop loading assignments')
-  })
-
-  it('should search assigments', () => {
-    component['searchAssignments'](true, ['appId1'])
-
-    expect(component.protectedAssignments.length).toBe(1)
-  })
-
-  it('should display error if search assigments fails', () => {
-    const errorResponse = new HttpErrorResponse({
-      error: 'test 404 error',
-      status: 404,
-      statusText: 'Not Found'
+      expect(console.warn).toHaveBeenCalledWith('No apps found - stop loading assignments')
     })
-    assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
 
-    component['searchAssignments'](true, ['appId1'])
+    it('should search assigments', () => {
+      component['searchAssignments'](true, ['appId1'])
 
-    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ASSIGNMENTS')
-    expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
-  })
+      expect(component.protectedAssignments.length).toBe(1)
+    })
 
-  it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
-    const errorResponse = { message: 'non-HTTP error' }
-    assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
+    it('should display error if search assigments fails', () => {
+      const errorResponse = new HttpErrorResponse({
+        error: 'test 404 error',
+        status: 404,
+        statusText: 'Not Found'
+      })
+      assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
-    component.ngOnInit()
+      component['searchAssignments'](true, ['appId1'])
 
-    expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
-    expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ASSIGNMENTS')
+      expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
+    })
+
+    it('should catch non-HttpErrorResponse error if search for assignments fails', () => {
+      const errorResponse = { message: 'non-HTTP error' }
+      assApiSpy.searchAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component.ngOnInit()
+
+      expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS')
+      expect(console.error).toHaveBeenCalledWith('searchAssignments', errorResponse)
+    })
   })
 
   /*
-   * Table Filter
+   * Table Filter: global
    */
   describe('table global filter', () => {
     it('should set filterMode to CONTAINS when mode is "="', () => {
@@ -669,7 +673,7 @@ describe('AppDetailComponent', () => {
   })
 
   /**
-   * Filter: Product, AppId
+   * Table Filter: Product, AppId
    */
   describe('table column sorting', () => {
     it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
@@ -870,350 +874,357 @@ describe('AppDetailComponent', () => {
   /*
    * ROLE
    */
-  it('should call stopPropagation and set role to undefined in onCreateRole', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+  describe('role mgmt', () => {
+    it('should call stopPropagation and set role to undefined in onCreateRole', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-    component.onCreateRole(event)
+      component.onCreateRole(event)
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.role).toBeUndefined()
-    expect(component.changeMode).toBe('CREATE')
-    expect(component.showRoleDetailDialog).toBeTrue()
-  })
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.role).toBeUndefined()
+      expect(component.changeMode).toBe('CREATE')
+      expect(component.showRoleDetailDialog).toBeTrue()
+    })
 
-  it('should call stopPropagation and set role in onEditRole', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+    it('should call stopPropagation and set role in onEditRole', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-    component.onEditRole(event, role1)
+      component.onEditRole(event, role1)
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.role).toBe(role1)
-    expect(component.changeMode).toBe('EDIT')
-    expect(component.showRoleDetailDialog).toBeTrue()
-  })
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.role).toBe(role1)
+      expect(component.changeMode).toBe('EDIT')
+      expect(component.showRoleDetailDialog).toBeTrue()
+    })
 
-  it('should call stopPropagation and set role in onDeleteRole', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+    it('should call stopPropagation and set role in onDeleteRole', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-    component.onDeleteRole(event, role1)
+      component.onDeleteRole(event, role1)
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.role).toBe(role1)
-    expect(component.changeMode).toBe('DELETE')
-    expect(component.showRoleDeleteDialog).toBeTrue()
-  })
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.role).toBe(role1)
+      expect(component.changeMode).toBe('DELETE')
+      expect(component.showRoleDeleteDialog).toBeTrue()
+    })
 
-  it('should reset state and call loadData if changed in onDetailChanged', () => {
-    component.onDetailChanged(true)
+    it('should reset state and call loadData if changed in onDetailChanged', () => {
+      component.onDetailChanged(true)
 
-    expect(component.role).toBeUndefined()
-    expect(component.permission).toBeUndefined()
-    expect(component.changeMode).toBe('VIEW')
-    expect(component.displayPermissionDetailDialog).toBeFalse()
-    expect(component.displayPermissionDeleteDialog).toBeFalse()
-    expect(component.showRoleDetailDialog).toBeFalse()
-    expect(component.showRoleDeleteDialog).toBeFalse()
+      expect(component.role).toBeUndefined()
+      expect(component.permission).toBeUndefined()
+      expect(component.changeMode).toBe('VIEW')
+      expect(component.displayPermissionDetailDialog).toBeFalse()
+      expect(component.displayPermissionDeleteDialog).toBeFalse()
+      expect(component.showRoleDetailDialog).toBeFalse()
+      expect(component.showRoleDeleteDialog).toBeFalse()
+    })
   })
 
   /*
    * PERMISSION
    */
+  describe('permission mgmt', () => {
+    it('should call onDetailPermission in create mode onCopyPermission', () => {
+      const event = new MouseEvent('click')
+      spyOn(component, 'onDetailPermission')
 
-  it('should call onDetailPermission in create mode onCopyPermission', () => {
-    const event = new MouseEvent('click')
-    spyOn(component, 'onDetailPermission')
+      component.onCopyPermission(event, permRow)
 
-    component.onCopyPermission(event, permRow)
+      expect(component.onDetailPermission).toHaveBeenCalledWith(event, permRow)
+      expect(component.changeMode).toBe('CREATE')
+    })
 
-    expect(component.onDetailPermission).toHaveBeenCalledWith(event, permRow)
-    expect(component.changeMode).toBe('CREATE')
-  })
+    it('should call stopPropagation and set role to undefined in onCreatePermission', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-  it('should call stopPropagation and set role to undefined in onCreatePermission', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+      component.onCreatePermission(event)
 
-    component.onCreatePermission(event)
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.role).toBeUndefined()
+      expect(component.changeMode).toBe('CREATE')
+      expect(component.displayPermissionDetailDialog).toBeTrue()
+    })
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.role).toBeUndefined()
-    expect(component.changeMode).toBe('CREATE')
-    expect(component.displayPermissionDetailDialog).toBeTrue()
-  })
+    it('should call stopPropagation and set permission onDetailPermission', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-  it('should call stopPropagation and set permission onDetailPermission', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+      component.onDetailPermission(event, permRow)
 
-    component.onDetailPermission(event, permRow)
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permission).toBe(permRow)
+      expect(component.changeMode).toBe('EDIT')
+      expect(component.displayPermissionDetailDialog).toBeTrue()
+    })
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permission).toBe(permRow)
-    expect(component.changeMode).toBe('EDIT')
-    expect(component.displayPermissionDetailDialog).toBeTrue()
-  })
+    it('should set changeMode according to operator onDetailPermission', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-  it('should set changeMode according to operator onDetailPermission', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+      component.onDetailPermission(event, permRow)
 
-    component.onDetailPermission(event, permRow)
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permission).toBe(permRow)
+      expect(component.changeMode).toBe('EDIT') //   mandatory: false
+      expect(component.displayPermissionDetailDialog).toBeTrue()
 
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permission).toBe(permRow)
-    expect(component.changeMode).toBe('EDIT') //   mandatory: false
-    expect(component.displayPermissionDetailDialog).toBeTrue()
+      component.onDetailPermission(event, { ...permRow, mandatory: true })
+      expect(component.changeMode).toBe('VIEW')
+    })
 
-    component.onDetailPermission(event, { ...permRow, mandatory: true })
-    expect(component.changeMode).toBe('VIEW')
-  })
+    it('should call stopPropagation and set permission in onDeletePermission', () => {
+      const event = new MouseEvent('click')
+      spyOn(event, 'stopPropagation')
 
-  it('should call stopPropagation and set permission in onDeletePermission', () => {
-    const event = new MouseEvent('click')
-    spyOn(event, 'stopPropagation')
+      component.onDeletePermission(event, permRow)
 
-    component.onDeletePermission(event, permRow)
-
-    expect(event.stopPropagation).toHaveBeenCalled()
-    expect(component.permission).toBe(permRow)
-    expect(component.changeMode).toBe('DELETE')
-    expect(component.displayPermissionDeleteDialog).toBeTrue()
+      expect(event.stopPropagation).toHaveBeenCalled()
+      expect(component.permission).toBe(permRow)
+      expect(component.changeMode).toBe('DELETE')
+      expect(component.displayPermissionDeleteDialog).toBeTrue()
+    })
   })
 
   /****************************************************************************
    *  ASSIGNMENTS    => grant + revoke permissions => assign roles
    ****************************************************************************
    */
-  it('should create an assignment', () => {
-    component.onAssignPermission(permRow, role1)
+  describe('assignment mgmt', () => {
+    it('should create an assignment', () => {
+      component.onAssignPermission(permRow, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
+    })
 
-  it('should display error if assignment fails', () => {
-    const errorResponse = { error: 'Error on creating an assignment', status: 400 }
-    assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
+    it('should display error if assignment fails', () => {
+      const errorResponse = { error: 'Error on creating an assignment', status: 400 }
+      assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
-    component.onAssignPermission(permRow, role1)
+      component.onAssignPermission(permRow, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('createAssignment', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('createAssignment', errorResponse)
+    })
 
-  it('should delete an assignment', () => {
-    component.onRemovePermission(permRow, role1)
+    it('should delete an assignment', () => {
+      component.onRemovePermission(permRow, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
+    })
 
-  it('should display error if assignment creation fails', () => {
-    const errorResponse = { error: 'Error on removing a permission', status: 400 }
-    assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
+    it('should display error if assignment creation fails', () => {
+      const errorResponse = { error: 'Error on removing a permission', status: 400 }
+      assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
-    component.onRemovePermission(permRow, role1)
+      component.onRemovePermission(permRow, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('deleteAssignment', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('deleteAssignment', errorResponse)
+    })
 
-  it('should grant all permissions: assign all perms of an app to a role', () => {
-    const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId1'
+    it('should grant all permissions: assign all perms of an app to a role', () => {
+      const ev = new MouseEvent('click')
+      component.filterAppValue = 'appId1'
 
-    component.ngOnInit()
-    component.onGrantAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onGrantAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+    })
 
-  it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
-    const errorResponse = { error: 'Error on grant all permissions with app filter', status: 400 }
-    assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-    const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId1'
+    it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
+      const errorResponse = { error: 'Error on grant all permissions with app filter', status: 400 }
+      assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      const ev = new MouseEvent('click')
+      component.filterAppValue = 'appId1'
 
-    component.ngOnInit()
-    component.onGrantAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onGrantAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('grantRoleApplicationAssignments', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('grantRoleApplicationAssignments', errorResponse)
+    })
 
-  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
-    const ev = new MouseEvent('click')
-    component.filterProductValue = 'productAppId'
+    it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+      const ev = new MouseEvent('click')
+      component.filterProductValue = 'productAppId'
 
-    component.ngOnInit()
-    component.onGrantAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onGrantAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+    })
 
-  it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
-    const errorResponse = { error: 'Error on grant all permissions with product filter', status: 400 }
-    assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-    const ev = new MouseEvent('click')
-    component.filterProductValue = 'productAppId'
+    it('should display error when trying to grant all permissions: assign all perms of all apps of a product to a role', () => {
+      const errorResponse = { error: 'Error on grant all permissions with product filter', status: 400 }
+      assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      const ev = new MouseEvent('click')
+      component.filterProductValue = 'productAppId'
 
-    component.ngOnInit()
-    component.onGrantAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onGrantAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('grantRoleProductsAssignments', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('grantRoleProductsAssignments', errorResponse)
+    })
 
-  it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
-    const ev = new MouseEvent('click')
+    it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
+      const ev = new MouseEvent('click')
 
-    component.ngOnInit()
-    component.onGrantAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onGrantAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
+    })
 
-  it('should revoke all permissions: remove all perms of an app to a role', () => {
-    const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId1'
+    it('should revoke all permissions: remove all perms of an app to a role', () => {
+      const ev = new MouseEvent('click')
+      component.filterAppValue = 'appId1'
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+    })
 
-  it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
-    const errorResponse = { error: 'Error on revoke all permissions with app filter', status: 400 }
-    assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-    const ev = new MouseEvent('click')
-    component.filterAppValue = 'appId1'
+    it('should display error when trying to revoke all permissions: remove all perms of an app to a role', () => {
+      const errorResponse = { error: 'Error on revoke all permissions with app filter', status: 400 }
+      assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      const ev = new MouseEvent('click')
+      component.filterAppValue = 'appId1'
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('revokeRoleApplicationAssignments', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('revokeRoleApplicationAssignments', errorResponse)
+    })
 
-  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
-    const ev = new MouseEvent('click')
-    component.filterProductValue = 'productAppId'
+    it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
+      const ev = new MouseEvent('click')
+      component.filterProductValue = 'productAppId'
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+    })
 
-  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2a) in a workspace for a selected product', () => {
-    const ev = new MouseEvent('click')
-    component.filterProductValue = 'productAppId'
-    component.urlParamAppType = 'WORKSPACE'
+    it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2a) in a workspace for a selected product', () => {
+      const ev = new MouseEvent('click')
+      component.filterProductValue = 'productAppId'
+      component.urlParamAppType = 'WORKSPACE'
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
-  })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+    })
 
-  it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
-    component.filterProductItems = [
-      { label: 'prodName1', value: 'prodName1' },
-      { label: 'prodName2', value: 'prodName2' }
-    ]
-    component.filterProductValue = undefined
-    component.currentApp.isProduct = false
+    it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2b) in a workspace for all products', () => {
+      component.filterProductItems = [
+        { label: 'prodName1', value: 'prodName1' },
+        { label: 'prodName2', value: 'prodName2' }
+      ]
+      component.filterProductValue = undefined
+      component.currentApp.isProduct = false
 
-    const res = component['prepareProductListForBulkOperation']()
+      const res = component['prepareProductListForBulkOperation']()
 
-    expect(res).toEqual(['prodName1', 'prodName2'])
-  })
+      expect(res).toEqual(['prodName1', 'prodName2'])
+    })
 
-  it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
-    const errorResponse = { error: 'Error on revoke all permissions with product filter', status: 400 }
-    assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-    const ev = new MouseEvent('click')
-    component.filterProductValue = 'productAppId'
+    it('should display error when trying to revoke all permissions: remove all assgmts of all apps of a product to a role', () => {
+      const errorResponse = { error: 'Error on revoke all permissions with product filter', status: 400 }
+      assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+      const ev = new MouseEvent('click')
+      component.filterProductValue = 'productAppId'
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
-    expect(console.error).toHaveBeenCalledWith('revokeRoleProductsAssignments', errorResponse)
-  })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
+      expect(console.error).toHaveBeenCalledWith('revokeRoleProductsAssignments', errorResponse)
+    })
 
-  it('should revoke all permissions: remove all assgmts of a role', () => {
-    const ev = new MouseEvent('click')
+    it('should revoke all permissions: remove all assgmts of a role', () => {
+      const ev = new MouseEvent('click')
 
-    component.ngOnInit()
-    component.onRevokeAllPermissions(ev, role1)
+      component.ngOnInit()
+      component.onRevokeAllPermissions(ev, role1)
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
+    })
   })
 
   /*
    * EDGE CASES
    */
-  it('should return 0 when sorting permissions without appIds or prod names', () => {
-    const perm3: Permission = {
-      id: 'permId3'
-    }
-    const permRow3: PermissionViewRow = {
-      ...perm3,
-      key: 'key',
-      roles: { undefined },
-      appType: 'MFE',
-      appDisplayName: 'appName1',
-      productDisplayName: 'prodName1'
-    }
-    const permRow4: PermissionViewRow = {
-      ...perm3,
-      key: 'key',
-      roles: { undefined },
-      appType: 'MFE',
-      appDisplayName: 'appName1',
-      productDisplayName: 'prodName1'
-    }
-    const resultAppAsc = (component as any).sortPermissionRowByAppIdAsc(permRow3, permRow4)
-    expect(resultAppAsc).toBe(0)
+  describe('edge cases', () => {
+    it('should return 0 when sorting permissions without appIds or prod names', () => {
+      const perm3: Permission = {
+        id: 'permId3'
+      }
+      const permRow3: PermissionViewRow = {
+        ...perm3,
+        key: 'key',
+        roles: { undefined },
+        appType: 'MFE',
+        appDisplayName: 'appName1',
+        productDisplayName: 'prodName1'
+      }
+      const permRow4: PermissionViewRow = {
+        ...perm3,
+        key: 'key',
+        roles: { undefined },
+        appType: 'MFE',
+        appDisplayName: 'appName1',
+        productDisplayName: 'prodName1'
+      }
+      const resultAppAsc = (component as any).sortPermissionRowByAppIdAsc(permRow3, permRow4)
+      expect(resultAppAsc).toBe(0)
 
-    const resultAppDesc = (component as any).sortPermissionRowByAppIdDesc(permRow3, permRow4)
-    expect(resultAppDesc).toBe(0)
+      const resultAppDesc = (component as any).sortPermissionRowByAppIdDesc(permRow3, permRow4)
+      expect(resultAppDesc).toBe(0)
 
-    const resultProdAsc = (component as any).sortPermissionRowByProductAsc(permRow3, permRow4)
-    expect(resultProdAsc).toBe(0)
+      const resultProdAsc = (component as any).sortPermissionRowByProductAsc(permRow3, permRow4)
+      expect(resultProdAsc).toBe(0)
 
-    const resultProdDesc = (component as any).sortPermissionRowByProductDesc(permRow3, permRow4)
-    expect(resultProdDesc).toBe(0)
-  })
+      const resultProdDesc = (component as any).sortPermissionRowByProductDesc(permRow3, permRow4)
+      expect(resultProdDesc).toBe(0)
+    })
 
-  it('should return 0 when sorting permissions without appIds or prod names', () => {
-    const role3: Role = {
-      id: 'roleId1'
-    }
-    const role4: Role = {
-      id: 'roleId1'
-    }
+    it('should return 0 when sorting permissions without appIds or prod names', () => {
+      const role3: Role = {
+        id: 'roleId1'
+      }
+      const role4: Role = {
+        id: 'roleId1'
+      }
 
-    const result = (component as any).sortRoleByName(role3, role4)
+      const result = (component as any).sortRoleByName(role3, role4)
 
-    expect(result).toBe(0)
-  })
+      expect(result).toBe(0)
+    })
 
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
-    mockUserService.lang$.getValue.and.returnValue('de')
-    fixture = TestBed.createComponent(AppDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+    it('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
+      mockUserService.lang$.getValue.and.returnValue('de')
+      fixture = TestBed.createComponent(AppDetailComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+    })
   })
 
   describe('Test translations', () => {

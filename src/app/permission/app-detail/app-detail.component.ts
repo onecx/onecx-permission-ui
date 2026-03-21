@@ -171,6 +171,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.prepareActionButtons()
     this.loadData()
   }
+
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
     this.destroy$.complete()
@@ -552,6 +553,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
           this.emptyRolesExist = this.roles.some((r) => !r.hasAssignments)
         } else {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_0.ASSIGNMENTS'
+          console.error('searchAssignments', result)
         }
       })
   }
