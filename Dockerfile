@@ -1,4 +1,4 @@
-FROM ghcr.io/onecx/docker-spa-base:2.17.0-rc.2
+FROM ghcr.io/onecx/docker-spa-base:2.17.0-rc.6
 
 # Copy nginx configuration
 COPY nginx/locations.conf $DIR_LOCATION/locations.conf
