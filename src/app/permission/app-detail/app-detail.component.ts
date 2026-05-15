@@ -423,7 +423,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.loadRolesAndPermissions()
       },
       error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+        this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.WORKSPACE_ROLES_NOK' })
         console.error('createRole', err)
       }
     })
