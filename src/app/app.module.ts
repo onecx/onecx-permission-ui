@@ -6,14 +6,20 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
 
-import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
+import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
-import { createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { StandaloneShellModule, provideStandaloneProviders } from '@onecx/angular-standalone-shell'
+import {
+  createTranslateLoader,
+  providePermissionService,
+  provideThemeConfig,
+  provideTranslationPathFromMeta
+} from '@onecx/angular-utils'
 import { APP_CONFIG } from '@onecx/angular-integration-interface'
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
 import { environment } from 'src/environments/environment'
 import { AppComponent } from './app.component'
+import { primengThemeOverrides } from './shared/theme/primeng-theme-overrides'
 
 const routes: Routes = [
   {
@@ -29,7 +35,8 @@ const routes: Routes = [
     BrowserModule,
     BrowserAnimationsModule,
     AngularAuthModule,
-    PortalCoreModule.forRoot('onecx-permission-ui'),
+    AngularAcceleratorModule,
+    StandaloneShellModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking',
       enableTracing: true
@@ -46,6 +53,9 @@ const routes: Routes = [
   providers: [
     { provide: APP_CONFIG, useValue: environment },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    provideThemeConfig({ overrides: primengThemeOverrides }),
+    provideStandaloneProviders(),
+    providePermissionService(),
     provideHttpClient(withInterceptorsFromDi())
   ]
 })

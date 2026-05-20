@@ -1,16 +1,17 @@
 import { ElementRef } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { AsyncPipe, CommonModule } from '@angular/common'
+import { AsyncPipe, CommonModule, Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, ReplaySubject, throwError } from 'rxjs'
+import { of, throwError } from 'rxjs'
 import { Table, TableModule } from 'primeng/table'
-import { TabViewModule } from 'primeng/tabview'
+import { TabsModule } from 'primeng/tabs'
 
-import { BASE_URL, RemoteComponentConfig, SlotService } from '@onecx/angular-remote-components'
+import { SlotService } from '@onecx/angular-remote-components'
 import { AppConfigService } from '@onecx/angular-integration-interface'
+import { RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import {
@@ -18,6 +19,7 @@ import {
   ExtendedSelectItem,
   slotInitializer
 } from './user-roles-permissions.component'
+import { environment } from '../../../environments/environment'
 
 const userAssignments: UserAssignment[] = [
   {
@@ -53,16 +55,13 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(false))
   }
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
-  let baseUrlSubject: ReplaySubject<any>
 
   beforeEach(waitForAsync(() => {
-    baseUrlSubject = new ReplaySubject<any>(1)
-
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
         TableModule,
-        TabViewModule,
+        TabsModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -74,11 +73,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         { provide: Router, useValue: routerMock },
         { provide: Table, useClass: MockTable },
         provideHttpClient(),
-        provideHttpClientTesting(),
-        {
-          provide: BASE_URL,
-          useValue: baseUrlSubject
-        }
+        provideHttpClientTesting()
       ]
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
@@ -92,8 +87,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         }
       })
       .compileComponents()
-
-    baseUrlSubject.next('base_url_mock')
 
     slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     userApiSpy.getUserAssignments.calls.reset()
@@ -131,17 +124,16 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       expect(component.ocxInitRemoteComponent).toHaveBeenCalledWith(mockConfig)
     })
 
-    it('should initialize the remote component', (done: DoneFn) => {
+    it('should initialize the remote component', () => {
       initializeComponent('userid')
 
       component.ocxInitRemoteComponent({
         baseUrl: 'base_url'
       } as RemoteComponentConfig)
 
-      baseUrlSubject.asObservable().subscribe((item) => {
-        expect(item).toEqual('base_url')
-        done()
-      })
+      const expectedBasePath = Location.joinWithSlash('base_url', environment.apiPrefix)
+      expect((userApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
+      expect((assApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
     })
   })
 

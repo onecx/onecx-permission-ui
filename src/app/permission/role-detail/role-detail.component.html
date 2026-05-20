@@ -51,23 +51,25 @@
         id="apm_role_detail_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
-        [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CANCEL' | translate }}</label>
+      </p-button>
       <p-button
         id="apm_role_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSaveRole()"
         [disabled]="!formGroup.valid"
-        [label]="'ACTIONS.SAVE' | translate"
         [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.SAVE' | translate }}</label>
+      </p-button>
     </div>
   </ng-template>
 </p-dialog>
@@ -98,22 +100,24 @@
         id="apm_role_delete_action_no"
         icon="pi pi-times"
         (onClick)="onClose()"
-        [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CONFIRMATION.NO' | translate }}</label>
+      </p-button>
       <p-button
         id="apm_role_delete_action_yes"
         icon="pi pi-check"
         (onClick)="onDeleteConfirmation()"
-        [label]="'ACTIONS.CONFIRMATION.YES' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CONFIRMATION.YES' | translate }}</label>
+      </p-button>
     </div>
   </ng-template>
 </p-dialog>
@@ -186,35 +190,38 @@
         id="apm_idm_roles_action_close"
         icon="pi pi-times"
         (onClick)="onClose()"
-        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.NAVIGATION.CLOSE' | translate }}</label>
+      </p-button>
       <p-button
         *ngIf="!exceptionKey && !loading"
         id="apm_idm_roles_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
-        [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CANCEL' | translate }}</label>
+      </p-button>
       <p-button
         *ngIf="!exceptionKey && !loading"
         id="apm_idm_roles_action_save"
         icon="pi pi-check"
         (onClick)="onAddIamRoles()"
         [disabled]="idmRolesSelected.length === 0"
-        [label]="'ROLE.IDM.SAVE' | translate"
         [ariaLabel]="'ROLE.IDM.SAVE' | translate"
         [pTooltip]="'ROLE.IDM.SAVE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ROLE.IDM.SAVE' | translate }}</label>
+      </p-button>
     </div>
   </ng-template>
 </p-dialog>

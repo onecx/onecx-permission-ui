@@ -3,7 +3,7 @@ import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { Subject, catchError, combineLatest, map, of, Observable } from 'rxjs'
+import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
@@ -62,6 +62,15 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
 export class AppDetailComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
   private readonly debug = true // to be removed after finalization
+  private readonly relevantPermissions = [
+    'ROLE#EDIT',
+    'ROLE#CREATE',
+    'ROLE#DELETE',
+    'PERMISSION#EDIT',
+    'PERMISSION#CREATE',
+    'PERMISSION#DELETE',
+    'PERMISSION#GRANT'
+  ]
   limitText = limitText
   // dialog control
   public loadingApp = true
@@ -144,18 +153,55 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId')
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
-    // simplify permission checks
-    if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
-    if (userService.hasPermission('ROLE#CREATE')) this.myPermissions.push('ROLE#CREATE')
-    if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
-    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
-    if (userService.hasPermission('PERMISSION#CREATE')) this.myPermissions.push('PERMISSION#CREATE')
-    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
-    if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
     this.filterMode = FilterMatchMode.CONTAINS
   }
 
   public ngOnInit(): void {
+    if (this.myPermissions.length > 0) {
+      this.initializeComponentState()
+      return
+    }
+    this.resolvePermissions()
+      .pipe(take(1))
+      .subscribe((permissions) => {
+        this.myPermissions = permissions
+        this.initializeComponentState()
+      })
+  }
+
+  private resolvePermissions(): Observable<string[]> {
+    const userService = this.userService as any
+    if (typeof userService.getPermissions === 'function') {
+      const permissions$ = userService.getPermissions()
+      if (permissions$ && typeof permissions$.pipe === 'function') {
+        return permissions$.pipe(
+          map((permissions: string[]) =>
+            this.relevantPermissions.filter((permission) => permissions.includes(permission))
+          )
+        )
+      }
+    }
+    if (typeof userService.hasPermission === 'function') {
+      const checks = this.relevantPermissions.map((permission) => userService.hasPermission(permission))
+      const hasAsyncCheck = checks.some((check) => check && typeof check.then === 'function')
+      if (!hasAsyncCheck) {
+        return of(this.relevantPermissions.filter((_, index) => !!checks[index]))
+      }
+      return from(
+        Promise.all(
+          this.relevantPermissions.map((permission, index) =>
+            Promise.resolve(checks[index]).then((hasPermission) => ({
+              permission,
+              hasPermission
+            }))
+          )
+        ).then((checks) => checks.filter((check) => check.hasPermission).map((check) => check.permission))
+      )
+    }
+    return of([])
+  }
+
+  private initializeComponentState(): void {
     if (
       this.myPermissions.includes('ROLE#EDIT') ||
       this.myPermissions.includes('ROLE#CREATE') ||

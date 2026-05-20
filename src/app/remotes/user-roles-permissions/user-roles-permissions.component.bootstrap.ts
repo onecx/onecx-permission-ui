@@ -6,15 +6,19 @@ import { ReplaySubject } from 'rxjs'
 
 import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
+import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
 import {
+  createTranslateLoader,
+  providePermissionService,
+  provideThemeConfig,
+  provideTranslationPathFromMeta,
   REMOTE_COMPONENT_CONFIG,
-  RemoteComponentConfig,
-  provideTranslateServiceForRoot
-} from '@onecx/angular-remote-components'
-import { createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+  RemoteComponentConfig
+} from '@onecx/angular-utils'
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 
 import { environment } from 'src/environments/environment'
+import { primengThemeOverrides } from '../../shared/theme/primeng-theme-overrides'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 
 bootstrapRemoteComponent(
@@ -25,6 +29,8 @@ bootstrapRemoteComponent(
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(AngularAuthModule, BrowserAnimationsModule),
     { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
+    providePermissionService(),
+    provideThemeConfig({ overrides: primengThemeOverrides }),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideTranslateServiceForRoot({
       isolate: true,

@@ -73,7 +73,7 @@
             <button
               id="apm_app_detail_permission_table_filter_contains"
               class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border"
-              [class.p-highlight]="this.filterMode === 'contains'"
+              [class.is-active]="this.filterMode === 'contains'"
               (click)="onFilterModeChange('=')"
               [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
               [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
@@ -85,7 +85,7 @@
             <button
               id="apm_app_detail_permission_table_filter_not_contains"
               class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border white-space-nowrap"
-              [class.p-highlight]="this.filterMode === 'notContains'"
+              [class.is-active]="this.filterMode === 'notContains'"
               (click)="onFilterModeChange('!=')"
               [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
               [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
@@ -209,18 +209,22 @@
               >
                 <span class="pi pi-plus-circle" aria-hidden="true"></span>
               </button>
-              <p-checkbox
-                type="text"
-                inputId="apm_app_detail_permission_table_header_display_additional_row_data"
-                styleClass="ml-2 cursor-auto shadow-none"
-                [(ngModel)]="displayAdditionalRowData"
-                [binary]="true"
-                [label]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
-                [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
-                [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              ></p-checkbox>
+              <div class="ml-2 flex align-items-center gap-2">
+                <p-checkbox
+                  type="text"
+                  inputId="apm_app_detail_permission_table_header_display_additional_row_data"
+                  styleClass="cursor-auto shadow-none"
+                  [(ngModel)]="displayAdditionalRowData"
+                  [binary]="true"
+                  [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
+                  [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                ></p-checkbox>
+                <label for="apm_app_detail_permission_table_header_display_additional_row_data">
+                  {{ 'DIALOG.DETAIL.ADDITIONAL_INFO' | translate }}
+                </label>
+              </div>
             </ng-container>
           </section>
           <!-- roles -->
@@ -304,19 +308,34 @@
                   <input
                     #roleNameFilter
                     pInputText
-                    type="text"
                     id="apm_app_detail_permission_table_header_role_filter"
-                    class="w-15rem adata-view-control-border text-responsive"
-                    (input)="onRoleFilterChange(roleNameFilter.value)"
-                    [ariaLabel]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
+                    type="text"
+                    class="w-13rem sm:w-16rem data-view-control-border text-responsive"
+                    (input)="onRoleFilterChange($any($event.target).value)"
+                    [attr.aria-label]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     [pTooltip]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   />
                   <label for="apm_app_detail_permission_table_header_role_filter" aria-hidden="true">
-                    {{ 'DIALOG.DETAIL.ROLES.FILTER' | translate }}</label
-                  >
+                    {{ 'DIALOG.DETAIL.ROLES.FILTER.LABEL' | translate }}
+                  </label>
                 </span>
+                <div class="ml-2 flex align-items-center gap-2">
+                  <p-checkbox
+                    inputId="apm_app_detail_permission_table_header_display_additional_row_data"
+                    styleClass="cursor-auto shadow-none"
+                    [(ngModel)]="displayAdditionalRowData"
+                    [binary]="true"
+                    [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
+                    [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></p-checkbox>
+                  <label for="apm_app_detail_permission_table_header_display_additional_row_data">
+                    {{ 'DIALOG.DETAIL.ADDITIONAL_INFO' | translate }}
+                  </label>
+                </div>
                 <button
                   id="apm_app_detail_permission_table_header_role_filter_clear"
                   class="p-inputgroup-addon pseudo-button border-right-1 pi pi-filter-slash"
@@ -415,7 +434,7 @@
             <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
             <div *ngIf="!currentApp.isProduct" class="flex flex-wrap sm:flex-nowrap align-items-center">
               <span #filterProduct class="p-float-label inline-block">
-                <p-dropdown
+                <p-select
                   id="apm_app_detail_permission_table_filter_product_name"
                   styleClass="w-full clear-icon-used"
                   [appendTo]="'body'"
@@ -428,7 +447,7 @@
                   [pTooltip]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                ></p-dropdown>
+                ></p-select>
                 <label for="apm_app_detail_permission_table_filter_product_name" aria-hidden="true">
                   {{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</label
                 >
@@ -455,7 +474,7 @@
           >
             <div class="flex flex-wrap sm:white-space-nowrap align-items-center">
               <span #filterApp class="flex-grow-1 p-float-label inline-block">
-                <p-dropdown
+                <p-select
                   id="apm_app_detail_permission_table_filter_app_id"
                   styleClass="w-10rem md:w-full clear-icon-used"
                   [appendTo]="'body'"
@@ -468,7 +487,7 @@
                   [pTooltip]="'DIALOG.DETAIL.FILTER.APPS.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                ></p-dropdown>
+                ></p-select>
                 <label
                   for="apm_app_detail_permission_table_filter_app_id"
                   class="text-sm sm:text-base"

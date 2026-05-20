@@ -42,7 +42,7 @@
     border-left: 0;
     border-right: 0;
   }
-  .p-dropdown {
+  .p-select {
     &.clear-icon-used .p-inputtext {
       padding-right: 2rem;
     }
@@ -56,7 +56,7 @@
     &:hover {
       background: var(--toggle-button-hover-bg);
     }
-    &.p-highlight {
+    &.is-active {
       background: var(--toggle-button-active-bg);
       &:hover {
         background: var(--toggle-button-active-hover-bg);

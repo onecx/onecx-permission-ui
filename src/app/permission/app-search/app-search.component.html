@@ -229,12 +229,13 @@
         id="apm_import_action_cancel"
         icon="pi pi-times"
         (onClick)="onCloseImportDialog()"
-        [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CANCEL' | translate }}</label>
+      </p-button>
     </div>
   </ng-template>
 </p-dialog>

@@ -9,13 +9,13 @@ import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 import {
   Action,
+  ColumnType,
   RowListGridData,
   DataSortDirection,
   DataTableColumn,
   Filter,
   ObjectUtils
 } from '@onecx/angular-accelerator'
-import { ColumnType } from '@onecx/portal-integration-angular'
 
 import {
   Application,

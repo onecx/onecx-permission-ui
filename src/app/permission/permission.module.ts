@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
-import { addInitializeModuleGuard, InitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
@@ -50,11 +50,12 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    PortalCoreModule.forMicroFrontend(),
-    [RouterModule.forChild(addInitializeModuleGuard(routes))],
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    RouterModule.forChild(routes),
     SharedModule
   ],
-  providers: [InitializeModuleGuard]
+  providers: []
 })
 export class PermissionModule {
   constructor() {

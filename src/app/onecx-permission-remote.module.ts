@@ -5,19 +5,25 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
 
-import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
+import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
-import { createTranslateLoader, PortalApiConfiguration, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import {
+  createTranslateLoader,
+  PortalApiConfiguration,
+  providePermissionService,
+  provideThemeConfig,
+  provideTranslationPathFromMeta
+} from '@onecx/angular-utils'
 import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
-import { addInitializeModuleGuard, AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 
 import { Configuration } from './shared/generated'
 import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
+import { primengThemeOverrides } from './shared/theme/primeng-theme-overrides'
 
-function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
-  return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
+function apiConfigProvider() {
+  return new PortalApiConfiguration(Configuration, environment.apiPrefix)
 }
 
 const routes: Routes = [
@@ -32,8 +38,8 @@ const routes: Routes = [
     AngularAuthModule,
     BrowserModule,
     BrowserAnimationsModule,
-    PortalCoreModule.forMicroFrontend(),
-    RouterModule.forRoot(addInitializeModuleGuard(routes)),
+    AngularAcceleratorModule,
+    RouterModule.forRoot(routes),
     TranslateModule.forRoot({
       isolate: true,
       loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
@@ -45,9 +51,11 @@ const routes: Routes = [
   ],
   providers: [
     ConfigurationService,
-    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] },
+    { provide: Configuration, useFactory: apiConfigProvider },
     provideAppInitializer(() => initializeRouter(inject(Router), inject(AppStateService))()),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    providePermissionService(),
+    provideThemeConfig({ overrides: primengThemeOverrides }),
     provideHttpClient(withInterceptorsFromDi())
   ]
 })

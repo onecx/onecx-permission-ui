@@ -5,23 +5,27 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
+import { CheckboxModule } from 'primeng/checkbox'
+import { ButtonModule } from 'primeng/button'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DialogModule } from 'primeng/dialog'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { FileUploadModule } from 'primeng/fileupload'
 import { InputTextModule } from 'primeng/inputtext'
-import { InputTextareaModule } from 'primeng/inputtextarea'
+import { TextareaModule } from 'primeng/textarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
+import { MessageModule } from 'primeng/message'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
-import { TabViewModule } from 'primeng/tabview'
+import { TabsModule } from 'primeng/tabs'
 import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
 
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { LabelResolver } from './label.resolver'
 import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
@@ -29,46 +33,54 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
 @NgModule({
   declarations: [OcxChipComponent],
   imports: [
-    PortalCoreModule.forMicroFrontend(),
+    AngularAcceleratorModule,
     AutoCompleteModule,
+    CheckboxModule,
+    ButtonModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DialogModule,
-    DropdownModule,
+    SelectModule,
     FileUploadModule,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
+    TextareaModule,
     KeyFilterModule,
     ListboxModule,
+    MessageModule,
     MultiSelectModule,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
-    TabViewModule,
+    TabsModule,
     ToastModule,
+    TooltipModule,
     TranslateModule
   ],
   exports: [
     AutoCompleteModule,
+    CheckboxModule,
+    ButtonModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DialogModule,
-    DropdownModule,
+    SelectModule,
     FileUploadModule,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
+    TextareaModule,
     KeyFilterModule,
     ListboxModule,
+    MessageModule,
     MultiSelectModule,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
-    TabViewModule,
+    TabsModule,
     ToastModule,
+    TooltipModule,
     TranslateModule,
     OcxChipComponent
   ],
@@ -91,9 +103,11 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
         },
         deps: [TranslateService]
       },
-      //this is required because primeng calendar wraps things in an ugly way
+      // this is required because PrimeNG calendar/datepicker wraps controls in a custom element
       blurPredicate: (element: Element) => {
-        return ['INPUT', 'TEXTAREA', 'SELECT', 'CUSTOM-DATE', 'P-CALENDAR', 'P-DROPDOWN'].includes(element.tagName)
+        return ['INPUT', 'TEXTAREA', 'SELECT', 'CUSTOM-DATE', 'P-CALENDAR', 'P-DATEPICKER', 'P-SELECT'].includes(
+          element.tagName
+        )
       }
     })
   ]

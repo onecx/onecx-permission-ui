@@ -29,23 +29,25 @@
         id="apm_export_action_cancel"
         icon="pi pi-times"
         (onClick)="onCloseExportDialog()"
-        [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.CANCEL' | translate }}</label>
+      </p-button>
       <p-button
         id="apm_export_action_export"
         icon="pi pi-download"
         (onClick)="onExportConfirmation()"
         [disabled]="selectedProductNames.length === 0"
-        [label]="'ACTIONS.EXPORT.LABEL' | translate"
         [ariaLabel]="'ACTIONS.EXPORT.LABEL' | translate"
         [pTooltip]="'ACTIONS.EXPORT.ITEMS_SELECTED.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      >
+        <label>{{ 'ACTIONS.EXPORT.LABEL' | translate }}</label>
+      </p-button>
     </div>
   </ng-template>
 </p-dialog>
