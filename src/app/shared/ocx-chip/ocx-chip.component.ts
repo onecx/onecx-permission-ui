@@ -5,6 +5,7 @@ import { Component, Input } from '@angular/core'
  */
 @Component({
   selector: 'app-ocx-chip',
+  standalone: false,
   templateUrl: './ocx-chip.component.html'
 })
 export class OcxChipComponent {

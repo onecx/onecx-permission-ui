@@ -15,9 +15,11 @@ export type IDMRole = { name?: string } // replica from a IAM role
 
 @Component({
   selector: 'app-role-detail',
+  standalone: false,
   templateUrl: './role-detail.component.html',
   styleUrls: ['./role-detail.component.scss'],
   providers: [
+    // eslint-disable-next-line deprecation/deprecation
     { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
     { provide: SLOT_SERVICE, useExisting: SlotService }
   ]

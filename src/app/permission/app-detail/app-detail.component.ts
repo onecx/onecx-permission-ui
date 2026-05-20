@@ -55,6 +55,7 @@ export type PermissionViewRow = Permission & {
 export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
 
 @Component({
+  standalone: false,
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
 })

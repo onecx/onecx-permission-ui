@@ -8,6 +8,7 @@ import { getCurrentDateTime } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-permission-export',
+  standalone: false,
   templateUrl: './permission-export.component.html',
   styleUrls: ['./permission-export.component.scss']
 })

@@ -48,6 +48,7 @@ export type ImportError = {
 }
 
 @Component({
+  standalone: false,
   templateUrl: './app-search.component.html',
   styleUrls: ['./app-search.component.scss']
 })

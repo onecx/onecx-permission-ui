@@ -57,6 +57,7 @@ export function slotInitializer(slotService: SlotService) {
   imports: [AngularRemoteComponentsModule, CommonModule, PortalCoreModule, RouterModule, TranslateModule, SharedModule],
   providers: [
     { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
+    // eslint-disable-next-line deprecation/deprecation
     { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
     { provide: SLOT_SERVICE, useExisting: SlotService }
   ],

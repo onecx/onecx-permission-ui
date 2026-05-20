@@ -14,6 +14,7 @@ import { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-detai
 
 @Component({
   selector: 'app-permission-detail',
+  standalone: false,
   templateUrl: './permission-detail.component.html',
   styleUrls: ['./permission-detail.component.scss']
 })
