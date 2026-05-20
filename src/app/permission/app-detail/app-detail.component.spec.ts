@@ -6,7 +6,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-import { DataViewModule } from 'primeng/dataview'
 import { FilterMatchMode } from 'primeng/api'
 import { Table } from 'primeng/table'
 
@@ -182,7 +181,6 @@ describe('AppDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AppDetailComponent],
       imports: [
-        DataViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')

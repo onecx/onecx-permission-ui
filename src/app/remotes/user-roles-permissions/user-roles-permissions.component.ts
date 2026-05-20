@@ -11,9 +11,8 @@ import {
   ViewChild
 } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
@@ -25,11 +24,9 @@ import {
   SLOT_SERVICE,
   SlotService,
   ocxRemoteComponent,
-  ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
 import { UserService } from '@onecx/angular-integration-interface'
-import { createRemoteComponentTranslateLoader } from '@onecx/angular-accelerator'
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
 
 import {
@@ -61,15 +58,7 @@ export function slotInitializer(slotService: SlotService) {
   providers: [
     { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
     { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
-    { provide: SLOT_SERVICE, useExisting: SlotService },
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL]
-      }
-    })
+    { provide: SLOT_SERVICE, useExisting: SlotService }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })

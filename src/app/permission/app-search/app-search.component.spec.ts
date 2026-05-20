@@ -3,11 +3,9 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { DataViewModule } from 'primeng/dataview'
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { RowListGridData } from '@onecx/angular-accelerator'
@@ -64,13 +62,11 @@ describe('AppSearchComponent', () => {
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AppSearchComponent],
       imports: [
-        DataViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -111,26 +107,6 @@ describe('AppSearchComponent', () => {
   describe('initialize', () => {
     it('should create', () => {
       expect(component).toBeTruthy()
-    })
-
-    it('dataview translations', (done) => {
-      const translationData = {
-        'ACTIONS.SEARCH.SORT_BY': 'sortBy'
-      }
-      const translateService = TestBed.inject(TranslateService)
-      spyOn(translateService, 'get').and.returnValue(of(translationData))
-
-      component.ngOnInit()
-
-      component.dataViewControlsTranslations$?.subscribe({
-        next: (data) => {
-          if (data) {
-            expect(data.sortDropdownTooltip).toEqual('sortBy')
-          }
-          done()
-        },
-        error: done.fail
-      })
     })
 
     it('should add filters when component is initialized', (done) => {
@@ -556,7 +532,6 @@ describe('AppSearchComponent', () => {
     let event: any = {}
 
     beforeEach(() => {
-      translateServiceSpy.get.and.returnValue(of({}))
       file = new File(['file content'], 'test.txt', { type: 'text/plain' })
       const fileList: FileList = {
         0: file,
@@ -569,7 +544,6 @@ describe('AppSearchComponent', () => {
     it('should select a file and parse', async () => {
       const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
-      translateServiceSpy.get.and.returnValue(of({}))
 
       await component.onImportFileSelect(event as any as FileSelectEvent)
 
@@ -590,7 +564,6 @@ describe('AppSearchComponent', () => {
       }
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
       spyOn(console, 'error')
-      translateServiceSpy.get.and.returnValue(of({}))
 
       await component.onImportFileSelect(event)
 

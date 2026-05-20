@@ -4,7 +4,6 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { DataView } from 'primeng/dataview'
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
@@ -16,7 +15,7 @@ import {
   Filter,
   ObjectUtils
 } from '@onecx/angular-accelerator'
-import { ColumnType, DataViewControlTranslations } from '@onecx/portal-integration-angular'
+import { ColumnType } from '@onecx/portal-integration-angular'
 
 import {
   Application,
@@ -93,8 +92,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
 
   @ViewChild(FileUpload) fileUploader: FileUpload | undefined
-  @ViewChild(DataView) dv: DataView | undefined
-  public dataViewControlsTranslations$: Observable<DataViewControlTranslations> | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
@@ -290,31 +287,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       )
   }
   private prepareDialogTranslations(): void {
-    this.dataViewControlsTranslations$ = this.translate
-      .get([
-        'APP.DISPLAY_NAME',
-        'APP.TYPE',
-        'ACTIONS.SEARCH.SORT_BY',
-        'ACTIONS.SEARCH.FILTER.LABEL',
-        'ACTIONS.SEARCH.FILTER.OF',
-        'ACTIONS.SEARCH.SORT_DIRECTION_ASC',
-        'ACTIONS.SEARCH.SORT_DIRECTION_DESC'
-      ])
-      .pipe(
-        map((data) => {
-          return {
-            sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
-            filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
-            filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.DISPLAY_NAME'] + ', ' + data['APP.TYPE'],
-            sortOrderTooltips: {
-              ascending: data['ACTIONS.SEARCH.SORT_DIRECTION_ASC'],
-              descending: data['ACTIONS.SEARCH.SORT_DIRECTION_DESC']
-            },
-            sortDropdownTooltip: data['ACTIONS.SEARCH.SORT_BY']
-          } as DataViewControlTranslations
-        })
-      )
-
     this.actions$ = this.translate
       .get([
         'ACTIONS.EXPORT.LABEL',
@@ -421,8 +393,20 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
   }
-  public onSortChange(field: string): void {
-    this.sortField = field
+  public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {
+    if (typeof sort === 'string') {
+      this.sortField = sort
+      return
+    }
+
+    this.sortField = sort.sortColumn
+    this.sortDirection = sort.sortDirection
+    this.sortOrder =
+      sort.sortDirection === DataSortDirection.ASCENDING
+        ? -1
+        : sort.sortDirection === DataSortDirection.DESCENDING
+          ? 1
+          : 0
   }
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1

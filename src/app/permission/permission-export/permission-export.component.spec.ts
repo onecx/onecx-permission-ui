@@ -2,7 +2,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DataViewModule } from 'primeng/dataview'
 import { of, throwError } from 'rxjs'
 
 import { ApplicationAPIService, WorkspaceAPIService, AssignmentAPIService } from 'src/app/shared/generated'
@@ -28,7 +27,6 @@ describe('PermissionExportComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PermissionExportComponent],
       imports: [
-        DataViewModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')

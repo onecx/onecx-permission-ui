@@ -8,7 +8,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
-import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { FileUploadModule } from 'primeng/fileupload'
@@ -35,7 +34,6 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
-    DataViewModule,
     DialogModule,
     DropdownModule,
     FileUploadModule,
@@ -57,7 +55,6 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
-    DataViewModule,
     DialogModule,
     DropdownModule,
     FileUploadModule,

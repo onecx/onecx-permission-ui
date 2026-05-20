@@ -57,7 +57,7 @@
     </form>
   </ocx-search-header>
 
-  <ocx-page-content *ngIf="(filteredApps$ | async) ?? [] as applications">
+  <ocx-content *ngIf="(filteredApps$ | async) ?? [] as applications">
     <div *ngIf="exceptionKey" class="m-3 flex flex-wrap justify-content-between align-items-center">
       <p-message id="apm_app_search_exception" severity="error" [text]="exceptionKey | translate"></p-message>
       <p-button
@@ -106,76 +106,62 @@
             </div>
           </section>
         </div>
-        <ocx-data-view-controls
-          class="flex-grow-1"
-          [supportedViews]="['grid']"
-          [initialViewMode]="viewMode"
-          [enableFiltering]="true"
-          (filterChange)="onFilterChange($event)"
-          [filterColumns]="['APP.DISPLAY_NAME' | translate, 'APP.TYPE' | translate]"
-          [enableSorting]="true"
-          [defaultSortOption]="sortField"
-          [defaultSortDirection]="sortOrder === 1"
-          [sortingOptions]="[
-            { label: 'APP.DISPLAY_NAME' | translate, value: 'displayName' },
-            { label: 'APP.TYPE' | translate, value: 'appType' }
-          ]"
-          (sortChange)="onSortChange($event)"
-          (sortDirectionChange)="onSortDirChange($event)"
-          [translations]="(dataViewControlsTranslations$ | async) ?? {}"
-        >
-        </ocx-data-view-controls>
       </div>
       <section
         [attr.aria-label]="
           ('DIALOG.SEARCH.RESULTS' | translate) + ': ' + ('DIALOG.SEARCH.QUICK_FILTER.PRODUCT' | translate)
         "
       >
-        <ocx-data-list-grid
+        <ocx-interactive-data-view
           id="apm_app_search_dataview"
           [data]="applications"
-          [paginator]="true"
+          [listGridPaginator]="true"
           [pageSizes]="[20, 40, 100]"
           [pageSize]="20"
+          [supportedViewLayouts]="['grid']"
           [layout]="'grid'"
           [columns]="columnTypes"
+          [clientSideSorting]="true"
+          [clientSideFiltering]="true"
+          [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
           [sortDirection]="sortDirection"
           [sortField]="sortField"
+          (sorted)="onSortChange($event)"
         >
-          <ng-template let-app let-i="rowIndex" #gridItem>
+          <ng-template pTemplate="item" let-item let-i="index">
             <article
               class="col-6 md:col-4 lg:col-4 xl:col-3 p-2 md:p-3"
-              [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+              [attr.aria-label]="item.appType === 'WORKSPACE' ? item.displayName : item.productName"
             >
               <a
                 tabindex="0"
                 [id]="'apm_app_search_data_idx_' + i"
                 class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
-                (click)="onAppClick(app)"
+                (click)="onAppClick(item)"
                 role="link"
               >
                 <div
                   [id]="'apm_app_search_data_idx_' + i + '_name'"
                   class="font-bold text-sm md:text-base lg:text-lg text-responsive"
                   [id]="'apm_app_search_data_idx_' + i + '_app_name'"
-                  [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+                  [attr.aria-label]="item.appType === 'WORKSPACE' ? item.displayName : item.productName"
                 >
-                  {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
+                  {{ item.appType === 'WORKSPACE' ? item.displayName : item.productName }}
                 </div>
                 <app-ocx-chip
                   [id]="'apm_app_search_data_idx_' + i + '_type'"
                   class="py-1"
-                  [styleClass]="app.appType === 'WORKSPACE' ? 'bg-primary' : ''"
-                  [label]="'APP.TYPE_'.concat(app.appType) | translate"
-                  [title]="'APP.TYPE_'.concat(app.appType) + '.TOOLTIP' | translate"
+                  [styleClass]="item.appType === 'WORKSPACE' ? 'bg-primary' : ''"
+                  [label]="'APP.TYPE_'.concat(item.appType) | translate"
+                  [title]="'APP.TYPE_'.concat(item.appType) + '.TOOLTIP' | translate"
                 />
               </a>
             </article>
           </ng-template>
-        </ocx-data-list-grid>
+        </ocx-interactive-data-view>
       </section>
     </div>
-  </ocx-page-content>
+  </ocx-content>
 </ocx-portal-page>
 
 <!-- IMPORT -->
