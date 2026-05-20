@@ -112,7 +112,7 @@
       "OF": "von",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter für ",
+        "OF": "Filter für Anzeigename, Typ",
         "CLEAR": "Filter entfernen",
         "MODE_CONTAINS": "Filterwert enthalten",
         "MODE_NOT_CONTAINS": "Filterwert nicht enthalten"

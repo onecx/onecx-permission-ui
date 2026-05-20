@@ -79,9 +79,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public actions$: Observable<Action[]> | undefined
   // filter row
   public filterBy = ['action', 'resource']
+  private readonly permissionFilterFields = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
   public filterMode: string
+  public readonly filterModeContains = FilterMatchMode.CONTAINS
+  public readonly filterModeNotContains = FilterMatchMode.NOT_CONTAINS
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
   public quickFilterItems$: Observable<SelectItem[]> | undefined
 
@@ -635,22 +638,43 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public tableFilter(val: any): void {
     if (this.permissionTable) {
-      return this.permissionTable.filterGlobal(val, this.filterMode)
+      const activeFilterFields = this.filterBy?.length ? this.filterBy : this.permissionFilterFields
+
+      // Clear stale column/global constraints before reapplying the active mode.
+      this.permissionTable.filter?.('', 'global', FilterMatchMode.CONTAINS)
+      this.permissionFilterFields.forEach((field) => {
+        this.permissionTable?.filter?.('', field, FilterMatchMode.NOT_CONTAINS)
+      })
+
+      if (this.filterMode === FilterMatchMode.NOT_CONTAINS) {
+        activeFilterFields.forEach((field) => this.permissionTable?.filter?.(val, field, FilterMatchMode.NOT_CONTAINS))
+      } else {
+        this.permissionTable.filterGlobal?.(val, this.filterMode)
+      }
+      this.scheduleFrozenColumnsRealign()
     }
   }
   public onClearTableFilter(): void {
     if (this.permissionNameFilter) {
       this.permissionNameFilter.nativeElement.value = ''
       this.quickFilterValue = 'ALL'
+      this.filterBy = ['action', 'resource']
+      this.filterValue = ''
     }
     this.filterAppValue = undefined
     this.onSortPermissionTable()
     if (this.permissionTable?.clear) this.permissionTable?.clear()
+    this.scheduleFrozenColumnsRealign()
   }
   public onSortPermissionTable() {
     // reset icons
     if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-sort-alt'
     if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-sort-alt'
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onPermissionTableFiltered() {
+    this.scheduleFrozenColumnsRealign()
   }
   /**
    * Filter: Product, AppId
@@ -673,10 +697,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         )
         break
     }
+    this.scheduleFrozenColumnsRealign()
   }
   public onFilterItemClearAppId() {
     this.filterAppValue = undefined
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+    this.scheduleFrozenColumnsRealign()
   }
 
   // if product name selected then reload app id filter
@@ -686,6 +712,51 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
     this.prepareFilterApps(this.filterProductValue)
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  private scheduleFrozenColumnsRealign() {
+    if (typeof window === 'undefined') return
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => this.realignFrozenColumns())
+      })
+    })
+  }
+
+  private realignFrozenColumns() {
+    const tableHost = document.getElementById('apm_app_detail_permission_table')
+    const table = tableHost?.querySelector('.p-datatable-table') as HTMLTableElement | null
+    const headerRow = table?.querySelector('thead > tr') as HTMLTableRowElement | null
+    if (!table || !headerRow) return
+
+    const frozenOffsets = new Map<number, number>()
+    let leftOffset = 0
+    Array.from(headerRow.children).forEach((cell, index) => {
+      const headerCell = cell as HTMLElement
+      const isFrozen =
+        headerCell.classList.contains('p-datatable-frozen-column') || headerCell.classList.contains('p-frozen-column')
+      const isVisible = window.getComputedStyle(headerCell).display !== 'none'
+      if (!isFrozen || !isVisible) return
+
+      frozenOffsets.set(index, leftOffset)
+      leftOffset += headerCell.getBoundingClientRect().width
+    })
+
+    Array.from(table.querySelectorAll('thead > tr, tbody > tr')).forEach((row) => {
+      const rowCells = Array.from((row as HTMLTableRowElement).children)
+      frozenOffsets.forEach((offset, index) => {
+        const cell = rowCells[index] as HTMLElement | undefined
+        if (!cell) return
+
+        const isFrozen =
+          cell.classList.contains('p-datatable-frozen-column') || cell.classList.contains('p-frozen-column')
+        const isVisible = window.getComputedStyle(cell).display !== 'none'
+        if (isFrozen && isVisible) {
+          cell.style.left = `${offset}px`
+        }
+      })
+    })
   }
 
   /****************************************************************************

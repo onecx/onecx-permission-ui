@@ -7,12 +7,16 @@ import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CheckboxModule } from 'primeng/checkbox'
 import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DialogModule } from 'primeng/dialog'
 import { SelectModule } from 'primeng/select'
 import { FileUploadModule } from 'primeng/fileupload'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputTextModule } from 'primeng/inputtext'
 import { TextareaModule } from 'primeng/textarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
@@ -37,13 +41,17 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     AutoCompleteModule,
     CheckboxModule,
     ButtonModule,
+    CardModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DialogModule,
     SelectModule,
     FileUploadModule,
+    FloatLabelModule,
     FormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
     InputTextModule,
     TextareaModule,
     KeyFilterModule,
@@ -62,13 +70,17 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     AutoCompleteModule,
     CheckboxModule,
     ButtonModule,
+    CardModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DialogModule,
     SelectModule,
     FileUploadModule,
+    FloatLabelModule,
     FormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
     InputTextModule,
     TextareaModule,
     KeyFilterModule,

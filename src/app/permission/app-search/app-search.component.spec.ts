@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs'
 
 import { FileSelectEvent } from 'primeng/fileupload'
 
-import { RowListGridData } from '@onecx/angular-accelerator'
+import { FilterType, RowListGridData } from '@onecx/angular-accelerator'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
@@ -111,16 +111,13 @@ describe('AppSearchComponent', () => {
 
     it('should add filters when component is initialized', (done) => {
       component.typeFilterValue$.next('filterValue')
-      component.textFilterValue$.next('textFilterValue')
 
       component.filters$.subscribe({
         next: (filters) => {
           expect(filters).toContain(
-            jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', mode: 'equals' })
+            jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', filterType: FilterType.EQUALS })
           )
-          expect(filters).toContain(
-            jasmine.objectContaining({ columnId: 'displayName', value: 'textFilterValue', mode: 'contains' })
-          )
+          expect(filters.length).toBe(1)
           done()
         }
       })

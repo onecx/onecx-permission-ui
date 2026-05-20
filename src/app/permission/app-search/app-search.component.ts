@@ -14,6 +14,7 @@ import {
   DataSortDirection,
   DataTableColumn,
   Filter,
+  FilterType,
   ObjectUtils
 } from '@onecx/angular-accelerator'
 
@@ -72,6 +73,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterValue: AppFilterType = 'ALL'
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
+  public filterText = ''
   public sortField = 'displayName'
   public sortOrder = -1
 
@@ -85,11 +87,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public limitText = limitText
 
   public columnTypes: DataTableColumn[] = [
-    { columnType: ColumnType.STRING, id: 'name', nameKey: '' },
-    { columnType: ColumnType.STRING, id: 'appType', nameKey: '' },
+    { columnType: ColumnType.STRING, id: 'displayName', nameKey: 'APP.DISPLAY_NAME', sortable: true },
+    { columnType: ColumnType.STRING, id: 'appType', nameKey: 'DIALOG.DETAIL.FILTER.APP_TYPE', sortable: true },
     { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
   ]
-  public filters$: Observable<(Filter & { mode: 'contains' | 'equals' })[]>
+  public filters$: Observable<Filter[]>
   public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
 
   @ViewChild(FileUpload) fileUploader: FileUpload | undefined
@@ -111,14 +113,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
     this.appSearchCriteria.controls['appType'].setValue('ALL') // default: all app types
     this.appSearchCriteria.controls['name'].disable()
-    this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
-      map(([typeValue, textFilter]) => {
-        const filters: (Filter & { mode: 'contains' | 'equals' })[] = []
+    this.filters$ = this.typeFilterValue$.pipe(
+      map((typeValue) => {
+        const filters: Filter[] = []
         if (typeValue) {
-          filters.push({ columnId: 'appType', value: typeValue, mode: 'equals' })
-        }
-        if (textFilter) {
-          filters.push({ columnId: 'displayName', value: textFilter, mode: 'contains' })
+          filters.push({ columnId: 'appType', value: typeValue, filterType: FilterType.EQUALS })
         }
         return filters
       })
@@ -227,16 +226,27 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.apps$ = this.searchProducts(this.appSearchCriteria.controls['appType'].value)
         break
     }
-    this.filteredApps$ = combineLatest([this.apps$, this.filters$]).pipe(
-      map(([apps, filters]) => {
+    this.filteredApps$ = combineLatest([this.apps$, this.filters$, this.textFilterValue$]).pipe(
+      map(([apps, filters, textFilter]) => {
         this.loading = false
-        return apps.filter((app) => {
+        let result = apps.filter((app) => {
           return filters.every((filter) => {
-            return filter.mode === 'equals'
+            return filter.filterType === FilterType.EQUALS
               ? ObjectUtils.resolveFieldData(app, filter.columnId) === filter.value
               : (ObjectUtils.resolveFieldData(app, filter.columnId)?.includes(filter.value) ?? false)
           })
         })
+        if (textFilter) {
+          const lowerFilter = textFilter.toLowerCase()
+          result = result.filter((app) => {
+            return (
+              (app.displayName?.toLowerCase()?.includes(lowerFilter) ?? false) ||
+              (app.productName?.toLowerCase()?.includes(lowerFilter) ?? false) ||
+              (app.appId?.toLowerCase()?.includes(lowerFilter) ?? false)
+            )
+          })
+        }
+        return result
       })
     )
   }
@@ -393,6 +403,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
+  }
+  public onGlobalFilter(value: string): void {
+    this.filterText = value
+    this.textFilterValue$.next(value)
+  }
+  public onClearGlobalFilter(): void {
+    this.filterText = ''
+    this.textFilterValue$.next(undefined)
   }
   public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {
     if (typeof sort === 'string') {

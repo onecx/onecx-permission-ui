@@ -21,4 +21,67 @@
     padding: 0.5rem 0rem 0rem 0rem;
     border-top: var(--table-header-border);
   }
+  .p-dataview-content > .grid {
+    gap: 0 !important;
+    padding: 0 0.5rem;
+  }
+  #interactiveDataViewHeader {
+    position: relative;
+  }
+  #interactiveDataViewHeader > .flex > div:has(> .app-search-top-center) {
+    flex: 1;
+    min-width: 0;
+  }
+  #interactiveDataViewHeader .app-search-top-center {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  #interactiveDataViewHeader .app-search-top-center > .app-search-quickfilter {
+    margin-inline-end: auto;
+  }
+  #interactiveDataViewHeader .app-search-filterbox {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-shrink: 0;
+  }
+  @media screen and (max-width: 1199px) {
+    #interactiveDataViewHeader > .flex {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+    #interactiveDataViewHeader > .flex > div:has(> .app-search-top-center) {
+      width: 100%;
+    }
+    #interactiveDataViewHeader .app-search-top-center {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+    #interactiveDataViewHeader .app-search-top-center > .app-search-quickfilter {
+      margin-inline-end: 0;
+      max-width: 100%;
+    }
+    #interactiveDataViewHeader .app-search-filterbox {
+      position: static;
+      left: auto;
+      transform: none;
+      width: 100%;
+      max-width: 100%;
+    }
+    #interactiveDataViewHeader .app-search-filterbox .p-inputgroup {
+      width: 100%;
+    }
+    #interactiveDataViewHeader > .flex > div:has(> ocx-data-list-grid-sorting) {
+      width: 100%;
+      justify-content: flex-start;
+    }
+    #interactiveDataViewHeader > .flex > div:last-child {
+      position: static !important;
+    }
+  }
 }

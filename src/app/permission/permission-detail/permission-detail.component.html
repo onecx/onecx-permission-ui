@@ -12,7 +12,7 @@
   <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -27,10 +27,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_product_name">
             {{ 'PERMISSION.PRODUCT_NAME' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -45,7 +45,7 @@
           <label class="ocx-required-label" for="apm_permission_detail_app_id">
             {{ 'PERMISSION.APP_ID' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div *ngIf="changeMode !== 'CREATE'">
         <div class="px-2 mb-2 flex flex-row justify-content-between align-items-center column-gap-3">
@@ -87,7 +87,7 @@
         ></p-message>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -102,10 +102,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_resource">
             {{ 'PERMISSION.RESOURCE' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -120,10 +120,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_action">
             {{ 'PERMISSION.ACTION' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label">
+        <p-floatlabel variant="on">
           <input
             pInputText
             type="text"
@@ -133,7 +133,7 @@
             [ariaLabel]="'PERMISSION.DESCRIPTION' | translate"
           />
           <label for="apm_permission_detail_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
-        </span>
+        </p-floatlabel>
       </div>
     </div>
   </form>
@@ -145,39 +145,36 @@
         id="apm_permission_detail_action_close"
         icon="pi pi-times"
         (onClick)="onClose()"
+        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-        <label>{{ 'ACTIONS.NAVIGATION.CLOSE' | translate }}</label>
-      </p-button>
+      />
       <p-button
         *ngIf="changeMode !== 'VIEW'"
         autofocus
         id="apm_permission_detail_action_cancel"
         icon="pi pi-times"
         (onClick)="onClose()"
+        [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-        <label>{{ 'ACTIONS.CANCEL' | translate }}</label>
-      </p-button>
+      />
       <p-button
         *ngIf="changeMode !== 'VIEW'"
         id="apm_permission_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSave()"
         [disabled]="!formGroup.valid"
+        [label]="'ACTIONS.SAVE' | translate"
         [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-        <label>{{ 'ACTIONS.SAVE' | translate }}</label>
-      </p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>
@@ -214,24 +211,22 @@
         id="apm_permission_delete_action_no"
         icon="pi pi-times"
         (onClick)="onClose()"
+        [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-        <label>{{ 'ACTIONS.CONFIRMATION.NO' | translate }}</label>
-      </p-button>
+      />
       <p-button
         id="apm_permission_delete_action_yes"
         icon="pi pi-check"
         (onClick)="onDeleteConfirmation()"
+        [label]="'ACTIONS.CONFIRMATION.YES' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-        <label>{{ 'ACTIONS.CONFIRMATION.YES' | translate }}</label>
-      </p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>

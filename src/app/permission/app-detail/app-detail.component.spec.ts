@@ -643,9 +643,63 @@ describe('AppDetailComponent', () => {
       expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('testValue', 'mode')
     })
 
+    it('should apply NOT_CONTAINS as column filters for all active permission filter fields', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterBy = ['action', 'resource']
+      component.filterMode = FilterMatchMode.NOT_CONTAINS
+
+      component.tableFilter('VIEW')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'global', FilterMatchMode.CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('VIEW', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('VIEW', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filterGlobal).not.toHaveBeenCalled()
+    })
+
+    it('should apply NOT_CONTAINS only for currently active fields', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterBy = ['action']
+      component.filterMode = FilterMatchMode.NOT_CONTAINS
+
+      component.tableFilter('DELETE')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('DELETE', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).not.toHaveBeenCalledWith(
+        'DELETE',
+        'resource',
+        FilterMatchMode.NOT_CONTAINS
+      )
+      expect(component.permissionTable.filterGlobal).not.toHaveBeenCalled()
+    })
+
+    it('should clear NOT_CONTAINS column filters and use global filter for CONTAINS mode', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterMode = FilterMatchMode.CONTAINS
+
+      component.tableFilter('PERMISSION')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'global', FilterMatchMode.CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('PERMISSION', FilterMatchMode.CONTAINS)
+    })
+
     it('should clear all clear all values onClearTableFilter', () => {
       component.permissionNameFilter = { nativeElement: { value: 'value' } }
       component.quickFilterValue = 'ALL'
+      component.filterBy = ['action']
+      component.filterValue = 'VIEW'
       component.filterAppValue = 'value'
       component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
       spyOn(component, 'onSortPermissionTable')
@@ -654,6 +708,8 @@ describe('AppDetailComponent', () => {
 
       expect(component.permissionNameFilter.nativeElement.value).toBe('')
       expect(component.quickFilterValue).toBe('ALL')
+      expect(component.filterBy).toEqual(['action', 'resource'])
+      expect(component.filterValue).toBe('')
       expect(component.filterAppValue).toBeUndefined()
       expect(component.onSortPermissionTable).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
