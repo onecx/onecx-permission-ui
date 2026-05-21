@@ -419,7 +419,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * COLUMNS => Roles, ROWS => Permissions
    */
   private prepareSearchRolesAndPermissions(): void {
-    this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: {} }).pipe(
+    this.roles$ = this.roleApi.searchRoles({ roleSearchCriteria: { pageSize: this.pageSize } }).pipe(
       map((result: RolePageResult) => {
         return result.stream ? result.stream?.map((role) => role as PermissionRole) : []
       }),
@@ -497,7 +497,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.loadRolesAndPermissions()
       },
       error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.ROLE.MESSAGE.WORKSPACE_ROLES_NOK' })
+        this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.WORKSPACE_ROLES_NOK' })
         console.error('createRole', err)
       }
     })
