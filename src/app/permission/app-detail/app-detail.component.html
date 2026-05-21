@@ -46,7 +46,6 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
-        @let filterEmptyStyle = { opacity: 'var(--disabled-opacity)' };
         <div class="py-1 px-0 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
@@ -72,16 +71,13 @@
             </div>
           </div>
           <!-- Permission Filter -->
-          <p-inputgroup styleClass="permission-filter-group w-18rem sm:w-22rem sm:mx-1">
+          <p-inputgroup styleClass="permission-filter-group w-18rem sm:w-22rem sm:mx-1 align-self-start">
             <p-inputgroup-addon styleClass="permission-filter-addon">
               <p-button
                 id="apm_app_detail_permission_table_filter_contains"
                 label="="
-                [styleClass]="
-                  this.filterMode === this.filterModeContains
-                    ? 'h-full text-lg font-bold text-center permission-filter-mode-btn is-active'
-                    : 'h-full text-lg font-bold text-center permission-filter-mode-btn'
-                "
+                styleClass="text-lg font-bold text-center"
+                [severity]="this.filterMode === this.filterModeContains ? 'primary' : 'secondary'"
                 (onClick)="onFilterModeChange('=')"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
                 [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
@@ -93,11 +89,8 @@
               <p-button
                 id="apm_app_detail_permission_table_filter_not_contains"
                 label="!="
-                [styleClass]="
-                  this.filterMode === this.filterModeNotContains
-                    ? 'h-full text-lg font-bold text-center white-space-nowrap permission-filter-mode-btn is-active'
-                    : 'h-full text-lg font-bold text-center white-space-nowrap permission-filter-mode-btn'
-                "
+                styleClass="text-lg font-bold text-center white-space-nowrap"
+                [severity]="this.filterMode === this.filterModeNotContains ? 'primary' : 'secondary'"
                 (onClick)="onFilterModeChange('!=')"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
                 [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
@@ -129,11 +122,9 @@
             </p-floatlabel>
             <p-inputgroup-addon styleClass="permission-filter-addon">
               <p-button
-                severity="primary"
                 id="apm_app_detail_permission_table_filter_clear"
                 icon="pi pi-filter-slash"
-                [styleClass]="permissionNameFilter.value !== '' ? 'h-full bg-primary' : 'h-full'"
-                [style]="permissionNameFilter.value === '' ? filterEmptyStyle : null"
+                [severity]="permissionNameFilter.value !== '' ? 'primary' : 'secondary'"
                 [disabled]="permissionNameFilter.value === ''"
                 (onClick)="onClearTableFilter()"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -339,9 +330,8 @@
                   <p-button
                     id="apm_app_detail_permission_table_header_role_filter_clear"
                     icon="pi pi-filter-slash"
-                    [styleClass]="roleNameFilter.value !== '' ? 'bg-primary' : ''"
+                    [severity]="roleNameFilter.value !== '' ? 'primary' : 'secondary'"
                     [disabled]="roleNameFilter.value === ''"
-                    [style]="roleNameFilter.value === '' ? filterEmptyStyle : null"
                     (onClick)="onRoleFilterClear(roleNameFilter)"
                     [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                     [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -353,7 +343,7 @@
                   <p-button
                     id="apm_app_detail_permission_table_header_role_hide_empty_roles"
                     icon="pi pi-times-circle"
-                    [styleClass]="hideEmptyRoles ? 'bg-primary' : ''"
+                    [severity]="hideEmptyRoles ? 'primary' : 'secondary'"
                     [disabled]="!emptyRolesExist"
                     (onClick)="onHideEmptyRolesToggle()"
                     [ariaLabel]="
@@ -371,7 +361,8 @@
                     <p-button
                       id="apm_app_detail_permission_table_header_role_hide_non_workspace_roles"
                       label="W"
-                      [styleClass]="showNonWorkspaceRoles ? 'font-bold bg-primary' : 'font-bold'"
+                      styleClass="font-bold"
+                      [severity]="showNonWorkspaceRoles ? 'primary' : 'secondary'"
                       [disabled]="!emptyRolesExist"
                       (onClick)="onShowNonWorkspaceRolesToggle()"
                       [ariaLabel]="
