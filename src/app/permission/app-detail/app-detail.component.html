@@ -228,6 +228,7 @@
                   inputId="apm_app_detail_permission_table_header_display_additional_row_data"
                   styleClass="cursor-auto shadow-none"
                   [(ngModel)]="displayAdditionalRowData"
+                  (onChange)="onDisplayAdditionalRowDataToggle()"
                   [binary]="true"
                   [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
                   [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"

@@ -715,6 +715,10 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.scheduleFrozenColumnsRealign()
   }
 
+  public onDisplayAdditionalRowDataToggle(): void {
+    this.scheduleFrozenColumnsRealign()
+  }
+
   /**
    * Filter: Product, AppId
    */

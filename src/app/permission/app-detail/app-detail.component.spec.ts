@@ -724,6 +724,14 @@ describe('AppDetailComponent', () => {
       expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-sort-alt')
       expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-sort-alt')
     })
+
+    it('should realign frozen columns when additional row data visibility changes', () => {
+      const scheduleSpy = spyOn<any>(component, 'scheduleFrozenColumnsRealign')
+
+      component.onDisplayAdditionalRowDataToggle()
+
+      expect(scheduleSpy).toHaveBeenCalled()
+    })
   })
 
   /**
