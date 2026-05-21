@@ -19,7 +19,6 @@ import { APP_CONFIG } from '@onecx/angular-integration-interface'
 
 import { environment } from 'src/environments/environment'
 import { AppComponent } from './app.component'
-import { primengThemeOverrides } from './shared/theme/primeng-theme-overrides'
 
 const routes: Routes = [
   {
@@ -53,7 +52,7 @@ const routes: Routes = [
   providers: [
     { provide: APP_CONFIG, useValue: environment },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-    provideThemeConfig({ overrides: primengThemeOverrides }),
+    provideThemeConfig(),
     provideStandaloneProviders(),
     providePermissionService(),
     provideHttpClient(withInterceptorsFromDi())

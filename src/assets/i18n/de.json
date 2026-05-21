@@ -211,6 +211,7 @@
       },
       "ROLES": {
         "FILTER": "Rollenfilter",
+        "FILTER.LABEL": "Rollenfilter",
         "FILTER.TOOLTIP": "Filter für Rollenname",
         "EMPTY_ROLE": "Rolle hat keine zugewiesenen Berechtigungen",
         "HIDE_EMPTY_ROLES": "Nicht zugewiesene Rollen ausblenden",

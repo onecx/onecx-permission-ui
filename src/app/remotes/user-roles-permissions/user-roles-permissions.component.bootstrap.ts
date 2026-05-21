@@ -18,7 +18,6 @@ import {
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 
 import { environment } from 'src/environments/environment'
-import { primengThemeOverrides } from '../../shared/theme/primeng-theme-overrides'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 
 bootstrapRemoteComponent(
@@ -30,7 +29,7 @@ bootstrapRemoteComponent(
     importProvidersFrom(AngularAuthModule, BrowserAnimationsModule),
     { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
     providePermissionService(),
-    provideThemeConfig({ overrides: primengThemeOverrides }),
+    provideThemeConfig(),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideTranslateServiceForRoot({
       isolate: true,

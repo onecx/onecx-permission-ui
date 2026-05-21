@@ -20,7 +20,6 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { Configuration } from './shared/generated'
 import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
-import { primengThemeOverrides } from './shared/theme/primeng-theme-overrides'
 
 function apiConfigProvider() {
   return new PortalApiConfiguration(Configuration, environment.apiPrefix)
@@ -55,7 +54,7 @@ const routes: Routes = [
     provideAppInitializer(() => initializeRouter(inject(Router), inject(AppStateService))()),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     providePermissionService(),
-    provideThemeConfig({ overrides: primengThemeOverrides }),
+    provideThemeConfig(),
     provideHttpClient(withInterceptorsFromDi())
   ]
 })

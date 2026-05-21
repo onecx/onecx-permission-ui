@@ -311,6 +311,30 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (val !== '' && this.rolesFiltered && this.roles.length > 0)
       this.rolesFiltered = this.roles.filter((r) => r.name!.includes(val))
     else this.rolesFiltered = this.roles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleFilterInputChange(val: string): void {
+    this.onRoleFilterChange(val)
+  }
+
+  public onRoleFilterClear(roleNameFilter: HTMLInputElement): void {
+    roleNameFilter.value = ''
+    this.onRoleFilterChange('')
+  }
+
+  public onHideEmptyRolesToggle(): void {
+    this.hideEmptyRoles = !this.hideEmptyRoles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onShowNonWorkspaceRolesToggle(): void {
+    this.showNonWorkspaceRoles = !this.showNonWorkspaceRoles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleInputGroupStateChanged(): void {
+    this.scheduleFrozenColumnsRealign()
   }
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
@@ -676,6 +700,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onPermissionTableFiltered() {
     this.scheduleFrozenColumnsRealign()
   }
+
+  public onPermissionTablePaged() {
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onPermissionToolsToggle() {
+    this.showPermissionTools = !this.showPermissionTools
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleToolsToggle() {
+    this.showRoleTools = !this.showRoleTools
+    this.scheduleFrozenColumnsRealign()
+  }
+
   /**
    * Filter: Product, AppId
    */

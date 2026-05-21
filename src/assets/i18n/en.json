@@ -211,6 +211,7 @@
       },
       "ROLES": {
         "FILTER": "Filter for Roles",
+        "FILTER.LABEL": "Filter for Roles",
         "FILTER.TOOLTIP": "Filter for Role name",
         "EMPTY_ROLE": "Role has no assigned Permissions",
         "HIDE_EMPTY_ROLES": "Hide unassigned Roles",
