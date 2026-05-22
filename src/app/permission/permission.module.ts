@@ -40,18 +40,16 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [
-    AppSearchComponent,
-    AppDetailComponent,
-    RoleDetailComponent,
-    PermissionDetailComponent,
-    PermissionExportComponent
-  ],
   imports: [
     CommonModule,
     FormsModule,
     AngularAcceleratorModule,
     PortalPageComponent,
+    AppSearchComponent,
+    AppDetailComponent,
+    RoleDetailComponent,
+    PermissionDetailComponent,
+    PermissionExportComponent,
     RouterModule.forChild(routes),
     SharedModule
   ],

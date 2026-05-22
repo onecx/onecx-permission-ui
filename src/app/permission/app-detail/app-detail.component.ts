@@ -8,7 +8,8 @@ import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Action } from '@onecx/angular-accelerator'
+import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import {
   Role,
@@ -33,6 +34,10 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
+import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
+import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
+import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
+import { SharedModule } from 'src/app/shared/shared.module'
 import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
@@ -55,7 +60,15 @@ export type PermissionViewRow = Permission & {
 export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    SharedModule,
+    RoleDetailComponent,
+    PermissionDetailComponent,
+    PermissionExportComponent
+  ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
 })
@@ -758,11 +771,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.scheduleFrozenColumnsRealign()
   }
 
-  private scheduleFrozenColumnsRealign() {
-    if (typeof window === 'undefined') return
+  private scheduleFrozenColumnsRealign(
+    requestFrame: typeof requestAnimationFrame | undefined = globalThis.requestAnimationFrame
+  ) {
+    if (typeof requestFrame !== 'function') return
     setTimeout(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => this.realignFrozenColumns())
+      requestFrame(() => {
+        requestFrame(() => this.realignFrozenColumns())
       })
     })
   }
@@ -779,7 +794,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       const headerCell = cell as HTMLElement
       const isFrozen =
         headerCell.classList.contains('p-datatable-frozen-column') || headerCell.classList.contains('p-frozen-column')
-      const isVisible = window.getComputedStyle(headerCell).display !== 'none'
+      const isVisible = globalThis.getComputedStyle(headerCell).display !== 'none'
       if (!isFrozen || !isVisible) return
 
       frozenOffsets.set(index, leftOffset)
@@ -794,7 +809,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
         const isFrozen =
           cell.classList.contains('p-datatable-frozen-column') || cell.classList.contains('p-frozen-column')
-        const isVisible = window.getComputedStyle(cell).display !== 'none'
+        const isVisible = globalThis.getComputedStyle(cell).display !== 'none'
         if (isFrozen && isVisible) {
           cell.style.left = `${offset}px`
         }

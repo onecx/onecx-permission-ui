@@ -1,9 +1,10 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
@@ -47,11 +48,10 @@ describe('PermissionDetailComponent', () => {
     'updatePermission',
     'deletePermission'
   ])
+  const langSubject = new BehaviorSubject('en')
 
   const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue').and.returnValue('en')
-    },
+    lang$: langSubject,
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
       return (
         permissionName === 'PERMISSION#CREATE' ||
@@ -63,21 +63,29 @@ describe('PermissionDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PermissionDetailComponent],
       imports: [
+        PermissionDetailComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
+        provideHttpClient(),
         provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
         { provide: UserService, useValue: mockUserService }
       ],
       schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents()
+    })
+      .overrideComponent(PermissionDetailComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {

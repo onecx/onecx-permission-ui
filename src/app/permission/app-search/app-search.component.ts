@@ -7,8 +7,10 @@ import { SelectItem } from 'primeng/api'
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { PortalPageComponent } from '@onecx/angular-utils'
 import {
   Action,
+  AngularAcceleratorModule,
   ColumnType,
   RowListGridData,
   DataSortDirection,
@@ -28,6 +30,8 @@ import {
   ApplicationPageResult,
   Permission
 } from 'src/app/shared/generated'
+import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
+import { SharedModule } from 'src/app/shared/shared.module'
 import { limitText, sortByLocale } from 'src/app/shared/utils'
 
 export interface AppSearchCriteria {
@@ -49,7 +53,8 @@ export type ImportError = {
 }
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [AngularAcceleratorModule, PortalPageComponent, SharedModule, PermissionExportComponent],
   templateUrl: './app-search.component.html',
   styleUrls: ['./app-search.component.scss']
 })
@@ -420,12 +425,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
     this.sortField = sort.sortColumn
     this.sortDirection = sort.sortDirection
-    this.sortOrder =
-      sort.sortDirection === DataSortDirection.ASCENDING
-        ? -1
-        : sort.sortDirection === DataSortDirection.DESCENDING
-          ? 1
-          : 0
+    let sortOrder = 0
+    if (sort.sortDirection === DataSortDirection.ASCENDING) {
+      sortOrder = -1
+    } else if (sort.sortDirection === DataSortDirection.DESCENDING) {
+      sortOrder = 1
+    }
+    this.sortOrder = sortOrder
   }
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1

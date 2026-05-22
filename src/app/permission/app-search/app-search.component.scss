@@ -5,17 +5,12 @@
 @include correct-select-button;
 @include search-criteria-select-button;
 @include search-criteria-select-button-slim;
-@include search-criteria-select-button-filter;
 @include dialog-footer-buttons;
 @include correct-file-upload;
-@include card-badges;
 @include displaying-text-responsive;
 @include media-queries;
 
 :host ::ng-deep {
-  .card-badge-right.badge-2-1 {
-    top: 20px;
-  }
   .p-dataview .p-dataview-content {
     margin: 0.75rem 0rem 0rem 0rem;
     padding: 0.5rem 0rem 0rem 0rem;

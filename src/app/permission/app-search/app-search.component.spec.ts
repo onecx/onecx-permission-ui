@@ -8,7 +8,8 @@ import { of, throwError } from 'rxjs'
 
 import { FileSelectEvent } from 'primeng/fileupload'
 
-import { FilterType, RowListGridData } from '@onecx/angular-accelerator'
+import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
+import { PermissionService } from '@onecx/angular-utils'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
@@ -62,11 +63,15 @@ describe('AppSearchComponent', () => {
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
+  const permissionServiceSpy = {
+    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(of(true)),
+    getPermissions: jasmine.createSpy('getPermissions').and.returnValue(of([]))
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AppSearchComponent],
       imports: [
+        AppSearchComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -80,11 +85,19 @@ describe('AppSearchComponent', () => {
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ],
       schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents()
+    })
+      .overrideComponent(AppSearchComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {
@@ -287,6 +300,31 @@ describe('AppSearchComponent', () => {
   })
 
   describe('search apps', () => {
+    it('should combine workspace and product results for app type ALL', (done) => {
+      const wsApps = [{ appId: 'ws-1', appType: 'WORKSPACE', displayName: 'Workspace One' }] as (App &
+        RowListGridData)[]
+      const productApps = [
+        { appId: 'app-1', appType: 'PRODUCT', displayName: 'Product One', productName: 'Product One' }
+      ] as (App & RowListGridData)[]
+      spyOn<any>(component, 'searchWorkspaces').and.returnValue(of(wsApps))
+      spyOn<any>(component, 'searchProducts').and.returnValue(of(productApps))
+      component.filters$ = of([])
+      component.textFilterValue$.next(undefined)
+      component.appSearchCriteria.controls['appType'].setValue('ALL')
+
+      component.searchApps()
+
+      component.apps$.subscribe({
+        next: (apps) => {
+          expect(apps.length).toBe(2)
+          expect(apps.some((a) => a.appType === 'WORKSPACE')).toBeTrue()
+          expect(apps.some((a) => a.appType === 'PRODUCT')).toBeTrue()
+          done()
+        },
+        error: done.fail
+      })
+    })
+
     it('should search apps', (done) => {
       component.appSearchCriteria.controls['appType'].setValue('APP')
       component.appSearchCriteria.controls['name'].setValue('app')
@@ -380,6 +418,184 @@ describe('AppSearchComponent', () => {
           error: done.fail
         })
       })
+
+      it('should apply equals filter in filtered apps pipeline', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-eq', appId: 'app-eq-id', productName: 'product-eq' }]
+          } as any)
+        )
+        component.filters$ = of([{ columnId: 'appType', value: 'PRODUCT', filterType: FilterType.EQUALS }] as any)
+        component.textFilterValue$.next(undefined)
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(1)
+            expect(apps[0].appType).toBe('PRODUCT')
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should include app when text filter matches displayName', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-display', appId: 'app-display-id', productName: 'display-hit' }]
+          } as any)
+        )
+        component.filters$ = of([])
+        component.textFilterValue$.next('display-hit')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(1)
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should include app when text filter matches productName after displayName miss', (done) => {
+        const products = [
+          {
+            appId: 'app-prod-id',
+            appType: 'PRODUCT',
+            displayName: 'display-miss',
+            productName: 'product-hit'
+          }
+        ] as (App & RowListGridData)[]
+        spyOn<any>(component, 'searchProducts').and.returnValue(of(products))
+        component.filters$ = of([])
+        component.textFilterValue$.next('product-hit')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(1)
+            expect(apps[0].displayName).toBe('display-miss')
+            expect(apps[0].productName).toBe('product-hit')
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should handle undefined displayName and productName in text filter evaluation', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-nullish', appId: 'app-nullish-id' }]
+          } as any)
+        )
+        component.filters$ = of([])
+        component.textFilterValue$.next('nullish-id')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(1)
+            expect(apps[0].displayName).toBeUndefined()
+            expect(apps[0].productName).toBeUndefined()
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should apply non-equals filters and match text search by appId', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-x', appId: 'target-app-id', productName: 'product-x' }]
+          } as any)
+        )
+        component.filters$ = of([{ columnId: 'appId', value: 'target', filterType: FilterType.CONTAINS }] as any)
+        component.textFilterValue$.next('app-id')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps.length).toBe(1)
+            expect(apps[0].appId).toBe('target-app-id')
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should return empty result when non-equals filter field is missing', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-x', appId: 'target-app-id', productName: 'product-x' }]
+          } as any)
+        )
+        component.filters$ = of([{ columnId: 'doesNotExist', value: 'target', filterType: FilterType.CONTAINS }] as any)
+        component.textFilterValue$.next(undefined)
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps).toEqual([])
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should exclude apps when text filter does not match display name, product name, or app id', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-y', appId: 'alpha-app-id', productName: 'product-y' }]
+          } as any)
+        )
+        component.filters$ = of([])
+        component.textFilterValue$.next('no-such-value')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps).toEqual([])
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should handle undefined appId when applying text filter', (done) => {
+        appApiSpy.searchApplications.and.returnValue(
+          of({
+            stream: [{ name: 'app-z', productName: 'product-z' }]
+          } as any)
+        )
+        component.filters$ = of([])
+        component.textFilterValue$.next('no-such-value')
+        component.appSearchCriteria.controls['appType'].setValue('PRODUCT')
+
+        component.searchApps()
+
+        component.filteredApps$.subscribe({
+          next: (apps) => {
+            expect(apps).toEqual([])
+            done()
+          },
+          error: done.fail
+        })
+      })
     })
   })
 
@@ -434,11 +650,51 @@ describe('AppSearchComponent', () => {
     expect(component.textFilterValue$.next).toHaveBeenCalledWith(filterValue)
   })
 
+  describe('global filter', () => {
+    it('should store and emit global filter value', () => {
+      spyOn(component.textFilterValue$, 'next')
+
+      component.onGlobalFilter('my-filter')
+
+      expect(component.filterText).toBe('my-filter')
+      expect(component.textFilterValue$.next).toHaveBeenCalledWith('my-filter')
+    })
+
+    it('should clear and emit undefined global filter value', () => {
+      component.filterText = 'to-clear'
+      spyOn(component.textFilterValue$, 'next')
+
+      component.onClearGlobalFilter()
+
+      expect(component.filterText).toBe('')
+      expect(component.textFilterValue$.next).toHaveBeenCalledWith(undefined)
+    })
+  })
+
   describe('sorting', () => {
     it('should set correct values onSortChange', () => {
       component.onSortChange('field')
 
       expect(component.sortField).toEqual('field')
+    })
+
+    it('should set sort field, direction and order from sort metadata', () => {
+      component.onSortChange({ sortColumn: 'appId', sortDirection: DataSortDirection.ASCENDING })
+
+      expect(component.sortField).toEqual('appId')
+      expect(component.sortDirection).toEqual(DataSortDirection.ASCENDING)
+      expect(component.sortOrder).toEqual(-1)
+
+      component.onSortChange({ sortColumn: 'displayName', sortDirection: DataSortDirection.DESCENDING })
+
+      expect(component.sortField).toEqual('displayName')
+      expect(component.sortDirection).toEqual(DataSortDirection.DESCENDING)
+      expect(component.sortOrder).toEqual(1)
+
+      component.onSortChange({ sortColumn: 'displayName', sortDirection: undefined as any })
+
+      expect(component.sortField).toEqual('displayName')
+      expect(component.sortOrder).toEqual(0)
     })
 
     it('should set correct values onSortDirChange', () => {

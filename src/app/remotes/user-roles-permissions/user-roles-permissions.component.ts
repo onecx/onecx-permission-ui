@@ -1,11 +1,11 @@
 import {
-  APP_INITIALIZER,
   Component,
   ElementRef,
   EventEmitter,
   NO_ERRORS_SCHEMA,
   CUSTOM_ELEMENTS_SCHEMA,
   Input,
+  OnInit,
   OnChanges,
   ViewChild
 } from '@angular/core'
@@ -60,14 +60,12 @@ export function slotInitializer(slotService: SlotService) {
     TranslateModule,
     SharedModule
   ],
-  providers: [
-    // eslint-disable-next-line deprecation/deprecation
-    { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
-    { provide: SLOT_SERVICE, useExisting: SlotService }
-  ],
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
+export class OneCXUserRolesPermissionsComponent
+  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnInit, OnChanges
+{
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
@@ -107,6 +105,11 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
   }
+
+  public ngOnInit(): void {
+    slotInitializer(this.slotService)()
+  }
+
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
     this.remoteComponentConfig$.next(remoteComponentConfig)

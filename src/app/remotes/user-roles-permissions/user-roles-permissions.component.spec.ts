@@ -52,6 +52,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
   const slotServiceSpy = {
+    init: jasmine.createSpy('init'),
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(false))
   }
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
@@ -400,6 +401,16 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   })
 
   describe('idm roles', () => {
+    it('should handle primitive tab values in onTabChange', () => {
+      initializeComponent()
+      const provideIamRolesSpy = spyOn<any>(component, 'provideIamRoles').and.returnValue(of([]))
+
+      component.onTabChange('1', userAssignments)
+
+      expect(component.selectedTabIndex).toBe(1)
+      expect(provideIamRolesSpy).not.toHaveBeenCalled()
+    })
+
     it('should getting my idm roles from token - successful', (done) => {
       initializeComponent()
 

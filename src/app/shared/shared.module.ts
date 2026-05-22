@@ -35,8 +35,8 @@ import { LabelResolver } from './label.resolver'
 import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
 
 @NgModule({
-  declarations: [OcxChipComponent],
   imports: [
+    OcxChipComponent,
     AngularAcceleratorModule,
     AutoCompleteModule,
     CheckboxModule,
@@ -67,6 +67,7 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     TranslateModule
   ],
   exports: [
+    OcxChipComponent,
     AutoCompleteModule,
     CheckboxModule,
     ButtonModule,
@@ -93,8 +94,7 @@ import { OcxChipComponent } from './ocx-chip/ocx-chip.component'
     TabsModule,
     ToastModule,
     TooltipModule,
-    TranslateModule,
-    OcxChipComponent
+    TranslateModule
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [

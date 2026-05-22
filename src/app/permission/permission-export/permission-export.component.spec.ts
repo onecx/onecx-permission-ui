@@ -25,8 +25,8 @@ describe('PermissionExportComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PermissionExportComponent],
       imports: [
+        PermissionExportComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -41,7 +41,18 @@ describe('PermissionExportComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy }
       ],
       schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents()
+    })
+      .overrideComponent(PermissionExportComponent, {
+        set: {
+          template: '',
+          imports: [],
+          providers: [
+            { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
+            { provide: PortalMessageService, useValue: msgServiceSpy }
+          ]
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {

@@ -149,7 +149,7 @@
                   </p-floatlabel>
                   <p-button
                     icon="pi pi-filter-slash"
-                    (click)="dvFilterInput.value = ''; onClearGlobalFilter()"
+                    (onClick)="dvFilterInput.value = ''; onClearGlobalFilter()"
                     [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   />
                 </p-inputgroup>
@@ -162,6 +162,10 @@
                 styleClass="cursor-pointer hover:bg-gray-200 text-center"
                 [attr.aria-label]="item.appType === 'WORKSPACE' ? item.displayName : item.productName"
                 (click)="onAppClick(item)"
+                (keydown.enter)="onAppClick(item)"
+                (keydown.space)="$event.preventDefault(); onAppClick(item)"
+                role="button"
+                tabindex="0"
               >
                 <div
                   class="font-bold text-sm md:text-base lg:text-lg text-responsive"
