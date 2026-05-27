@@ -13,25 +13,31 @@
 :host ::ng-deep {
   .p-datatable.app-detail-permission-table {
     padding: 0;
+    border: none;
   }
   .p-datatable.app-detail-permission-table .p-datatable-header {
     padding: 0 0.5rem 0.5rem;
+    border: none;
+    border-bottom: 1px solid var(--onecx-permission-onecx-permission-ui-datatable-header-border-color);
   }
   @media screen and (min-width: 576px) {
     .p-datatable.app-detail-permission-table .p-datatable-header {
       padding-top: 1rem;
       padding-left: 1rem;
       padding-right: 1rem;
-      border-style: none;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--onecx-permission-onecx-permission-ui-datatable-header-border-color);
     }
   }
   .p-datatable.app-detail-permission-table .p-datatable-wrapper {
     padding: 0;
     margin-top: 0;
+    border: none;
   }
   .p-datatable.app-detail-permission-table .p-datatable-table-container {
     padding: 0 0.5rem 0.5rem;
     background: var(--onecx-permission-onecx-permission-ui-content-background);
+    border: none;
   }
   @media screen and (min-width: 576px) {
     .p-datatable.app-detail-permission-table .p-datatable-table-container {
@@ -64,8 +70,8 @@
     height: 3rem;
   }
   .app-detail-permission-table {
-    border: 1px solid var(--onecx-permission-onecx-permission-ui-datatable-header-border-color);
-    border-radius: 3px;
+    border: none;
+    border-radius: 0;
   }
 
   // Fix hover color
