@@ -129,5 +129,11 @@
     "url-loader": "^4.1.1",
     "webpack": "5.95.0",
     "webpack-merge": "^6.0.1"
+  },
+  "overrides": {
+    "koa": "^3.1.1",
+    "tar": "^7.5.11",
+    "serialize-javascript": "^7.0.5",
+    "picomatch": "^4.0.4"
   }
 }
