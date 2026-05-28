@@ -1,12 +1,21 @@
-import { APP_INITIALIZER, Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, EventEmitter, Input, Output, OnChanges, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormGroup, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { errorTailorImports } from '@ngneat/error-tailor'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputTextModule } from 'primeng/inputtext'
+import { ListboxModule } from 'primeng/listbox'
+import { MessageModule } from 'primeng/message'
+import { TooltipModule } from 'primeng/tooltip'
 
-import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+import { AngularRemoteComponentsModule, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import { CreateRoleRequest, Role, RoleAPIService, UpdateRoleRequest } from 'src/app/shared/generated'
-import { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
+import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
 export function slotInitializer(slotService: SlotService) {
   return () => slotService.init()
@@ -15,14 +24,27 @@ export type IDMRole = { name?: string } // replica from a IAM role
 
 @Component({
   selector: 'app-role-detail',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    errorTailorImports,
+    DialogModule,
+    FloatLabelModule,
+    InputTextModule,
+    ListboxModule,
+    MessageModule,
+    ButtonModule,
+    TooltipModule,
+    AngularRemoteComponentsModule
+  ],
   templateUrl: './role-detail.component.html',
   styleUrls: ['./role-detail.component.scss'],
-  providers: [
-    { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
-    { provide: SLOT_SERVICE, useExisting: SlotService }
-  ]
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
 })
-export class RoleDetailComponent implements OnChanges {
+export class RoleDetailComponent implements OnInit, OnChanges {
   @Input() currentApp!: App
   @Input() role: Role | undefined
   @Input() roles: Role[] = []
@@ -58,6 +80,10 @@ export class RoleDetailComponent implements OnChanges {
       name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       description: new FormControl(null)
     })
+  }
+
+  public ngOnInit(): void {
+    slotInitializer(this.slotService)()
   }
 
   public ngOnChanges(): void {

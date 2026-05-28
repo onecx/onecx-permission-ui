@@ -3,12 +3,13 @@ import { Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { Subject, catchError, combineLatest, map, of, Observable } from 'rxjs'
+import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Action } from '@onecx/angular-accelerator'
+import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import {
   Role,
@@ -33,6 +34,10 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
+import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
+import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
+import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
+import { SharedModule } from 'src/app/shared/shared.module'
 import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
@@ -55,12 +60,30 @@ export type PermissionViewRow = Permission & {
 export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
 
 @Component({
+  standalone: true,
+  imports: [
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    SharedModule,
+    RoleDetailComponent,
+    PermissionDetailComponent,
+    PermissionExportComponent
+  ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
 })
 export class AppDetailComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
   private readonly debug = true // to be removed after finalization
+  private readonly relevantPermissions = [
+    'ROLE#EDIT',
+    'ROLE#CREATE',
+    'ROLE#DELETE',
+    'PERMISSION#EDIT',
+    'PERMISSION#CREATE',
+    'PERMISSION#DELETE',
+    'PERMISSION#GRANT'
+  ]
   limitText = limitText
   // dialog control
   public loadingApp = true
@@ -69,9 +92,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public actions$: Observable<Action[]> | undefined
   // filter row
   public filterBy = ['action', 'resource']
+  private readonly permissionFilterFields = ['action', 'resource']
   public filterNot = false
   public filterValue: string | undefined
   public filterMode: string
+  public readonly filterModeContains = FilterMatchMode.CONTAINS
+  public readonly filterModeNotContains = FilterMatchMode.NOT_CONTAINS
   public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
   public quickFilterItems$: Observable<SelectItem[]> | undefined
 
@@ -143,18 +169,55 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId')
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
-    // simplify permission checks
-    if (userService.hasPermission('ROLE#EDIT')) this.myPermissions.push('ROLE#EDIT')
-    if (userService.hasPermission('ROLE#CREATE')) this.myPermissions.push('ROLE#CREATE')
-    if (userService.hasPermission('ROLE#DELETE')) this.myPermissions.push('ROLE#DELETE')
-    if (userService.hasPermission('PERMISSION#EDIT')) this.myPermissions.push('PERMISSION#EDIT')
-    if (userService.hasPermission('PERMISSION#CREATE')) this.myPermissions.push('PERMISSION#CREATE')
-    if (userService.hasPermission('PERMISSION#DELETE')) this.myPermissions.push('PERMISSION#DELETE')
-    if (userService.hasPermission('PERMISSION#GRANT')) this.myPermissions.push('PERMISSION#GRANT')
     this.filterMode = FilterMatchMode.CONTAINS
   }
 
   public ngOnInit(): void {
+    if (this.myPermissions.length > 0) {
+      this.initializeComponentState()
+      return
+    }
+    this.resolvePermissions()
+      .pipe(take(1))
+      .subscribe((permissions) => {
+        this.myPermissions = permissions
+        this.initializeComponentState()
+      })
+  }
+
+  private resolvePermissions(): Observable<string[]> {
+    const userService = this.userService as any
+    if (typeof userService.getPermissions === 'function') {
+      const permissions$ = userService.getPermissions()
+      if (permissions$ && typeof permissions$.pipe === 'function') {
+        return permissions$.pipe(
+          map((permissions: string[]) =>
+            this.relevantPermissions.filter((permission) => permissions.includes(permission))
+          )
+        )
+      }
+    }
+    if (typeof userService.hasPermission === 'function') {
+      const checks = this.relevantPermissions.map((permission) => userService.hasPermission(permission))
+      const hasAsyncCheck = checks.some((check) => check && typeof check.then === 'function')
+      if (!hasAsyncCheck) {
+        return of(this.relevantPermissions.filter((_, index) => !!checks[index]))
+      }
+      return from(
+        Promise.all(
+          this.relevantPermissions.map((permission, index) =>
+            Promise.resolve(checks[index]).then((hasPermission) => ({
+              permission,
+              hasPermission
+            }))
+          )
+        ).then((checks) => checks.filter((check) => check.hasPermission).map((check) => check.permission))
+      )
+    }
+    return of([])
+  }
+
+  private initializeComponentState(): void {
     if (
       this.myPermissions.includes('ROLE#EDIT') ||
       this.myPermissions.includes('ROLE#CREATE') ||
@@ -261,6 +324,30 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (val !== '' && this.rolesFiltered && this.roles.length > 0)
       this.rolesFiltered = this.roles.filter((r) => r.name!.includes(val))
     else this.rolesFiltered = this.roles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleFilterInputChange(val: string): void {
+    this.onRoleFilterChange(val)
+  }
+
+  public onRoleFilterClear(roleNameFilter: HTMLInputElement): void {
+    roleNameFilter.value = ''
+    this.onRoleFilterChange('')
+  }
+
+  public onHideEmptyRolesToggle(): void {
+    this.hideEmptyRoles = !this.hideEmptyRoles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onShowNonWorkspaceRolesToggle(): void {
+    this.showNonWorkspaceRoles = !this.showNonWorkspaceRoles
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleInputGroupStateChanged(): void {
+    this.scheduleFrozenColumnsRealign()
   }
   private loadData(): void {
     if (!this.urlParamAppId || !this.urlParamAppType) {
@@ -588,23 +675,63 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public tableFilter(val: any): void {
     if (this.permissionTable) {
-      return this.permissionTable.filterGlobal(val, this.filterMode)
+      const activeFilterFields = this.filterBy?.length ? this.filterBy : this.permissionFilterFields
+
+      // Clear stale column/global constraints before reapplying the active mode.
+      this.permissionTable.filter?.('', 'global', FilterMatchMode.CONTAINS)
+      this.permissionFilterFields.forEach((field) => {
+        this.permissionTable?.filter?.('', field, FilterMatchMode.NOT_CONTAINS)
+      })
+
+      if (this.filterMode === FilterMatchMode.NOT_CONTAINS) {
+        activeFilterFields.forEach((field) => this.permissionTable?.filter?.(val, field, FilterMatchMode.NOT_CONTAINS))
+      } else {
+        this.permissionTable.filterGlobal?.(val, this.filterMode)
+      }
+      this.scheduleFrozenColumnsRealign()
     }
   }
   public onClearTableFilter(): void {
     if (this.permissionNameFilter) {
       this.permissionNameFilter.nativeElement.value = ''
       this.quickFilterValue = 'ALL'
+      this.filterBy = ['action', 'resource']
+      this.filterValue = ''
     }
     this.filterAppValue = undefined
     this.onSortPermissionTable()
     if (this.permissionTable?.clear) this.permissionTable?.clear()
+    this.scheduleFrozenColumnsRealign()
   }
   public onSortPermissionTable() {
     // reset icons
     if (this.sortIconAppId) this.sortIconAppId.nativeElement.className = 'pi pi-sort-alt'
     if (this.sortIconProduct) this.sortIconProduct.nativeElement.className = 'pi pi-sort-alt'
+    this.scheduleFrozenColumnsRealign()
   }
+
+  public onPermissionTableFiltered() {
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onPermissionTablePaged() {
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onPermissionToolsToggle() {
+    this.showPermissionTools = !this.showPermissionTools
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onRoleToolsToggle() {
+    this.showRoleTools = !this.showRoleTools
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  public onDisplayAdditionalRowDataToggle(): void {
+    this.scheduleFrozenColumnsRealign()
+  }
+
   /**
    * Filter: Product, AppId
    */
@@ -626,10 +753,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         )
         break
     }
+    this.scheduleFrozenColumnsRealign()
   }
   public onFilterItemClearAppId() {
     this.filterAppValue = undefined
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
+    this.scheduleFrozenColumnsRealign()
   }
 
   // if product name selected then reload app id filter
@@ -639,6 +768,53 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
     this.prepareFilterApps(this.filterProductValue)
+    this.scheduleFrozenColumnsRealign()
+  }
+
+  private scheduleFrozenColumnsRealign(
+    requestFrame: typeof requestAnimationFrame | undefined = globalThis.requestAnimationFrame
+  ) {
+    if (typeof requestFrame !== 'function') return
+    setTimeout(() => {
+      requestFrame(() => {
+        requestFrame(() => this.realignFrozenColumns())
+      })
+    })
+  }
+
+  private realignFrozenColumns() {
+    const tableHost = document.getElementById('apm_app_detail_permission_table')
+    const table = tableHost?.querySelector('.p-datatable-table') as HTMLTableElement | null
+    const headerRow = table?.querySelector('thead > tr') as HTMLTableRowElement | null
+    if (!table || !headerRow) return
+
+    const frozenOffsets = new Map<number, number>()
+    let leftOffset = 0
+    Array.from(headerRow.children).forEach((cell, index) => {
+      const headerCell = cell as HTMLElement
+      const isFrozen =
+        headerCell.classList.contains('p-datatable-frozen-column') || headerCell.classList.contains('p-frozen-column')
+      const isVisible = globalThis.getComputedStyle(headerCell).display !== 'none'
+      if (!isFrozen || !isVisible) return
+
+      frozenOffsets.set(index, leftOffset)
+      leftOffset += headerCell.getBoundingClientRect().width
+    })
+
+    Array.from(table.querySelectorAll('thead > tr, tbody > tr')).forEach((row) => {
+      const rowCells = Array.from((row as HTMLTableRowElement).children)
+      frozenOffsets.forEach((offset, index) => {
+        const cell = rowCells[index] as HTMLElement | undefined
+        if (!cell) return
+
+        const isFrozen =
+          cell.classList.contains('p-datatable-frozen-column') || cell.classList.contains('p-frozen-column')
+        const isVisible = globalThis.getComputedStyle(cell).display !== 'none'
+        if (isFrozen && isVisible) {
+          cell.style.left = `${offset}px`
+        }
+      })
+    })
   }
 
   /****************************************************************************

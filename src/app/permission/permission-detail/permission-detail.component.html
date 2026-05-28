@@ -12,7 +12,7 @@
   <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column gap-4 justify-content-between">
       <div class="mt-1">
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -27,10 +27,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_product_name">
             {{ 'PERMISSION.PRODUCT_NAME' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -45,34 +45,38 @@
           <label class="ocx-required-label" for="apm_permission_detail_app_id">
             {{ 'PERMISSION.APP_ID' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div *ngIf="changeMode !== 'CREATE'">
         <div class="px-2 mb-2 flex flex-row justify-content-between align-items-center column-gap-3">
-          <p-checkbox
-            type="text"
-            inputId="apm_permission_detail_operator"
-            formControlName="operator"
-            [binary]="true"
-            [styleClass]="'cursor-auto shadow-none'"
-            [label]="'PERMISSION.OPERATOR' | translate"
-            [ariaLabel]="'PERMISSION.OPERATOR' | translate"
-            [pTooltip]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
-            tooltipPosition="right"
-            tooltipEvent="hover"
-          ></p-checkbox>
-          <p-checkbox
-            type="text"
-            inputId="apm_permission_detail_mandatory"
-            formControlName="mandatory"
-            [binary]="true"
-            [styleClass]="'cursor-auto shadow-none'"
-            [label]="'PERMISSION.MANDATORY' | translate"
-            [ariaLabel]="'PERMISSION.MANDATORY' | translate"
-            [pTooltip]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
-            tooltipPosition="right"
-            tooltipEvent="hover"
-          ></p-checkbox>
+          <div class="flex align-items-center gap-2">
+            <p-checkbox
+              type="text"
+              inputId="apm_permission_detail_operator"
+              formControlName="operator"
+              [binary]="true"
+              [styleClass]="'cursor-auto shadow-none'"
+              [ariaLabel]="'PERMISSION.OPERATOR' | translate"
+              [pTooltip]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
+              tooltipPosition="right"
+              tooltipEvent="hover"
+            ></p-checkbox>
+            <label for="apm_permission_detail_operator">{{ 'PERMISSION.OPERATOR' | translate }}</label>
+          </div>
+          <div class="flex align-items-center gap-2">
+            <p-checkbox
+              type="text"
+              inputId="apm_permission_detail_mandatory"
+              formControlName="mandatory"
+              [binary]="true"
+              [styleClass]="'cursor-auto shadow-none'"
+              [ariaLabel]="'PERMISSION.MANDATORY' | translate"
+              [pTooltip]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
+              tooltipPosition="right"
+              tooltipEvent="hover"
+            ></p-checkbox>
+            <label for="apm_permission_detail_mandatory">{{ 'PERMISSION.MANDATORY' | translate }}</label>
+          </div>
         </div>
         <p-message
           *ngIf="permission?.operator"
@@ -83,7 +87,7 @@
         ></p-message>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -98,10 +102,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_resource">
             {{ 'PERMISSION.RESOURCE' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -116,10 +120,10 @@
           <label class="ocx-required-label" for="apm_permission_detail_action">
             {{ 'PERMISSION.ACTION' | translate }}
           </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label">
+        <p-floatlabel variant="on">
           <input
             pInputText
             type="text"
@@ -129,7 +133,7 @@
             [ariaLabel]="'PERMISSION.DESCRIPTION' | translate"
           />
           <label for="apm_permission_detail_description">{{ 'PERMISSION.DESCRIPTION' | translate }} </label>
-        </span>
+        </p-floatlabel>
       </div>
     </div>
   </form>
@@ -146,7 +150,7 @@
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         *ngIf="changeMode !== 'VIEW'"
         autofocus
@@ -158,7 +162,7 @@
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         *ngIf="changeMode !== 'VIEW'"
         id="apm_permission_detail_action_save"
@@ -170,7 +174,7 @@
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>
@@ -212,7 +216,7 @@
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         id="apm_permission_delete_action_yes"
         icon="pi pi-check"
@@ -222,7 +226,7 @@
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>

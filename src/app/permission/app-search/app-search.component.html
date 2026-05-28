@@ -39,7 +39,7 @@
         </section>
       </div>
       <div>
-        <span class="p-float-label">
+        <p-floatlabel variant="on">
           <input
             id="apm_app_search_criteria_name"
             pInputText
@@ -52,12 +52,12 @@
             tooltipEvent="hover"
           />
           <label for="apm_app_search_criteria_name" aria-hidden="true">{{ 'APP.SEARCH.NAME' | translate }}</label>
-        </span>
+        </p-floatlabel>
       </div>
     </form>
   </ocx-search-header>
 
-  <ocx-page-content *ngIf="(filteredApps$ | async) ?? [] as applications">
+  <ocx-content *ngIf="(filteredApps$ | async) ?? [] as applications">
     <div *ngIf="exceptionKey" class="m-3 flex flex-wrap justify-content-between align-items-center">
       <p-message id="apm_app_search_exception" severity="error" [text]="exceptionKey | translate"></p-message>
       <p-button
@@ -79,103 +79,113 @@
     ></p-message>
 
     <div *ngIf="!(loading || exceptionKey)" class="py-2 px-3">
-      <div class="flex flex-wrap align-items-center mt-1 mx-1">
-        <div class="flex flex-wrap align-items-center ml-1 gap-2">
-          <section
-            class="slim-selectbutton align-items-start search-criteria-selectbutton"
-            [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
-            [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          >
-            <p-selectButton
-              inputid="apm_app_search_quick_filter"
-              [options]="(quickFilterItems$ | async) ?? []"
-              [(ngModel)]="quickFilterValue"
-              [allowEmpty]="false"
-              (onChange)="onQuickFilterChange($event)"
-              [ariaLabel]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
-            >
-              <ng-template let-item pTemplate>
-                <span [id]="'apm_app_search_quick_filter_' + item.value"> {{ item.label }}</span>
-              </ng-template>
-            </p-selectButton>
-            <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-80">
-              <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
-              <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + quickFilterValue | translate }}</span>
-            </div>
-          </section>
-        </div>
-        <ocx-data-view-controls
-          class="flex-grow-1"
-          [supportedViews]="['grid']"
-          [initialViewMode]="viewMode"
-          [enableFiltering]="true"
-          (filterChange)="onFilterChange($event)"
-          [filterColumns]="['APP.DISPLAY_NAME' | translate, 'APP.TYPE' | translate]"
-          [enableSorting]="true"
-          [defaultSortOption]="sortField"
-          [defaultSortDirection]="sortOrder === 1"
-          [sortingOptions]="[
-            { label: 'APP.DISPLAY_NAME' | translate, value: 'displayName' },
-            { label: 'APP.TYPE' | translate, value: 'appType' }
-          ]"
-          (sortChange)="onSortChange($event)"
-          (sortDirectionChange)="onSortDirChange($event)"
-          [translations]="(dataViewControlsTranslations$ | async) ?? {}"
-        >
-        </ocx-data-view-controls>
-      </div>
       <section
         [attr.aria-label]="
           ('DIALOG.SEARCH.RESULTS' | translate) + ': ' + ('DIALOG.SEARCH.QUICK_FILTER.PRODUCT' | translate)
         "
       >
-        <ocx-data-list-grid
+        <ocx-interactive-data-view
           id="apm_app_search_dataview"
           [data]="applications"
-          [paginator]="true"
+          [listGridPaginator]="true"
           [pageSizes]="[20, 40, 100]"
           [pageSize]="20"
+          [supportedViewLayouts]="['grid']"
           [layout]="'grid'"
           [columns]="columnTypes"
+          [displayedColumnKeys]="['displayName', 'appType', 'appId']"
+          [clientSideSorting]="true"
+          [clientSideFiltering]="true"
+          [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
           [sortDirection]="sortDirection"
           [sortField]="sortField"
+          [filters]="(filters$ | async) ?? []"
+          (sorted)="onSortChange($event)"
         >
-          <ng-template let-app let-i="rowIndex" #gridItem>
-            <article
-              class="col-6 md:col-4 lg:col-4 xl:col-3 p-2 md:p-3"
-              [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
-            >
-              <a
+          <ng-template #topCenter>
+            <div class="app-search-top-center">
+              <section
+                class="app-search-quickfilter slim-selectbutton align-items-start search-criteria-selectbutton"
+                [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
+                [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              >
+                <p-selectButton
+                  inputid="apm_app_search_quick_filter"
+                  [options]="(quickFilterItems$ | async) ?? []"
+                  [(ngModel)]="quickFilterValue"
+                  [allowEmpty]="false"
+                  (onChange)="onQuickFilterChange($event)"
+                  [ariaLabel]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
+                >
+                  <ng-template let-item pTemplate>
+                    <span [id]="'apm_app_search_quick_filter_' + item.value"> {{ item.label }}</span>
+                  </ng-template>
+                </p-selectButton>
+              </section>
+
+              <div class="app-search-filterbox">
+                <p-inputgroup class="w-auto">
+                  <p-inputgroup-addon>
+                    <i class="pi pi-filter" aria-hidden="true"></i>
+                  </p-inputgroup-addon>
+                  <p-floatlabel variant="on">
+                    <input
+                      #dvFilterInput
+                      id="apm_app_search_filter"
+                      type="text"
+                      pInputText
+                      [value]="filterText"
+                      (input)="onGlobalFilter(dvFilterInput.value)"
+                      [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                      tooltipPosition="top"
+                      tooltipEvent="hover"
+                      [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                    />
+                    <label for="apm_app_search_filter" aria-hidden="true">
+                      {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}
+                    </label>
+                  </p-floatlabel>
+                  <p-button
+                    icon="pi pi-filter-slash"
+                    (onClick)="dvFilterInput.value = ''; onClearGlobalFilter()"
+                    [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  />
+                </p-inputgroup>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="gridItem" let-item>
+            <div class="col-6 md:col-4 lg:col-4 xl:col-3 p-1">
+              <p-card
+                styleClass="cursor-pointer hover:bg-gray-200 text-center"
+                [attr.aria-label]="item.appType === 'WORKSPACE' ? item.displayName : item.productName"
+                (click)="onAppClick(item)"
+                (keydown.enter)="onAppClick(item)"
+                (keydown.space)="$event.preventDefault(); onAppClick(item)"
+                role="button"
                 tabindex="0"
-                [id]="'apm_app_search_data_idx_' + i"
-                class="card px-2 p-1 flex flex-column gap-1 sm:gap-2 justify-content-between text-center hover:bg-gray-200 hover:text-color cursor-pointer"
-                (click)="onAppClick(app)"
-                role="link"
               >
                 <div
-                  [id]="'apm_app_search_data_idx_' + i + '_name'"
                   class="font-bold text-sm md:text-base lg:text-lg text-responsive"
-                  [id]="'apm_app_search_data_idx_' + i + '_app_name'"
-                  [attr.aria-label]="app.appType === 'WORKSPACE' ? app.displayName : app.productName"
+                  [attr.aria-label]="item.appType === 'WORKSPACE' ? item.displayName : item.productName"
                 >
-                  {{ app.appType === 'WORKSPACE' ? app.displayName : app.productName }}
+                  {{ item.appType === 'WORKSPACE' ? item.displayName : item.productName }}
                 </div>
                 <app-ocx-chip
-                  [id]="'apm_app_search_data_idx_' + i + '_type'"
                   class="py-1"
-                  [styleClass]="app.appType === 'WORKSPACE' ? 'bg-primary' : ''"
-                  [label]="'APP.TYPE_'.concat(app.appType) | translate"
-                  [title]="'APP.TYPE_'.concat(app.appType) + '.TOOLTIP' | translate"
+                  [styleClass]="item.appType === 'WORKSPACE' ? 'bg-primary' : ''"
+                  [label]="'APP.TYPE_'.concat(item.appType) | translate"
+                  [title]="'APP.TYPE_'.concat(item.appType) + '.TOOLTIP' | translate"
                 />
-              </a>
-            </article>
+              </p-card>
+            </div>
           </ng-template>
-        </ocx-data-list-grid>
+        </ocx-interactive-data-view>
       </section>
     </div>
-  </ocx-page-content>
+  </ocx-content>
 </ocx-portal-page>
 
 <!-- IMPORT -->
@@ -248,7 +258,7 @@
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>

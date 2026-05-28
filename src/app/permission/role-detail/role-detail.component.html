@@ -12,7 +12,7 @@
   <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
       <div class="mt-1">
-        <span class="p-float-label" controlErrorAnchor>
+        <p-floatlabel variant="on" controlErrorAnchor>
           <input
             pInputText
             type="text"
@@ -25,10 +25,10 @@
             tooltipEvent="hover"
           />
           <label class="ocx-required-label" for="apm_role_detail_name"> {{ 'ROLE.NAME' | translate }} </label>
-        </span>
+        </p-floatlabel>
       </div>
       <div>
-        <span class="p-float-label">
+        <p-floatlabel variant="on">
           <input
             pInputText
             type="text"
@@ -40,7 +40,7 @@
             tooltipEvent="hover"
           />
           <label for="apm_role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
-        </span>
+        </p-floatlabel>
       </div>
     </div>
   </form>
@@ -56,7 +56,7 @@
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         id="apm_role_detail_action_save"
         icon="pi pi-save"
@@ -67,7 +67,7 @@
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>
@@ -103,7 +103,7 @@
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         id="apm_role_delete_action_yes"
         icon="pi pi-check"
@@ -113,7 +113,7 @@
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>
@@ -191,7 +191,7 @@
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         *ngIf="!exceptionKey && !loading"
         id="apm_idm_roles_action_cancel"
@@ -202,7 +202,7 @@
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
       <p-button
         *ngIf="!exceptionKey && !loading"
         id="apm_idm_roles_action_save"
@@ -214,7 +214,7 @@
         [pTooltip]="'ROLE.IDM.SAVE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-button>
+      />
     </div>
   </ng-template>
 </p-dialog>

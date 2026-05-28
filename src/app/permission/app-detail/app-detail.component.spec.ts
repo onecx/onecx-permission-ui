@@ -5,11 +5,11 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
-import { DataViewModule } from 'primeng/dataview'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 import { FilterMatchMode } from 'primeng/api'
 import { Table } from 'primeng/table'
 
+import { PermissionService } from '@onecx/angular-utils'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import {
@@ -152,13 +152,15 @@ describe('AppDetailComponent', () => {
   ])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', ['searchPermissions'])
+  const permissionServiceSpy = {
+    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(of(true)),
+    getPermissions: jasmine.createSpy('getPermissions').and.returnValue(of([]))
+  }
   const roleApiSpy = jasmine.createSpyObj<RoleAPIService>('RoleAPIService', ['searchRoles', 'createRole'])
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['getDetailsByWorkspaceName'])
 
   const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue').and.returnValue('en')
-    },
+    lang$: new BehaviorSubject('en'),
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
       if (
         permissionName === 'ROLE#CREATE' ||
@@ -180,9 +182,8 @@ describe('AppDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AppDetailComponent],
       imports: [
-        DataViewModule,
+        AppDetailComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -196,6 +197,7 @@ describe('AppDetailComponent', () => {
         { provide: AssignmentAPIService, useValue: assApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
+        { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: Router, useValue: mockRouter },
@@ -204,7 +206,14 @@ describe('AppDetailComponent', () => {
         { provide: Location, useValue: locationSpy }
       ],
       schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents()
+    })
+      .overrideComponent(AppDetailComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {
@@ -258,6 +267,53 @@ describe('AppDetailComponent', () => {
       component.onReload()
 
       expect((component as any).loadData).toHaveBeenCalled()
+    })
+  })
+
+  describe('permission resolution', () => {
+    it('should resolve relevant permissions from getPermissions observable', (done) => {
+      const originalGetPermissions = (mockUserService as any).getPermissions
+      const originalHasPermission = mockUserService.hasPermission
+      ;(mockUserService as any).getPermissions = jasmine
+        .createSpy('getPermissions')
+        .and.returnValue(of(['ROLE#CREATE', 'PERMISSION#DELETE', 'UNRELATED#PERMISSION']))
+      ;(mockUserService as any).hasPermission = undefined
+      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+        expect(permissions).toEqual(['ROLE#CREATE', 'PERMISSION#DELETE'])
+        ;(mockUserService as any).getPermissions = originalGetPermissions
+        ;(mockUserService as any).hasPermission = originalHasPermission
+        done()
+      })
+    })
+
+    it('should return empty list when getPermissions is not observable and hasPermission is unavailable', (done) => {
+      const originalGetPermissions = (mockUserService as any).getPermissions
+      const originalHasPermission = mockUserService.hasPermission
+      ;(mockUserService as any).getPermissions = jasmine.createSpy('getPermissions').and.returnValue([])
+      ;(mockUserService as any).hasPermission = undefined
+      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+        expect(permissions).toEqual([])
+        ;(mockUserService as any).getPermissions = originalGetPermissions
+        ;(mockUserService as any).hasPermission = originalHasPermission
+        done()
+      })
+    })
+
+    it('should resolve permissions from asynchronous hasPermission checks', (done) => {
+      const originalGetPermissions = (mockUserService as any).getPermissions
+      const originalHasPermission = mockUserService.hasPermission
+      ;(mockUserService as any).getPermissions = undefined
+      ;(mockUserService as any).hasPermission = jasmine
+        .createSpy('hasPermission')
+        .and.callFake((permission: string) =>
+          Promise.resolve(permission === 'ROLE#CREATE' || permission === 'PERMISSION#GRANT')
+        )
+      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+        expect(permissions).toEqual(['ROLE#CREATE', 'PERMISSION#GRANT'])
+        ;(mockUserService as any).getPermissions = originalGetPermissions
+        ;(mockUserService as any).hasPermission = originalHasPermission
+        done()
+      })
     })
   })
 
@@ -645,9 +701,77 @@ describe('AppDetailComponent', () => {
       expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('testValue', 'mode')
     })
 
+    it('should apply NOT_CONTAINS as column filters for all active permission filter fields', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterBy = ['action', 'resource']
+      component.filterMode = FilterMatchMode.NOT_CONTAINS
+
+      component.tableFilter('VIEW')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'global', FilterMatchMode.CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('VIEW', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('VIEW', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filterGlobal).not.toHaveBeenCalled()
+    })
+
+    it('should apply NOT_CONTAINS only for currently active fields', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterBy = ['action']
+      component.filterMode = FilterMatchMode.NOT_CONTAINS
+
+      component.tableFilter('DELETE')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('DELETE', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).not.toHaveBeenCalledWith(
+        'DELETE',
+        'resource',
+        FilterMatchMode.NOT_CONTAINS
+      )
+      expect(component.permissionTable.filterGlobal).not.toHaveBeenCalled()
+    })
+
+    it('should fallback to default filter fields when filterBy is not configured', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      ;(component as any).filterBy = undefined
+      component.filterMode = FilterMatchMode.NOT_CONTAINS
+
+      component.tableFilter('EDIT')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('EDIT', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('EDIT', 'resource', FilterMatchMode.NOT_CONTAINS)
+    })
+
+    it('should clear NOT_CONTAINS column filters and use global filter for CONTAINS mode', () => {
+      component.permissionTable = {
+        filter: jasmine.createSpy(),
+        filterGlobal: jasmine.createSpy()
+      } as unknown as Table
+      component.filterMode = FilterMatchMode.CONTAINS
+
+      component.tableFilter('PERMISSION')
+
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'global', FilterMatchMode.CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'action', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filter).toHaveBeenCalledWith('', 'resource', FilterMatchMode.NOT_CONTAINS)
+      expect(component.permissionTable.filterGlobal).toHaveBeenCalledWith('PERMISSION', FilterMatchMode.CONTAINS)
+    })
+
     it('should clear all clear all values onClearTableFilter', () => {
       component.permissionNameFilter = { nativeElement: { value: 'value' } }
       component.quickFilterValue = 'ALL'
+      component.filterBy = ['action']
+      component.filterValue = 'VIEW'
       component.filterAppValue = 'value'
       component.permissionTable = { clear: jasmine.createSpy() } as unknown as Table
       spyOn(component, 'onSortPermissionTable')
@@ -656,6 +780,8 @@ describe('AppDetailComponent', () => {
 
       expect(component.permissionNameFilter.nativeElement.value).toBe('')
       expect(component.quickFilterValue).toBe('ALL')
+      expect(component.filterBy).toEqual(['action', 'resource'])
+      expect(component.filterValue).toBe('')
       expect(component.filterAppValue).toBeUndefined()
       expect(component.onSortPermissionTable).toHaveBeenCalled()
       expect(component.permissionTable.clear).toHaveBeenCalled()
@@ -669,6 +795,159 @@ describe('AppDetailComponent', () => {
 
       expect(component.sortIconAppId.nativeElement.className).toBe('pi pi-sort-alt')
       expect(component.sortIconProduct.nativeElement.className).toBe('pi pi-sort-alt')
+    })
+
+    it('should realign frozen columns when additional row data visibility changes', () => {
+      const scheduleSpy = spyOn<any>(component, 'scheduleFrozenColumnsRealign')
+
+      component.onDisplayAdditionalRowDataToggle()
+
+      expect(scheduleSpy).toHaveBeenCalled()
+    })
+
+    it('should delegate role filter input and clear actions', () => {
+      const roleNameFilter = document.createElement('input')
+      roleNameFilter.value = 'role1'
+      spyOn(component, 'onRoleFilterChange')
+
+      component.onRoleFilterInputChange('role1')
+      component.onRoleFilterClear(roleNameFilter)
+
+      expect(component.onRoleFilterChange).toHaveBeenCalledWith('role1')
+      expect(component.onRoleFilterChange).toHaveBeenCalledWith('')
+      expect(roleNameFilter.value).toBe('')
+    })
+
+    it('should toggle role filters and trigger frozen-column realignment', () => {
+      const scheduleSpy = spyOn<any>(component, 'scheduleFrozenColumnsRealign')
+      component.hideEmptyRoles = false
+      component.showNonWorkspaceRoles = false
+
+      component.onHideEmptyRolesToggle()
+      component.onShowNonWorkspaceRolesToggle()
+      component.onRoleInputGroupStateChanged()
+
+      expect(component.hideEmptyRoles).toBeTrue()
+      expect(component.showNonWorkspaceRoles).toBeTrue()
+      expect(scheduleSpy).toHaveBeenCalledTimes(3)
+    })
+
+    it('should toggle tools and trigger frozen-column realignment for table events', () => {
+      const scheduleSpy = spyOn<any>(component, 'scheduleFrozenColumnsRealign')
+      component.showPermissionTools = false
+      component.showRoleTools = false
+
+      component.onPermissionTableFiltered()
+      component.onPermissionTablePaged()
+      component.onPermissionToolsToggle()
+      component.onRoleToolsToggle()
+
+      expect(component.showPermissionTools).toBeTrue()
+      expect(component.showRoleTools).toBeTrue()
+      expect(scheduleSpy).toHaveBeenCalledTimes(4)
+    })
+  })
+
+  describe('frozen column realignment', () => {
+    afterEach(() => {
+      document.getElementById('apm_app_detail_permission_table')?.remove()
+    })
+
+    it('should return without errors when table host is not present', () => {
+      expect(() => (component as any).realignFrozenColumns()).not.toThrow()
+    })
+
+    it('should align only visible frozen cells and skip hidden/non-frozen/missing cells', () => {
+      document.getElementById('apm_app_detail_permission_table')?.remove()
+
+      const host = document.createElement('div')
+      host.id = 'apm_app_detail_permission_table'
+
+      const table = document.createElement('table')
+      table.className = 'p-datatable-table'
+
+      const thead = document.createElement('thead')
+      const headerRow = document.createElement('tr')
+      const headerFrozenA = document.createElement('th')
+      const headerFrozenB = document.createElement('th')
+      const headerRegular = document.createElement('th')
+      const headerHiddenFrozen = document.createElement('th')
+
+      headerFrozenA.className = 'p-datatable-frozen-column'
+      headerFrozenB.className = 'p-frozen-column'
+      headerHiddenFrozen.className = 'p-frozen-column'
+      headerHiddenFrozen.dataset['hidden'] = 'true'
+
+      spyOn(headerFrozenA, 'getBoundingClientRect').and.returnValue({ width: 80 } as DOMRect)
+      spyOn(headerFrozenB, 'getBoundingClientRect').and.returnValue({ width: 40 } as DOMRect)
+
+      headerRow.append(headerFrozenA, headerFrozenB, headerRegular, headerHiddenFrozen)
+      thead.appendChild(headerRow)
+
+      const tbody = document.createElement('tbody')
+      const bodyRowA = document.createElement('tr')
+      const bodyRowAFrozen = document.createElement('td')
+      const bodyRowAHiddenFrozen = document.createElement('td')
+      const bodyRowARegular = document.createElement('td')
+      const bodyRowAOther = document.createElement('td')
+
+      bodyRowAFrozen.className = 'p-datatable-frozen-column'
+      bodyRowAHiddenFrozen.className = 'p-frozen-column'
+      bodyRowAHiddenFrozen.dataset['hidden'] = 'true'
+
+      bodyRowA.append(bodyRowAFrozen, bodyRowAHiddenFrozen, bodyRowARegular, bodyRowAOther)
+
+      const bodyRowB = document.createElement('tr')
+      const bodyRowBRegular = document.createElement('td')
+      bodyRowB.append(bodyRowBRegular)
+
+      tbody.append(bodyRowA, bodyRowB)
+
+      table.append(thead, tbody)
+      host.appendChild(table)
+      document.body.appendChild(host)
+
+      const styleSpy = spyOn(globalThis, 'getComputedStyle').and.callFake((element: Element) => {
+        const isHidden = (element as HTMLElement).dataset['hidden'] === 'true'
+        return { display: isHidden ? 'none' : 'table-cell' } as CSSStyleDeclaration
+      })
+
+      ;(component as any).realignFrozenColumns()
+
+      expect(styleSpy).toHaveBeenCalled()
+      expect(headerFrozenA.style.left).toBe('0px')
+      expect(headerFrozenB.style.left).toBe('80px')
+      expect(bodyRowAFrozen.style.left).toBe('0px')
+      expect(bodyRowAHiddenFrozen.style.left).toBe('')
+    })
+
+    it('should schedule frozen-column realignment through timeout and nested animation frames', () => {
+      const timeoutSpy = spyOn(globalThis as any, 'setTimeout').and.callFake((handler: TimerHandler) => {
+        if (typeof handler === 'function') {
+          handler()
+        }
+        return 0
+      })
+      const animationFrameSpy = spyOn(globalThis, 'requestAnimationFrame').and.callFake(
+        (callback: FrameRequestCallback) => {
+          callback(0)
+          return 0
+        }
+      )
+      const realignSpy = spyOn<any>(component, 'realignFrozenColumns')
+
+      ;(component as any).scheduleFrozenColumnsRealign()
+
+      expect(timeoutSpy).toHaveBeenCalled()
+      expect(animationFrameSpy).toHaveBeenCalledTimes(2)
+      expect(realignSpy).toHaveBeenCalled()
+    })
+
+    it('should return early from scheduling when requestAnimationFrame is unavailable', () => {
+      const timeoutSpy = spyOn(globalThis as any, 'setTimeout')
+      ;(component as any).scheduleFrozenColumnsRealign(null)
+
+      expect(timeoutSpy).not.toHaveBeenCalled()
     })
   })
 
@@ -1219,7 +1498,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call this.user.lang$ from the constructor and set this.dateFormat to the correct format if user.lang$ de', () => {
-      mockUserService.lang$.getValue.and.returnValue('de')
+      spyOn(mockUserService.lang$, 'getValue').and.returnValue('de')
       fixture = TestBed.createComponent(AppDetailComponent)
       component = fixture.componentInstance
       fixture.detectChanges()

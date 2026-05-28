@@ -112,7 +112,7 @@
       "OF": "von",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter für ",
+        "OF": "Filter für Anzeigename, Typ",
         "CLEAR": "Filter entfernen",
         "MODE_CONTAINS": "Filterwert enthalten",
         "MODE_NOT_CONTAINS": "Filterwert nicht enthalten"
@@ -211,6 +211,7 @@
       },
       "ROLES": {
         "FILTER": "Rollenfilter",
+        "FILTER.LABEL": "Rollenfilter",
         "FILTER.TOOLTIP": "Filter für Rollenname",
         "EMPTY_ROLE": "Rolle hat keine zugewiesenen Berechtigungen",
         "HIDE_EMPTY_ROLES": "Nicht zugewiesene Rollen ausblenden",

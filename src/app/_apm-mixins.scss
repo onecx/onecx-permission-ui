@@ -69,7 +69,7 @@
 
 @mixin compact-dropdown-list-items {
   :host ::ng-deep {
-    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    .p-select-overlay .p-select-list .p-select-option {
       padding: 0.4rem 1rem !important;
     }
   }
@@ -235,7 +235,7 @@
     /* correction for data-view-control component */
     .data-view-control-border {
       border: var(--toggle-button-border);
-      &.p-dropdown {
+      &.p-select {
         .p-inputtext {
           color: var(--emphasis-medium);
           opacity: 0.9;
@@ -246,7 +246,7 @@
         }
       }
       &.p-inputtext:hover,
-      &.p-dropdown:hover {
+      &.p-select:hover {
         border-color: rgb(0 0 0 / 30%) !important;
       }
     }
@@ -351,11 +351,11 @@
       .p-selectbutton .p-button {
         opacity: 0.9 !important;
         border: var(--toggle-button-border);
-        &.p-highlight {
+        &.p-togglebutton-checked {
           background: var(--toggle-button-active-bg);
           border-color: var(--toggle-button-active-border-color);
         }
-        &:not(.p-disabled):not(.p-highlight):hover {
+        &:not(.p-disabled):not(.p-togglebutton-checked):hover {
           color: var(--text-color);
           border-color: var(--toggle-button-hover-border-color);
           background-color: var(--toggle-button-hover-bg);
@@ -372,12 +372,12 @@
     }
     .search-criteria-selectbutton {
       .p-selectbutton .p-button {
-        &.p-highlight {
+        &.p-togglebutton-checked {
           color: var(--primary-text-color);
           border-color: var(--toggle-button-hover-border-color);
           background-color: var(--primary-color);
         }
-        &:not(.p-disabled):not(.p-highlight):hover {
+        &:not(.p-disabled):not(.p-togglebutton-checked):hover {
           color: var(--primary-text-color);
           border-color: var(--toggle-button-hover-border-color);
           background-color: var(--button-hover-bg);
@@ -410,14 +410,14 @@
 }
 @mixin dropdown-zebra-rows {
   :host ::ng-deep {
-    .p-dropdown-panel .p-dropdown-items *:nth-child(even) .p-dropdown-item {
+    .p-select-overlay .p-select-list *:nth-child(even) .p-select-option {
       background-color: var(--table-body-row-even-bg);
     }
   }
 }
 @mixin listbox-zebra-rows {
   :host ::ng-deep {
-    .p-listbox:not(.p-disabled) .p-listbox-item:not(.p-highlight):not(.p-disabled) {
+    .p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled) {
       &:nth-child(even) {
         background-color: var(--table-body-row-even-bg);
       }
@@ -513,15 +513,15 @@
 
 @mixin tabview-reduce-padding {
   :host ::ng-deep {
-    .p-tabview .p-tabview-panels {
+    .p-tabs .p-tabpanels {
       padding: 1.4rem 0 0 0;
     }
   }
 }
 @mixin tabview-fix-color-selected-tab {
   :host ::ng-deep {
-    // correct the background color on inital selected tab
-    .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link[aria-selected='true'] {
+    // correct the background color on initial selected tab
+    .p-tabs .p-tab[aria-selected='true'] {
       background-color: rgba(var(--primary-color-rgb), 0.12);
     }
   }

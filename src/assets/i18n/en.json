@@ -112,7 +112,7 @@
       "OF": "of",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter by ",
+        "OF": "Filter by Display Name, Type",
         "CLEAR": "Clear Filter",
         "MODE_CONTAINS": "Filter value is contained",
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
@@ -211,6 +211,7 @@
       },
       "ROLES": {
         "FILTER": "Filter for Roles",
+        "FILTER.LABEL": "Filter for Roles",
         "FILTER.TOOLTIP": "Filter for Role name",
         "EMPTY_ROLE": "Role has no assigned Permissions",
         "HIDE_EMPTY_ROLES": "Hide unassigned Roles",

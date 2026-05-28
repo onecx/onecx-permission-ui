@@ -1,36 +1,31 @@
 import {
-  APP_INITIALIZER,
   Component,
   ElementRef,
   EventEmitter,
   NO_ERRORS_SCHEMA,
   CUSTOM_ELEMENTS_SCHEMA,
-  Inject,
   Input,
+  OnInit,
   OnChanges,
   ViewChild
 } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import {
   AngularRemoteComponentsModule,
-  BASE_URL,
-  RemoteComponentConfig,
   SLOT_SERVICE,
   SlotService,
   ocxRemoteComponent,
-  ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { createRemoteComponentTranslateLoader } from '@onecx/angular-accelerator'
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
   AssignmentAPIService,
@@ -57,23 +52,20 @@ export function slotInitializer(slotService: SlotService) {
   templateUrl: './user-roles-permissions.component.html',
   styleUrls: ['./user-roles-permissions.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, PortalCoreModule, RouterModule, TranslateModule, SharedModule],
-  providers: [
-    { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
-    { provide: APP_INITIALIZER, useFactory: slotInitializer, deps: [SLOT_SERVICE], multi: true },
-    { provide: SLOT_SERVICE, useExisting: SlotService },
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL]
-      }
-    })
+  imports: [
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    SharedModule
   ],
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
+export class OneCXUserRolesPermissionsComponent
+  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnInit, OnChanges
+{
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
@@ -101,9 +93,9 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public componentPermissions: string[] = []
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
+  private readonly remoteComponentConfig$ = new ReplaySubject<RemoteComponentConfig>(1)
 
   constructor(
-    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
     private readonly user: UserService,
     private readonly slotService: SlotService,
     private readonly userApi: UserAPIService,
@@ -113,9 +105,14 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
   }
+
+  public ngOnInit(): void {
+    slotInitializer(this.slotService)()
+  }
+
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.baseUrl.next(remoteComponentConfig.baseUrl)
+    this.remoteComponentConfig$.next(remoteComponentConfig)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
     })
@@ -208,8 +205,10 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   // activate TAB
-  public onTabChange($event: any, uas: UserAssignment[]) {
-    if ($event.index === 2) {
+  public onTabChange(tabValue: number | string | { index: number }, uas: UserAssignment[]) {
+    const selectedTab = typeof tabValue === 'object' ? tabValue.index : Number(tabValue)
+    this.selectedTabIndex = selectedTab
+    if (selectedTab === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
       this.idmRoles$ = this.provideIamRoles() // used for me permissions
     }

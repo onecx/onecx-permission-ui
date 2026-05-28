@@ -4,19 +4,21 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { DataView } from 'primeng/dataview'
 import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { PortalPageComponent } from '@onecx/angular-utils'
 import {
   Action,
+  AngularAcceleratorModule,
+  ColumnType,
   RowListGridData,
   DataSortDirection,
   DataTableColumn,
   Filter,
+  FilterType,
   ObjectUtils
 } from '@onecx/angular-accelerator'
-import { ColumnType, DataViewControlTranslations } from '@onecx/portal-integration-angular'
 
 import {
   Application,
@@ -28,6 +30,8 @@ import {
   ApplicationPageResult,
   Permission
 } from 'src/app/shared/generated'
+import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
+import { SharedModule } from 'src/app/shared/shared.module'
 import { limitText, sortByLocale } from 'src/app/shared/utils'
 
 export interface AppSearchCriteria {
@@ -49,6 +53,8 @@ export type ImportError = {
 }
 
 @Component({
+  standalone: true,
+  imports: [AngularAcceleratorModule, PortalPageComponent, SharedModule, PermissionExportComponent],
   templateUrl: './app-search.component.html',
   styleUrls: ['./app-search.component.scss']
 })
@@ -72,6 +78,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterValue: AppFilterType = 'ALL'
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
+  public filterText = ''
   public sortField = 'displayName'
   public sortOrder = -1
 
@@ -85,16 +92,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public limitText = limitText
 
   public columnTypes: DataTableColumn[] = [
-    { columnType: ColumnType.STRING, id: 'name', nameKey: '' },
-    { columnType: ColumnType.STRING, id: 'appType', nameKey: '' },
+    { columnType: ColumnType.STRING, id: 'displayName', nameKey: 'APP.DISPLAY_NAME', sortable: true },
+    { columnType: ColumnType.STRING, id: 'appType', nameKey: 'DIALOG.DETAIL.FILTER.APP_TYPE', sortable: true },
     { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
   ]
-  public filters$: Observable<(Filter & { mode: 'contains' | 'equals' })[]>
+  public filters$: Observable<Filter[]>
   public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
 
   @ViewChild(FileUpload) fileUploader: FileUpload | undefined
-  @ViewChild(DataView) dv: DataView | undefined
-  public dataViewControlsTranslations$: Observable<DataViewControlTranslations> | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
@@ -113,14 +118,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     })
     this.appSearchCriteria.controls['appType'].setValue('ALL') // default: all app types
     this.appSearchCriteria.controls['name'].disable()
-    this.filters$ = combineLatest([this.typeFilterValue$, this.textFilterValue$]).pipe(
-      map(([typeValue, textFilter]) => {
-        const filters: (Filter & { mode: 'contains' | 'equals' })[] = []
+    this.filters$ = this.typeFilterValue$.pipe(
+      map((typeValue) => {
+        const filters: Filter[] = []
         if (typeValue) {
-          filters.push({ columnId: 'appType', value: typeValue, mode: 'equals' })
-        }
-        if (textFilter) {
-          filters.push({ columnId: 'displayName', value: textFilter, mode: 'contains' })
+          filters.push({ columnId: 'appType', value: typeValue, filterType: FilterType.EQUALS })
         }
         return filters
       })
@@ -229,16 +231,27 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.apps$ = this.searchProducts(this.appSearchCriteria.controls['appType'].value)
         break
     }
-    this.filteredApps$ = combineLatest([this.apps$, this.filters$]).pipe(
-      map(([apps, filters]) => {
+    this.filteredApps$ = combineLatest([this.apps$, this.filters$, this.textFilterValue$]).pipe(
+      map(([apps, filters, textFilter]) => {
         this.loading = false
-        return apps.filter((app) => {
+        let result = apps.filter((app) => {
           return filters.every((filter) => {
-            return filter.mode === 'equals'
+            return filter.filterType === FilterType.EQUALS
               ? ObjectUtils.resolveFieldData(app, filter.columnId) === filter.value
               : (ObjectUtils.resolveFieldData(app, filter.columnId)?.includes(filter.value) ?? false)
           })
         })
+        if (textFilter) {
+          const lowerFilter = textFilter.toLowerCase()
+          result = result.filter((app) => {
+            return (
+              (app.displayName?.toLowerCase()?.includes(lowerFilter) ?? false) ||
+              (app.productName?.toLowerCase()?.includes(lowerFilter) ?? false) ||
+              (app.appId?.toLowerCase()?.includes(lowerFilter) ?? false)
+            )
+          })
+        }
+        return result
       })
     )
   }
@@ -290,31 +303,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       )
   }
   private prepareDialogTranslations(): void {
-    this.dataViewControlsTranslations$ = this.translate
-      .get([
-        'APP.DISPLAY_NAME',
-        'APP.TYPE',
-        'ACTIONS.SEARCH.SORT_BY',
-        'ACTIONS.SEARCH.FILTER.LABEL',
-        'ACTIONS.SEARCH.FILTER.OF',
-        'ACTIONS.SEARCH.SORT_DIRECTION_ASC',
-        'ACTIONS.SEARCH.SORT_DIRECTION_DESC'
-      ])
-      .pipe(
-        map((data) => {
-          return {
-            sortDropdownPlaceholder: data['ACTIONS.SEARCH.SORT_BY'],
-            filterInputPlaceholder: data['ACTIONS.SEARCH.FILTER.LABEL'],
-            filterInputTooltip: data['ACTIONS.SEARCH.FILTER.OF'] + data['APP.DISPLAY_NAME'] + ', ' + data['APP.TYPE'],
-            sortOrderTooltips: {
-              ascending: data['ACTIONS.SEARCH.SORT_DIRECTION_ASC'],
-              descending: data['ACTIONS.SEARCH.SORT_DIRECTION_DESC']
-            },
-            sortDropdownTooltip: data['ACTIONS.SEARCH.SORT_BY']
-          } as DataViewControlTranslations
-        })
-      )
-
     this.actions$ = this.translate
       .get([
         'ACTIONS.EXPORT.LABEL',
@@ -421,8 +409,29 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
   }
-  public onSortChange(field: string): void {
-    this.sortField = field
+  public onGlobalFilter(value: string): void {
+    this.filterText = value
+    this.textFilterValue$.next(value)
+  }
+  public onClearGlobalFilter(): void {
+    this.filterText = ''
+    this.textFilterValue$.next(undefined)
+  }
+  public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {
+    if (typeof sort === 'string') {
+      this.sortField = sort
+      return
+    }
+
+    this.sortField = sort.sortColumn
+    this.sortDirection = sort.sortDirection
+    let sortOrder = 0
+    if (sort.sortDirection === DataSortDirection.ASCENDING) {
+      sortOrder = -1
+    } else if (sort.sortDirection === DataSortDirection.DESCENDING) {
+      sortOrder = 1
+    }
+    this.sortOrder = sortOrder
   }
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1

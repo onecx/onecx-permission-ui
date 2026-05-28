@@ -8,7 +8,7 @@
   >
   </ocx-page-header>
 
-  <ocx-page-content>
+  <ocx-content>
     <p-message
       *ngIf="exceptionKey"
       id="apm_app_detail_permission_table_data_access_issue"
@@ -25,14 +25,17 @@
     ></p-message>
 
     <p-table
+      showGridlines
       *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
-      styleClass="pb-2 px-2 sm:px-3"
+      styleClass="app-detail-permission-table"
       [columns]="rolesFiltered"
       [value]="permissionRows"
       [globalFilterFields]="filterBy"
       (onSort)="onSortPermissionTable()"
+      (onFilter)="onPermissionTableFiltered()"
+      (onPage)="onPermissionTablePaged()"
       [scrollable]="true"
       scrollHeight="590px"
       [rows]="10"
@@ -43,7 +46,6 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
-        @let filterEmptyStyle = { 'background-color': 'var(--emphasis-lower)', opacity: 'var(--disabled-opacity)' };
         <div class="py-1 px-0 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
@@ -69,38 +71,40 @@
             </div>
           </div>
           <!-- Permission Filter -->
-          <div class="p-inputgroup w-18rem sm:w-22rem sm:mx-1">
-            <button
-              id="apm_app_detail_permission_table_filter_contains"
-              class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border"
-              [class.p-highlight]="this.filterMode === 'contains'"
-              (click)="onFilterModeChange('=')"
-              [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
-              [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              =
-            </button>
-            <button
-              id="apm_app_detail_permission_table_filter_not_contains"
-              class="p-inputgroup-addon text-lg font-bold text-center pseudo-selectbutton data-view-control-border white-space-nowrap"
-              [class.p-highlight]="this.filterMode === 'notContains'"
-              (click)="onFilterModeChange('!=')"
-              [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
-              [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              !=
-            </button>
-            <span class="p-float-label">
+          <p-inputgroup styleClass="permission-filter-group w-18rem sm:w-22rem sm:mx-1 align-self-start">
+            <p-inputgroup-addon styleClass="permission-filter-addon">
+              <p-button
+                id="apm_app_detail_permission_table_filter_contains"
+                label="="
+                styleClass="text-lg font-bold text-center"
+                [severity]="this.filterMode === this.filterModeContains ? 'primary' : 'secondary'"
+                (onClick)="onFilterModeChange('=')"
+                [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
+                [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-button>
+            </p-inputgroup-addon>
+            <p-inputgroup-addon styleClass="permission-filter-addon">
+              <p-button
+                id="apm_app_detail_permission_table_filter_not_contains"
+                label="!="
+                styleClass="text-lg font-bold text-center white-space-nowrap"
+                [severity]="this.filterMode === this.filterModeNotContains ? 'primary' : 'secondary'"
+                (onClick)="onFilterModeChange('!=')"
+                [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
+                [pTooltip]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-button>
+            </p-inputgroup-addon>
+            <p-floatlabel variant="on">
               <input
                 #permissionNameFilter
                 id="apm_app_detail_permission_table_filter"
                 pInputText
                 type="text"
-                class="w-13rem sm:w-15rem data-view-control-border text-responsive"
+                class="w-full text-responsive"
                 (input)="tableFilter($any($event.target).value)"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                 [pTooltip]="
@@ -115,25 +119,25 @@
               <label for="apm_app_detail_permission_table_filter" aria-hidden="true">
                 {{ 'DIALOG.DETAIL.FILTER.PERMISSION.LABEL' | translate }}
               </label>
-            </span>
-            <button
-              id="apm_app_detail_permission_table_filter_clear"
-              class="p-inputgroup-addon bg-primary pseudo-button pi pi-filter-slash"
-              [ngClass]="{
-                'bg-primary': permissionNameFilter.value !== '',
-                'p-disabled': permissionNameFilter.value === ''
-              }"
-              [ngStyle]="permissionNameFilter.value === '' ? filterEmptyStyle : null"
-              (click)="onClearTableFilter()"
-              [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-              [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></button>
-          </div>
+            </p-floatlabel>
+            <p-inputgroup-addon styleClass="permission-filter-addon">
+              <p-button
+                id="apm_app_detail_permission_table_filter_clear"
+                icon="pi pi-filter-slash"
+                [severity]="permissionNameFilter.value !== '' ? 'primary' : 'secondary'"
+                [disabled]="permissionNameFilter.value === ''"
+                (onClick)="onClearTableFilter()"
+                [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-button
+            ></p-inputgroup-addon>
+          </p-inputgroup>
           <p-button
             id="apm_app_detail_permission_table_reload_button"
-            styleClass="h-full"
+            class="reload-btn-host"
+            styleClass="reload-btn"
             icon="pi pi-refresh"
             (onClick)="onReload()"
             [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
@@ -187,7 +191,7 @@
               type="button"
               id="apm_app_detail_permission_table_header_permission_tools"
               class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
-              (click)="showPermissionTools = !showPermissionTools"
+              (click)="onPermissionToolsToggle()"
               [ariaLabel]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               tooltipPosition="top"
@@ -209,18 +213,23 @@
               >
                 <span class="pi pi-plus-circle" aria-hidden="true"></span>
               </button>
-              <p-checkbox
-                type="text"
-                inputId="apm_app_detail_permission_table_header_display_additional_row_data"
-                styleClass="ml-2 cursor-auto shadow-none"
-                [(ngModel)]="displayAdditionalRowData"
-                [binary]="true"
-                [label]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
-                [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
-                [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              ></p-checkbox>
+              <div class="ml-2 flex align-items-center gap-2">
+                <p-checkbox
+                  type="text"
+                  inputId="apm_app_detail_permission_table_header_display_additional_row_data"
+                  styleClass="cursor-auto shadow-none"
+                  [(ngModel)]="displayAdditionalRowData"
+                  (onChange)="onDisplayAdditionalRowDataToggle()"
+                  [binary]="true"
+                  [ariaLabel]="'DIALOG.DETAIL.ADDITIONAL_INFO' | translate"
+                  [pTooltip]="'DIALOG.DETAIL.ADDITIONAL_INFO.TOOLTIP' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                ></p-checkbox>
+                <label for="apm_app_detail_permission_table_header_display_additional_row_data">
+                  {{ 'DIALOG.DETAIL.ADDITIONAL_INFO' | translate }}
+                </label>
+              </div>
             </ng-container>
           </section>
           <!-- roles -->
@@ -246,7 +255,7 @@
                   type="button"
                   id="apm_app_detail_permission_table_header_permission_tools"
                   class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
-                  (click)="showRoleTools = !showRoleTools"
+                  (click)="onRoleToolsToggle()"
                   [ariaLabel]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   [pTooltip]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   tooltipPosition="top"
@@ -299,74 +308,78 @@
                   </button>
                 </ng-container>
               </div>
-              <div *ngIf="roles.length > 3 || emptyRolesExist" class="ml-2 p-inputgroup">
-                <span class="p-float-label">
+              <p-inputgroup *ngIf="roles.length > 3 || emptyRolesExist" styleClass="ml-2 role-filter-group">
+                <p-floatlabel variant="on">
                   <input
                     #roleNameFilter
                     pInputText
-                    type="text"
                     id="apm_app_detail_permission_table_header_role_filter"
-                    class="w-15rem adata-view-control-border text-responsive"
-                    (input)="onRoleFilterChange(roleNameFilter.value)"
-                    [ariaLabel]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
+                    type="text"
+                    class="w-13rem sm:w-16rem text-responsive"
+                    (input)="onRoleFilterInputChange($any($event.target).value)"
+                    [attr.aria-label]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     [pTooltip]="'DIALOG.DETAIL.ROLES.FILTER.TOOLTIP' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   />
                   <label for="apm_app_detail_permission_table_header_role_filter" aria-hidden="true">
-                    {{ 'DIALOG.DETAIL.ROLES.FILTER' | translate }}</label
-                  >
-                </span>
-                <button
-                  id="apm_app_detail_permission_table_header_role_filter_clear"
-                  class="p-inputgroup-addon pseudo-button border-right-1 pi pi-filter-slash"
-                  [ngClass]="{
-                    'bg-primary': roleNameFilter.value !== '',
-                    'p-disabled': roleNameFilter.value === ''
-                  }"
-                  [ngStyle]="roleNameFilter.value === '' ? filterEmptyStyle : null"
-                  (click)="roleNameFilter.value = ''; onRoleFilterChange('')"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-                  [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                ></button>
-                <button
-                  id="apm_app_detail_permission_table_header_role_hide_empty_roles"
-                  class="p-inputgroup-addon pseudo-button border-right-1 pi pi-times-circle"
-                  [ngClass]="{ 'bg-primary': hideEmptyRoles, 'p-disabled': !emptyRolesExist }"
-                  (click)="hideEmptyRoles = !hideEmptyRoles"
-                  [attr.aria-label]="
-                    'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES' | translate
-                  "
-                  [pTooltip]="
-                    'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES.TOOLTIP' | translate
-                  "
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                ></button>
-                @if (!this.currentApp.isProduct) {
-                  <button
-                    id="apm_app_detail_permission_table_header_role_hide_non_workspace_roles"
-                    class="p-inputgroup-addon pseudo-button"
-                    [ngClass]="{ 'bg-primary': showNonWorkspaceRoles, 'p-disabled': !emptyRolesExist }"
-                    (click)="showNonWorkspaceRoles = !showNonWorkspaceRoles"
-                    [attr.aria-label]="
-                      'DIALOG.DETAIL.ROLES.' + (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') + '_NON_WORKSPACE_ROLES'
-                        | translate
+                    {{ 'DIALOG.DETAIL.ROLES.FILTER.LABEL' | translate }}
+                  </label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                  <p-button
+                    id="apm_app_detail_permission_table_header_role_filter_clear"
+                    icon="pi pi-filter-slash"
+                    [severity]="roleNameFilter.value !== '' ? 'primary' : 'secondary'"
+                    [disabled]="roleNameFilter.value === ''"
+                    (onClick)="onRoleFilterClear(roleNameFilter)"
+                    [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                    [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></p-button>
+                </p-inputgroup-addon>
+                <p-inputgroup-addon>
+                  <p-button
+                    id="apm_app_detail_permission_table_header_role_hide_empty_roles"
+                    icon="pi pi-times-circle"
+                    [severity]="hideEmptyRoles ? 'primary' : 'secondary'"
+                    [disabled]="!emptyRolesExist"
+                    (onClick)="onHideEmptyRolesToggle()"
+                    [ariaLabel]="
+                      'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES' | translate
                     "
                     [pTooltip]="
-                      'DIALOG.DETAIL.ROLES.' +
-                        (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') +
-                        '_NON_WORKSPACE_ROLES.TOOLTIP' | translate
+                      'DIALOG.DETAIL.ROLES.' + (hideEmptyRoles ? 'SHOW' : 'HIDE') + '_EMPTY_ROLES.TOOLTIP' | translate
                     "
                     tooltipPosition="top"
                     tooltipEvent="hover"
-                  >
-                    W
-                  </button>
+                  ></p-button>
+                </p-inputgroup-addon>
+                @if (!this.currentApp.isProduct) {
+                  <p-inputgroup-addon>
+                    <p-button
+                      id="apm_app_detail_permission_table_header_role_hide_non_workspace_roles"
+                      label="W"
+                      styleClass="font-bold"
+                      [severity]="showNonWorkspaceRoles ? 'primary' : 'secondary'"
+                      [disabled]="!emptyRolesExist"
+                      (onClick)="onShowNonWorkspaceRolesToggle()"
+                      [ariaLabel]="
+                        'DIALOG.DETAIL.ROLES.' + (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') + '_NON_WORKSPACE_ROLES'
+                          | translate
+                      "
+                      [pTooltip]="
+                        'DIALOG.DETAIL.ROLES.' +
+                          (showNonWorkspaceRoles ? 'HIDE' : 'SHOW') +
+                          '_NON_WORKSPACE_ROLES.TOOLTIP' | translate
+                      "
+                      tooltipPosition="top"
+                      tooltipEvent="hover"
+                    ></p-button>
+                  </p-inputgroup-addon>
                 }
-              </div>
+              </p-inputgroup>
             </div>
           </section>
         </div>
@@ -414,8 +427,8 @@
           >
             <div *ngIf="currentApp.isProduct">{{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</div>
             <div *ngIf="!currentApp.isProduct" class="flex flex-wrap sm:flex-nowrap align-items-center">
-              <span #filterProduct class="p-float-label inline-block">
-                <p-dropdown
+              <p-floatlabel variant="on" #filterProduct class="inline-block app-detail-product-filter">
+                <p-select
                   id="apm_app_detail_permission_table_filter_product_name"
                   styleClass="w-full clear-icon-used"
                   [appendTo]="'body'"
@@ -428,11 +441,11 @@
                   [pTooltip]="'DIALOG.DETAIL.FILTER.PRODUCT.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                ></p-dropdown>
+                ></p-select>
                 <label for="apm_app_detail_permission_table_filter_product_name" aria-hidden="true">
                   {{ 'DIALOG.DETAIL.FILTER.PRODUCT' | translate }}</label
                 >
-              </span>
+              </p-floatlabel>
               <button
                 pbutton
                 type="button"
@@ -454,8 +467,8 @@
             class="sm:p-2 vertical-align-bottom border-bottom-2 border-right-2"
           >
             <div class="flex flex-wrap sm:white-space-nowrap align-items-center">
-              <span #filterApp class="flex-grow-1 p-float-label inline-block">
-                <p-dropdown
+              <p-floatlabel variant="on" #filterApp class="flex-grow-1 inline-block">
+                <p-select
                   id="apm_app_detail_permission_table_filter_app_id"
                   styleClass="w-10rem md:w-full clear-icon-used"
                   [appendTo]="'body'"
@@ -468,7 +481,7 @@
                   [pTooltip]="'DIALOG.DETAIL.FILTER.APPS.TOOLTIP' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                ></p-dropdown>
+                ></p-select>
                 <label
                   for="apm_app_detail_permission_table_filter_app_id"
                   class="text-sm sm:text-base"
@@ -476,7 +489,7 @@
                 >
                   {{ 'DIALOG.DETAIL.FILTER.APPS' | translate }}</label
                 >
-              </span>
+              </p-floatlabel>
               <button
                 pbutton
                 type="button"
@@ -785,7 +798,7 @@
         </tr>
       </ng-template>
     </p-table>
-  </ocx-page-content>
+  </ocx-content>
 </ocx-portal-page>
 
 <app-role-detail
