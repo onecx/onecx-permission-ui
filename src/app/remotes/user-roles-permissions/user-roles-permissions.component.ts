@@ -4,7 +4,9 @@ import {
   EventEmitter,
   NO_ERRORS_SCHEMA,
   CUSTOM_ELEMENTS_SCHEMA,
+  Inject,
   Input,
+  Optional,
   OnInit,
   OnChanges,
   ViewChild
@@ -25,7 +27,7 @@ import {
 } from '@onecx/angular-remote-components'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { RemoteComponentConfig } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
   AssignmentAPIService,
@@ -100,7 +102,9 @@ export class OneCXUserRolesPermissionsComponent
     private readonly slotService: SlotService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    @Optional() @Inject(REMOTE_COMPONENT_CONFIG)
+    private readonly injectedRemoteComponentConfig$: ReplaySubject<RemoteComponentConfig> | null
   ) {
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
@@ -112,6 +116,7 @@ export class OneCXUserRolesPermissionsComponent
 
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.injectedRemoteComponentConfig$?.next(remoteComponentConfig)
     this.remoteComponentConfig$.next(remoteComponentConfig)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)

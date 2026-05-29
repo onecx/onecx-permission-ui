@@ -1,3 +1,5 @@
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.scss';
 @import '/src/app/_apm-mixins.scss';
 
 @include tabview-fix-color-selected-tab;
@@ -12,6 +14,12 @@
   }
 }
 :host ::ng-deep {
+
+  #apm_user_assignments_table_filter_clear,
+  #apm_user_assignments_table_filter_clear .p-button {
+    height: 100% !important;
+  }
+
   .p-dialog .p-dialog-content {
     border-bottom-left-radius: var(--border-radius) !important;
     border-bottom-right-radius: var(--border-radius) !important;
