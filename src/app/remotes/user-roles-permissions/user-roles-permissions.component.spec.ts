@@ -376,6 +376,44 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
   })
 
+  describe('listbox option mapping', () => {
+    it('should map role names to SelectItem options and reuse cached result', () => {
+      initializeComponent()
+      const items: UserAssignment[] = [{ roleName: 'Role B' }, { roleName: 'Role A' }, { roleName: 'Role B' }]
+      const extractSpy = spyOn(component, 'extractFilterItems').and.callThrough()
+
+      const first = component.getRoleListboxOptions(items)
+      const second = component.getRoleListboxOptions(items)
+
+      expect(first).toEqual([
+        { label: 'Role A', value: 'Role A' },
+        { label: 'Role B', value: 'Role B' }
+      ])
+      expect(second).toBe(first)
+      expect(extractSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should map product names to SelectItem options and reuse cached result', () => {
+      initializeComponent()
+      const items: UserAssignment[] = [
+        { productName: 'Product B' },
+        { productName: 'Product A' },
+        { productName: 'Product B' }
+      ]
+      const extractSpy = spyOn(component, 'extractFilterItems').and.callThrough()
+
+      const first = component.getProductListboxOptions(items)
+      const second = component.getProductListboxOptions(items)
+
+      expect(first).toEqual([
+        { label: 'Product A', value: 'Product A' },
+        { label: 'Product B', value: 'Product B' }
+      ])
+      expect(second).toBe(first)
+      expect(extractSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('onClearFilterUserAssignmentTable', () => {
     it('should clear the permissionTableFilter value if it exists', () => {
       component.permissionTableFilter = {
