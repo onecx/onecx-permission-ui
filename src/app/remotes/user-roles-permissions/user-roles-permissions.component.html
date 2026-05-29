@@ -219,7 +219,7 @@
         <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
           <!-- ROLES -->
           <section
-            *ngIf="extractFilterItems(items, 'roleName') as roles"
+            *ngIf="getRoleListboxOptions(items) as roles"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
@@ -234,6 +234,8 @@
               id="apm_user_roles_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="roles"
+              optionLabel="label"
+              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
@@ -242,7 +244,7 @@
 
           <!-- PRODUCTS -->
           <section
-            *ngIf="extractFilterItems(items, 'productName') as products"
+            *ngIf="getProductListboxOptions(items) as products"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
@@ -257,6 +259,8 @@
               id="apm_user_products_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="products"
+              optionLabel="label"
+              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"

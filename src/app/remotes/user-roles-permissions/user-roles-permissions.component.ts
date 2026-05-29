@@ -96,6 +96,8 @@ export class OneCXUserRolesPermissionsComponent
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
   private readonly remoteComponentConfig$ = new ReplaySubject<RemoteComponentConfig>(1)
+  private readonly roleListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
+  private readonly productListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
 
   constructor(
     private readonly user: UserService,
@@ -103,7 +105,8 @@ export class OneCXUserRolesPermissionsComponent
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
     private readonly translate: TranslateService,
-    @Optional() @Inject(REMOTE_COMPONENT_CONFIG)
+    @Optional()
+    @Inject(REMOTE_COMPONENT_CONFIG)
     private readonly injectedRemoteComponentConfig$: ReplaySubject<RemoteComponentConfig> | null
   ) {
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
@@ -275,6 +278,24 @@ export class OneCXUserRolesPermissionsComponent
     })
     arr.sort(sortByLocale)
     return arr
+  }
+
+  public getRoleListboxOptions(items: UserAssignment[]): SelectItem[] {
+    const cached = this.roleListboxOptionsCache.get(items)
+    if (cached) return cached
+
+    const options = this.extractFilterItems(items, 'roleName').map((value) => ({ label: value, value }))
+    this.roleListboxOptionsCache.set(items, options)
+    return options
+  }
+
+  public getProductListboxOptions(items: UserAssignment[]): SelectItem[] {
+    const cached = this.productListboxOptionsCache.get(items)
+    if (cached) return cached
+
+    const options = this.extractFilterItems(items, 'productName').map((value) => ({ label: value, value }))
+    this.productListboxOptionsCache.set(items, options)
+    return options
   }
 
   public applyGlobalFilter($event: Event, primengTable: Table): void {
