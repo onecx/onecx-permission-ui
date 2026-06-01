@@ -8,24 +8,21 @@
   >
   </ocx-page-header>
 
-  <ocx-content>
+  <ocx-content class="ocx-content">
     <p-message
       *ngIf="exceptionKey"
       id="apm_app_detail_permission_table_data_access_issue"
       severity="error"
-      styleClass="m-3"
       [text]="exceptionKey | translate"
     ></p-message>
     <p-message
       *ngIf="!exceptionKey && (loadingApp || loadingPermissions)"
       id="apm_app_detail_permission_table_data_loading"
       severity="info"
-      styleClass="m-3"
       [text]="'ACTIONS.LOADING' | translate"
     ></p-message>
 
     <p-table
-      showGridlines
       *ngIf="!exceptionKey && !loadingApp && !loadingPermissions"
       #permissionTable
       id="apm_app_detail_permission_table"
@@ -46,7 +43,7 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
-        <div class="py-1 px-0 flex flex-wrap justify-content-between gap-2">
+        <div class="p-0 mb-2 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
               class="slim-selectbutton align-items-start search-criteria-selectbutton"
@@ -67,7 +64,7 @@
                   ><span [id]="'pm_app_detail_quick_filter_' + item.value"> {{ item.label }}</span></ng-template
                 >
               </p-selectButton>
-              <div class="p-selectbutton-subtitle opacity-80">{{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}</div>
+              <div class="text-sm opacity-80">{{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}</div>
             </div>
           </div>
           <!-- Permission Filter -->
@@ -146,7 +143,9 @@
             tooltipEvent="hover"
           ></p-button>
         </div>
-        <div class="relative pt-1 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3">
+        <div
+          class="relative pt-1 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
+        >
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">
             <ul

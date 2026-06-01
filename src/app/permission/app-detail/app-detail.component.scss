@@ -4,6 +4,8 @@
 @include word-break-all;
 @include ocx-text-responsive;
 @include ocx-floatlabel;
+@include ocx-content;
+@include ocx-p-message;
 
 /*
 @include correct-select-button;
@@ -15,6 +17,14 @@
 @include table-responsive-columns;
 
 :host ::ng-deep {
+  // Fix hover color
+  #apm_app_detail_permission_table_filter_clear > button {
+    &:not(:disabled):hover {
+      background: var(--onecx-permission-onecx-permission-ui-button-primary-hover-background) !important;
+    }
+  }
+
+  /*
   .p-datatable.app-detail-permission-table {
     padding: 0;
     border: none;
@@ -63,25 +73,26 @@
       margin-top: 1rem;
     }
   }
+
+  .p-datatable-gridlines .p-datatable-thead > tr > th,
+  .p-datatable-gridlines .p-datatable-tbody > tr > th,
+  */
+
+  .p-datatable-header {
+    border: none;
+    border-radius: 0;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
   .p-datatable {
     .p-datatable-thead > tr > th:last-of-type,
     .p-datatable-tbody > tr > td:last-of-type {
       border-right: unset;
     }
-  }
-  .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0 0.5rem;
-    height: 3rem;
-  }
-  .app-detail-permission-table {
-    border: none;
-    border-radius: 0;
-  }
-
-  // Fix hover color
-  #apm_app_detail_permission_table_filter_clear > button {
-    &:not(:disabled):hover {
-      background: var(--onecx-permission-onecx-permission-ui-button-primary-hover-background) !important;
+    .p-datatable-tbody > tr > td {
+      padding: 0 0.5rem;
+      height: 3rem;
     }
   }
 

@@ -2,32 +2,22 @@
 
 @include ocx-text-responsive;
 @include ocx-floatlabel;
+@include ocx-content;
 @include ocx-modal-dialog;
 @include ocx-interactive-data-view-fixes;
 @include correct-file-upload;
 @include media-queries;
 
-/*
-@include correct-data-view-control;
-@include correct-search-criteria;
-@include correct-select-button;
-@include search-criteria-select-button;
-@include search-criteria-select-button-slim;
-*/
-
 :host ::ng-deep {
-  .ocx-content > div {
-    margin-bottom: 0 !important;
-  }
-
-  .p-dataview .p-dataview-content {
-    margin: 0.75rem 0rem 0rem 0rem;
-    padding: 0.5rem 0rem 0rem 0rem;
-    border-top: var(--table-header-border);
-  }
-  .p-dataview-content > .grid {
-    gap: 0 !important;
-    padding: 0 0.5rem;
+  .p-card-body {
+    padding: 0.5rem;
+    .p-card-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      row-gap: 0.5rem;
+    }
   }
 
   // Make the top center area flexible to allow centering the quick filter and/or other controls
@@ -38,6 +28,16 @@
           flex: 1 1 0% !important;
         }
       }
+    }
+  }
+
+  .p-dataview .p-dataview-content {
+    margin: 0.75rem 0rem 0rem 0rem;
+    padding: 0.5rem 0rem 0rem 0rem;
+    border-top: var(--table-header-border);
+    > .grid {
+      gap: 0 !important;
+      padding: 0 0.5rem;
     }
   }
 }
