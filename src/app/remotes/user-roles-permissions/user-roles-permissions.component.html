@@ -73,6 +73,7 @@
           [columns]="columns"
           [value]="items"
           [styleClass]="'p-datatable-striped pb-2' + (!userId ? ' px-2 sm:px-3' : '')"
+          [tableStyle]="{ 'text-align': 'center' }"
           [scrollable]="true"
           [autoLayout]="true"
           [globalFilterFields]="['role', 'action', 'resource', 'productName']"
@@ -87,10 +88,10 @@
           <ng-template pTemplate="caption">
             <div class="flex flex-wrap justify-content-between align-items-center gap-2">
               <div role="note">{{ 'USER_PERMISSIONS.TABS.PERMISSIONS.TITLE' | translate }} {{ items.length }}</div>
-              <div class="p-inputgroup w-auto">
-                <span class="p-inputgroup-addon data-view-control-border">
-                  <span class="pi pi-filter"></span>
-                </span>
+              <p-inputgroup class="w-auto">
+                <p-inputgroup-addon>
+                  <span class="pi pi-filter" aria-hidden="true"></span>
+                </p-inputgroup-addon>
                 <p-floatlabel variant="on">
                   <input
                     #permissionNameFilter
@@ -116,28 +117,31 @@
                     {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}
                   </label>
                 </p-floatlabel>
-                <button
-                  tabindex="0"
-                  id="apm_user_assignments_table_filter_clear"
-                  class="p-inputgroup-addon bg-primary cursor-pointer pi pi-filter-slash"
-                  (click)="onClearFilterUserAssignmentTable()"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-                  [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                ></button>
-              </div>
+                <p-inputgroup-addon class="filter-clear-addon">
+                  <p-button
+                    id="apm_user_assignments_table_filter_clear"
+                    styleClass="p-button-icon-only"
+                    (onClick)="onClearFilterUserAssignmentTable(); permissionTable.filterGlobal('', 'contains')"
+                    [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                    [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  >
+                    <span class="pi pi-filter-slash" aria-hidden="true"></span>
+                  </p-button>
+                </p-inputgroup-addon>
+              </p-inputgroup>
               <p-button
                 type="button"
                 id="apm_user_assignments_table_header_action_reload"
-                styleClass="h-full sm:ml-3"
-                icon="pi pi-refresh"
+                styleClass="p-button-icon-only h-full sm:ml-3"
                 (onClick)="onReload()"
                 [ariaLabel]="'ACTIONS.SEARCH.RELOAD' | translate"
                 [pTooltip]="'ACTIONS.SEARCH.RELOAD' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
+                <span class="pi pi-refresh" aria-hidden="true"></span>
               </p-button>
             </div>
           </ng-template>
@@ -157,17 +161,19 @@
               <th
                 *ngFor="let col of columns"
                 [id]="'apm_user_assignments_table_header_' + col.field"
-                class="p-2"
+                class="p-2 text-center"
                 [pSortableColumn]="col.field"
                 [attr.aria-label]="col.tooltip | translate"
                 [pTooltip]="col.tooltip | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-                <div class="flex flex-row flex-nowrap justify-content-center align-items-center">
+                <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-1">
                   <ng-container *ngIf="!col.filter"> {{ col.header | translate }} </ng-container>
-                  <p-floatlabel variant="on" *ngIf="col.filter" class="atext-left">
+                  <p-floatlabel variant="on" *ngIf="col.filter" class="inline-block w-10rem">
                     <p-select
+                      class="w-10rem"
+                      size="small"
                       [id]="'apm_user_assignments_table_filter_' + col.field"
                       (onClick)="$event.stopPropagation()"
                       (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
@@ -192,7 +198,7 @@
               <td
                 *ngFor="let col of columns"
                 [id]="'apm_user_assignments_table_row_' + i + '_' + col.field"
-                class="text-center"
+                class="text-center align-middle"
               >
                 {{ item[col.field] }}
               </td>
@@ -213,7 +219,7 @@
         <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
           <!-- ROLES -->
           <section
-            *ngIf="extractFilterItems(items, 'roleName') as roles"
+            *ngIf="getRoleListboxOptions(items) as roles"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
@@ -228,6 +234,8 @@
               id="apm_user_roles_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="roles"
+              optionLabel="label"
+              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
@@ -236,7 +244,7 @@
 
           <!-- PRODUCTS -->
           <section
-            *ngIf="extractFilterItems(items, 'productName') as products"
+            *ngIf="getProductListboxOptions(items) as products"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
@@ -251,6 +259,8 @@
               id="apm_user_products_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="products"
+              optionLabel="label"
+              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"
