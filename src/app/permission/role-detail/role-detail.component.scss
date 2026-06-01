@@ -1,7 +1,7 @@
 @import '/src/app/_apm-mixins.scss';
 
-@include dialog-footer-buttons;
-@include displaying-text-responsive;
+@include ocx-text-responsive;
+@include ocx-modal-dialog;
 
 // IAM roles
 @include listbox-zebra-rows;
