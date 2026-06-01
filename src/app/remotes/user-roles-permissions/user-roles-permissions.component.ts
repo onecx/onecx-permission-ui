@@ -4,7 +4,9 @@ import {
   EventEmitter,
   NO_ERRORS_SCHEMA,
   CUSTOM_ELEMENTS_SCHEMA,
+  Inject,
   Input,
+  Optional,
   OnInit,
   OnChanges,
   ViewChild
@@ -25,7 +27,7 @@ import {
 } from '@onecx/angular-remote-components'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { RemoteComponentConfig } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
   AssignmentAPIService,
@@ -94,13 +96,18 @@ export class OneCXUserRolesPermissionsComponent
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
   private readonly remoteComponentConfig$ = new ReplaySubject<RemoteComponentConfig>(1)
+  private readonly roleListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
+  private readonly productListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
 
   constructor(
     private readonly user: UserService,
     private readonly slotService: SlotService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    @Optional()
+    @Inject(REMOTE_COMPONENT_CONFIG)
+    private readonly injectedRemoteComponentConfig$: ReplaySubject<RemoteComponentConfig> | null
   ) {
     this.user.lang$.subscribe((lang) => this.translate.use(lang))
     this.columns = this.prepareColumn()
@@ -112,6 +119,7 @@ export class OneCXUserRolesPermissionsComponent
 
   // initialize this component as remote
   public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.injectedRemoteComponentConfig$?.next(remoteComponentConfig)
     this.remoteComponentConfig$.next(remoteComponentConfig)
     this.userApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
@@ -270,6 +278,24 @@ export class OneCXUserRolesPermissionsComponent
     })
     arr.sort(sortByLocale)
     return arr
+  }
+
+  public getRoleListboxOptions(items: UserAssignment[]): SelectItem[] {
+    const cached = this.roleListboxOptionsCache.get(items)
+    if (cached) return cached
+
+    const options = this.extractFilterItems(items, 'roleName').map((value) => ({ label: value, value }))
+    this.roleListboxOptionsCache.set(items, options)
+    return options
+  }
+
+  public getProductListboxOptions(items: UserAssignment[]): SelectItem[] {
+    const cached = this.productListboxOptionsCache.get(items)
+    if (cached) return cached
+
+    const options = this.extractFilterItems(items, 'productName').map((value) => ({ label: value, value }))
+    this.productListboxOptionsCache.set(items, options)
+    return options
   }
 
   public applyGlobalFilter($event: Event, primengTable: Table): void {
