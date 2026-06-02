@@ -5,8 +5,27 @@
 /* portal core */
 @import 'node_modules/@onecx/angular-accelerator/assets/styles.scss';
 
+/*
+ * Global styles for OneCX Permission UI
+ *
+ * This style setting is required here because some of adhoc created DOM elements (e.g. dropdownn lists) are under the DOM root.
+*/
 // disable default settings of dialogs created by portal dialog service
 .buttonDialogScrollableContent {
   max-height: unset !important;
   margin-bottom: 1rem !important;
+}
+
+.p-select-option {
+  padding: 0.5rem 1rem !important;
+}
+/* ZEBRA rows on dropdown */
+.p-select-overlay .p-select-list *:nth-child(even) .p-select-option {
+  background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
+}
+/* ZEBRA rows on listbox */
+.p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled) {
+  &:nth-child(even) {
+    background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
+  }
 }
