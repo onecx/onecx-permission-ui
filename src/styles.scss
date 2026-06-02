@@ -8,7 +8,7 @@
 /*
  * Global styles for OneCX Permission UI
  *
- * This style setting is required here because some of adhoc created DOM elements (e.g. dropdownn lists) are under the DOM root.
+ * These styles are required here because there are some DOM elements created on the fly (e.g. dropdownn lists) are under the DOM root.
 */
 // disable default settings of dialogs created by portal dialog service
 .buttonDialogScrollableContent {

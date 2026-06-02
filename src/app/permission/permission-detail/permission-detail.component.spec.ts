@@ -45,8 +45,7 @@ describe('PermissionDetailComponent', () => {
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', [
     'createPermission',
-    'updatePermission',
-    'deletePermission'
+    'updatePermission'
   ])
   const langSubject = new BehaviorSubject('en')
 
@@ -94,7 +93,6 @@ describe('PermissionDetailComponent', () => {
     component.permission = permRow
     permApiSpy.createPermission.and.returnValue(of({}) as any)
     permApiSpy.updatePermission.and.returnValue(of({}) as any)
-    permApiSpy.deletePermission.and.returnValue(of({}) as any)
     fixture.detectChanges()
   })
 
@@ -229,32 +227,6 @@ describe('PermissionDetailComponent', () => {
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.PERMISSION_NOK' })
       expect(console.error).toHaveBeenCalledWith('updatePermission', errorResponse)
-    })
-  })
-
-  describe('Permission deletion', () => {
-    it('should delete a permission - ignoring because missing permission id', () => {
-      component.onDeleteConfirmation()
-    })
-
-    it('should delete a permission', () => {
-      component.permission = { ...permRow, id: 'id' }
-
-      component.onDeleteConfirmation()
-
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
-    })
-
-    it('should display error when trying to delete a permission failed', () => {
-      const errorResponse = { error: 'Error on deleting a permission', status: 400 }
-      permApiSpy.deletePermission.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-      component.permission = { ...permRow, id: 'id' }
-
-      component.onDeleteConfirmation()
-
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
-      expect(console.error).toHaveBeenCalledWith('deletePermission', errorResponse)
     })
   })
 })

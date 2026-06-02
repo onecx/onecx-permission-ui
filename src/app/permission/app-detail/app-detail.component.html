@@ -820,9 +820,14 @@
   [permission]="permission"
   [changeMode]="changeMode"
   [displayDetailDialog]="displayPermissionDetailDialog"
-  [displayDeleteDialog]="displayPermissionDeleteDialog"
   (dataChanged)="onDetailChanged($event)"
 ></app-permission-detail>
+
+<app-permission-delete
+  [permission]="permission"
+  [displayDeleteDialog]="displayPermissionDeleteDialog"
+  (dataChanged)="onDetailChanged($event)"
+></app-permission-delete>
 
 <app-permission-export
   [products]="productNames"

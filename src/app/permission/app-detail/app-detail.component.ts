@@ -34,6 +34,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
+import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
@@ -66,6 +67,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     PortalPageComponent,
     SharedModule,
     RoleDetailComponent,
+    PermissionDeleteComponent,
     PermissionDetailComponent,
     PermissionExportComponent
   ],
