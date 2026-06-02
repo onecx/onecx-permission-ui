@@ -3,18 +3,14 @@
 @include danger-action;
 @include word-break-all;
 @include ocx-text-responsive;
-@include ocx-floatlabel;
+@include ocx-p-floatlabel;
 @include ocx-content;
 @include ocx-p-message;
-
-/*
-@include correct-select-button;
-@include search-criteria-select-button;
-@include search-criteria-select-button-slim;
-@include compact-dropdown-list-items;
-*/
+@include ocx-p-inputgroup;
+@include table-zebra-rows;
 @include table-inline-buttons;
 @include table-responsive-columns;
+@include listbox-zebra-rows;
 
 :host ::ng-deep {
   // Fix hover color
@@ -24,16 +20,20 @@
     }
   }
 
+  .button-letter-icon {
+    padding: 1px 4px !important;
+  }
+
+  .p-select {
+    &.clear-icon-used .p-inputtext {
+      padding-right: 2rem;
+    }
+    .p-inputtext {
+      padding: 0.6rem;
+    }
+  }
+
   /*
-  .p-datatable.app-detail-permission-table {
-    padding: 0;
-    border: none;
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-header {
-    padding: 0 0.5rem 0.5rem;
-    border: none;
-    border-bottom: 1px solid var(--onecx-permission-onecx-permission-ui-datatable-header-border-color);
-  }
   @media screen and (min-width: 576px) {
     .p-datatable.app-detail-permission-table .p-datatable-header {
       padding-top: 1rem;
@@ -73,9 +73,6 @@
       margin-top: 1rem;
     }
   }
-
-  .p-datatable-gridlines .p-datatable-thead > tr > th,
-  .p-datatable-gridlines .p-datatable-tbody > tr > th,
   */
 
   .p-datatable-header {
@@ -96,55 +93,8 @@
     }
   }
 
-  .button-letter-icon {
-    padding: 1px 4px !important;
-  }
-
-  .p-select {
-    &.clear-icon-used .p-inputtext {
-      padding-right: 2rem;
-    }
-    .p-inputtext {
-      padding: 0.6rem;
-    }
-  }
   .app-detail-product-filter {
     min-width: 13rem;
-  }
-
-  .role-filter-group > .p-inputgroupaddon {
-    padding: 0;
-    width: auto;
-    aspect-ratio: 1;
-    align-self: stretch;
-    flex: 0 0 auto;
-    overflow: hidden;
-    align-items: stretch;
-  }
-
-  .permission-filter-group > .permission-filter-addon > p-button {
-    display: flex;
-    width: 100%;
-    height: 100%;
-  }
-
-  .role-filter-group > .p-inputgroupaddon > p-button {
-    display: flex;
-    width: auto;
-    height: 100%;
-  }
-
-  .permission-filter-group > .permission-filter-addon > p-button > .p-button {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-  }
-
-  .role-filter-group > .p-inputgroupaddon > p-button > .p-button {
-    width: auto;
-    min-width: var(--p-button-icon-only-width, 2.5rem);
-    height: 100%;
-    margin: 0;
   }
 
   .text-ellipsis-3-lines {

@@ -43,7 +43,7 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
-        <div class="p-0 mb-2 flex flex-wrap justify-content-between gap-2">
+        <div class="p-0 flex flex-wrap justify-content-between gap-2">
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
               class="slim-selectbutton align-items-start search-criteria-selectbutton"
@@ -67,13 +67,17 @@
               <div class="text-sm opacity-80">{{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}</div>
             </div>
           </div>
+
           <!-- Permission Filter -->
-          <p-inputgroup styleClass="permission-filter-group w-18rem sm:w-22rem sm:mx-1 align-self-start">
-            <p-inputgroup-addon styleClass="permission-filter-addon">
+          <!--
+          -->
+          <p-inputgroup styleClass="w-18rem sm:w-22rem sm:mx-1 align-self-start">
+            <p-inputgroup-addon>
               <p-button
                 id="apm_app_detail_permission_table_filter_contains"
                 label="="
                 styleClass="text-lg font-bold text-center"
+                [disabled]="this.filterMode === this.filterModeContains"
                 [severity]="this.filterMode === this.filterModeContains ? 'primary' : 'secondary'"
                 (onClick)="onFilterModeChange('=')"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_CONTAINS' | translate"
@@ -82,11 +86,12 @@
                 tooltipEvent="hover"
               ></p-button>
             </p-inputgroup-addon>
-            <p-inputgroup-addon styleClass="permission-filter-addon">
+            <p-inputgroup-addon>
               <p-button
                 id="apm_app_detail_permission_table_filter_not_contains"
                 label="!="
                 styleClass="text-lg font-bold text-center white-space-nowrap"
+                [disabled]="this.filterMode === this.filterModeNotContains"
                 [severity]="this.filterMode === this.filterModeNotContains ? 'primary' : 'secondary'"
                 (onClick)="onFilterModeChange('!=')"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.MODE_NOT_CONTAINS' | translate"
@@ -104,12 +109,7 @@
                 class="w-full text-responsive"
                 (input)="tableFilter($any($event.target).value)"
                 [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
-                [pTooltip]="
-                  ('ACTIONS.SEARCH.FILTER.OF' | translate) +
-                  ('PERMISSION.RESOURCE' | translate) +
-                  ', ' +
-                  ('PERMISSION.ACTION' | translate)
-                "
+                [pTooltip]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
@@ -131,6 +131,7 @@
               ></p-button
             ></p-inputgroup-addon>
           </p-inputgroup>
+
           <p-button
             id="apm_app_detail_permission_table_reload_button"
             class="reload-btn-host"
@@ -143,8 +144,10 @@
             tooltipEvent="hover"
           ></p-button>
         </div>
+
+        <!-- SUMMARY AND TOOLS ROW -->
         <div
-          class="relative pt-1 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
+          class="relative py-2 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
         >
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">

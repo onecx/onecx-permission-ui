@@ -3,7 +3,7 @@
  * **********************************************/
 
 // Manipulate PrimeNG p-floatlabel
-@mixin ocx-floatlabel {
+@mixin ocx-p-floatlabel {
   .p-floatlabel {
     // Move the label only if embedded input control (input, textarea etc.) is filled or focussed
     &.p-floatlabel-over {
@@ -46,14 +46,6 @@
   }
 }
 
-@mixin compact-dropdown-list-items {
-  :host ::ng-deep {
-    .p-select-overlay .p-select-list .p-select-option {
-      padding: 0.4rem 1rem !important;
-    }
-  }
-}
-
 @mixin invisible {
   :host ::ng-deep {
     .invisible {
@@ -83,22 +75,20 @@
   }
 }
 
-@mixin prepare-inputgroup {
+@mixin ocx-p-inputgroup {
   :host ::ng-deep {
-    .inputgroup-dropdown-with-link {
-      border-right: none;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    .input-field-correction .p-inputtext {
-      padding-top: 1rem !important;
-      padding-bottom: 0.5rem !important;
-    }
-    .pseudo-button:hover {
-      background: var(--button-hover-bg) !important;
-      cursor: pointer;
-      * {
-        background: var(--button-hover-bg) !important;
+    .p-inputgroupaddon {
+      > p-button {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        > .p-button {
+          flex-grow: 1;
+        }
+      }
+      /* Manipulate the addon wrapper depends on button state inside */
+      &:has(.p-button.p-button-primary) {
+        border: none;
       }
     }
   }
@@ -399,36 +389,28 @@
     }
   }
 }
-@mixin dropdown-zebra-rows {
-  :host ::ng-deep {
-    .p-select-overlay .p-select-list *:nth-child(even) .p-select-option {
-      background-color: var(--table-body-row-even-bg);
-    }
-  }
-}
+/* ZEBRA rows on dropdown => see styles.scss*/
+
 @mixin listbox-zebra-rows {
   :host ::ng-deep {
     .p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled) {
       &:nth-child(even) {
-        background-color: var(--table-body-row-even-bg);
+        background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
       }
     }
   }
 }
 @mixin picklist-zebra-rows {
   :host ::ng-deep {
-    .p-picklist-list li {
-      &:nth-child(even) {
-        background-color: var(--table-body-row-even-bg);
-      }
+    .p-picklist-list li:nth-child(even) {
+      background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
     }
   }
 }
 @mixin table-zebra-rows {
   :host ::ng-deep {
-    /* this works only on non-frozen columns (table.p-datatable-striped does not work) */
-    .p-datatable .p-datatable-tbody > tr:nth-child(even) > td:not(.p-frozen-column) {
-      background-color: var(--table-body-row-even-bg);
+    .p-datatable .p-datatable-tbody > tr:nth-child(even) > td {
+      background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
     }
   }
 }

@@ -103,7 +103,8 @@
         (sorted)="onSortChange($event)"
       >
         <ng-template #topCenter>
-          <div class="app-search-top-center flex flex-wrap flex-row justify-content-between align-items-center gap-2">
+          <div class="flex flex-wrap flex-row justify-content-between align-items-center gap-2">
+            <!-- QUICK Filter -->
             <section
               class="app-search-quickfilter slim-selectbutton align-items-start search-criteria-selectbutton"
               [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
@@ -125,35 +126,43 @@
               </p-selectButton>
             </section>
 
-            <div class="app-search-filterbox">
-              <p-inputgroup class="w-auto">
-                <p-inputgroup-addon>
-                  <i class="pi pi-filter" aria-hidden="true"></i>
-                </p-inputgroup-addon>
-                <p-floatlabel variant="on">
-                  <input
-                    #dvFilterInput
-                    id="apm_app_search_filter"
-                    type="text"
-                    pInputText
-                    [value]="filterText"
-                    (input)="onGlobalFilter(dvFilterInput.value)"
-                    [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
-                    tooltipPosition="top"
-                    tooltipEvent="hover"
-                    [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
-                  />
-                  <label for="apm_app_search_filter" aria-hidden="true">
-                    {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}
-                  </label>
-                </p-floatlabel>
+            <!-- GLOBAL Filter -->
+            <p-inputgroup class="w-auto">
+              <p-inputgroup-addon>
+                <i class="pi pi-filter" aria-hidden="true"></i>
+              </p-inputgroup-addon>
+              <p-floatlabel variant="on">
+                <input
+                  #dvFilterInput
+                  id="apm_app_search_filter"
+                  type="text"
+                  pInputText
+                  [value]="filterText"
+                  (input)="onGlobalFilter(dvFilterInput.value)"
+                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                  [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                />
+                <label for="apm_app_search_filter" aria-hidden="true">
+                  {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}
+                </label>
+              </p-floatlabel>
+              <p-inputgroup-addon>
                 <p-button
                   icon="pi pi-filter-slash"
+                  [severity]="dvFilterInput.value !== '' ? 'primary' : 'secondary'"
+                  [disabled]="dvFilterInput.value === ''"
                   (onClick)="dvFilterInput.value = ''; onClearGlobalFilter()"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
                 />
-              </p-inputgroup>
-            </div>
+              </p-inputgroup-addon>
+            </p-inputgroup>
+
+            <!-- ALIGNMENT Helper -->
             <div>&nbsp;</div>
           </div>
         </ng-template>
