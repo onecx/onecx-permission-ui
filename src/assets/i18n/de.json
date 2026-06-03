@@ -18,8 +18,8 @@
       "ROLE": "Rolle erstellen",
       "ROLE.TOOLTIP": "Eine neue Rolle erstellen",
       "IAM_ROLES": "IDM Rollen auswählen",
-      "IAM_ROLES.TOOLTIP": "IDM Rollen auswählen damit sie hier verwendet werden können",
-      "WORKSPACE_ROLES.TOOLTIP": "Fehlende Workspace Rollen übernehmen damit sie hier verwendet werden können",
+      "IAM_ROLES.TOOLTIP": "IDM Rollen auswählen und hinzufügen, um sie hier zu verwenden.",
+      "WORKSPACE_ROLES.TOOLTIP": "Fehlende Workspace Rollen übernehmen, damit sie hier verwendet werden können.",
       "MESSAGE": {
         "APPLICATION_OK": "Die App wurde erfolgreich erstellt",
         "APPLICATION_NOK": "Ein Fehler ist aufgetreten. Die App wurde nicht erstellt.",
@@ -120,9 +120,9 @@
     },
     "VIEW": {
       "ROLE": "Rollendetails",
-      "ROLE.TOOLS": "Rollen verwalten - ein/ausblenden",
+      "ROLE.TOOLS": "Rollen verwalten:<br/>ein/ausblenden",
       "PERMISSION": "Berechtigungsdetails",
-      "PERMISSION.TOOLS": "Berechtigungen verwalten - ein/ausblenden"
+      "PERMISSION.TOOLS": "Berechtigungen verwalten:<br/>ein/ausblenden"
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",

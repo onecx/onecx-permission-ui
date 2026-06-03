@@ -532,13 +532,13 @@ describe('AppDetailComponent', () => {
    */
   describe('create role', () => {
     it('should do something onAddIAMRoles', () => {
-      component.onAddIAMRoles(new MouseEvent('click'))
+      component.onAddIAMRoles(new Event('click'))
 
       expect(component.displayIamRolesDialog).toBeTrue()
     })
 
     it('should return if there are no missing ws roles', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       spyOn(ev, 'stopPropagation')
       component.missingWorkspaceRoles = false
 
@@ -548,7 +548,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should create a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       spyOn(ev, 'stopPropagation')
       component.missingWorkspaceRoles = true
       component.currentApp.workspaceDetails = wsDetails
@@ -563,7 +563,7 @@ describe('AppDetailComponent', () => {
       const errorResponse = { error: 'Error on creating a role', status: 400 }
       roleApiSpy.createRole.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       spyOn(ev, 'stopPropagation')
       component.missingWorkspaceRoles = true
       component.currentApp.workspaceDetails = wsDetails
@@ -956,7 +956,7 @@ describe('AppDetailComponent', () => {
    */
   describe('table column sorting', () => {
     it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-alt'
 
@@ -975,7 +975,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-amount-down'
 
@@ -994,7 +994,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-amount-up-alt'
 
@@ -1014,7 +1014,7 @@ describe('AppDetailComponent', () => {
 
     /* same tests for sortByProduct */
     it('should set icon class and sort by descending when icon class is "sort-alt"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-alt'
 
@@ -1033,7 +1033,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set icon class sort by ascending when icon class is "sort-amount-down"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-amount-down'
 
@@ -1052,7 +1052,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set icon class and sort by descending when icon class is "sort-amount-up-alt"', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       const icon = document.createElement('span')
       icon.className = 'pi pi-sort-amount-up-alt'
 
@@ -1155,7 +1155,7 @@ describe('AppDetailComponent', () => {
    */
   describe('role mgmt', () => {
     it('should call stopPropagation and set role to undefined in onCreateRole', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onCreateRole(event)
@@ -1167,7 +1167,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call stopPropagation and set role in onEditRole', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onEditRole(event, role1)
@@ -1179,7 +1179,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call stopPropagation and set role in onDeleteRole', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onDeleteRole(event, role1)
@@ -1214,7 +1214,7 @@ describe('AppDetailComponent', () => {
    */
   describe('permission mgmt', () => {
     it('should call onDetailPermission in create mode onCopyPermission', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(component, 'onDetailPermission')
 
       component.onCopyPermission(event, permRow)
@@ -1224,7 +1224,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call stopPropagation and set role to undefined in onCreatePermission', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onCreatePermission(event)
@@ -1236,7 +1236,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call stopPropagation and set permission onDetailPermission', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onDetailPermission(event, permRow)
@@ -1248,7 +1248,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set changeMode according to operator onDetailPermission', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onDetailPermission(event, permRow)
@@ -1263,7 +1263,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should call stopPropagation and set permission in onDeletePermission', () => {
-      const event = new MouseEvent('click')
+      const event = new Event('click')
       spyOn(event, 'stopPropagation')
 
       component.onDeletePermission(event, permRow)
@@ -1289,41 +1289,45 @@ describe('AppDetailComponent', () => {
    */
   describe('assignment mgmt', () => {
     it('should create an assignment', () => {
-      component.onAssignPermission(permRow, role1)
+      const ev = new Event('click')
+      component.onAssignPermission(ev, permRow, role1)
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_SUCCESS' })
     })
 
     it('should display error if assignment fails', () => {
+      const ev = new Event('click')
       const errorResponse = { error: 'Error on creating an assignment', status: 400 }
       assApiSpy.createAssignment.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.onAssignPermission(permRow, role1)
+      component.onAssignPermission(ev, permRow, role1)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
       expect(console.error).toHaveBeenCalledWith('createAssignment', errorResponse)
     })
 
     it('should delete an assignment', () => {
-      component.onRemovePermission(permRow, role1)
+      const ev = new Event('click')
+      component.onRemovePermission(ev, permRow, role1)
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
     })
 
     it('should display error if assignment creation fails', () => {
+      const ev = new Event('click')
       const errorResponse = { error: 'Error on removing a permission', status: 400 }
       assApiSpy.deleteAssignment.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.onRemovePermission(permRow, role1)
+      component.onRemovePermission(ev, permRow, role1)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
       expect(console.error).toHaveBeenCalledWith('deleteAssignment', errorResponse)
     })
 
     it('should grant all permissions: assign all perms of an app to a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterAppValue = 'appId1'
 
       component.ngOnInit()
@@ -1333,10 +1337,10 @@ describe('AppDetailComponent', () => {
     })
 
     it('should display error when trying to grant all permissions: assign all perms of an app to a role', () => {
+      const ev = new Event('click')
       const errorResponse = { error: 'Error on grant all permissions with app filter', status: 400 }
       assApiSpy.grantRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      const ev = new MouseEvent('click')
       component.filterAppValue = 'appId1'
 
       component.ngOnInit()
@@ -1347,7 +1351,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterProductValue = 'productAppId'
 
       component.ngOnInit()
@@ -1360,7 +1364,7 @@ describe('AppDetailComponent', () => {
       const errorResponse = { error: 'Error on grant all permissions with product filter', status: 400 }
       assApiSpy.grantRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterProductValue = 'productAppId'
 
       component.ngOnInit()
@@ -1371,7 +1375,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should grant all permissions: assign all perms of all apps of a product to a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
 
       component.ngOnInit()
       component.onGrantAllPermissions(ev, role1)
@@ -1380,7 +1384,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should revoke all permissions: remove all perms of an app to a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterAppValue = 'appId1'
 
       component.ngOnInit()
@@ -1393,7 +1397,7 @@ describe('AppDetailComponent', () => {
       const errorResponse = { error: 'Error on revoke all permissions with app filter', status: 400 }
       assApiSpy.revokeRoleApplicationAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterAppValue = 'appId1'
 
       component.ngOnInit()
@@ -1404,7 +1408,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 1: for a product', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterProductValue = 'productAppId'
 
       component.ngOnInit()
@@ -1414,7 +1418,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should revoke all permissions: remove all assgnmts of all apps of a product to a role - case 2a) in a workspace for a selected product', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterProductValue = 'productAppId'
       component.urlParamAppType = 'WORKSPACE'
 
@@ -1441,7 +1445,7 @@ describe('AppDetailComponent', () => {
       const errorResponse = { error: 'Error on revoke all permissions with product filter', status: 400 }
       assApiSpy.revokeRoleProductsAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
       component.filterProductValue = 'productAppId'
 
       component.ngOnInit()
@@ -1452,7 +1456,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should revoke all permissions: remove all assgmts of a role', () => {
-      const ev = new MouseEvent('click')
+      const ev = new Event('click')
 
       component.ngOnInit()
       component.onRevokeAllPermissions(ev, role1)

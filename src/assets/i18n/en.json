@@ -120,9 +120,9 @@
     },
     "VIEW": {
       "ROLE": "Role Details",
-      "ROLE.TOOLS": "Manage Roles - on/off",
+      "ROLE.TOOLS": "Manage Roles:<br/>on/off",
       "PERMISSION": "Permission Details",
-      "PERMISSION.TOOLS": "Manage Permissions - on/off"
+      "PERMISSION.TOOLS": "Manage Permissions:<br/>on/off"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",

@@ -495,7 +495,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onCreateWorkspaceRoles(ev: MouseEvent) {
+  public onCreateWorkspaceRoles(ev: Event) {
     ev.stopPropagation()
     if (!this.missingWorkspaceRoles) return
     // get workspace roles which are not exists within permission product
@@ -734,7 +734,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * Filter: Product, AppId
    */
-  public onFilterItemSortIcon(ev: MouseEvent, icon: HTMLSpanElement, field: string) {
+  public onFilterItemSortIcon(ev: Event, icon: HTMLSpanElement, field: string) {
     ev.stopPropagation()
     this.permissionTable?.clear()
     switch (icon.className) {
@@ -820,19 +820,19 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *  ROLE
    ****************************************************************************
    */
-  public onCreateRole(ev?: MouseEvent): void {
+  public onCreateRole(ev?: Event): void {
     ev?.stopPropagation()
     this.role = undefined
     this.changeMode = 'CREATE'
     this.displayRoleDetailDialog = true
   }
-  public onEditRole(ev: MouseEvent, role: Role): void {
+  public onEditRole(ev: Event, role: Role): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'EDIT'
     this.displayRoleDetailDialog = true
   }
-  public onDeleteRole(ev: MouseEvent, role: Role): void {
+  public onDeleteRole(ev: Event, role: Role): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'DELETE'
@@ -853,7 +853,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayIamRolesDialog = false
     if (changed) this.loadData()
   }
-  public onAddIAMRoles(ev: MouseEvent) {
+  public onAddIAMRoles(ev: Event) {
     this.displayIamRolesDialog = true
   }
 
@@ -861,23 +861,23 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *  PERMISSION
    ****************************************************************************
    */
-  public onCopyPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+  public onCopyPermission(ev: Event, perm: PermissionViewRow): void {
     this.onDetailPermission(ev, { ...perm, operator: false })
     this.changeMode = 'CREATE'
   }
-  public onCreatePermission(ev?: MouseEvent): void {
+  public onCreatePermission(ev?: Event): void {
     ev?.stopPropagation()
     this.role = undefined
     this.changeMode = 'CREATE'
     this.displayPermissionDetailDialog = true
   }
-  public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
+  public onDetailPermission(ev: Event, perm: PermissionViewRow): void {
     ev.stopPropagation()
     this.permission = { ...perm }
     this.changeMode = this.permission.mandatory ? 'VIEW' : 'EDIT'
     this.displayPermissionDetailDialog = true
   }
-  public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
+  public onDeletePermission(ev: Event, perm: PermissionViewRow): void {
     ev.stopPropagation()
     this.permission = { ...perm }
     this.changeMode = 'DELETE'
@@ -894,7 +894,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    *  ASSIGNMENTS    => grant + revoke permissions => assign roles
    ****************************************************************************
    */
-  public onAssignPermission(permRow: PermissionViewRow, role: Role): void {
+  public onAssignPermission(ev: Event, permRow: PermissionViewRow, role: Role): void {
+    ev.stopPropagation()
     this.assApi
       .createAssignment({
         createAssignmentRequest: {
@@ -914,7 +915,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         }
       })
   }
-  public onRemovePermission(permRow: PermissionViewRow, role: Role): void {
+  public onRemovePermission(ev: Event, permRow: PermissionViewRow, role: Role): void {
+    ev.stopPropagation()
     this.assApi.deleteAssignment({ id: permRow.roles[role.id!] } as DeleteAssignmentRequestParams).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_SUCCESS' })
@@ -935,7 +937,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * 3.1 If currentApp is PRODUCT then this product must be used
    * 3.2 If currentApp is WORKSPACE then all product are used
    */
-  public onGrantAllPermissions(ev: MouseEvent, role: Role): void {
+  public onGrantAllPermissions(ev: Event, role: Role): void {
     const productNames = this.prepareProductListForBulkOperation()
     const response = function (outside: any, fname: string) {
       return {
@@ -973,7 +975,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /* REVOKE ALL depends on what ALL means:
      ... see GRANT description above
   */
-  public onRevokeAllPermissions(ev: MouseEvent, role: Role): void {
+  public onRevokeAllPermissions(ev: Event, role: Role): void {
     const productNames = this.prepareProductListForBulkOperation()
     const response = function (outside: any, fname: string) {
       return {
