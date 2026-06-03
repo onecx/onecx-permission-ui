@@ -5,7 +5,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
@@ -782,23 +781,22 @@ describe('AppSearchComponent', () => {
    */
   describe('on import file select', () => {
     let file: File
-    let event: any = {}
+    let event: FileSelectEvent = {
+      originalEvent: new Event('change'),
+      files: [],
+      currentFiles: []
+    }
 
     beforeEach(() => {
       file = new File(['file content'], 'test.txt', { type: 'text/plain' })
-      const fileList: FileList = {
-        0: file,
-        length: 1,
-        item: (index: number) => file
-      }
-      event = { files: fileList }
+      event = { originalEvent: new Event('change'), files: [file], currentFiles: [file] }
     })
 
     it('should select a file and parse', async () => {
       const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
 
-      await component.onImportFileSelect(event as any as FileSelectEvent)
+      await component.onImportFileSelect(event)
 
       expect(file.text).toHaveBeenCalled()
       expect(component.importAssignmentItem).toEqual(JSON.parse(mockContent))
