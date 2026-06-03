@@ -37,6 +37,7 @@ import {
 import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
+import { RoleDeleteComponent } from 'src/app/permission/role-delete/role-delete.component'
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
@@ -66,6 +67,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     AngularAcceleratorModule,
     PortalPageComponent,
     SharedModule,
+    RoleDeleteComponent,
     RoleDetailComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
@@ -836,6 +838,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'DELETE'
     this.displayRoleDeleteDialog = true
   }
+  public onDeleteRoleChanges(changed: boolean) {
+    this.role = undefined
+    this.changeMode = 'VIEW'
+    this.displayRoleDeleteDialog = false
+    if (changed) this.loadData()
+  }
   public onChanges(changed: boolean) {
     this.role = undefined
     this.changeMode = 'VIEW'
@@ -875,7 +883,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'DELETE'
     this.displayPermissionDeleteDialog = true
   }
-  public onDeleteChanges(changed: boolean) {
+  public onDeletePermissionChanges(changed: boolean) {
     this.permission = undefined
     this.changeMode = 'VIEW'
     this.displayPermissionDeleteDialog = false

@@ -50,7 +50,6 @@ export class RoleDetailComponent implements OnInit, OnChanges {
   @Input() roles: Role[] = []
   @Input() changeMode: ChangeMode = 'VIEW'
   @Input() displayDetailDialog = false
-  @Input() displayDeleteDialog = false
   @Input() displayIamRolesDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
@@ -181,23 +180,6 @@ export class RoleDetailComponent implements OnInit, OnChanges {
         }
       })
     }
-  }
-
-  /**
-   * Delete a ROLE
-   */
-  public onDeleteConfirmation() {
-    if (!this.role?.id) return
-    this.roleApi.deleteRole({ id: this.role?.id }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-        this.dataChanged.emit(true)
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error('deleteRole', err)
-      }
-    })
   }
 
   public onAddIamRoles() {

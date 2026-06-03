@@ -12,6 +12,7 @@ import { LabelResolver } from 'src/app/shared/label.resolver'
 import { AppSearchComponent } from './app-search/app-search.component'
 import { AppDetailComponent } from './app-detail/app-detail.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
+import { RoleDeleteComponent } from './role-delete/role-delete.component'
 import { PermissionDeleteComponent } from './permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from './permission-detail/permission-detail.component'
 import { PermissionExportComponent } from './permission-export/permission-export.component'
@@ -49,6 +50,7 @@ const routes: Routes = [
     AppSearchComponent,
     AppDetailComponent,
     RoleDetailComponent,
+    RoleDeleteComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
     PermissionExportComponent,

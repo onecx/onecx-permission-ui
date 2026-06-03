@@ -31,8 +31,7 @@ describe('RoleDetailComponent', () => {
   const roleApiSpy = {
     searchAvailableRoles: jasmine.createSpy('searchAvailableRoles').and.returnValue(of({})),
     createRole: jasmine.createSpy('createRole').and.returnValue(of({})),
-    updateRole: jasmine.createSpy('updateRole').and.returnValue(of({})),
-    deleteRole: jasmine.createSpy('deleteRole').and.returnValue(of({}))
+    updateRole: jasmine.createSpy('updateRole').and.returnValue(of({}))
   }
   const slotServiceSpy = {
     init: jasmine.createSpy('init'),
@@ -88,7 +87,6 @@ describe('RoleDetailComponent', () => {
     roleApiSpy.searchAvailableRoles.calls.reset()
     roleApiSpy.createRole.calls.reset()
     roleApiSpy.updateRole.calls.reset()
-    roleApiSpy.deleteRole.calls.reset()
   })
 
   it('should create', () => {
@@ -188,31 +186,6 @@ describe('RoleDetailComponent', () => {
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.ROLE_NOK' })
       expect(console.error).toHaveBeenCalledWith('updateRole', errorResponse)
-    })
-  })
-
-  describe('oneDeleteConfirmation', () => {
-    it('should delete a role - ignoring because missing role id', () => {
-      component.onDeleteConfirmation()
-    })
-
-    it('should delete a role', () => {
-      component.role = { ...role, id: 'id' }
-      component.onDeleteConfirmation()
-
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-    })
-
-    it('should display error when trying to delete a role failed', () => {
-      const errorResponse = { status: 400, statusText: 'Error on deleting a role' }
-      roleApiSpy.deleteRole.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-      component.role = { ...role, id: 'id' }
-
-      component.onDeleteConfirmation()
-
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-      expect(console.error).toHaveBeenCalledWith('deleteRole', errorResponse)
     })
   })
 

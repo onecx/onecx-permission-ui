@@ -1199,6 +1199,14 @@ describe('AppDetailComponent', () => {
       expect(component.displayRoleDetailDialog).toBeFalse()
       expect(component.displayRoleDeleteDialog).toBeFalse()
     })
+
+    it('should reset state and call loadData if changed in onDeleteRoleChanges', () => {
+      component.onDeleteRoleChanges(true)
+
+      expect(component.role).toBeUndefined()
+      expect(component.changeMode).toBe('VIEW')
+      expect(component.displayRoleDeleteDialog).toBeFalse()
+    })
   })
 
   /*
@@ -1266,8 +1274,8 @@ describe('AppDetailComponent', () => {
       expect(component.displayPermissionDeleteDialog).toBeTrue()
     })
 
-    it('should reset state and call loadData if changed in onDeleteChanges', () => {
-      component.onDeleteChanges(true)
+    it('should reset state and call loadData if changed in onDeletePermissionChanges', () => {
+      component.onDeletePermissionChanges(true)
 
       expect(component.permission).toBeUndefined()
       expect(component.changeMode).toBe('VIEW')

@@ -810,9 +810,14 @@
   [changeMode]="changeMode"
   [displayIamRolesDialog]="displayIamRolesDialog"
   [displayDetailDialog]="displayRoleDetailDialog"
-  [displayDeleteDialog]="displayRoleDeleteDialog"
   (dataChanged)="onChanges($event)"
 ></app-role-detail>
+
+<app-role-delete
+  [role]="role"
+  [visible]="displayRoleDeleteDialog"
+  (dataChanged)="onDeleteRoleChanges($event)"
+></app-role-delete>
 
 <app-permission-detail
   [currentApp]="currentApp"
@@ -826,7 +831,7 @@
 <app-permission-delete
   [permission]="permission"
   [visible]="displayPermissionDeleteDialog"
-  (dataChanged)="onDeleteChanges($event)"
+  (dataChanged)="onDeletePermissionChanges($event)"
 ></app-permission-delete>
 
 <app-permission-export
