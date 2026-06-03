@@ -151,7 +151,6 @@
                 <p-button
                   icon="pi pi-filter-slash"
                   (onClick)="globalFilterInput.value = ''; onClearGlobalFilter()"
-                  (onKeydown.enter)="globalFilterInput.value = ''; onClearGlobalFilter()"
                   [severity]="globalFilterInput.value !== '' ? 'primary' : 'secondary'"
                   [disabled]="globalFilterInput.value === ''"
                   [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
@@ -201,6 +200,7 @@
 <p-dialog
   [header]="'ACTIONS.IMPORT.ASSIGNMENT' | translate"
   [(visible)]="displayImportDialog"
+  (onHide)="onCloseImportDialog()"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -274,7 +274,7 @@
 
 <!-- EXPORT -->
 <app-permission-export
-  [products]="productNames"
+  [products]="(productNames$ | async) ?? []"
   [listedProductsHeaderKey]="'ACTIONS.EXPORT.APPLICATION_LIST'"
   [(displayExportDialog)]="displayExportDialog"
 ></app-permission-export>

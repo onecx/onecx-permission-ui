@@ -310,17 +310,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onExport(): void {
     if (this.currentApp.appType === 'WORKSPACE') {
-      this.currentApp.workspaceDetails?.products?.forEach((detail) => {
-        this.productNames.push(detail.productName!)
-      })
-      this.productNames.sort(sortByLocale)
+      this.productNames =
+        this.currentApp.workspaceDetails?.products?.map((p) => p.productName!).sort(sortByLocale) ?? []
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
     } else if (this.currentApp.isProduct) {
       this.productNames = [this.currentApp.name!]
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.OF_APPLICATION'
     }
-    this.displayPermissionExportDialog = true
+    if (this.productNames.length > 0) this.displayPermissionExportDialog = true
   }
+
   public onRoleFilterChange(val: string): void {
     if (val !== '' && this.rolesFiltered && this.roles.length > 0)
       this.rolesFiltered = this.roles.filter((r) => r.name!.includes(val))
@@ -444,16 +443,16 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       })
     )
     // search permissions for products (from app or workspace)
-    const productNames: string[] = []
+    const prodNames: string[] = []
     if (this.currentApp.isProduct) {
-      productNames.push(this.currentApp.productName!)
+      prodNames.push(this.currentApp.productName!)
     } else
       this.currentApp.workspaceDetails?.products?.map((p) => {
-        productNames.push(p.productName!)
+        prodNames.push(p.productName!)
       })
     this.permissions$ = this.permApi
       .searchPermissions({
-        permissionSearchCriteria: { productNames: productNames, pageSize: this.pageSize }
+        permissionSearchCriteria: { productNames: prodNames, pageSize: this.pageSize }
       })
       .pipe(
         map((result: PermissionPageResult) => result.stream ?? []),
@@ -940,7 +939,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * 3.2 If currentApp is WORKSPACE then all product are used
    */
   public onGrantAllPermissions(ev: Event, role: Role): void {
-    const productNames = this.prepareProductListForBulkOperation()
+    const prodNames = this.prepareProductListForBulkOperation()
     const response = function (outside: any, fname: string) {
       return {
         next: () => {
@@ -954,13 +953,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
     if (this.filterAppValue) {
-      if (productNames.length === 1)
+      if (prodNames.length === 1)
         this.assApi
           .grantRoleApplicationAssignments({
             roleId: role.id,
             createRoleApplicationAssignmentRequest: {
               appId: this.filterAppValue,
-              productName: productNames[0]
+              productName: prodNames[0]
             }
           } as GrantRoleApplicationAssignmentsRequestParams)
           .subscribe(response(this, 'grantRoleApplicationAssignments'))
@@ -968,7 +967,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.assApi
         .grantRoleProductsAssignments({
           roleId: role.id,
-          createRoleProductsAssignmentRequest: { productNames: productNames }
+          createRoleProductsAssignmentRequest: { productNames: prodNames }
         } as GrantRoleProductsAssignmentsRequestParams)
         .subscribe(response(this, 'grantRoleProductsAssignments'))
     }
@@ -978,7 +977,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
      ... see GRANT description above
   */
   public onRevokeAllPermissions(ev: Event, role: Role): void {
-    const productNames = this.prepareProductListForBulkOperation()
+    const prodNames = this.prepareProductListForBulkOperation()
     const response = function (outside: any, fname: string) {
       return {
         next: () => {
@@ -992,13 +991,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
     if (this.filterAppValue) {
-      if (productNames.length === 1)
+      if (prodNames.length === 1)
         this.assApi
           .revokeRoleApplicationAssignments({
             roleId: role.id,
             revokeRoleApplicationAssignmentRequest: {
               appId: this.filterAppValue,
-              productName: productNames[0]
+              productName: prodNames[0]
             }
           } as RevokeRoleApplicationAssignmentsRequestParams)
           .subscribe(response(this, 'revokeRoleApplicationAssignments'))
@@ -1006,7 +1005,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.assApi
         .revokeRoleProductsAssignments({
           roleId: role.id,
-          revokeRoleProductsAssignmentRequest: { productNames: productNames }
+          revokeRoleProductsAssignmentRequest: { productNames: prodNames }
         } as RevokeRoleProductsAssignmentsRequestParams)
         .subscribe(response(this, 'revokeRoleProductsAssignments'))
     }

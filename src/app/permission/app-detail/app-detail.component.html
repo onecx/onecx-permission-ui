@@ -194,6 +194,7 @@
               id="apm_app_detail_permission_table_header_permission_tools"
               class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
               (click)="onPermissionToolsToggle()"
+              (keydown.enter)="onPermissionToolsToggle()"
               [ariaLabel]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               tooltipPosition="top"
@@ -209,6 +210,7 @@
                 id="apm_app_detail_permission_table_header_permission_create"
                 class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                 (click)="onCreatePermission()"
+                (keydown.enter)="onCreatePermission()"
                 [ariaLabel]="'ACTIONS.CREATE.PERMISSION' | translate"
                 [pTooltip]="'ACTIONS.CREATE.PERMISSION' | translate"
                 tooltipPosition="top"
@@ -532,9 +534,9 @@
               class="flex flex-row gap-0 justify-content-center align-items-center white-space-nowrap"
             >
               <button
+                *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                 pbutton
                 type="button"
-                *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                 [id]="'app_detail_permission_table_col_' + role.id + '_action_grant_all'"
                 class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onGrantAllPermissions($event, role)"
@@ -548,9 +550,9 @@
               </button>
               @if (role.hasAssignments) {
                 <button
+                  *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                   pbutton
                   type="button"
-                  *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                   class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onRevokeAllPermissions($event, role)"
@@ -582,9 +584,9 @@
                   role="note"
                 ></div>
                 <button
+                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#EDIT')"
                   pbutton
                   type="button"
-                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#EDIT')"
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                   class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onEditRole($event, role)"
@@ -597,9 +599,9 @@
                   <span class="pi pi-pencil" aria-hidden="true"></span>
                 </button>
                 <button
+                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#DELETE')"
                   pbutton
                   type="button"
-                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#DELETE')"
                   [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                   class="p-1 mr-0 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onDeleteRole($event, role)"
@@ -635,9 +637,9 @@
               class="white-space-nowrap text-center"
             >
               <button
+                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                 pbutton
                 type="button"
-                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                 [id]="'app_detail_permission_table_row_' + row + '_action_edit'"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onDetailPermission($event, rowData)"
@@ -781,12 +783,12 @@
                   *ngIf="!rowData.roles[role.id]"
                   pbutton
                   type="button"
-                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                  (click)="onAssignPermission($event, rowData, role)"
-                  (keydown.enter)="onAssignPermission($event, rowData, role)"
                   [id]="
                     'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_not_assigned'
                   "
+                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
+                  (click)="onAssignPermission($event, rowData, role)"
+                  (keydown.enter)="onAssignPermission($event, rowData, role)"
                   [ariaLabel]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   [pTooltip]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
@@ -800,10 +802,10 @@
                   *ngIf="rowData.roles[role.id]"
                   pbutton
                   type="button"
+                  [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
                   class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onRemovePermission($event, rowData, role)"
                   (keydown.enter)="onRemovePermission($event, rowData, role)"
-                  [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
                   [ariaLabel]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   [pTooltip]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"

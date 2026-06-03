@@ -63,9 +63,10 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "ASSIGNMENT": "Berechtigungszuordnungen exportieren",
+      "HINT": "Exporttiert werden nur die Berechtigungszuordnungen (Berechtigung <=> Rolle) der ausgewählten Applikationen, nicht die Berechtigungen oder Rollen selbst.",
+      "ASSIGNMENT": "Export Zuordnungen",
       "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen exportieren",
-      "ITEMS_SELECTED.TOOLTIP": "Die ausgewählten Berechtigungen exportieren (lokal speichern)",
+      "ITEMS_SELECTED.TOOLTIP": "Die Zuweisungen der ausgewählten Applikationen exportieren (lokal speichern).",
       "MESSAGE": {
         "ASSIGNMENT.EXPORT_OK": "Die Berechtigungen wurden erfolgreich exportiert",
         "ASSIGNMENT.EXPORT_NOK": "Ein Fehler ist aufgetreten. Die Berechtigungen wurden nicht exportiert."
@@ -288,8 +289,8 @@
   "ROLE": {
     "LABEL": "Rollen",
     "TOOLTIP": "Liste der Rollen zu denen Berechtigungen erteilt werden können. Wirksam werden Berechtigungen für einen Benutzer erst dann, wenn dem Benutzer die Rolle zugeordnet wird.",
-    "NAME": "Name",
-    "DESCRIPTION": "Beschreibung",
+    "NAME": "Name der Rolle, eindeutig im IDM (Identity Management)",
+    "DESCRIPTION": "Weitere Informationen zur Rolle",
     "MANDATORY": "Diese Rolle ist notwendig für den Betrieb und kann somit nicht bearbeitet oder gelöscht werden.",
     "IDM": {
       "HEADER": "IDM Rollen auswählen",
@@ -335,10 +336,6 @@
       "ACTION": "Aktion die auf der Ressource erlaubt ist",
       "RESOURCE": "Name der Ressource auf der gearbeitet werden kann",
       "ROLE": "Rolle aus dem IDM (Identity Management) der die Berechtigung zugewiesen wurde"
-    },
-    "MSG": {
-      "PERMISSIONS_REFRESH_INFO": "Berechtigungen wurden aktualisiert",
-      "PERMISSIONS_REFRESH_ERROR": "Unbekanntes Problem beim Aktualisieren von Berechtigungen"
     }
   },
   "VALIDATION": {

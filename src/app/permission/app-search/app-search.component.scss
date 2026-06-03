@@ -9,6 +9,7 @@
 @include ocx-interactive-data-view-fixes;
 @include correct-file-upload;
 @include media-queries;
+@include listbox-zebra-rows;
 
 :host ::ng-deep {
   .p-card-body {

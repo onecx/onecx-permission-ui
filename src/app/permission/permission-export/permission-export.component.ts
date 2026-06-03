@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { ListboxModule } from 'primeng/listbox'
 import { TooltipModule } from 'primeng/tooltip'
+import { MessageModule } from 'primeng/message'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
@@ -16,14 +17,23 @@ import { getCurrentDateTime } from 'src/app/shared/utils'
 @Component({
   selector: 'app-permission-export',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, DialogModule, ListboxModule, ButtonModule, TooltipModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    DialogModule,
+    ListboxModule,
+    ButtonModule,
+    TooltipModule,
+    MessageModule
+  ],
   templateUrl: './permission-export.component.html',
   styleUrls: ['./permission-export.component.scss']
 })
 export class PermissionExportComponent {
   @Input() products: string[] = []
-  @Input() displayExportDialog = false
   @Input() listedProductsHeaderKey = ''
+  @Input() displayExportDialog = false
   @Output() displayExportDialogChange = new EventEmitter<boolean>()
 
   public selectedProductNames: string[] = []

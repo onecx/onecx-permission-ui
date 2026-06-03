@@ -317,7 +317,21 @@ describe('AppDetailComponent', () => {
     })
   })
 
-  describe('onExport', () => {
+  describe('Export', () => {
+    it('should not export if no apps available', () => {
+      component.currentApp = {
+        appType: 'WORKSPACE',
+        workspaceDetails: {
+          products: undefined
+        },
+        isProduct: false
+      }
+
+      component.onExport()
+
+      expect(component.productNames).toEqual([])
+      expect(component.displayPermissionExportDialog).toBeFalse()
+    })
     it('should set up export for WORKSPACE app type', () => {
       component.currentApp = {
         appType: 'WORKSPACE',

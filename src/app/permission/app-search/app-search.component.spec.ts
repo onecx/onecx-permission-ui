@@ -900,11 +900,12 @@ describe('AppSearchComponent', () => {
       component.ngOnInit()
       component.onExport()
 
-      component.products$.subscribe({
-        next: (products) => {
-          expect(products.length).toBe(2)
-          expect(products[0].displayName).toEqual('product3')
-          expect(products[1].displayName).toEqual('product4')
+      expect(component.displayExportDialog).toBeTrue()
+      component.productNames$.subscribe({
+        next: (productNames) => {
+          expect(productNames.length).toBe(2)
+          expect(productNames[0]).toEqual('product3')
+          expect(productNames[1]).toEqual('product4')
           done()
         },
         error: done.fail
@@ -919,9 +920,9 @@ describe('AppSearchComponent', () => {
       component.ngOnInit()
       component.onExport()
 
-      component.products$.subscribe({
-        next: (products) => {
-          expect(products.length).toBe(0)
+      component.productNames$.subscribe({
+        next: (productNames) => {
+          expect(productNames.length).toBe(0)
           expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
           expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
           done()
