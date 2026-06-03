@@ -97,7 +97,7 @@ describe('RoleDetailComponent', () => {
     it('should enable formGroup if user has permissions: edit mode', () => {
       component.changeMode = 'EDIT'
       component.formGroup = formGroup
-      component.displayIamRolesDialog = false
+      component.displayIdmRolesDialog = false
 
       component.ngOnChanges()
 
@@ -209,7 +209,7 @@ describe('RoleDetailComponent', () => {
    */
   describe('get IAM roles', () => {
     it('should get IAM roles - with getting data', fakeAsync(() => {
-      component.displayIamRolesDialog = true
+      component.displayIdmRolesDialog = true
       component.isComponentDefined = false
       component.roles = [role]
       slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
@@ -225,7 +225,7 @@ describe('RoleDetailComponent', () => {
     }))
 
     it('should get IAM roles - reuse existing data', () => {
-      component.displayIamRolesDialog = true
+      component.displayIdmRolesDialog = true
       component.isComponentDefined = true
       component.roles = [role]
       component.idmRolesOrg = [{ name: 'role1' }, { name: 'role2' }]

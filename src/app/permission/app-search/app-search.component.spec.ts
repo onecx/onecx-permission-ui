@@ -656,17 +656,17 @@ describe('AppSearchComponent', () => {
 
       component.onGlobalFilter('my-filter')
 
-      expect(component.filterText).toBe('my-filter')
+      expect(component.globalFilterValue).toBe('my-filter')
       expect(component.textFilterValue$.next).toHaveBeenCalledWith('my-filter')
     })
 
     it('should clear and emit undefined global filter value', () => {
-      component.filterText = 'to-clear'
+      component.globalFilterValue = 'to-clear'
       spyOn(component.textFilterValue$, 'next')
 
       component.onClearGlobalFilter()
 
-      expect(component.filterText).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.textFilterValue$.next).toHaveBeenCalledWith(undefined)
     })
   })

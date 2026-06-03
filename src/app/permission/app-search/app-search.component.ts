@@ -78,7 +78,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterValue: AppFilterType = 'ALL'
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
-  public filterText = ''
+  public globalFilterValue = ''
   public sortField = 'displayName'
   public sortOrder = -1
 
@@ -410,11 +410,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.textFilterValue$.next(filter)
   }
   public onGlobalFilter(value: string): void {
-    this.filterText = value
+    this.globalFilterValue = value
     this.textFilterValue$.next(value)
   }
   public onClearGlobalFilter(): void {
-    this.filterText = ''
+    this.globalFilterValue = ''
     this.textFilterValue$.next(undefined)
   }
   public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {

@@ -534,7 +534,7 @@ describe('AppDetailComponent', () => {
     it('should do something onAddIAMRoles', () => {
       component.onAddIAMRoles(new Event('click'))
 
-      expect(component.displayIamRolesDialog).toBeTrue()
+      expect(component.displayIdmRolesDialog).toBeTrue()
     })
 
     it('should return if there are no missing ws roles', () => {

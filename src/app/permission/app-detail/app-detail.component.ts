@@ -155,7 +155,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public missingWorkspaceRoles = false
   public displayRoleDetailDialog = false
   public displayRoleDeleteDialog = false
-  public displayIamRolesDialog = false
+  public displayIdmRolesDialog = false
   public showRoleTools = false
 
   constructor(
@@ -850,11 +850,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.displayPermissionDetailDialog = false
     this.displayRoleDetailDialog = false
     this.displayRoleDeleteDialog = false
-    this.displayIamRolesDialog = false
+    this.displayIdmRolesDialog = false
     if (changed) this.loadData()
   }
   public onAddIAMRoles(ev: Event) {
-    this.displayIamRolesDialog = true
+    this.displayIdmRolesDialog = true
   }
 
   /****************************************************************************

@@ -1,11 +1,11 @@
 @import '/src/app/_apm-mixins.scss';
 
-@include ocx-text-responsive;
-@include ocx-p-floatlabel;
 @include ocx-content;
 @include ocx-modal-dialog;
-@include ocx-p-message;
+@include ocx-text-responsive;
+@include ocx-p-floatlabel;
 @include ocx-p-inputgroup;
+@include ocx-p-message;
 @include ocx-interactive-data-view-fixes;
 @include correct-file-upload;
 @include media-queries;

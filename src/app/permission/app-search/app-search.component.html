@@ -133,12 +133,12 @@
               </p-inputgroup-addon>
               <p-floatlabel variant="on">
                 <input
-                  #dvFilterInput
+                  #globalFilterInput
                   id="apm_app_search_filter"
                   type="text"
                   pInputText
-                  [value]="filterText"
-                  (input)="onGlobalFilter(dvFilterInput.value)"
+                  [value]="globalFilterValue"
+                  (input)="onGlobalFilter(globalFilterInput.value)"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
                   tooltipPosition="top"
@@ -151,9 +151,10 @@
               <p-inputgroup-addon>
                 <p-button
                   icon="pi pi-filter-slash"
-                  [severity]="dvFilterInput.value !== '' ? 'primary' : 'secondary'"
-                  [disabled]="dvFilterInput.value === ''"
-                  (onClick)="dvFilterInput.value = ''; onClearGlobalFilter()"
+                  (onClick)="globalFilterInput.value = ''; onClearGlobalFilter()"
+                  (onKeydown.enter)="globalFilterInput.value = ''; onClearGlobalFilter()"
+                  [severity]="globalFilterInput.value !== '' ? 'primary' : 'secondary'"
+                  [disabled]="globalFilterInput.value === ''"
                   [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   tooltipPosition="top"
