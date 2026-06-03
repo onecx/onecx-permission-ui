@@ -46,7 +46,6 @@ export class PermissionDetailComponent implements OnChanges {
   @Input() permissions: Permission[] = []
   @Input() changeMode: ChangeMode = 'VIEW'
   @Input() displayDetailDialog = false
-  @Input() displayDeleteDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   public formGroup: FormGroup
@@ -95,10 +94,6 @@ export class PermissionDetailComponent implements OnChanges {
     } else if (this.changeMode === 'CREATE') {
       this.formGroup.enable()
     }
-  }
-
-  public onClose(): void {
-    this.dataChanged.emit(false)
   }
 
   /**
@@ -166,19 +161,5 @@ export class PermissionDetailComponent implements OnChanges {
         }
       })
     }
-  }
-
-  public onDeleteConfirmation() {
-    if (!this.permission?.id) return
-    this.permApi.deletePermission({ id: this.permission?.id }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_OK' })
-        this.dataChanged.emit(true)
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.PERMISSION_NOK' })
-        console.error('deletePermission', err)
-      }
-    })
   }
 }

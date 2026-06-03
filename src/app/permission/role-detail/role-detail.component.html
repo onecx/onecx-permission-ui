@@ -1,7 +1,7 @@
 <p-dialog
   [header]="'ACTIONS.' + changeMode + '.ROLE' | translate"
   [(visible)]="displayDetailDialog"
-  (onHide)="onClose()"
+  (onHide)="dataChanged.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -50,7 +50,7 @@
         autofocus
         id="apm_role_detail_action_cancel"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
@@ -76,7 +76,7 @@
 <p-dialog
   [(visible)]="displayDeleteDialog"
   [header]="'ACTIONS.DELETE.ROLE' | translate"
-  (onHide)="onClose()"
+  (onHide)="dataChanged.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -97,7 +97,7 @@
       <p-button
         id="apm_role_delete_action_no"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
@@ -121,8 +121,8 @@
 <!-- SELECT IDM ROLES -->
 <p-dialog
   [header]="'ROLE.IDM.HEADER' | translate"
-  [(visible)]="showIamRolesDialog"
-  (onHide)="onClose()"
+  [(visible)]="displayIamRolesDialog"
+  (onHide)="dataChanged.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -185,7 +185,7 @@
         *ngIf="exceptionKey || loading"
         id="apm_idm_roles_action_close"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
@@ -196,7 +196,7 @@
         *ngIf="!exceptionKey && !loading"
         id="apm_idm_roles_action_cancel"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"

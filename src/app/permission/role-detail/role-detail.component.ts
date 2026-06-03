@@ -51,7 +51,7 @@ export class RoleDetailComponent implements OnInit, OnChanges {
   @Input() changeMode: ChangeMode = 'VIEW'
   @Input() displayDetailDialog = false
   @Input() displayDeleteDialog = false
-  @Input() showIamRolesDialog = false
+  @Input() displayIamRolesDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   public loading = true
@@ -93,7 +93,7 @@ export class RoleDetailComponent implements OnInit, OnChanges {
       this.formGroup.controls['description'].patchValue(this.role.description)
     }
     // initialize receiving data - once
-    if (this.showIamRolesDialog) {
+    if (this.displayIamRolesDialog) {
       if (this.isComponentDefined) {
         // refresh missing roles
         this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
@@ -122,10 +122,6 @@ export class RoleDetailComponent implements OnInit, OnChanges {
       this.idmRolesOrg = list
       this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
     })
-  }
-
-  public onClose(): void {
-    this.dataChanged.emit(false)
   }
 
   /**

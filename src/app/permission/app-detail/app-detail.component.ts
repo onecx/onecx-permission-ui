@@ -34,6 +34,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
+import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
@@ -66,6 +67,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     PortalPageComponent,
     SharedModule,
     RoleDetailComponent,
+    PermissionDeleteComponent,
     PermissionDetailComponent,
     PermissionExportComponent
   ],
@@ -145,13 +147,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   // role management
   private roles$!: Observable<PermissionRole[]>
-  public roles: PermissionRole[] = []
   public role: Role | undefined
+  public roles: PermissionRole[] = []
   public rolesFiltered: PermissionRole[] = []
   public missingWorkspaceRoles = false
-  public showRoleDetailDialog = false
-  public showRoleDeleteDialog = false
-  public showIamRolesDialog = false
+  public displayRoleDetailDialog = false
+  public displayRoleDeleteDialog = false
+  public displayIamRolesDialog = false
   public showRoleTools = false
 
   constructor(
@@ -174,31 +176,34 @@ export class AppDetailComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     if (this.myPermissions.length > 0) {
-      this.initializeComponentState()
+      this.initializeComponent()
       return
     }
-    this.resolvePermissions()
+    this.getMyPermissions()
       .pipe(take(1))
       .subscribe((permissions) => {
         this.myPermissions = permissions
-        this.initializeComponentState()
+        this.initializeComponent()
       })
   }
 
-  private resolvePermissions(): Observable<string[]> {
+  public ngOnDestroy(): void {
+    this.destroy$.next(undefined)
+    this.destroy$.complete()
+  }
+
+  private getMyPermissions(): Observable<string[]> {
     const userService = this.userService as any
     if (typeof userService.getPermissions === 'function') {
       const permissions$ = userService.getPermissions()
       if (permissions$ && typeof permissions$.pipe === 'function') {
         return permissions$.pipe(
-          map((permissions: string[]) =>
-            this.relevantPermissions.filter((permission) => permissions.includes(permission))
-          )
+          map((permissions: string[]) => this.relevantPermissions.filter((p) => permissions.includes(p)))
         )
       }
     }
     if (typeof userService.hasPermission === 'function') {
-      const checks = this.relevantPermissions.map((permission) => userService.hasPermission(permission))
+      const checks = this.relevantPermissions.map((p) => userService.hasPermission(p))
       const hasAsyncCheck = checks.some((check) => check && typeof check.then === 'function')
       if (!hasAsyncCheck) {
         return of(this.relevantPermissions.filter((_, index) => !!checks[index]))
@@ -217,7 +222,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     return of([])
   }
 
-  private initializeComponentState(): void {
+  private initializeComponent(): void {
     if (
       this.myPermissions.includes('ROLE#EDIT') ||
       this.myPermissions.includes('ROLE#CREATE') ||
@@ -233,11 +238,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.prepareQuickFilterItems()
     this.prepareActionButtons()
     this.loadData()
-  }
-
-  public ngOnDestroy(): void {
-    this.destroy$.next(undefined)
-    this.destroy$.complete()
   }
 
   public prepareQuickFilterItems(): void {
@@ -278,7 +278,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             {
               label: data['ACTIONS.NAVIGATION.BACK'],
               title: data['ACTIONS.NAVIGATION.BACK.TOOLTIP'],
-              actionCallback: () => this.onClose(),
+              actionCallback: () => this.location.back(),
               icon: 'pi pi-arrow-left',
               show: 'always'
             },
@@ -300,9 +300,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   /**
    * UI Events
    */
-  public onClose(): void {
-    this.location.back()
-  }
   public onReload(): void {
     this.onClearTableFilter()
     this.loadData()
@@ -825,33 +822,31 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     ev?.stopPropagation()
     this.role = undefined
     this.changeMode = 'CREATE'
-    this.showRoleDetailDialog = true
+    this.displayRoleDetailDialog = true
   }
   public onEditRole(ev: MouseEvent, role: Role): void {
     ev.stopPropagation()
-    this.role = role
+    this.role = { ...role }
     this.changeMode = 'EDIT'
-    this.showRoleDetailDialog = true
+    this.displayRoleDetailDialog = true
   }
   public onDeleteRole(ev: MouseEvent, role: Role): void {
     ev.stopPropagation()
-    this.role = role
+    this.role = { ...role }
     this.changeMode = 'DELETE'
-    this.showRoleDeleteDialog = true
+    this.displayRoleDeleteDialog = true
   }
-  public onDetailChanged(changed: boolean) {
+  public onChanges(changed: boolean) {
     this.role = undefined
-    this.permission = undefined
     this.changeMode = 'VIEW'
     this.displayPermissionDetailDialog = false
-    this.displayPermissionDeleteDialog = false
-    this.showRoleDetailDialog = false
-    this.showRoleDeleteDialog = false
-    this.showIamRolesDialog = false
+    this.displayRoleDetailDialog = false
+    this.displayRoleDeleteDialog = false
+    this.displayIamRolesDialog = false
     if (changed) this.loadData()
   }
   public onAddIAMRoles(ev: MouseEvent) {
-    this.showIamRolesDialog = true
+    this.displayIamRolesDialog = true
   }
 
   /****************************************************************************
@@ -870,15 +865,21 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
   public onDetailPermission(ev: MouseEvent, perm: PermissionViewRow): void {
     ev.stopPropagation()
-    this.permission = perm
+    this.permission = { ...perm }
     this.changeMode = this.permission.mandatory ? 'VIEW' : 'EDIT'
     this.displayPermissionDetailDialog = true
   }
   public onDeletePermission(ev: MouseEvent, perm: PermissionViewRow): void {
     ev.stopPropagation()
-    this.permission = perm
+    this.permission = { ...perm }
     this.changeMode = 'DELETE'
     this.displayPermissionDeleteDialog = true
+  }
+  public onDeleteChanges(changed: boolean) {
+    this.permission = undefined
+    this.changeMode = 'VIEW'
+    this.displayPermissionDeleteDialog = false
+    if (changed) this.loadData()
   }
 
   /****************************************************************************

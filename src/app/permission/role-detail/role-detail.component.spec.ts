@@ -99,7 +99,7 @@ describe('RoleDetailComponent', () => {
     it('should enable formGroup if user has permissions: edit mode', () => {
       component.changeMode = 'EDIT'
       component.formGroup = formGroup
-      component.showIamRolesDialog = false
+      component.displayIamRolesDialog = false
 
       component.ngOnChanges()
 
@@ -107,14 +107,6 @@ describe('RoleDetailComponent', () => {
       expect(component.formGroup.controls['name'].value).toEqual(role.name)
       expect(component.formGroup.controls['description'].value).toBeUndefined()
     })
-  })
-
-  it('should notify parent that nothing has changed after closing the dialog', () => {
-    spyOn(component.dataChanged, 'emit')
-
-    component.onClose()
-
-    expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
   })
 
   describe('onSaveRole', () => {
@@ -244,7 +236,7 @@ describe('RoleDetailComponent', () => {
    */
   describe('get IAM roles', () => {
     it('should get IAM roles - with getting data', fakeAsync(() => {
-      component.showIamRolesDialog = true
+      component.displayIamRolesDialog = true
       component.isComponentDefined = false
       component.roles = [role]
       slotServiceSpy.isSomeComponentDefinedForSlot.and.returnValue(of(true))
@@ -260,7 +252,7 @@ describe('RoleDetailComponent', () => {
     }))
 
     it('should get IAM roles - reuse existing data', () => {
-      component.showIamRolesDialog = true
+      component.displayIamRolesDialog = true
       component.isComponentDefined = true
       component.roles = [role]
       component.idmRolesOrg = [{ name: 'role1' }, { name: 'role2' }]

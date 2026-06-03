@@ -808,10 +808,10 @@
   [roles]="roles"
   [role]="role"
   [changeMode]="changeMode"
-  [showIamRolesDialog]="showIamRolesDialog"
-  [displayDetailDialog]="showRoleDetailDialog"
-  [displayDeleteDialog]="showRoleDeleteDialog"
-  (dataChanged)="onDetailChanged($event)"
+  [displayIamRolesDialog]="displayIamRolesDialog"
+  [displayDetailDialog]="displayRoleDetailDialog"
+  [displayDeleteDialog]="displayRoleDeleteDialog"
+  (dataChanged)="onChanges($event)"
 ></app-role-detail>
 
 <app-permission-detail
@@ -820,9 +820,14 @@
   [permission]="permission"
   [changeMode]="changeMode"
   [displayDetailDialog]="displayPermissionDetailDialog"
-  [displayDeleteDialog]="displayPermissionDeleteDialog"
-  (dataChanged)="onDetailChanged($event)"
+  (dataChanged)="onChanges($event)"
 ></app-permission-detail>
+
+<app-permission-delete
+  [permission]="permission"
+  [visible]="displayPermissionDeleteDialog"
+  (dataChanged)="onDeleteChanges($event)"
+></app-permission-delete>
 
 <app-permission-export
   [products]="productNames"
