@@ -279,7 +279,10 @@
     /* fix base layout of interactive data view */
     ocx-interactive-data-view > {
       :first-child {
-        padding: 0rem 0 0.5rem 0 !important;
+        padding: 0 0 0.5rem 0 !important;
+        > :first-child {
+          padding: 0.5rem 0 !important;
+        }
       }
       :not(:first-child) {
         padding: 0.5rem 0 0 0 !important;

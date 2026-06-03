@@ -10,40 +10,38 @@
   [style]="{ width: '400px' }"
 >
   <form [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
-      <div class="mt-1">
-        <p-floatlabel controlErrorAnchor>
-          <input
-            pInputText
-            type="text"
-            class="w-full text-responsive"
-            id="apm_role_detail_name"
-            formControlName="name"
-            [ariaLabel]="'ROLE.NAME' | translate"
-            [pTooltip]="'ROLE.NAME' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          />
-          <label class="ocx-required-label" for="apm_role_detail_name"> {{ 'ROLE.NAME' | translate }} </label>
-        </p-floatlabel>
-      </div>
-      <div>
-        <p-floatlabel>
-          <input
-            pInputText
-            type="text"
-            class="w-full text-responsive"
-            id="apm_role_detail_description"
-            formControlName="description"
-            [pTooltip]="'ROLE.DESCRIPTION' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          />
-          <label for="apm_role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
-        </p-floatlabel>
-      </div>
+    <div class="mt-2 flex flex-wrap flex-column justify-content-between row-gap-4">
+      <p-floatlabel variant="on" controlErrorAnchor>
+        <input
+          pInputText
+          type="text"
+          class="w-full text-responsive"
+          id="apm_role_detail_name"
+          formControlName="name"
+          [ariaLabel]="'ROLE.NAME' | translate"
+          [pTooltip]="'ROLE.NAME' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <label class="ocx-required-label" for="apm_role_detail_name">{{ 'ROLE.NAME' | translate }}</label>
+      </p-floatlabel>
+      <p-floatlabel variant="on">
+        <input
+          pInputText
+          type="text"
+          class="w-full text-responsive"
+          id="apm_role_detail_description"
+          formControlName="description"
+          [ariaLabel]="'ROLE.DESCRIPTION' | translate"
+          [pTooltip]="'ROLE.DESCRIPTION' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <label for="apm_role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
+      </p-floatlabel>
     </div>
   </form>
+
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <p-button

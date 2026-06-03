@@ -43,7 +43,9 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
+        <!-- FILTER -->
         <div class="p-0 flex flex-wrap justify-content-between gap-2">
+          <!-- Permission QUICK Filter -->
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
               class="slim-selectbutton align-items-start search-criteria-selectbutton"
@@ -69,8 +71,6 @@
           </div>
 
           <!-- Permission Filter -->
-          <!--
-          -->
           <p-inputgroup styleClass="w-18rem sm:w-22rem sm:mx-1 align-self-start">
             <p-inputgroup-addon>
               <p-button
@@ -108,8 +108,8 @@
                 type="text"
                 class="w-full text-responsive"
                 (input)="tableFilter($any($event.target).value)"
-                [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
-                [pTooltip]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
+                [ariaLabel]="'DIALOG.DETAIL.FILTER.PERMISSION.LABEL' | translate"
+                [pTooltip]="'DIALOG.DETAIL.FILTER.PERMISSION.LABEL' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
@@ -145,9 +145,9 @@
           ></p-button>
         </div>
 
-        <!-- SUMMARY AND TOOLS ROW -->
+        <!-- SUMMARY AND TOOLS -->
         <div
-          class="relative py-2 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
+          class="relative py-3 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
         >
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">
