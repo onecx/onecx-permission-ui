@@ -1,7 +1,7 @@
 <p-dialog
   [header]="'ACTIONS.' + changeMode + '.PERMISSION' | translate"
   [(visible)]="displayDetailDialog"
-  (onHide)="onClose()"
+  (onHide)="dataChanged.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -144,7 +144,7 @@
         autofocus
         id="apm_permission_detail_action_close"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
@@ -156,7 +156,7 @@
         autofocus
         id="apm_permission_detail_action_cancel"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"

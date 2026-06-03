@@ -86,14 +86,6 @@ describe('PermissionDeleteComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should notify parent that nothing has changed onClose', () => {
-    spyOn(component.dataChanged, 'emit')
-
-    component.onClose()
-
-    expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
-  })
-
   describe('Permission deletion', () => {
     it('should not delete if permission id is missing', () => {
       component.permission = { ...permRow, id: undefined }

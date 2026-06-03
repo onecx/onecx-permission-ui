@@ -278,7 +278,7 @@ describe('AppDetailComponent', () => {
         .createSpy('getPermissions')
         .and.returnValue(of(['ROLE#CREATE', 'PERMISSION#DELETE', 'UNRELATED#PERMISSION']))
       ;(mockUserService as any).hasPermission = undefined
-      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+      ;(component as any).getMyPermissions().subscribe((permissions: string[]) => {
         expect(permissions).toEqual(['ROLE#CREATE', 'PERMISSION#DELETE'])
         ;(mockUserService as any).getPermissions = originalGetPermissions
         ;(mockUserService as any).hasPermission = originalHasPermission
@@ -291,7 +291,7 @@ describe('AppDetailComponent', () => {
       const originalHasPermission = mockUserService.hasPermission
       ;(mockUserService as any).getPermissions = jasmine.createSpy('getPermissions').and.returnValue([])
       ;(mockUserService as any).hasPermission = undefined
-      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+      ;(component as any).getMyPermissions().subscribe((permissions: string[]) => {
         expect(permissions).toEqual([])
         ;(mockUserService as any).getPermissions = originalGetPermissions
         ;(mockUserService as any).hasPermission = originalHasPermission
@@ -308,7 +308,7 @@ describe('AppDetailComponent', () => {
         .and.callFake((permission: string) =>
           Promise.resolve(permission === 'ROLE#CREATE' || permission === 'PERMISSION#GRANT')
         )
-      ;(component as any).resolvePermissions().subscribe((permissions: string[]) => {
+      ;(component as any).getMyPermissions().subscribe((permissions: string[]) => {
         expect(permissions).toEqual(['ROLE#CREATE', 'PERMISSION#GRANT'])
         ;(mockUserService as any).getPermissions = originalGetPermissions
         ;(mockUserService as any).hasPermission = originalHasPermission
@@ -534,7 +534,7 @@ describe('AppDetailComponent', () => {
     it('should do something onAddIAMRoles', () => {
       component.onAddIAMRoles(new MouseEvent('click'))
 
-      expect(component.showIamRolesDialog).toBeTrue()
+      expect(component.displayIamRolesDialog).toBeTrue()
     })
 
     it('should return if there are no missing ws roles', () => {
@@ -1163,7 +1163,7 @@ describe('AppDetailComponent', () => {
       expect(event.stopPropagation).toHaveBeenCalled()
       expect(component.role).toBeUndefined()
       expect(component.changeMode).toBe('CREATE')
-      expect(component.showRoleDetailDialog).toBeTrue()
+      expect(component.displayRoleDetailDialog).toBeTrue()
     })
 
     it('should call stopPropagation and set role in onEditRole', () => {
@@ -1173,9 +1173,9 @@ describe('AppDetailComponent', () => {
       component.onEditRole(event, role1)
 
       expect(event.stopPropagation).toHaveBeenCalled()
-      expect(component.role).toBe(role1)
+      expect(component.role).toEqual(role1)
       expect(component.changeMode).toBe('EDIT')
-      expect(component.showRoleDetailDialog).toBeTrue()
+      expect(component.displayRoleDetailDialog).toBeTrue()
     })
 
     it('should call stopPropagation and set role in onDeleteRole', () => {
@@ -1185,21 +1185,19 @@ describe('AppDetailComponent', () => {
       component.onDeleteRole(event, role1)
 
       expect(event.stopPropagation).toHaveBeenCalled()
-      expect(component.role).toBe(role1)
+      expect(component.role).toEqual(role1)
       expect(component.changeMode).toBe('DELETE')
-      expect(component.showRoleDeleteDialog).toBeTrue()
+      expect(component.displayRoleDeleteDialog).toBeTrue()
     })
 
-    it('should reset state and call loadData if changed in onDetailChanged', () => {
-      component.onDetailChanged(true)
+    it('should reset state and call loadData if changed in onChanges', () => {
+      component.onChanges(true)
 
       expect(component.role).toBeUndefined()
-      expect(component.permission).toBeUndefined()
       expect(component.changeMode).toBe('VIEW')
       expect(component.displayPermissionDetailDialog).toBeFalse()
-      expect(component.displayPermissionDeleteDialog).toBeFalse()
-      expect(component.showRoleDetailDialog).toBeFalse()
-      expect(component.showRoleDeleteDialog).toBeFalse()
+      expect(component.displayRoleDetailDialog).toBeFalse()
+      expect(component.displayRoleDeleteDialog).toBeFalse()
     })
   })
 
@@ -1236,7 +1234,7 @@ describe('AppDetailComponent', () => {
       component.onDetailPermission(event, permRow)
 
       expect(event.stopPropagation).toHaveBeenCalled()
-      expect(component.permission).toBe(permRow)
+      expect(component.permission).toEqual(permRow)
       expect(component.changeMode).toBe('EDIT')
       expect(component.displayPermissionDetailDialog).toBeTrue()
     })
@@ -1248,7 +1246,7 @@ describe('AppDetailComponent', () => {
       component.onDetailPermission(event, permRow)
 
       expect(event.stopPropagation).toHaveBeenCalled()
-      expect(component.permission).toBe(permRow)
+      expect(component.permission).toEqual(permRow)
       expect(component.changeMode).toBe('EDIT') //   mandatory: false
       expect(component.displayPermissionDetailDialog).toBeTrue()
 
@@ -1263,9 +1261,17 @@ describe('AppDetailComponent', () => {
       component.onDeletePermission(event, permRow)
 
       expect(event.stopPropagation).toHaveBeenCalled()
-      expect(component.permission).toBe(permRow)
+      expect(component.permission).toEqual(permRow)
       expect(component.changeMode).toBe('DELETE')
       expect(component.displayPermissionDeleteDialog).toBeTrue()
+    })
+
+    it('should reset state and call loadData if changed in onDeleteChanges', () => {
+      component.onDeleteChanges(true)
+
+      expect(component.permission).toBeUndefined()
+      expect(component.changeMode).toBe('VIEW')
+      expect(component.displayPermissionDeleteDialog).toBeFalse()
     })
   })
 

@@ -1,7 +1,7 @@
 <p-dialog
   [header]="'ACTIONS.DELETE.PERMISSION' | translate"
-  [(visible)]="displayDeleteDialog"
-  (onHide)="onClose()"
+  [(visible)]="visible"
+  (onHide)="dataChanged.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -28,7 +28,7 @@
         autofocus
         id="apm_permission_delete_action_no"
         icon="pi pi-times"
-        (onClick)="onClose()"
+        (onClick)="dataChanged.emit(false)"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"

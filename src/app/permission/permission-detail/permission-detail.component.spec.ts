@@ -137,14 +137,6 @@ describe('PermissionDetailComponent', () => {
     expect(component.formGroup.controls['operator'].disabled).toBeTrue()
   })
 
-  it('should notify parent that nothing has changed onClose', () => {
-    spyOn(component.dataChanged, 'emit')
-
-    component.onClose()
-
-    expect(component.dataChanged.emit).toHaveBeenCalledWith(false)
-  })
-
   it('should stop and notify that form is invalid onSave', () => {
     spyOn(console, 'info')
 

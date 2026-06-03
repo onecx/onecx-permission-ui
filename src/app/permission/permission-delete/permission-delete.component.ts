@@ -19,17 +19,13 @@ import type { PermissionViewRow } from 'src/app/permission/app-detail/app-detail
 })
 export class PermissionDeleteComponent {
   @Input() permission: PermissionViewRow | undefined
-  @Input() displayDeleteDialog = false
+  @Input() visible = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
   constructor(
     private readonly permApi: PermissionAPIService,
     private readonly msgService: PortalMessageService
   ) {}
-
-  public onClose(): void {
-    this.dataChanged.emit(false)
-  }
 
   public onDeleteConfirmation(): void {
     if (!this.permission?.id) return

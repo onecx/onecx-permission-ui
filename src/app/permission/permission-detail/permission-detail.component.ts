@@ -96,10 +96,6 @@ export class PermissionDetailComponent implements OnChanges {
     }
   }
 
-  public onClose(): void {
-    this.dataChanged.emit(false)
-  }
-
   /**
    * Save a PERMISSION
    */
