@@ -5,7 +5,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
@@ -656,17 +655,17 @@ describe('AppSearchComponent', () => {
 
       component.onGlobalFilter('my-filter')
 
-      expect(component.filterText).toBe('my-filter')
+      expect(component.globalFilterValue).toBe('my-filter')
       expect(component.textFilterValue$.next).toHaveBeenCalledWith('my-filter')
     })
 
     it('should clear and emit undefined global filter value', () => {
-      component.filterText = 'to-clear'
+      component.globalFilterValue = 'to-clear'
       spyOn(component.textFilterValue$, 'next')
 
       component.onClearGlobalFilter()
 
-      expect(component.filterText).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.textFilterValue$.next).toHaveBeenCalledWith(undefined)
     })
   })
@@ -782,23 +781,22 @@ describe('AppSearchComponent', () => {
    */
   describe('on import file select', () => {
     let file: File
-    let event: any = {}
+    let event: FileSelectEvent = {
+      originalEvent: new Event('change'),
+      files: [],
+      currentFiles: []
+    }
 
     beforeEach(() => {
       file = new File(['file content'], 'test.txt', { type: 'text/plain' })
-      const fileList: FileList = {
-        0: file,
-        length: 1,
-        item: (index: number) => file
-      }
-      event = { files: fileList }
+      event = { originalEvent: new Event('change'), files: [file], currentFiles: [file] }
     })
 
     it('should select a file and parse', async () => {
       const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
 
-      await component.onImportFileSelect(event as any as FileSelectEvent)
+      await component.onImportFileSelect(event)
 
       expect(file.text).toHaveBeenCalled()
       expect(component.importAssignmentItem).toEqual(JSON.parse(mockContent))
@@ -902,11 +900,12 @@ describe('AppSearchComponent', () => {
       component.ngOnInit()
       component.onExport()
 
-      component.products$.subscribe({
-        next: (products) => {
-          expect(products.length).toBe(2)
-          expect(products[0].displayName).toEqual('product3')
-          expect(products[1].displayName).toEqual('product4')
+      expect(component.displayExportDialog).toBeTrue()
+      component.productNames$.subscribe({
+        next: (productNames) => {
+          expect(productNames.length).toBe(2)
+          expect(productNames[0]).toEqual('product3')
+          expect(productNames[1]).toEqual('product4')
           done()
         },
         error: done.fail
@@ -921,9 +920,9 @@ describe('AppSearchComponent', () => {
       component.ngOnInit()
       component.onExport()
 
-      component.products$.subscribe({
-        next: (products) => {
-          expect(products.length).toBe(0)
+      component.productNames$.subscribe({
+        next: (productNames) => {
+          expect(productNames.length).toBe(0)
           expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
           expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
           done()

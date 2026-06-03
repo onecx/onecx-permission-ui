@@ -10,40 +10,38 @@
   [style]="{ width: '400px' }"
 >
   <form [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column row-gap-4 justify-content-between">
-      <div class="mt-1">
-        <p-floatlabel controlErrorAnchor>
-          <input
-            pInputText
-            type="text"
-            class="w-full text-responsive"
-            id="apm_role_detail_name"
-            formControlName="name"
-            [ariaLabel]="'ROLE.NAME' | translate"
-            [pTooltip]="'ROLE.NAME' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          />
-          <label class="ocx-required-label" for="apm_role_detail_name"> {{ 'ROLE.NAME' | translate }} </label>
-        </p-floatlabel>
-      </div>
-      <div>
-        <p-floatlabel>
-          <input
-            pInputText
-            type="text"
-            class="w-full text-responsive"
-            id="apm_role_detail_description"
-            formControlName="description"
-            [pTooltip]="'ROLE.DESCRIPTION' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          />
-          <label for="apm_role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
-        </p-floatlabel>
-      </div>
+    <div class="mt-2 flex flex-wrap flex-column justify-content-between row-gap-4">
+      <p-floatlabel variant="on" controlErrorAnchor>
+        <input
+          pInputText
+          type="text"
+          class="w-full text-responsive"
+          id="apm_role_detail_name"
+          formControlName="name"
+          [ariaLabel]="'ROLE.NAME' | translate"
+          [pTooltip]="'ROLE.NAME' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <label class="ocx-required-label" for="apm_role_detail_name">{{ 'ROLE.NAME' | translate }}</label>
+      </p-floatlabel>
+      <p-floatlabel variant="on">
+        <input
+          pInputText
+          type="text"
+          class="w-full text-responsive"
+          id="apm_role_detail_description"
+          formControlName="description"
+          [ariaLabel]="'ROLE.DESCRIPTION' | translate"
+          [pTooltip]="'ROLE.DESCRIPTION' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <label for="apm_role_detail_description">{{ 'ROLE.DESCRIPTION' | translate }} </label>
+      </p-floatlabel>
     </div>
   </form>
+
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
       <p-button
@@ -65,153 +63,6 @@
         [label]="'ACTIONS.SAVE' | translate"
         [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-    </div>
-  </ng-template>
-</p-dialog>
-
-<!-- DELETE ROLE -->
-<p-dialog
-  [(visible)]="displayDeleteDialog"
-  [header]="'ACTIONS.DELETE.ROLE' | translate"
-  (onHide)="dataChanged.emit(false)"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="true"
-  [resizable]="false"
-  [dismissableMask]="true"
-  [style]="{ 'max-width': '425px' }"
->
-  <div class="mr-2 flex column-gap-4 row-gap-1 justify-content-start align-items-center">
-    <div class="pi pi-question-circle text-3xl danger-action-text"></div>
-    <div class="flex flex-column row-gap-2">
-      <div id="apm_role_delete_message" class="font-bold">{{ 'ACTIONS.DELETE.MESSAGE.ROLE' | translate }}</div>
-      <div id="apm_role_delete_role_name" class="font-bold text-center danger-action-text">{{ role?.name }}</div>
-      <div>{{ 'ACTIONS.DELETE.NO_UNDO' | translate }}</div>
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-      <p-button
-        id="apm_role_delete_action_no"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.CONFIRMATION.NO' | translate"
-        [ariaLabel]="'ACTIONS.CONFIRMATION.NO' | translate"
-        [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        id="apm_role_delete_action_yes"
-        icon="pi pi-check"
-        (onClick)="onDeleteConfirmation()"
-        [label]="'ACTIONS.CONFIRMATION.YES' | translate"
-        [ariaLabel]="'ACTIONS.CONFIRMATION.YES' | translate"
-        [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-    </div>
-  </ng-template>
-</p-dialog>
-
-<!-- SELECT IDM ROLES -->
-<p-dialog
-  [header]="'ROLE.IDM.HEADER' | translate"
-  [(visible)]="displayIamRolesDialog"
-  (onHide)="dataChanged.emit(false)"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="true"
-  [resizable]="true"
-  [dismissableMask]="true"
->
-  <p-message
-    *ngIf="!isComponentDefined"
-    id="apm_idm_roles_exception_component_not_exist"
-    severity="error"
-    [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
-  ></p-message>
-
-  <ng-container *ngIf="isComponentDefined">
-    <ocx-slot
-      [name]="slotName"
-      [inputs]="{ userId: '$$ocx-iam-roles-search-all-indicator$$' }"
-      [outputs]="{ roleList: roleListEmitter }"
-    >
-    </ocx-slot>
-
-    <ng-container>
-      <p-message
-        *ngIf="exceptionKey"
-        id="apm_idm_roles_data_access_issue"
-        severity="error"
-        [text]="exceptionKey | translate"
-      ></p-message>
-      <p-message
-        *ngIf="loading"
-        id="apm_idm_roles_loading"
-        severity="info"
-        [text]="'ACTIONS.LOADING' | translate"
-      ></p-message>
-
-      <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
-        <div>{{ 'ROLE.IDM.LIST' | translate }}: {{ idmRoles.length }}</div>
-        <p-listbox
-          id="apm_idm_roles_list"
-          [options]="idmRoles"
-          [(ngModel)]="idmRolesSelected"
-          optionLabel="name"
-          [filter]="true"
-          [checkbox]="true"
-          [multiple]="true"
-          [metaKeySelection]="false"
-          [showToggleAll]="false"
-          [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-          [listStyle]="{ 'max-height': '300px' }"
-          [ariaLabel]="'ROLE.IDM.LIST' | translate"
-        />
-        <div class="text-xs">{{ 'ROLE.IDM.INFO' | translate }}</div>
-      </div>
-    </ng-container>
-  </ng-container>
-
-  <ng-template pTemplate="footer">
-    <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-      <p-button
-        *ngIf="exceptionKey || loading"
-        id="apm_idm_roles_action_close"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="!exceptionKey && !loading"
-        id="apm_idm_roles_action_cancel"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.CANCEL' | translate"
-        [ariaLabel]="'ACTIONS.CANCEL' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="!exceptionKey && !loading"
-        id="apm_idm_roles_action_save"
-        icon="pi pi-check"
-        (onClick)="onAddIamRoles()"
-        [disabled]="idmRolesSelected.length === 0"
-        [label]="'ROLE.IDM.SAVE' | translate"
-        [ariaLabel]="'ROLE.IDM.SAVE' | translate"
-        [pTooltip]="'ROLE.IDM.SAVE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       />

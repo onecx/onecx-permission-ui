@@ -62,10 +62,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()
   // data
   public apps$!: Observable<(App & RowListGridData)[]>
-  public filteredApps$!: Observable<(App & RowListGridData)[]>
-  private papps$!: Observable<ApplicationPageResult>
+  public filteredApps$!: Observable<(App & RowListGridData)[]> // for dropdown list filtering
   public products$!: Observable<(App & RowListGridData)[]>
-  public productNames: string[] = []
+  public productNames$!: Observable<string[]>
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteria!: FormGroup<AppSearchCriteria>
   // dialog control
@@ -78,7 +77,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public quickFilterValue: AppFilterType = 'ALL'
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
-  public filterText = ''
+  public globalFilterValue = ''
   public sortField = 'displayName'
   public sortOrder = -1
 
@@ -142,7 +141,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   /**
    * SEARCH
-   *
+   */
+  public onSearch() {
+    this.searchApps()
+  }
+  public onSearchReset() {
+    this.appSearchCriteria.reset({ appType: 'ALL' })
+    this.apps$ = of([] as (App & RowListGridData)[])
+    this.filteredApps$ = of([] as (App & RowListGridData)[])
+  }
+
+  /**
    * Workspaces groups Products(Apps) by registration
    */
   private searchWorkspaces(appType?: string): Observable<(App & RowListGridData)[]> {
@@ -177,9 +186,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
     )
   }
-  // Product => Group of Permission Applications with same product name
+  // Product => a group of Permission Applications with same product name
   private searchProducts(searchAppType?: string): Observable<(App & RowListGridData)[]> {
-    this.papps$ = this.appApi
+    const papps$: Observable<ApplicationPageResult> = this.appApi
       .searchApplications({
         applicationSearchCriteria: {
           appId: searchAppType === 'APP' ? (this.appSearchCriteria.controls['name'].value ?? '') : undefined,
@@ -194,7 +203,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           return of({})
         })
       )
-    return this.papps$.pipe(
+    return papps$.pipe(
       map((result) => {
         if (!result.stream) return []
         const productNames: string[] = []
@@ -212,6 +221,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       })
     )
   }
+
   public searchApps(): void {
     this.loading = true
     this.exceptionKey = undefined
@@ -334,7 +344,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       )
   }
 
-  /****************************************************************************
+  /*
    *  IMPORT
    */
   public onOpenImport(): void {
@@ -389,6 +399,18 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * EXPORT
+   */
+  public onExport(): void {
+    this.displayExportDialog = true
+    this.productNames$ = this.apps$.pipe(
+      map((products) =>
+        Array.from(products.filter((app) => app.appType === 'PRODUCT').map((p) => p.displayName!)).sort(sortByLocale)
+      )
+    )
+  }
+
+  /**
    * UI Events
    */
   public onAppClick(app: App): void {
@@ -401,6 +423,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     if (ev.value === 'ALL') this.appSearchCriteria.controls['name'].disable()
     else this.appSearchCriteria.controls['name'].enable()
   }
+
+  /**
+   * FILTER & SORT Events
+   */
   public onQuickFilterChange(ev: any): void {
     if (ev.value) this.quickFilterValue = ev.value
     if (this.quickFilterValue === 'ALL') this.typeFilterValue$.next('')
@@ -410,13 +436,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.textFilterValue$.next(filter)
   }
   public onGlobalFilter(value: string): void {
-    this.filterText = value
+    this.globalFilterValue = value
     this.textFilterValue$.next(value)
   }
   public onClearGlobalFilter(): void {
-    this.filterText = ''
+    this.globalFilterValue = ''
     this.textFilterValue$.next(undefined)
   }
+
   public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {
     if (typeof sort === 'string') {
       this.sortField = sort
@@ -436,25 +463,5 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1
     this.sortDirection = asc ? DataSortDirection.ASCENDING : DataSortDirection.DESCENDING
-  }
-  public onSearch() {
-    this.searchApps()
-  }
-  public onSearchReset() {
-    this.appSearchCriteria.reset({ appType: 'ALL' })
-    this.apps$ = of([] as (App & RowListGridData)[])
-    this.filteredApps$ = of([] as (App & RowListGridData)[])
-  }
-
-  public onExport(): void {
-    this.products$ = this.searchProducts() // search with max page size
-    this.products$
-      .pipe(
-        map((products) => {
-          this.productNames = Array.from(products.map((p) => p.displayName!)).sort(sortByLocale)
-          this.displayExportDialog = true
-        })
-      )
-      .subscribe()
   }
 }

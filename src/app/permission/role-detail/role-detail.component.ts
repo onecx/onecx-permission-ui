@@ -1,79 +1,50 @@
-import { Component, EventEmitter, Input, Output, OnChanges, OnInit } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormGroup, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { errorTailorImports } from '@ngneat/error-tailor'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputTextModule } from 'primeng/inputtext'
-import { ListboxModule } from 'primeng/listbox'
-import { MessageModule } from 'primeng/message'
 import { TooltipModule } from 'primeng/tooltip'
 
-import { AngularRemoteComponentsModule, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { CreateRoleRequest, Role, RoleAPIService, UpdateRoleRequest } from 'src/app/shared/generated'
 import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
-
-export function slotInitializer(slotService: SlotService) {
-  return () => slotService.init()
-}
-export type IDMRole = { name?: string } // replica from a IAM role
 
 @Component({
   selector: 'app-role-detail',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     TranslateModule,
     errorTailorImports,
     DialogModule,
     FloatLabelModule,
     InputTextModule,
-    ListboxModule,
-    MessageModule,
     ButtonModule,
-    TooltipModule,
-    AngularRemoteComponentsModule
+    TooltipModule
   ],
   templateUrl: './role-detail.component.html',
-  styleUrls: ['./role-detail.component.scss'],
-  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
+  styleUrls: ['./role-detail.component.scss']
 })
-export class RoleDetailComponent implements OnInit, OnChanges {
+export class RoleDetailComponent implements OnChanges {
   @Input() currentApp!: App
   @Input() role: Role | undefined
   @Input() roles: Role[] = []
   @Input() changeMode: ChangeMode = 'VIEW'
   @Input() displayDetailDialog = false
-  @Input() displayDeleteDialog = false
-  @Input() displayIamRolesDialog = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
-  public loading = true
-  public exceptionKey: string | undefined = undefined
   public formGroup: FormGroup
-  public idmRoles: IDMRole[] = []
-  public idmRolesOrg: IDMRole[] = []
-  public idmRolesSelected: IDMRole[] = []
-
-  // manage slot to get roles from iam
-  public loadingIamRoles = false
-  public isComponentDefined = false
-  public slotName = 'onecx-permission-iam-user-roles'
-  public roleListEmitter = new EventEmitter<IDMRole[]>()
-  public componentPermissions: string[] = []
 
   constructor(
     private readonly roleApi: RoleAPIService,
     private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
-    private readonly slotService: SlotService,
-    private readonly userService: UserService
+    private readonly msgService: PortalMessageService
   ) {
     this.formGroup = new FormGroup({
       id: new FormControl(null),
@@ -82,46 +53,12 @@ export class RoleDetailComponent implements OnInit, OnChanges {
     })
   }
 
-  public ngOnInit(): void {
-    slotInitializer(this.slotService)()
-  }
-
   public ngOnChanges(): void {
     this.formGroup.reset()
     if (this.changeMode === 'EDIT' && this.role) {
       this.formGroup.controls['name'].patchValue(this.role.name)
       this.formGroup.controls['description'].patchValue(this.role.description)
     }
-    // initialize receiving data - once
-    if (this.displayIamRolesDialog) {
-      if (this.isComponentDefined) {
-        // refresh missing roles
-        this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
-      } else {
-        // check if the IAM component is assigned to the slot
-        this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
-          this.isComponentDefined = def
-          if (this.isComponentDefined) this.prepareRoleListEmitter()
-        })
-      }
-    }
-  }
-
-  // Hommage to SonarCloud: separate this
-  private prepareRoleListEmitter() {
-    this.loading = true
-    // after 5s we assume IAM product is not running
-    setTimeout(() => {
-      if (this.loading) this.loading = false
-    }, 5000)
-
-    // receive data from remote component
-    this.roleListEmitter.subscribe((list) => {
-      this.loading = false
-      // exclude roles which already exists in Permission Mgmt
-      this.idmRolesOrg = list
-      this.idmRoles = this.idmRolesOrg.filter((l) => this.roles.filter((r) => r.name === l.name).length === 0)
-    })
   }
 
   /**
@@ -181,38 +118,5 @@ export class RoleDetailComponent implements OnInit, OnChanges {
         }
       })
     }
-  }
-
-  /**
-   * Delete a ROLE
-   */
-  public onDeleteConfirmation() {
-    if (!this.role?.id) return
-    this.roleApi.deleteRole({ id: this.role?.id }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_OK' })
-        this.dataChanged.emit(true)
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ROLE_NOK' })
-        console.error('deleteRole', err)
-      }
-    })
-  }
-
-  public onAddIamRoles() {
-    if (this.idmRolesSelected.length > 0)
-      this.roleApi.createRole({ createRolesRequest: { roles: this.idmRolesSelected } }).subscribe({
-        next: () => {
-          this.idmRolesSelected = []
-          this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_OK' })
-          this.dataChanged.emit(true)
-        },
-        error: (err) => {
-          this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.ROLE_NOK' })
-          console.error('createRole', err)
-        }
-      })
-    else this.dataChanged.emit(false)
   }
 }

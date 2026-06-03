@@ -9,35 +9,34 @@
   >
     <form
       [formGroup]="appSearchCriteria"
-      class="flex flex-wrap flex-row gap-4 row-gap-3 md:px-2"
+      class="flex flex-wrap flex-row column-gap-4 row-gap-3 md:px-2"
       [attr.aria-label]="'DIALOG.SEARCH.CRITERIA' | translate"
     >
-      <div class="flex flex-wrap flex-row align-items-center gap-2">
-        <section
-          class="slim-selectbutton search-criteria-selectbutton"
-          [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
-          [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
-          tooltipPosition="top"
-          tooltipEvent="hover"
+      <section
+        class="flex flex-wrap flex-column row-gap-0"
+        [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
+        [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      >
+        <p-selectButton
+          inputid="apm_app_search_criteria_app_type"
+          formControlName="appType"
+          [options]="(appTypeItems$ | async) ?? []"
+          (onChange)="onAppTypeCriteriaChange($event)"
+          [allowEmpty]="false"
+          [ariaLabel]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
         >
-          <p-selectButton
-            inputid="apm_app_search_criteria_app_type"
-            formControlName="appType"
-            [options]="(appTypeItems$ | async) ?? []"
-            (onChange)="onAppTypeCriteriaChange($event)"
-            [allowEmpty]="false"
-            [ariaLabel]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
-          >
-            <ng-template let-item pTemplate>
-              <span [id]="'apm_app_search_criteria_app_type_' + item.value"> {{ item.label }}</span>
-            </ng-template>
-          </p-selectButton>
-          <div class="p-selectbutton-subtitle flex flex-row flex-nowrap column-gap-3 opacity-90" aria-hidden="true">
-            <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
-            <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteria.controls['appType'].value | translate }}</span>
-          </div>
-        </section>
-      </div>
+          <ng-template let-item pTemplate>
+            <span [id]="'apm_app_search_criteria_app_type_' + item.value"> {{ item.label }}</span>
+          </ng-template>
+        </p-selectButton>
+        <div class="flex flex-row flex-nowrap column-gap-3 opacity-90 text-sm" aria-hidden="true">
+          <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
+          <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteria.controls['appType'].value | translate }}</span>
+        </div>
+      </section>
+      <!-- decoupling input from select button with extra div tag -->
       <div>
         <p-floatlabel variant="on">
           <input
@@ -46,7 +45,7 @@
             type="text"
             formControlName="name"
             class="w-15rem"
-            [attr.aria-label]="'APP.SEARCH.NAME.TOOLTIP' | translate"
+            [ariaLabel]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             [pTooltip]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -133,12 +132,12 @@
               </p-inputgroup-addon>
               <p-floatlabel variant="on">
                 <input
-                  #dvFilterInput
+                  #globalFilterInput
                   id="apm_app_search_filter"
                   type="text"
                   pInputText
-                  [value]="filterText"
-                  (input)="onGlobalFilter(dvFilterInput.value)"
+                  [value]="globalFilterValue"
+                  (input)="onGlobalFilter(globalFilterInput.value)"
                   [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
                   tooltipPosition="top"
@@ -151,9 +150,9 @@
               <p-inputgroup-addon>
                 <p-button
                   icon="pi pi-filter-slash"
-                  [severity]="dvFilterInput.value !== '' ? 'primary' : 'secondary'"
-                  [disabled]="dvFilterInput.value === ''"
-                  (onClick)="dvFilterInput.value = ''; onClearGlobalFilter()"
+                  (onClick)="globalFilterInput.value = ''; onClearGlobalFilter()"
+                  [severity]="globalFilterInput.value !== '' ? 'primary' : 'secondary'"
+                  [disabled]="globalFilterInput.value === ''"
                   [ariaLabel]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                   tooltipPosition="top"
@@ -201,6 +200,7 @@
 <p-dialog
   [header]="'ACTIONS.IMPORT.ASSIGNMENT' | translate"
   [(visible)]="displayImportDialog"
+  (onHide)="onCloseImportDialog()"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -274,7 +274,7 @@
 
 <!-- EXPORT -->
 <app-permission-export
-  [products]="productNames"
+  [products]="(productNames$ | async) ?? []"
   [listedProductsHeaderKey]="'ACTIONS.EXPORT.APPLICATION_LIST'"
   [(displayExportDialog)]="displayExportDialog"
 ></app-permission-export>

@@ -63,9 +63,10 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "ASSIGNMENT": "Export Permission Assignments",
-      "ASSIGNMENT.TOOLTIP": "Export of Permission Assignments",
-      "ITEMS_SELECTED.TOOLTIP": "Export selected Permission Assignments (store locally)",
+      "HINT": "Only permission assignments (Permission <=> Role) are exported of selected Applications, not the Permissions or Roles themselves.",
+      "ASSIGNMENT": "Export Assignments",
+      "ASSIGNMENT.TOOLTIP": "Export Permission Assignments",
+      "ITEMS_SELECTED.TOOLTIP": "Export selected Permission Assignments (store locally).",
       "MESSAGE": {
         "ASSIGNMENT.EXPORT_OK": "Permission assignments were exported successfully",
         "ASSIGNMENT.EXPORT_NOK": "An error has occurred. Permission assignments were not exported."
@@ -120,9 +121,9 @@
     },
     "VIEW": {
       "ROLE": "Role Details",
-      "ROLE.TOOLS": "Manage Roles - on/off",
+      "ROLE.TOOLS": "Manage Roles:<br/>on/off",
       "PERMISSION": "Permission Details",
-      "PERMISSION.TOOLS": "Manage Permissions - on/off"
+      "PERMISSION.TOOLS": "Manage Permissions:<br/>on/off"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
@@ -288,8 +289,8 @@
   "ROLE": {
     "LABEL": "Roles",
     "TOOLTIP": "List of Roles to which Permissions can be granted. Permissions for a user only become effective when the Role is assigned to the user.",
-    "NAME": "Name",
-    "DESCRIPTION": "Description",
+    "NAME": "Name of the Role, unique in IDM (Identity Management)",
+    "DESCRIPTION": "Additional information about the Role",
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
     "IDM": {
       "HEADER": "Select IDM Roles",
@@ -301,7 +302,7 @@
     }
   },
   "IAM_ROLES": {
-    "TOKEN_ROLES": "These Roles was extracted from Token."
+    "TOKEN_ROLES": "These Roles were extracted from the Token."
   },
   "USER_PERMISSIONS": {
     "TABS": {
@@ -315,7 +316,7 @@
       "ROLES.FILTER": "Role Name",
       "ROLES.TOOLTIP": "List of Roles to which Permissions are granted",
       "PRODUCTS.TITLE": "Applications: ",
-      "PRODUCTS.FILTER": "Applikation Name",
+      "PRODUCTS.FILTER": "Application Name",
       "PRODUCTS.TOOLTIP": "List of Applications to which Permissions are granted",
       "PERMISSIONS": "Permissions",
       "PERMISSIONS.TOOLTIP": "Permissions that apply to the Roles assigned",
@@ -335,10 +336,6 @@
       "ACTION": "Action that is allowed on the Resource",
       "RESOURCE": "Name of the Resource that can be worked on",
       "ROLE": "Role from IDM (Identity Management) to which the Permission was assigned"
-    },
-    "MSG": {
-      "PERMISSIONS_REFRESH_INFO": "Permissions were refreshed",
-      "PERMISSIONS_REFRESH_ERROR": "Error while upating Permissions"
     }
   },
   "VALIDATION": {
@@ -348,8 +345,8 @@
     "ERRORS": {
       "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
       "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
-      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
-      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
+      "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Role because it already exists",
+      "ROLE.EDIT_ALREADY_EXISTS": "Couldn't change Role because it already exists",
       "INTERNAL_ERROR": "Internal error",
       "EMPTY_REQUIRED_FIELD": "This field is required.",
       "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
@@ -362,7 +359,7 @@
     "NOT_FOUND": {
       "IAM_COMPONENT": "No component was provided that could provide this data.",
       "PRODUCT": "No data could be found for this Application.",
-      "USER": "The user no longer exist in IDM (Identity Management).",
+      "USER": "The user no longer exists in IDM (Identity Management).",
       "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_MISSING_PARAMETER": "Parameters from the URL could not be determined",

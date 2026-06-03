@@ -43,7 +43,9 @@
       currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
     >
       <ng-template pTemplate="caption">
+        <!-- FILTER -->
         <div class="p-0 flex flex-wrap justify-content-between gap-2">
+          <!-- Permission QUICK Filter -->
           <div class="flex align-items-center sm:ml-1 gap-1">
             <div
               class="slim-selectbutton align-items-start search-criteria-selectbutton"
@@ -69,8 +71,6 @@
           </div>
 
           <!-- Permission Filter -->
-          <!--
-          -->
           <p-inputgroup styleClass="w-18rem sm:w-22rem sm:mx-1 align-self-start">
             <p-inputgroup-addon>
               <p-button
@@ -108,8 +108,8 @@
                 type="text"
                 class="w-full text-responsive"
                 (input)="tableFilter($any($event.target).value)"
-                [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
-                [pTooltip]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
+                [ariaLabel]="'DIALOG.DETAIL.FILTER.PERMISSION.LABEL' | translate"
+                [pTooltip]="'DIALOG.DETAIL.FILTER.PERMISSION.LABEL' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
@@ -145,9 +145,9 @@
           ></p-button>
         </div>
 
-        <!-- SUMMARY AND TOOLS ROW -->
+        <!-- SUMMARY AND TOOLS -->
         <div
-          class="relative py-2 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
+          class="relative py-3 px-0 flex flex-wrap justify-content-around row-gap-1 column-gap-3 border-bottom-1 border-300"
         >
           <!-- summary -->
           <div class="xl:absolute hidden xl:block left-0 my-0 mx-1" style="z-index: 3">
@@ -194,10 +194,12 @@
               id="apm_app_detail_permission_table_header_permission_tools"
               class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
               (click)="onPermissionToolsToggle()"
+              (keydown.enter)="onPermissionToolsToggle()"
               [ariaLabel]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               [pTooltip]="'ACTIONS.VIEW.PERMISSION.TOOLS' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
+              escape="false"
             >
               <span class="pi pi-cog" aria-hidden="true"></span>
             </button>
@@ -208,6 +210,7 @@
                 id="apm_app_detail_permission_table_header_permission_create"
                 class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                 (click)="onCreatePermission()"
+                (keydown.enter)="onCreatePermission()"
                 [ariaLabel]="'ACTIONS.CREATE.PERMISSION' | translate"
                 [pTooltip]="'ACTIONS.CREATE.PERMISSION' | translate"
                 tooltipPosition="top"
@@ -258,10 +261,12 @@
                   id="apm_app_detail_permission_table_header_permission_tools"
                   class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                   (click)="onRoleToolsToggle()"
+                  (keydown.enter)="onRoleToolsToggle()"
                   [ariaLabel]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   [pTooltip]="'ACTIONS.VIEW.ROLE.TOOLS' | translate"
                   tooltipPosition="top"
                   tooltipEvent="hover"
+                  escape="false"
                 >
                   <span class="pi pi-cog" aria-hidden="true"></span>
                 </button>
@@ -273,6 +278,7 @@
                     id="apm_app_detail_permission_table_header_add_role_action"
                     class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                     (click)="onCreateRole($event)"
+                    (keydown.enter)="onCreateRole($event)"
                     [ariaLabel]="'ACTIONS.CREATE.ROLE' | translate"
                     [pTooltip]="'ACTIONS.CREATE.ROLE.TOOLTIP' | translate"
                     tooltipPosition="top"
@@ -287,6 +293,7 @@
                     id="am_app_detail_permission_table_header_action_add_iam_roles"
                     class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                     (click)="onAddIAMRoles($event)"
+                    (keydown.enter)="onAddIAMRoles($event)"
                     [ariaLabel]="'ACTIONS.CREATE.IAM_ROLES' | translate"
                     [pTooltip]="'ACTIONS.CREATE.IAM_ROLES.TOOLTIP' | translate"
                     tooltipPosition="top"
@@ -301,6 +308,7 @@
                     id="apm_app_detail_permission_table_header_action_add_workspace_roles"
                     class="p-button p-button-rounded p-button-text p-button-icon-only inline-button"
                     (click)="onCreateWorkspaceRoles($event)"
+                    (keydown.enter)="onCreateWorkspaceRoles($event)"
                     [ariaLabel]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     [pTooltip]="'ACTIONS.CREATE.WORKSPACE_ROLES.TOOLTIP' | translate"
                     tooltipPosition="top"
@@ -454,6 +462,7 @@
                 id="app_detail_permission_table_sort_product_name"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onFilterItemSortIcon($event, sortIconProduct, 'product')"
+                (keydown.enter)="onFilterItemSortIcon($event, sortIconProduct, 'product')"
                 [ariaLabel]="'PERMISSION.SORT.PRODUCT' | translate"
                 [pTooltip]="'PERMISSION.SORT.PRODUCT' | translate"
                 tooltipPosition="top"
@@ -498,6 +507,7 @@
                 id="app_detail_permission_table_sort_app_id"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onFilterItemSortIcon($event, sortIconAppId, 'appId')"
+                (keydown.enter)="onFilterItemSortIcon($event, sortIconAppId, 'appId')"
                 [ariaLabel]="'PERMISSION.SORT.APP_ID' | translate"
                 [pTooltip]="'PERMISSION.SORT.APP_ID' | translate"
                 tooltipPosition="top"
@@ -524,12 +534,13 @@
               class="flex flex-row gap-0 justify-content-center align-items-center white-space-nowrap"
             >
               <button
+                *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                 pbutton
                 type="button"
-                *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                 [id]="'app_detail_permission_table_col_' + role.id + '_action_grant_all'"
                 class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onGrantAllPermissions($event, role)"
+                (keydown.enter)="onGrantAllPermissions($event, role)"
                 [ariaLabel]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                 [pTooltip]="'PERMISSION.ASSIGNMENTS.GRANT_ALL_FOR_ROLE' | translate"
                 tooltipPosition="top"
@@ -539,12 +550,13 @@
               </button>
               @if (role.hasAssignments) {
                 <button
+                  *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                   pbutton
                   type="button"
-                  *ngIf="myPermissions.includes('PERMISSION#GRANT') && permissionTable.totalRecords > 0"
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_revoke_all'"
                   class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onRevokeAllPermissions($event, role)"
+                  (keydown.enter)="onRevokeAllPermissions($event, role)"
                   [ariaLabel]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   [pTooltip]="'PERMISSION.ASSIGNMENTS.REVOKE_ALL_FOR_ROLE' | translate"
                   tooltipPosition="top"
@@ -572,12 +584,13 @@
                   role="note"
                 ></div>
                 <button
+                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#EDIT')"
                   pbutton
                   type="button"
-                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#EDIT')"
                   [id]="'app_detail_permission_table_col_' + role.id + '_action_edit'"
                   class="p-1 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onEditRole($event, role)"
+                  (keydown.enter)="onEditRole($event, role)"
                   [ariaLabel]="'ACTIONS.EDIT.ROLE' | translate"
                   [pTooltip]="'ACTIONS.EDIT.ROLE' | translate"
                   tooltipPosition="top"
@@ -586,12 +599,13 @@
                   <span class="pi pi-pencil" aria-hidden="true"></span>
                 </button>
                 <button
+                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#DELETE')"
                   pbutton
                   type="button"
-                  *ngIf="!role.mandatory && myPermissions.includes('ROLE#DELETE')"
                   [id]="'app_detail_permission_table_col_' + role.name + '_action_delete'"
                   class="p-1 mr-0 p-button-rounded p-button-text p-button p-button-icon-only"
                   (click)="onDeleteRole($event, role)"
+                  (keydown.enter)="onDeleteRole($event, role)"
                   [ariaLabel]="'ACTIONS.DELETE.ROLE' | translate"
                   [pTooltip]="'ACTIONS.DELETE.ROLE' | translate"
                   tooltipPosition="top"
@@ -623,12 +637,13 @@
               class="white-space-nowrap text-center"
             >
               <button
+                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                 pbutton
                 type="button"
-                *ngIf="myPermissions.includes('PERMISSION#EDIT')"
                 [id]="'app_detail_permission_table_row_' + row + '_action_edit'"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onDetailPermission($event, rowData)"
+                (keydown.enter)="onDetailPermission($event, rowData)"
                 [ariaLabel]="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                 [pTooltip]="(rowData.mandatory ? 'ACTIONS.VIEW' : 'ACTIONS.EDIT') + '.PERMISSION' | translate"
                 tooltipPosition="top"
@@ -648,6 +663,7 @@
                 [id]="'app_detail_permission_table_row_' + row + '_action_copy'"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onCopyPermission($event, rowData)"
+                (keydown.enter)="onCopyPermission($event, rowData)"
                 [ariaLabel]="'ACTIONS.COPY.PERMISSION' | translate"
                 [pTooltip]="'ACTIONS.COPY.PERMISSION' | translate"
                 tooltipPosition="top"
@@ -662,6 +678,7 @@
                 [id]="'app_detail_permission_table_row_' + row + '_action_delete'"
                 class="p-button-rounded p-button-text p-button p-button-icon-only"
                 (click)="onDeletePermission($event, rowData)"
+                (keydown.enter)="onDeletePermission($event, rowData)"
                 [disabled]="rowData.mandatory"
                 [ariaLabel]="'ACTIONS.DELETE.PERMISSION' | translate"
                 [pTooltip]="'ACTIONS.DELETE.PERMISSION' | translate"
@@ -766,11 +783,12 @@
                   *ngIf="!rowData.roles[role.id]"
                   pbutton
                   type="button"
-                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                  (click)="onAssignPermission(rowData, role)"
                   [id]="
                     'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_not_assigned'
                   "
+                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
+                  (click)="onAssignPermission($event, rowData, role)"
+                  (keydown.enter)="onAssignPermission($event, rowData, role)"
                   [ariaLabel]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   [pTooltip]="('PERMISSION.ASSIGNMENTS.GRANT_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
@@ -784,9 +802,10 @@
                   *ngIf="rowData.roles[role.id]"
                   pbutton
                   type="button"
-                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
-                  (click)="onRemovePermission(rowData, role)"
                   [id]="'apm_app_detail_permission_table_' + row + '_' + role.name + '_' + rowData.key + '_assigned'"
+                  class="my-0 p-1 p-button-rounded p-button-text p-button p-button-icon-only"
+                  (click)="onRemovePermission($event, rowData, role)"
+                  (keydown.enter)="onRemovePermission($event, rowData, role)"
                   [ariaLabel]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   [pTooltip]="('PERMISSION.ASSIGNMENTS.REVOKE_ROLE' | translate) + role.name + ' + ' + rowData.key"
                   tooltipPosition="top"
@@ -808,11 +827,17 @@
   [roles]="roles"
   [role]="role"
   [changeMode]="changeMode"
-  [displayIamRolesDialog]="displayIamRolesDialog"
   [displayDetailDialog]="displayRoleDetailDialog"
-  [displayDeleteDialog]="displayRoleDeleteDialog"
   (dataChanged)="onChanges($event)"
 ></app-role-detail>
+
+<app-role-idm [roles]="roles" [visible]="displayIdmRolesDialog" (dataChanged)="onChanges($event)"></app-role-idm>
+
+<app-role-delete
+  [role]="role"
+  [visible]="displayRoleDeleteDialog"
+  (dataChanged)="onDeleteRoleChanges($event)"
+></app-role-delete>
 
 <app-permission-detail
   [currentApp]="currentApp"
@@ -826,7 +851,7 @@
 <app-permission-delete
   [permission]="permission"
   [visible]="displayPermissionDeleteDialog"
-  (dataChanged)="onDeleteChanges($event)"
+  (dataChanged)="onDeletePermissionChanges($event)"
 ></app-permission-delete>
 
 <app-permission-export
