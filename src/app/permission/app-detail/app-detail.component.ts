@@ -39,6 +39,7 @@ import { PermissionDetailComponent } from 'src/app/permission/permission-detail/
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
 import { RoleDeleteComponent } from 'src/app/permission/role-delete/role-delete.component'
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
+import { RoleIdmComponent } from 'src/app/permission/role-idm/role-idm.component'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
@@ -69,6 +70,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     SharedModule,
     RoleDeleteComponent,
     RoleDetailComponent,
+    RoleIdmComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
     PermissionExportComponent

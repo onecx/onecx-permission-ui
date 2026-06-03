@@ -825,10 +825,11 @@
   [roles]="roles"
   [role]="role"
   [changeMode]="changeMode"
-  [displayIdmRolesDialog]="displayIdmRolesDialog"
   [displayDetailDialog]="displayRoleDetailDialog"
   (dataChanged)="onChanges($event)"
 ></app-role-detail>
+
+<app-role-idm [roles]="roles" [visible]="displayIdmRolesDialog" (dataChanged)="onChanges($event)"></app-role-idm>
 
 <app-role-delete
   [role]="role"
