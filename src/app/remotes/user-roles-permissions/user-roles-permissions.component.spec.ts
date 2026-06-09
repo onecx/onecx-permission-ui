@@ -1,6 +1,6 @@
 import { ElementRef } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { AsyncPipe, CommonModule, Location } from '@angular/common'
+import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
@@ -79,7 +79,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
         set: {
-          imports: [CommonModule, AsyncPipe, TranslateTestingModule],
           providers: [
             { provide: UserAPIService, useValue: userApiSpy },
             { provide: AssignmentAPIService, useValue: assApiSpy },

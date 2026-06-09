@@ -214,7 +214,6 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   // activate TAB
   public onTabChange(tabValue: any, uas: UserAssignment[]) {
     const selectedTab = typeof tabValue === 'object' ? tabValue.index : Number(tabValue)
-    console.log('Tab changed to index: ', selectedTab)
     this.selectedTabIndex = selectedTab
     if (selectedTab === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
