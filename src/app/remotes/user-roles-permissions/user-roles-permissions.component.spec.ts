@@ -5,13 +5,12 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
-import { Table, TableModule } from 'primeng/table'
-import { TabsModule } from 'primeng/tabs'
+import { of, ReplaySubject, throwError } from 'rxjs'
+import { Table } from 'primeng/table'
 
 import { SlotService } from '@onecx/angular-remote-components'
 import { AppConfigService } from '@onecx/angular-integration-interface'
-import { RemoteComponentConfig } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import {
@@ -19,7 +18,7 @@ import {
   ExtendedSelectItem,
   slotInitializer
 } from './user-roles-permissions.component'
-import { environment } from '../../../environments/environment'
+import { environment } from 'src/environments/environment'
 
 const userAssignments: UserAssignment[] = [
   {
@@ -43,13 +42,14 @@ class MockTable {
 describe('OneCXUserRolesPermissionsComponent', () => {
   let component: OneCXUserRolesPermissionsComponent
   let fixture: ComponentFixture<OneCXUserRolesPermissionsComponent>
+  let baseUrlSubject: ReplaySubject<any>
 
+  const assApiSpy = {
+    searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
+  }
   const userApiSpy = {
     getUserAssignments: jasmine.createSpy('getUserAssignments').and.returnValue(of({ stream: userAssignments })),
     getTokenRoles: jasmine.createSpy('getTokenRoles').and.returnValue(of([]))
-  }
-  const assApiSpy = {
-    searchUserAssignments: jasmine.createSpy('searchUserAssignments').and.returnValue(of({ stream: userAssignments }))
   }
   const slotServiceSpy = {
     init: jasmine.createSpy('init'),
@@ -58,19 +58,19 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
 
   beforeEach(waitForAsync(() => {
+    baseUrlSubject = new ReplaySubject<any>(1)
+
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
-        TableModule,
-        TabsModule,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: SlotService, useValue: slotServiceSpy },
-        { provide: UserAPIService, useValue: userApiSpy },
         { provide: Router, useValue: routerMock },
         { provide: Table, useClass: MockTable },
         provideHttpClient(),
@@ -79,7 +79,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
         set: {
-          imports: [TranslateTestingModule, CommonModule, AsyncPipe],
+          imports: [CommonModule, AsyncPipe, TranslateTestingModule],
           providers: [
             { provide: UserAPIService, useValue: userApiSpy },
             { provide: AssignmentAPIService, useValue: assApiSpy },

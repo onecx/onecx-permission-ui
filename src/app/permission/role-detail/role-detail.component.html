@@ -9,7 +9,7 @@
   [dismissableMask]="true"
   [style]="{ width: '400px' }"
 >
-  <form [formGroup]="formGroup" errorTailor>
+  <form [formGroup]="formGroup">
     <div class="mt-2 flex flex-wrap flex-column justify-content-between row-gap-4">
       <p-floatlabel variant="on" controlErrorAnchor>
         <input
@@ -19,7 +19,7 @@
           id="apm_role_detail_name"
           formControlName="name"
           [ariaLabel]="'ROLE.NAME' | translate"
-          [pTooltip]="'ROLE.NAME' | translate"
+          [pTooltip]="'ROLE.NAME.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         />
@@ -33,7 +33,7 @@
           id="apm_role_detail_description"
           formControlName="description"
           [ariaLabel]="'ROLE.DESCRIPTION' | translate"
-          [pTooltip]="'ROLE.DESCRIPTION' | translate"
+          [pTooltip]="'ROLE.DESCRIPTION.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         />

@@ -17,11 +17,11 @@ const onProxyRes = function (proxyRes, req, res) {
 }
 
 const PROXY_CONFIG = {
-  '/bff': {
+  '/bff/': {
     target: 'http://onecx-permission-bff',
     secure: false,
     pathRewrite: {
-      '^.*/bff': ''
+      '^.*/bff/': '/'
     },
     changeOrigin: true,
     logLevel: 'debug',

@@ -1,4 +1,4 @@
-@import '/src/app/_apm-mixins.scss';
+@use 'src/app/apm-mixins' as *;
 
 @include danger-action;
 @include word-break-all;
@@ -33,56 +33,13 @@
     }
   }
 
-  /*
-  @media screen and (min-width: 576px) {
-    .p-datatable.app-detail-permission-table .p-datatable-header {
-      padding-top: 1rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--onecx-permission-onecx-permission-ui-datatable-header-border-color);
-    }
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-wrapper {
-    padding: 0;
-    margin-top: 0;
-    border: none;
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-table-container {
-    padding: 0 0.5rem 0.5rem;
-    background: var(--onecx-permission-onecx-permission-ui-content-background);
-    border: none;
-  }
-  @media screen and (min-width: 576px) {
-    .p-datatable.app-detail-permission-table .p-datatable-table-container {
-      padding: 0 1rem 0.5rem;
-    }
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-tbody > tr:nth-child(even) {
-    background: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-tbody > tr:nth-child(even) > td {
-    background: inherit;
-  }
-  .p-datatable.app-detail-permission-table .p-datatable-tbody > tr:nth-child(even) > td.p-datatable-frozen-column,
-  .p-datatable.app-detail-permission-table .p-datatable-tbody > tr:nth-child(even) > td.p-frozen-column {
-    background: inherit;
-  }
-  .p-datatable:not(.app-detail-permission-table) {
-    .p-datatable-wrapper {
-      margin-top: 1rem;
-    }
-  }
-  */
-
-  .p-datatable-header {
-    border: none;
-    border-radius: 0;
-    padding: 0.5rem;
-    margin-bottom: 0.25rem;
-  }
-
   .p-datatable {
+    .p-datatable-header {
+      border: none;
+      border-radius: 0;
+      padding: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
     .p-datatable-thead > tr > th:last-of-type,
     .p-datatable-tbody > tr > td:last-of-type {
       border-right: unset;

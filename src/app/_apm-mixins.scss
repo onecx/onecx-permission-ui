@@ -145,31 +145,19 @@
 /* **********************************************
  *  PrimeNG - Layout Corrections
  * **********************************************/
-@mixin input-clear-icon {
-  .p-input-icon-right > a:last-of-type {
-    right: 0.75rem;
-    color: var(--emphasis-medium);
-  }
-  .p-input-icon-left > a,
-  .p-input-icon-right > a {
-    position: absolute;
-    top: 50%;
-    margin-top: -0.5rem;
-  }
-}
-
 @mixin correct-autocomplete {
   :host ::ng-deep {
     .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
       padding-top: 0.4rem;
       padding-bottom: 0.4rem;
       &:nth-child(even) {
-        background-color: #f8f9fa;
+        background-color: var(--table-body-row-even-bg);
       }
     }
     .p-autocomplete-clear-icon {
       /* fix for bug in PrimeNG */
       right: 3.5rem;
+      color: black;
     }
     .p-autocomplete .p-autocomplete-loader {
       /* fix for bug in PrimeNG */
@@ -199,14 +187,14 @@
   :host ::ng-deep {
     .data-view-control,
     .data-view-control * {
-      color: var(--emphasis-medium);
+      color: var(--text-secondary-color);
     }
     /* correction for data-view-control component */
     .data-view-control-border {
       border: var(--toggle-button-border);
       &.p-select {
         .p-inputtext {
-          color: var(--emphasis-medium);
+          color: var(--text-secondary-color);
           opacity: 0.9;
         }
         &:last-of-type {
@@ -246,26 +234,38 @@
         }
       }
     }
+    .p-fileupload-file-info {
+      flex-direction: row;
+    }
   }
 }
 
-@mixin correct-select-button {
+@mixin file-upload-disabled-buttons {
   :host ::ng-deep {
-    .p-selectbutton.p-buttonset {
-      .p-button:first-of-type:not(:only-of-type) {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+    // PrimeNG v19: p-button no longer adds p-disabled class when [disabled]=true,
+    // only the inner <button> gets the native disabled attribute.
+    // Apply disabled visual treatment via :has() to match the p-disabled styles.
+    .p-fileupload p-button:has(button:disabled) {
+      .p-button {
+        opacity: var(--onecx-help-onecx-help-ui-disabled-opacity);
+        background-color: var(--onecx-help-onecx-help-ui-button-secondary-background);
       }
-      .p-button:not(:last-child),
-      .p-button:not(:last-child):hover {
-        border-right: 0 none;
+    }
+    .p-fileupload p-button:has(button:not(:disabled)) {
+      .p-button.p-fileupload-upload-button,
+      .p-button.p-fileupload-cancel-button {
+        background-color: var(--onecx-help-onecx-help-ui-onecx-primary-color);
+        color: var(--onecx-help-onecx-help-ui-onecx-topbar-menu-button-text-color);
+        opacity: var(--onecx-help-onecx-help-ui-enabled-opacity, 1);
       }
-      .p-button:last-of-type:not(:only-of-type) {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-      .p-button:not(:first-of-type):not(:last-of-type) {
-        border-radius: 0;
+      .p-button.p-fileupload-upload-button:enabled:hover,
+      .p-button.p-fileupload-upload-button:enabled:focus-visible,
+      .p-button.p-fileupload-cancel-button:enabled:hover,
+      .p-button.p-fileupload-cancel-button:enabled:focus-visible {
+        background-color: var(
+          --onecx-help-onecx-help-ui-button-primary-hover-background,
+          color-mix(in srgb, var(--onecx-help-onecx-help-ui-onecx-primary-color) 85%, black)
+        );
       }
     }
   }
@@ -312,71 +312,6 @@
         flex-wrap: wrap;
         align-content: center;
         margin-top: unset;
-      }
-    }
-  }
-}
-
-@mixin search-criteria-select-button-slim {
-  :host ::ng-deep {
-    .slim-selectbutton {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: column;
-      row-gap: 0.1rem;
-
-      .p-selectbutton .p-button {
-        text-align: center;
-        display: inline-block;
-        color: var(--emphasis-medium);
-        font-weight: var(--font-weight);
-        padding: 0.3rem 0.8rem;
-        border: var(--input-border);
-      }
-      .p-selectbutton-subtitle {
-        font-size: 0.8rem;
-        padding-left: 0.25rem;
-      }
-    }
-  }
-}
-@mixin search-criteria-select-button-filter {
-  :host ::ng-deep {
-    .filter-selectbutton {
-      .p-selectbutton .p-button {
-        opacity: 0.9 !important;
-        border: var(--toggle-button-border);
-        &.p-togglebutton-checked {
-          background: var(--toggle-button-active-bg);
-          border-color: var(--toggle-button-active-border-color);
-        }
-        &:not(.p-disabled):not(.p-togglebutton-checked):hover {
-          color: var(--text-color);
-          border-color: var(--toggle-button-hover-border-color);
-          background-color: var(--toggle-button-hover-bg);
-        }
-      }
-    }
-  }
-}
-@mixin search-criteria-select-button {
-  :host ::ng-deep {
-    .p-selectbutton-title {
-      width: 2rem;
-      text-align: right;
-    }
-    .search-criteria-selectbutton {
-      .p-selectbutton .p-button {
-        &.p-togglebutton-checked {
-          color: var(--primary-text-color);
-          border-color: var(--toggle-button-hover-border-color);
-          background-color: var(--primary-color);
-        }
-        &:not(.p-disabled):not(.p-togglebutton-checked):hover {
-          color: var(--primary-text-color);
-          border-color: var(--toggle-button-hover-border-color);
-          background-color: var(--button-hover-bg);
-        }
       }
     }
   }
@@ -486,49 +421,47 @@
     }
   }
 }
-@mixin dialog-modal-dialog-content {
+
+/* **********************************************
+ *  TABs
+ * **********************************************/
+@mixin ocx-tabs {
   :host ::ng-deep {
-    .p-dialog .p-dialog-content {
-      border-radius: unset !important;
-    }
-  }
-}
-@mixin dialog-modal-disable-full-height {
-  :host ::ng-deep {
-    @media (max-width: 991px) {
-      .p-dialog.disable-max-height-preset.p-dialog {
-        max-height: unset !important;
-        height: unset !important;
+    .p-tabs {
+      .p-tablist {
+        border-bottom: 1px solid var(--surface-300);
       }
-    }
-    @media (max-width: 576px) {
-      .p-dialog.disable-max-height-preset.p-dialog {
-        max-height: inherit !important;
-        height: inherit !important;
+      .p-tab {
+        padding: 0.75rem 1rem;
+        &.p-tab-active {
+          background-color: rgb(from var(--primary-color) r g b / 0.12);
+        }
       }
-    }
-  }
-}
-@mixin dialog-footer-buttons {
-  :host ::ng-deep {
-    .p-dialog .p-dialog-footer button {
-      margin: 0;
+      .p-tabpanels {
+        padding: 1.5rem 0 0 0;
+      }
     }
   }
 }
 
-@mixin tabview-reduce-padding {
+@mixin tabview-body-fix {
   :host ::ng-deep {
     .p-tabs .p-tabpanels {
       padding: 1.4rem 0 0 0;
     }
   }
 }
-@mixin tabview-fix-color-selected-tab {
+@mixin tabview-header-fix {
   :host ::ng-deep {
-    // correct the background color on initial selected tab
-    .p-tabs .p-tab[aria-selected='true'] {
-      background-color: rgba(var(--primary-color-rgb), 0.12);
+    --tabview-header-active-bg: rgb(from var(--primary-color) r g b / 0.12) !important;
+
+    .p-tablist-tab-list {
+      button.p-tab {
+        padding: 0.5rem 1rem;
+        &.p-tab-active {
+          background-color: var(--tabview-header-active-bg) !important;
+        }
+      }
     }
   }
 }

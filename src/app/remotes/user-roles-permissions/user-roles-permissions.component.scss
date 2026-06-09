@@ -1,10 +1,21 @@
-@import '/src/app/_apm-mixins.scss';
+@use 'src/app/apm-mixins' as *;
 
-@include tabview-fix-color-selected-tab;
-@include tabview-reduce-padding;
+@include danger-action;
+@include word-break-all;
+@include ocx-text-responsive;
+@include ocx-p-floatlabel;
+@include ocx-content;
+@include ocx-p-message;
+@include ocx-p-inputgroup;
+@include table-zebra-rows;
+@include table-inline-buttons;
+@include table-responsive-columns;
+@include tabview-header-fix;
+@include tabview-body-fix;
 @include listbox-zebra-rows;
 @include listbox-layout;
-@include dialog-footer-buttons;
+
+/*
 
 :host {
   .border-permission-group {
@@ -42,3 +53,4 @@
     padding: 0.5rem;
   }
 }
+*/

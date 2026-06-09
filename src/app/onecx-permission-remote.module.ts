@@ -5,10 +5,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
 
-import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import {
   createTranslateLoader,
+  MultiLanguageMissingTranslationHandler,
   PortalApiConfiguration,
   providePermissionService,
   provideThemeConfig,
@@ -16,6 +16,7 @@ import {
 } from '@onecx/angular-utils'
 import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { Configuration } from './shared/generated'
 import { environment } from 'src/environments/environment'
@@ -40,22 +41,29 @@ const routes: Routes = [
     AngularAcceleratorModule,
     RouterModule.forRoot(routes),
     TranslateModule.forRoot({
-      isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
+      isolate: false,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      },
       missingTranslationHandler: {
         provide: MissingTranslationHandler,
-        useClass: AngularAcceleratorMissingTranslationHandler
+        useClass: MultiLanguageMissingTranslationHandler
       }
     })
   ],
   providers: [
     ConfigurationService,
     { provide: Configuration, useFactory: apiConfigProvider },
-    provideAppInitializer(() => initializeRouter(inject(Router), inject(AppStateService))()),
+    provideAppInitializer(() => {
+      const initializerFn = initializeRouter(inject(Router), inject(AppStateService))
+      return initializerFn()
+    }),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     providePermissionService(),
-    provideThemeConfig(),
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withInterceptorsFromDi()),
+    provideThemeConfig()
   ]
 })
 export class OneCXPermissionModule implements DoBootstrap {

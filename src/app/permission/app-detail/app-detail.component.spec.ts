@@ -158,11 +158,11 @@ describe('AppDetailComponent', () => {
   }
   const roleApiSpy = jasmine.createSpyObj<RoleAPIService>('RoleAPIService', ['searchRoles', 'createRole'])
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['getDetailsByWorkspaceName'])
-
+  const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const mockUserService = {
     lang$: new BehaviorSubject('en'),
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
-      if (
+      return (
         permissionName === 'ROLE#CREATE' ||
         permissionName === 'ROLE#EDIT' ||
         permissionName === 'ROLE#DELETE' ||
@@ -170,15 +170,9 @@ describe('AppDetailComponent', () => {
         permissionName === 'PERMISSION#EDIT' ||
         permissionName === 'PERMISSION#DELETE' ||
         permissionName === 'PERMISSION#GRANT'
-      ) {
-        return true
-      } else {
-        return false
-      }
+      )
     })
   }
-
-  const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -516,6 +510,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
     })
+
     it('should go if no roles are loaded', () => {
       permApiSpy.searchPermissions.and.returnValue(of({}) as any)
       component.urlParamAppType = 'WORKSPACE'

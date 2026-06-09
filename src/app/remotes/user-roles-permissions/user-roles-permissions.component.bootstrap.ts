@@ -1,21 +1,22 @@
 import { importProvidersFrom } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MissingTranslationHandler, TranslateLoader } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
 
-import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
+import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import {
+  REMOTE_COMPONENT_CONFIG,
+  RemoteComponentConfig,
   createTranslateLoader,
   providePermissionService,
   provideThemeConfig,
-  provideTranslationPathFromMeta,
-  REMOTE_COMPONENT_CONFIG,
-  RemoteComponentConfig
+  provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 
 import { environment } from 'src/environments/environment'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
@@ -26,10 +27,10 @@ bootstrapRemoteComponent(
   environment.production,
   [
     provideHttpClient(withInterceptorsFromDi()),
-    importProvidersFrom(AngularAuthModule, BrowserAnimationsModule),
-    { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
-    providePermissionService(),
-    provideThemeConfig(),
+    {
+      provide: REMOTE_COMPONENT_CONFIG,
+      useValue: new ReplaySubject<RemoteComponentConfig>(1)
+    },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideTranslateServiceForRoot({
       isolate: true,
@@ -42,6 +43,9 @@ bootstrapRemoteComponent(
         provide: MissingTranslationHandler,
         useClass: AngularAcceleratorMissingTranslationHandler
       }
-    })
+    }),
+    importProvidersFrom(AngularAuthModule, BrowserModule, BrowserAnimationsModule),
+    providePermissionService(),
+    provideThemeConfig()
   ]
 )

@@ -176,6 +176,11 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     this.filterMode = FilterMatchMode.CONTAINS
+    this.getMyPermissions()
+      .pipe(take(1))
+      .subscribe((permissions) => {
+        this.myPermissions = permissions
+      })
   }
 
   public ngOnInit(): void {
@@ -183,12 +188,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.initializeComponent()
       return
     }
-    this.getMyPermissions()
-      .pipe(take(1))
-      .subscribe((permissions) => {
-        this.myPermissions = permissions
-        this.initializeComponent()
-      })
   }
 
   public ngOnDestroy(): void {

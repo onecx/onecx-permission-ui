@@ -16,7 +16,7 @@
       styleClass="mt-1 mb-3"
       [text]="'ACTIONS.EXPORT.HINT' | translate"
     ></p-message>
-    <div>{{ listedProductsHeaderKey | translate }}</div>
+    <div class="font-bold">{{ listedProductsHeaderKey | translate }}</div>
     <p-listbox
       id="apm_export_product_list"
       [options]="products"
@@ -24,10 +24,12 @@
       [filter]="true"
       [checkbox]="true"
       [multiple]="true"
+      [striped]="true"
       [showToggleAll]="true"
       [metaKeySelection]="false"
       [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
       [listStyle]="{ 'max-height': '300px' }"
+      [ariaLabel]="'ACTIONS.EXPORT.APPLICATION_LIST' | translate"
     />
   </div>
 
