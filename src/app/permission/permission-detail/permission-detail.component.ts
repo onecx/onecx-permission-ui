@@ -18,13 +18,23 @@ import {
   PermissionAPIService,
   Permission
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 import type { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-detail/app-detail.component'
 
 @Component({
   selector: 'app-permission-detail',
   standalone: true,
-  imports: [SharedModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    CheckboxModule,
+    DialogModule,
+    FloatLabelModule,
+    InputTextModule,
+    MessageModule,
+    TooltipModule,
+    TranslateModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './permission-detail.component.html',
   styleUrls: ['./permission-detail.component.scss']
 })

@@ -10,7 +10,6 @@ import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { SharedModule } from 'src/app/shared/shared.module'
 import { CreateRoleRequest, Role, RoleAPIService, UpdateRoleRequest } from 'src/app/shared/generated'
 import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.component'
 
@@ -18,7 +17,6 @@ import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.c
   selector: 'app-role-detail',
   standalone: true,
   imports: [
-    /*
     CommonModule,
     ReactiveFormsModule,
     TranslateModule,
@@ -26,8 +24,7 @@ import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.c
     FloatLabelModule,
     InputTextModule,
     ButtonModule,
-    TooltipModule,*/
-    SharedModule
+    TooltipModule
   ],
   templateUrl: './role-detail.component.html',
   styleUrls: ['./role-detail.component.scss']

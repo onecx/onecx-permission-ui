@@ -34,14 +34,15 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
+import { SharedModule } from 'src/app/shared/shared.module'
+import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
+
 import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
 import { RoleDeleteComponent } from 'src/app/permission/role-delete/role-delete.component'
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
 import { RoleIdmComponent } from 'src/app/permission/role-idm/role-idm.component'
-import { SharedModule } from 'src/app/shared/shared.module'
-import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 export type App = Application & {
   isProduct: boolean
@@ -67,13 +68,13 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   imports: [
     AngularAcceleratorModule,
     PortalPageComponent,
-    SharedModule,
     RoleDeleteComponent,
     RoleDetailComponent,
     RoleIdmComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
-    PermissionExportComponent
+    PermissionExportComponent,
+    SharedModule
   ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
@@ -176,18 +177,20 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'
     this.filterMode = FilterMatchMode.CONTAINS
+  }
+
+  public ngOnInit(): void {
     this.getMyPermissions()
       .pipe(take(1))
       .subscribe((permissions) => {
         this.myPermissions = permissions
+        this.initializeComponent()
       })
-  }
-
-  public ngOnInit(): void {
+    /*
     if (this.myPermissions.length > 0) {
       this.initializeComponent()
       return
-    }
+    }*/
   }
 
   public ngOnDestroy(): void {

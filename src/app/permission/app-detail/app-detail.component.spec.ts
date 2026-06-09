@@ -376,32 +376,30 @@ describe('AppDetailComponent', () => {
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType
-      component.myPermissions = ['ROLE#CREATE']
 
       component.ngOnInit()
 
       expect(component.currentApp).toEqual(loadedApp)
-      expect(component.myPermissions.length).toEqual(2)
-      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'ROLE#MANAGE'])
     })
 
     it('should detect manage roles/permissions on creation', () => {
-      component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
-
       component.ngOnInit()
 
-      expect(component.myPermissions.length).toEqual(4)
-      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'PERMISSION#CREATE', 'ROLE#MANAGE', 'PERMISSION#MANAGE'])
+      expect(component.myPermissions.length).toBe(9) // all
+
+      component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
+      component['initializeComponent']()
+
+      expect(component.myPermissions).toEqual(jasmine.arrayContaining(['ROLE#MANAGE', 'PERMISSION#MANAGE']))
     })
 
     it('should detect manage roles/permissions on deletion', () => {
-      component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
-
       component.ngOnInit()
 
-      expect(component.myPermissions.length).toEqual(4)
-      expect(component.myPermissions[2]).toEqual('ROLE#MANAGE')
-      expect(component.myPermissions[3]).toEqual('PERMISSION#MANAGE')
+      component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
+      component['initializeComponent']()
+
+      expect(component.myPermissions).toEqual(jasmine.arrayContaining(['ROLE#MANAGE', 'PERMISSION#MANAGE']))
     })
 
     it('should catch error if search for applications fails ', () => {
