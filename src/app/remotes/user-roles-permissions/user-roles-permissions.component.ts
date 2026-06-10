@@ -45,7 +45,7 @@ type ExtendedColumn = {
   field: string
   labelKey: string
   tooltipKey: string
-  hasFilter: true
+  hasFilter: boolean
   class?: string
   value?: string | null
 }
@@ -99,6 +99,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public exceptionKeyIdmRoles: string | undefined = undefined
   public loading = false
   public selectedTabIndex = 0
+  public selectedCity: string | undefined = undefined
 
   // manage slot to get roles from iam
   public loadingIdmRoles = false

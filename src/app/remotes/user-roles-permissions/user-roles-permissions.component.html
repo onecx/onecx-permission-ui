@@ -53,6 +53,7 @@
         <div
           *ngIf="items.length === 0"
           class="m-3 font-bold"
+          [attr.aria-label]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
           [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
@@ -168,26 +169,29 @@
                 [pSortableColumn]="col.field"
               >
                 <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-2">
-                  <ng-container *ngIf="!col.hasFilter"> {{ col.labelKey | translate }} </ng-container>
-                  <p-floatlabel variant="on" *ngIf="col.hasFilter" class="min-w-10rem">
-                    <p-select
-                      [inputId]="'apm_user_assignments_table_filter_' + col.field"
-                      styleClass="min-w-10rem"
-                      (onClick)="$event.stopPropagation()"
-                      (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
-                      [showClear]="true"
-                      [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
-                      [options]="extractFilterItems(items, col.field)"
-                      [ariaLabel]="col.tooltipKey | translate"
-                      [pTooltip]="col.tooltipKey | translate"
-                      tooltipPosition="top"
-                      tooltipEvent="hover"
-                    >
-                    </p-select>
-                    <label [for]="'apm_user_assignments_table_filter_' + col.field" aria-hidden="true">
-                      {{ col.labelKey | translate }}
-                    </label>
-                  </p-floatlabel>
+                  @if (col.hasFilter) {
+                    <p-floatlabel variant="on" class="min-w-10rem">
+                      <p-select
+                        variant="outlined"
+                        [inputId]="'apm_user_assignments_table_filter_' + col.field"
+                        styleClass="min-w-10rem"
+                        (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
+                        [showClear]="true"
+                        [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
+                        [options]="extractFilterItems(items, col.field)"
+                        [ariaLabel]="col.tooltipKey | translate"
+                        [tooltip]="col.tooltipKey | translate"
+                        tooltipPosition="top"
+                        tooltipEvent="hover"
+                      >
+                      </p-select>
+                      <label [for]="'apm_user_assignments_table_filter_' + col.field" aria-hidden="true">
+                        {{ col.labelKey | translate }}
+                      </label>
+                    </p-floatlabel>
+                  } @else {
+                    <div>{{ col.labelKey | translate }}</div>
+                  }
                   <p-sortIcon [field]="col.field" aria-hidden="true"></p-sortIcon>
                 </div>
               </th>
@@ -205,6 +209,7 @@
               </td>
             </tr>
           </ng-template>
+
           <ng-template pTemplate="emptymessage">
             <tr>
               <td [attr.colspan]="columns.length" id="apm_user_assignments_table_no_results">
@@ -276,86 +281,85 @@
         id="apm_user_idm_roles_tab"
         value="2"
       >
-        <ng-template pTemplate="content">
-          <!-- start loading if tab is active -->
-          <p-message
-            *ngIf="!isComponentDefined"
-            id="apm_user_idm_roles_exception_component_not_exist"
-            severity="error"
-            styleClass="m-3"
-            [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
-          ></p-message>
+        <!-- start loading if tab is active -->
+        <p-message
+          *ngIf="!isComponentDefined"
+          id="apm_user_idm_roles_exception_component_not_exist"
+          severity="error"
+          styleClass="m-3"
+          [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
+        ></p-message>
 
-          <!-- get roles from IAM for a user in admin mode -->
-          <ng-container *ngIf="isComponentDefined">
-            <ocx-slot
-              [name]="slotName"
-              [inputs]="{ userId: userId, issuer: this.issuer }"
-              [outputs]="{ roleList: roleListEmitter }"
+        <!-- get roles from IAM for a user in admin mode -->
+        <ng-container *ngIf="isComponentDefined">
+          <ocx-slot
+            [name]="slotName"
+            [inputs]="{ userId: userId, issuer: this.issuer }"
+            [outputs]="{ roleList: roleListEmitter }"
+          >
+          </ocx-slot>
+        </ng-container>
+
+        <p-message
+          *ngIf="loadingIdmRoles"
+          id="apm_user_idm_roles_loading"
+          severity="info"
+          styleClass="m-3"
+          [text]="'ACTIONS.LOADING' | translate"
+        ></p-message>
+        <p-message
+          *ngIf="exceptionKeyIdmRoles"
+          id="apm_user_idm_roles_exception"
+          severity="error"
+          styleClass="m-3"
+          [text]="exceptionKeyIdmRoles | translate"
+        ></p-message>
+
+        <ng-container *ngIf="isComponentDefined && (idmRoles$ | async) as idmRoles">
+          <!-- displaying -->
+          <section
+            *ngIf="!(exceptionKeyIdmRoles || loadingIdmRoles)"
+            class="m-3 flex flex-column row-gap-2 min-w-20rem max-w-30rem"
+          >
+            <div
+              class="font-bold"
+              [attr.aria-label]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
+              [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+              role="note"
             >
-            </ocx-slot>
-          </ng-container>
-
-          <p-message
-            *ngIf="loadingIdmRoles"
-            id="apm_user_idm_roles_loading"
-            severity="info"
-            styleClass="m-3"
-            [text]="'ACTIONS.LOADING' | translate"
-          ></p-message>
-          <p-message
-            *ngIf="exceptionKeyIdmRoles"
-            id="apm_user_idm_roles_exception"
-            severity="error"
-            styleClass="m-3"
-            [text]="exceptionKeyIdmRoles | translate"
-          ></p-message>
-
-          <ng-container *ngIf="isComponentDefined && (idmRoles$ | async) as idmRoles">
-            <!-- displaying -->
-            <section *ngIf="!(exceptionKeyIdmRoles || loadingIdmRoles)" class="m-3 flex flex-row justify-content-start">
-              <div class="p-2 flex flex-column row-gap-2">
+              {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ idmRoles.length }}
+            </div>
+            <p-listbox
+              id="apm_user_idm_roles_list"
+              [listStyle]="{ 'max-height': '300px' }"
+              [options]="idmRoles"
+              [filter]="true"
+              [filterFields]="['label']"
+              [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
+              [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
+            >
+              <ng-template let-role pTemplate="item">
+                @let tooltipText = 'USER_PERMISSIONS.TABS.IAM_ROLES.USER_ASSIGNED' | translate;
                 <div
-                  class="font-bold"
-                  [attr.aria-label]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
-                  [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
+                  class="flex align-items-center gap-2"
+                  [attr.aria-label]="!role.isUserAssignedRole ? '' : tooltipText"
+                  [pTooltip]="!role.isUserAssignedRole ? '' : tooltipText"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                  role="note"
                 >
-                  {{ 'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate }} {{ idmRoles.length }}
+                  <span
+                    class="pi text-primary font-bold cursor-auto"
+                    [ngClass]="{ 'pi-check': role.isUserAssignedRole }"
+                    style="width: 18px"
+                  ></span>
+                  <div class="cursor-auto">{{ role.label }}</div>
                 </div>
-                <p-listbox
-                  id="apm_user_idm_roles_list"
-                  [listStyle]="{ 'max-height': '300px' }"
-                  [options]="idmRoles"
-                  [filter]="true"
-                  [filterFields]="['label']"
-                  [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
-                  [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
-                >
-                  <ng-template let-role pTemplate="item">
-                    @let tooltipText = 'USER_PERMISSIONS.TABS.IAM_ROLES.USER_ASSIGNED' | translate;
-                    <div
-                      class="flex align-items-center gap-2"
-                      [attr.aria-label]="!role.isUserAssignedRole ? '' : tooltipText"
-                      [pTooltip]="!role.isUserAssignedRole ? '' : tooltipText"
-                      tooltipPosition="top"
-                      tooltipEvent="hover"
-                    >
-                      <span
-                        class="pi text-primary font-bold cursor-auto"
-                        [ngClass]="{ 'pi-check': role.isUserAssignedRole }"
-                        style="width: 18px"
-                      ></span>
-                      <div class="cursor-auto">{{ role.label }}</div>
-                    </div>
-                  </ng-template>
-                </p-listbox>
-              </div>
-            </section>
-          </ng-container>
-        </ng-template>
+              </ng-template>
+            </p-listbox>
+          </section>
+        </ng-container>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
