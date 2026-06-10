@@ -327,8 +327,15 @@
     }
   }
 }
-/* ZEBRA rows on dropdown => see styles.scss*/
+/* ZEBRA rows on dropdown => see also styles.scss for global settings */
 
+@mixin selectbox-zebra-rows {
+  :host ::ng-deep {
+    .p-select-list *:nth-child(even) .p-select-option:not(.p-select-option-selected):not(.p-disabled) {
+      background-color: var(--onecx-permission-onecx-permission-ui-datatable-row-striped-background);
+    }
+  }
+}
 @mixin listbox-zebra-rows {
   :host ::ng-deep {
     .p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled) {
@@ -439,28 +446,6 @@
       }
       .p-tabpanels {
         padding: 1.5rem 0 0 0;
-      }
-    }
-  }
-}
-
-@mixin tabview-body-fix {
-  :host ::ng-deep {
-    .p-tabs .p-tabpanels {
-      padding: 1.4rem 0 0 0;
-    }
-  }
-}
-@mixin tabview-header-fix {
-  :host ::ng-deep {
-    --tabview-header-active-bg: rgb(from var(--primary-color) r g b / 0.12) !important;
-
-    .p-tablist-tab-list {
-      button.p-tab {
-        padding: 0.5rem 1rem;
-        &.p-tab-active {
-          background-color: var(--tabview-header-active-bg) !important;
-        }
       }
     }
   }

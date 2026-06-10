@@ -41,6 +41,14 @@ import { environment } from 'src/environments/environment'
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
 export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
+type ExtendedColumn = {
+  field: string
+  labelKey: string
+  tooltipKey: string
+  hasFilter: true
+  class?: string
+  value?: string | null
+}
 
 export function slotInitializer(slotService: SlotService) {
   return () => slotService.init()
@@ -85,7 +93,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
   public idmRoles: Role[] = [] // empty list is indicator to init slot
-  public columns
+  public columns: ExtendedColumn[] = []
   public environment = environment
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIdmRoles: string | undefined = undefined
@@ -137,12 +145,15 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       }
       this.loadingIdmRoles = true
       if (!this.isComponentDefined) {
+        //console.log('check slot for iam component', this.slotName)
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
           if (this.isComponentDefined) {
+            //console.log('IAM component is defined for slot', this.slotName)
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
+              //console.log('Received IAM roles for slot', this.slotName, list)
               this.loadingIdmRoles = false
               this.idmRoles = list
               this.idmRoles$ = this.provideIamRoles()
@@ -236,8 +247,10 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       return of(roles)
     }
     // user in private context: get roles from token (if not yet done)
+    //console.log('idmRoles', this.idmRoles, this.userId, this.isComponentDefined)
     if (this.idmRoles.length > 0) {
       this.idmRoles?.forEach((r) => {
+        //console.log('role', r.name)
         roles.push({
           label: r.name,
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
@@ -297,44 +310,35 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     return options
   }
 
-  public applyGlobalFilter($event: Event, primengTable: Table): void {
-    primengTable.filterGlobal(($event.target as HTMLInputElement).value, 'contains')
-  }
-
-  public onClearFilterUserAssignmentTable(): void {
-    if (this.permissionTableFilter) {
-      this.permissionTableFilter.nativeElement.value = ''
-    }
-  }
-
-  private prepareColumn() {
+  private prepareColumn(): ExtendedColumn[] {
     return [
       {
-        field: 'resource',
-        header: 'USER_PERMISSIONS.RESOURCE',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
-        filter: true,
-        value: null
-      },
-      {
-        field: 'action',
-        header: 'USER_PERMISSIONS.ACTION',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
-        filter: true,
+        field: 'roleName',
+        labelKey: 'USER_PERMISSIONS.ROLE',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
+        hasFilter: true,
+        class: 'border-right-1 border-100 border-solid',
         value: null
       },
       {
         field: 'productName',
-        header: 'USER_PERMISSIONS.PRODUCT',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
-        filter: true,
+        labelKey: 'USER_PERMISSIONS.PRODUCT',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
+        hasFilter: true,
         value: null
       },
       {
-        field: 'roleName',
-        header: 'USER_PERMISSIONS.ROLE',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
-        filter: true,
+        field: 'resource',
+        labelKey: 'USER_PERMISSIONS.RESOURCE',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
+        hasFilter: true,
+        value: null
+      },
+      {
+        field: 'action',
+        labelKey: 'USER_PERMISSIONS.ACTION',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
+        hasFilter: true,
         value: null
       }
     ]

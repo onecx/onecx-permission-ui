@@ -48,7 +48,7 @@
       >
     </p-tablist>
 
-    <p-tabpanels>
+    <p-tabpanels [class]="userId ? '' : 'non-modal-panels'">
       <p-tabpanel id="apm_user_assignments_tab" value="0">
         <div
           *ngIf="items.length === 0"
@@ -81,28 +81,30 @@
         >
           <ng-template pTemplate="caption">
             <div class="flex flex-wrap justify-content-between align-items-center gap-2">
-              <div role="note">{{ 'USER_PERMISSIONS.TABS.PERMISSIONS.TITLE' | translate }} {{ items.length }}</div>
+              <div class="font-bold" role="note">
+                {{ 'USER_PERMISSIONS.TABS.PERMISSIONS.TITLE' | translate }} {{ items.length }}
+              </div>
               <p-inputgroup class="w-auto">
                 <p-inputgroup-addon>
                   <span class="pi pi-filter" aria-hidden="true"></span>
                 </p-inputgroup-addon>
                 <p-floatlabel variant="on">
                   <input
-                    #permissionNameFilter
+                    #permissionNameFilterInput
                     pInputText
                     type="text"
                     id="apm_user_assignments_table_filter"
-                    (input)="applyGlobalFilter($event, permissionTable)"
-                    [attr.aria-label]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
+                    (input)="permissionTable.filterGlobal(permissionNameFilterInput.value, 'contains')"
+                    [ariaLabel]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
                     [pTooltip]="
                       ('ACTIONS.SEARCH.FILTER.OF' | translate) +
-                      ('USER_PERMISSIONS.RESOURCE' | translate) +
-                      ', ' +
-                      ('USER_PERMISSIONS.ACTION' | translate) +
+                      ('USER_PERMISSIONS.ROLE' | translate) +
                       ', ' +
                       ('USER_PERMISSIONS.PRODUCT' | translate) +
                       ', ' +
-                      ('USER_PERMISSIONS.ROLE' | translate)
+                      ('USER_PERMISSIONS.RESOURCE' | translate) +
+                      ', ' +
+                      ('USER_PERMISSIONS.ACTION' | translate)
                     "
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -111,11 +113,15 @@
                     {{ 'ACTIONS.SEARCH.FILTER.LABEL' | translate }}
                   </label>
                 </p-floatlabel>
-                <p-inputgroup-addon class="filter-clear-addon">
+                <p-inputgroup-addon>
                   <p-button
                     id="apm_user_assignments_table_filter_clear"
-                    styleClass="p-button-icon-only"
-                    (onClick)="onClearFilterUserAssignmentTable(); permissionTable.filterGlobal('', 'contains')"
+                    (onClick)="permissionNameFilterInput.value = ''; permissionTable.filterGlobal('', 'contains')"
+                    (onKeydown.enter)="
+                      permissionNameFilterInput.value = ''; permissionTable.filterGlobal('', 'contains')
+                    "
+                    [severity]="permissionNameFilterInput.value !== '' ? 'primary' : 'secondary'"
+                    [disabled]="permissionNameFilterInput.value === ''"
                     [attr.aria-label]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                     [pTooltip]="'ACTIONS.SEARCH.FILTER.CLEAR' | translate"
                     tooltipPosition="top"
@@ -143,44 +149,43 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <th
+                id="apm_user_assignments_table_header_roles"
+                class="border-none border-right-1 border-100 border-solid"
+              ></th>
+              <th
                 id="apm_user_assignments_table_header_permissions"
-                class="text-center border-permission-group p-1"
+                class="text-center border-none py-2 surface-100 opacity-50"
                 colspan="3"
               >
                 {{ 'USER_PERMISSIONS.PERMISSION' | translate }}
               </th>
-              <th id="apm_user_assignments_table_header_roles" class="border-none"></th>
             </tr>
             <tr>
               <th
                 *ngFor="let col of columns"
                 [id]="'apm_user_assignments_table_header_' + col.field"
-                class="p-2 text-center"
+                [class]="'py-3 text-center ' + (col.class ?? '')"
                 [pSortableColumn]="col.field"
-                [attr.aria-label]="col.tooltip | translate"
-                [pTooltip]="col.tooltip | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
               >
-                <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-1">
-                  <ng-container *ngIf="!col.filter"> {{ col.header | translate }} </ng-container>
-                  <p-floatlabel variant="on" *ngIf="col.filter" class="inline-block w-10rem">
+                <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-2">
+                  <ng-container *ngIf="!col.hasFilter"> {{ col.labelKey | translate }} </ng-container>
+                  <p-floatlabel variant="on" *ngIf="col.hasFilter" class="min-w-10rem">
                     <p-select
-                      class="w-10rem"
-                      size="small"
-                      [id]="'apm_user_assignments_table_filter_' + col.field"
+                      [inputId]="'apm_user_assignments_table_filter_' + col.field"
+                      styleClass="min-w-10rem"
                       (onClick)="$event.stopPropagation()"
                       (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                       [showClear]="true"
                       [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
                       [options]="extractFilterItems(items, col.field)"
+                      [ariaLabel]="col.tooltipKey | translate"
+                      [pTooltip]="col.tooltipKey | translate"
+                      tooltipPosition="top"
+                      tooltipEvent="hover"
                     >
-                      <!--
-                    [(ngModel)]="col.value"
-                  -->
                     </p-select>
                     <label [for]="'apm_user_assignments_table_filter_' + col.field" aria-hidden="true">
-                      {{ col.header | translate }}
+                      {{ col.labelKey | translate }}
                     </label>
                   </p-floatlabel>
                   <p-sortIcon [field]="col.field" aria-hidden="true"></p-sortIcon>
@@ -194,7 +199,7 @@
               <td
                 *ngFor="let col of columns"
                 [id]="'apm_user_assignments_table_row_' + i + '_' + col.field"
-                class="text-center align-middle"
+                [class]="'text-center align-middle ' + (col.class ?? '')"
               >
                 {{ item[col.field] }}
               </td>

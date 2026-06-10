@@ -1,4 +1,3 @@
-import { ElementRef } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
@@ -164,16 +163,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       expect(component.searchUserAssignments).toHaveBeenCalledWith()
     })
-  })
-
-  it('should apply global filter on the primeng table', () => {
-    const mockTable: MockTable = TestBed.inject(Table) as unknown as MockTable
-    const event = { target: { value: 'test' } } as unknown as Event
-    spyOn(mockTable, 'filterGlobal')
-
-    component.applyGlobalFilter(event, mockTable as unknown as Table)
-
-    expect(mockTable.filterGlobal).toHaveBeenCalledWith('test', 'contains')
   })
 
   describe('search user assignments', () => {
@@ -410,30 +399,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       ])
       expect(second).toBe(first)
       expect(extractSpy).toHaveBeenCalledTimes(1)
-    })
-  })
-
-  describe('onClearFilterUserAssignmentTable', () => {
-    it('should clear the permissionTableFilter value if it exists', () => {
-      component.permissionTableFilter = {
-        nativeElement: { value: 'test filter' }
-      } as ElementRef
-
-      component.onClearFilterUserAssignmentTable()
-
-      expect(component.permissionTableFilter?.nativeElement.value).toBe('')
-    })
-
-    it('should not throw an error if permissionTableFilter is undefined', () => {
-      component.permissionTableFilter = undefined
-
-      expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
-    })
-
-    it('should not throw an error if permissionTable is undefined', () => {
-      component.permissionTable = undefined
-
-      expect(() => component.onClearFilterUserAssignmentTable()).not.toThrow()
     })
   })
 

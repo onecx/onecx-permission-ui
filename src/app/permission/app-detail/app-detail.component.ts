@@ -186,11 +186,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         this.myPermissions = permissions
         this.initializeComponent()
       })
-    /*
-    if (this.myPermissions.length > 0) {
-      this.initializeComponent()
-      return
-    }*/
   }
 
   public ngOnDestroy(): void {

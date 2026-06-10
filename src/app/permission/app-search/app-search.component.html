@@ -138,8 +138,13 @@
                   pInputText
                   [value]="globalFilterValue"
                   (input)="onGlobalFilter(globalFilterInput.value)"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
-                  [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
+                  [pTooltip]="
+                    ('ACTIONS.SEARCH.FILTER.OF' | translate) +
+                    ('DIALOG.SEARCH.FILTER.WORKSPACE' | translate) +
+                    ' and ' +
+                    ('DIALOG.SEARCH.FILTER.PRODUCT' | translate)
+                  "
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 />

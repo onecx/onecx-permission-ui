@@ -113,7 +113,7 @@
       "OF": "of",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter by Display Name, Type",
+        "OF": "Filter by ",
         "CLEAR": "Clear Filter",
         "MODE_CONTAINS": "Filter value is contained",
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
