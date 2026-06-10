@@ -41,6 +41,7 @@
       >
       <p-tab
         value="2"
+        *ocxIfPermission="'IAM_ROLE#VIEW'; permissions: componentPermissions"
         [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -177,6 +178,7 @@
                         styleClass="min-w-10rem"
                         (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                         [showClear]="true"
+                        [autoDisplayFirst]="false"
                         [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
                         [options]="getListboxOptionsCache(items, col.field)"
                         [ariaLabel]="col.tooltipKey | translate"
@@ -272,11 +274,7 @@
       </p-tabpanel>
 
       <!-- IDM ROLES -->
-      <p-tabpanel
-        *ocxIfPermission="'IAM_ROLE#VIEW'; permissions: componentPermissions"
-        id="apm_user_idm_roles_tab"
-        value="2"
-      >
+      <p-tabpanel id="apm_user_idm_roles_tab" value="2">
         <!-- start loading if tab is active -->
         <p-message
           *ngIf="!isComponentDefined"

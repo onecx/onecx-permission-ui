@@ -1,5 +1,5 @@
 @use 'src/app/apm-mixins' as *;
 
 @include ocx-text-responsive;
-@include ocx-p-floatlabel;
+@include ocx-required-label;
 @include ocx-modal-dialog;
