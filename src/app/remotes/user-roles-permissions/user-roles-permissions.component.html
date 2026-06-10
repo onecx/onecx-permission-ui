@@ -178,9 +178,9 @@
                         (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                         [showClear]="true"
                         [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
-                        [options]="extractFilterItems(items, col.field)"
+                        [options]="getListboxOptionsCache(items, col.field)"
                         [ariaLabel]="col.tooltipKey | translate"
-                        [tooltip]="col.tooltipKey | translate"
+                        [pTooltip]="col.tooltipKey | translate"
                         tooltipPosition="top"
                         tooltipEvent="hover"
                       >
@@ -225,7 +225,7 @@
         <div class="m-3 flex flex-row flex-wrap justify-content-start align-items-start column-gap-5 row-gap-4">
           <!-- ROLES -->
           <section
-            *ngIf="getRoleListboxOptions(items) as roles"
+            *ngIf="getListboxOptionsCache(items, 'roleName') as roles"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.ROLES.TOOLTIP' | translate"
@@ -240,8 +240,6 @@
               id="apm_user_roles_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="roles"
-              optionLabel="label"
-              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.ROLES.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.ROLES.TITLE' | translate"
@@ -250,7 +248,7 @@
 
           <!-- PRODUCTS -->
           <section
-            *ngIf="getProductListboxOptions(items) as products"
+            *ngIf="getListboxOptionsCache(items, 'productName') as products"
             class="flex flex-column row-gap-2"
             [attr.aria-label]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
             [pTooltip]="'USER_PERMISSIONS.TABS.PRODUCTS.TOOLTIP' | translate"
@@ -265,8 +263,6 @@
               id="apm_user_products_list"
               [listStyle]="{ 'max-height': '300px' }"
               [options]="products"
-              optionLabel="label"
-              [filterBy]="'label'"
               [filter]="true"
               [filterPlaceHolder]="'USER_PERMISSIONS.TABS.PRODUCTS.FILTER' | translate"
               [ariaLabel]="'USER_PERMISSIONS.TABS.PRODUCTS.TITLE' | translate"

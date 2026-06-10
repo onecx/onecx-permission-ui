@@ -39,7 +39,7 @@ import { sortByLocale, sortSelectItemsByLabel } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 // properties of UserAssignments
-type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
+type PROPERTY_NAME = 'roleName' | 'productName' | 'resource' | 'action'
 export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
 type ExtendedColumn = {
   field: string
@@ -107,8 +107,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public componentPermissions: string[] = []
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
-  private readonly roleListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
-  private readonly productListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
+  // cache for listbox options to avoid recalculations on each change detection run
+  private readonly listboxOptionsCache = {
+    roleName: new WeakMap<UserAssignment[], string[]>(),
+    productName: new WeakMap<UserAssignment[], string[]>(),
+    resource: new WeakMap<UserAssignment[], string[]>(),
+    action: new WeakMap<UserAssignment[], string[]>()
+  }
 
   constructor(
     @Inject(REMOTE_COMPONENT_CONFIG)
@@ -146,15 +151,12 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       }
       this.loadingIdmRoles = true
       if (!this.isComponentDefined) {
-        //console.log('check slot for iam component', this.slotName)
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
           if (this.isComponentDefined) {
-            //console.log('IAM component is defined for slot', this.slotName)
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
-              //console.log('Received IAM roles for slot', this.slotName, list)
               this.loadingIdmRoles = false
               this.idmRoles = list
               this.idmRoles$ = this.provideIamRoles()
@@ -248,10 +250,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       return of(roles)
     }
     // user in private context: get roles from token (if not yet done)
-    //console.log('idmRoles', this.idmRoles, this.userId, this.isComponentDefined)
     if (this.idmRoles.length > 0) {
       this.idmRoles?.forEach((r) => {
-        //console.log('role', r.name)
         roles.push({
           label: r.name,
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
@@ -293,21 +293,12 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     return arr
   }
 
-  public getRoleListboxOptions(items: UserAssignment[]): SelectItem[] {
-    const cached = this.roleListboxOptionsCache.get(items)
-    if (cached) return cached
+  public getListboxOptionsCache(items: UserAssignment[], fieldName: PROPERTY_NAME): string[] | undefined {
+    const cachedItems = this.listboxOptionsCache[fieldName].get(items)
+    if (cachedItems) return cachedItems
 
-    const options = this.extractFilterItems(items, 'roleName').map((value) => ({ label: value, value }))
-    this.roleListboxOptionsCache.set(items, options)
-    return options
-  }
-
-  public getProductListboxOptions(items: UserAssignment[]): SelectItem[] {
-    const cached = this.productListboxOptionsCache.get(items)
-    if (cached) return cached
-
-    const options = this.extractFilterItems(items, 'productName').map((value) => ({ label: value, value }))
-    this.productListboxOptionsCache.set(items, options)
+    const options = this.extractFilterItems(items, fieldName).map((value) => value)
+    this.listboxOptionsCache[fieldName].set(items, options)
     return options
   }
 
