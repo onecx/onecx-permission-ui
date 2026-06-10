@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core
 import { CommonModule } from '@angular/common'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { errorTailorImports } from '@ngneat/error-tailor'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { FloatLabelModule } from 'primeng/floatlabel'
@@ -21,7 +20,6 @@ import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.c
     CommonModule,
     ReactiveFormsModule,
     TranslateModule,
-    errorTailorImports,
     DialogModule,
     FloatLabelModule,
     InputTextModule,

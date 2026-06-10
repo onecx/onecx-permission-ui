@@ -1,9 +1,9 @@
 /* global styles */
-@import 'primeicons/primeicons.css';
-@import 'primeflex/primeflex.scss';
+@use 'primeflex/primeflex.scss';
+@use 'primeicons/primeicons.css';
 
 /* portal core */
-@import 'node_modules/@onecx/angular-accelerator/assets/styles.scss';
+@use 'node_modules/@onecx/angular-accelerator/assets/styles.scss';
 
 /*
  * Global styles for OneCX Permission UI

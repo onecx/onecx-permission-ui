@@ -158,11 +158,11 @@ describe('AppDetailComponent', () => {
   }
   const roleApiSpy = jasmine.createSpyObj<RoleAPIService>('RoleAPIService', ['searchRoles', 'createRole'])
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['getDetailsByWorkspaceName'])
-
+  const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const mockUserService = {
     lang$: new BehaviorSubject('en'),
     hasPermission: jasmine.createSpy('hasPermission').and.callFake((permissionName) => {
-      if (
+      return (
         permissionName === 'ROLE#CREATE' ||
         permissionName === 'ROLE#EDIT' ||
         permissionName === 'ROLE#DELETE' ||
@@ -170,15 +170,9 @@ describe('AppDetailComponent', () => {
         permissionName === 'PERMISSION#EDIT' ||
         permissionName === 'PERMISSION#DELETE' ||
         permissionName === 'PERMISSION#GRANT'
-      ) {
-        return true
-      } else {
-        return false
-      }
+      )
     })
   }
-
-  const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -382,32 +376,30 @@ describe('AppDetailComponent', () => {
       loadedApp.name = loadedApp.productName // is a product
       component.urlParamAppId = app1.name!
       component.urlParamAppType = loadedApp.appType
-      component.myPermissions = ['ROLE#CREATE']
 
       component.ngOnInit()
 
       expect(component.currentApp).toEqual(loadedApp)
-      expect(component.myPermissions.length).toEqual(2)
-      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'ROLE#MANAGE'])
     })
 
     it('should detect manage roles/permissions on creation', () => {
-      component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
-
       component.ngOnInit()
 
-      expect(component.myPermissions.length).toEqual(4)
-      expect(component.myPermissions).toEqual(['ROLE#CREATE', 'PERMISSION#CREATE', 'ROLE#MANAGE', 'PERMISSION#MANAGE'])
+      expect(component.myPermissions.length).toBe(9) // all
+
+      component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
+      component['initializeComponent']()
+
+      expect(component.myPermissions).toEqual(jasmine.arrayContaining(['ROLE#MANAGE', 'PERMISSION#MANAGE']))
     })
 
     it('should detect manage roles/permissions on deletion', () => {
-      component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
-
       component.ngOnInit()
 
-      expect(component.myPermissions.length).toEqual(4)
-      expect(component.myPermissions[2]).toEqual('ROLE#MANAGE')
-      expect(component.myPermissions[3]).toEqual('PERMISSION#MANAGE')
+      component.myPermissions = ['ROLE#DELETE', 'PERMISSION#DELETE']
+      component['initializeComponent']()
+
+      expect(component.myPermissions).toEqual(jasmine.arrayContaining(['ROLE#MANAGE', 'PERMISSION#MANAGE']))
     })
 
     it('should catch error if search for applications fails ', () => {
@@ -516,6 +508,7 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
     })
+
     it('should go if no roles are loaded', () => {
       permApiSpy.searchPermissions.and.returnValue(of({}) as any)
       component.urlParamAppType = 'WORKSPACE'

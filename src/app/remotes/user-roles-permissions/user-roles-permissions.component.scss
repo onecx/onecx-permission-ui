@@ -1,44 +1,44 @@
-@import '/src/app/_apm-mixins.scss';
+/* The following two imports are highly unusual in this context, but essential for styling the RC. */
+// @use 'primeflex/primeflex.scss';
+// @use 'primeicons/primeicons.css';
 
-@include tabview-fix-color-selected-tab;
-@include tabview-reduce-padding;
+/* Cross used classes */
+@use 'src/app/apm-mixins' as *;
+
+@include danger-action;
+@include word-break-all;
+@include ocx-text-responsive;
+@include ocx-p-message;
+@include ocx-p-inputgroup;
+@include ocx-tabs;
+@include table-zebra-rows;
+@include table-inline-buttons;
+@include table-responsive-columns;
+@include selectbox-zebra-rows;
 @include listbox-zebra-rows;
 @include listbox-layout;
-@include dialog-footer-buttons;
 
-:host {
-  .border-permission-group {
-    background-color: rgba(var(--primary-color-rgb), 0.12);
-  }
-}
 :host ::ng-deep {
-  #apm_user_assignments_table_filter_clear,
-  #apm_user_assignments_table_filter_clear .p-button {
-    height: 100% !important;
+  /* More space if component is used for displaying permissions for active user */
+  .p-tabs .p-tabpanels {
+    padding: 0;
+
+    &.non-modal-panels {
+      padding: 0.3rem 1rem;
+    }
   }
 
-  .p-dialog .p-dialog-content {
-    border-bottom-left-radius: var(--border-radius) !important;
-    border-bottom-right-radius: var(--border-radius) !important;
+  /* default size of filter lists, if no filter is selected */
+  .min-w-10rem {
+    min-width: 10rem;
+    min-height: 2.8rem;
   }
 
+  /* Displaying user profile name within the header on right side */
   .user-profile-name {
     top: 1.55rem;
     right: 8rem;
     font-weight: var(--dialog-header-font-weight); // same as dialog-title
     font-size: var(--dialog-header-font-size);
-  }
-
-  // reduce on all panels (tab content)
-  .p-tabs .p-tabpanels {
-    padding: 0;
-  }
-
-  .p-datatable .p-datatable-thead > tr:nth-child(2) > th {
-    border-bottom-width: 2px;
-  }
-
-  .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.5rem;
   }
 }

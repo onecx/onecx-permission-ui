@@ -113,7 +113,7 @@
       "OF": "of",
       "FILTER": {
         "LABEL": "Filter",
-        "OF": "Filter by Display Name, Type",
+        "OF": "Filter by ",
         "CLEAR": "Clear Filter",
         "MODE_CONTAINS": "Filter value is contained",
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
@@ -187,7 +187,7 @@
       "SUBHEADER_PRODUCT": "Management of Permissions and their Role assignments for the Application",
       "SUBHEADER_APP": "Management of Permissions and their Role assignments for the App",
       "ADDITIONAL_INFO": "More data...",
-      "ADDITIONAL_INFO.TOOLTIP": "Show additional information per permission",
+      "ADDITIONAL_INFO.TOOLTIP": "Description for the permission in the table",
       "QUICK_FILTER": {
         "LABEL": "Quick Filter for Actions",
         "TOOLTIP": "Quick Filter for Actions",
@@ -289,8 +289,10 @@
   "ROLE": {
     "LABEL": "Roles",
     "TOOLTIP": "List of Roles to which Permissions can be granted. Permissions for a user only become effective when the Role is assigned to the user.",
-    "NAME": "Name of the Role, unique in IDM (Identity Management)",
-    "DESCRIPTION": "Additional information about the Role",
+    "NAME": "Name of the Role",
+    "NAME.TOOLTIP": "Name of the Role, unique in IDM (Identity Management)",
+    "DESCRIPTION": "Description",
+    "DESCRIPTION.TOOLTIP": "Additional information about the Role",
     "MANDATORY": "This Role is necessary for operation and cannot therefore be changed or deleted.",
     "IDM": {
       "HEADER": "Select IDM Roles",

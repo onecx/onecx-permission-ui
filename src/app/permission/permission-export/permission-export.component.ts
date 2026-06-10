@@ -27,8 +27,7 @@ import { getCurrentDateTime } from 'src/app/shared/utils'
     TooltipModule,
     MessageModule
   ],
-  templateUrl: './permission-export.component.html',
-  styleUrls: ['./permission-export.component.scss']
+  templateUrl: './permission-export.component.html'
 })
 export class PermissionExportComponent {
   @Input() products: string[] = []

@@ -138,8 +138,13 @@
                   pInputText
                   [value]="globalFilterValue"
                   (input)="onGlobalFilter(globalFilterInput.value)"
-                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.OF' | translate"
-                  [pTooltip]="'ACTIONS.SEARCH.FILTER.OF' | translate"
+                  [attr.aria-label]="'ACTIONS.SEARCH.FILTER.LABEL' | translate"
+                  [pTooltip]="
+                    ('ACTIONS.SEARCH.FILTER.OF' | translate) +
+                    ('DIALOG.SEARCH.FILTER.WORKSPACE' | translate) +
+                    ' and ' +
+                    ('DIALOG.SEARCH.FILTER.PRODUCT' | translate)
+                  "
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 />
@@ -227,34 +232,35 @@
       [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
       [cancelLabel]="'ACTIONS.CANCEL' | translate"
     />
-    <p-message
-      *ngIf="importError?.exceptionKey"
-      id="apm_import_error_message_general"
-      class="w-full"
-      severity="error"
-      [text]="importError ? (importError.exceptionKey | translate) : ''"
-    ></p-message>
-    <ng-container *ngIf="importError?.error">
+    @if (importError) {
+      <p-message
+        *ngIf="importError.exceptionKey"
+        id="apm_import_error_message_general"
+        class="w-full"
+        severity="error"
+        [text]="importError ? (importError.exceptionKey | translate) : ''"
+      ></p-message>
+      @let err = importError.error ?? { detail: '', invalidParams: [] };
       <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
-        <div *ngIf="importError?.error.detail && !importError?.error.invalidParams">
-          {{ importError?.error.detail }}
+        <div *ngIf="err.detail && !err.invalidParams">
+          {{ err.detail }}
         </div>
-        <div *ngIf="importError?.error.invalidParams?.length > 0">
-          <div *ngIf="importError?.statusText === 'Conflict'">
-            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ importError?.error.invalidParams.length }}):
+        <div *ngIf="err.invalidParams?.length > 0">
+          <div *ngIf="importError.statusText === 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ err.invalidParams.length }}):
           </div>
-          <div *ngIf="importError?.statusText !== 'Conflict'">
-            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ importError?.error.invalidParams.length }}):
+          <div *ngIf="importError.statusText !== 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ err.invalidParams.length }}):
           </div>
           <ul class="m-2 px-3">
-            <li *ngFor="let param of importError?.error.invalidParams.slice(0, 10)">
+            <li *ngFor="let param of err.invalidParams.slice(0, 10)">
               {{ param.name }}
               <div>{{ param.message }}</div>
             </li>
           </ul>
         </div>
       </div>
-    </ng-container>
+    }
   </div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">

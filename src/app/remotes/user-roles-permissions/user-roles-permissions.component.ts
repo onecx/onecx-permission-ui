@@ -1,32 +1,30 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  NO_ERRORS_SCHEMA,
-  CUSTOM_ELEMENTS_SCHEMA,
-  Inject,
-  Input,
-  Optional,
-  OnInit,
-  OnChanges,
-  ViewChild
-} from '@angular/core'
+import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
-import { SelectItem } from 'primeng/api'
-import { Table } from 'primeng/table'
 
+import { SelectItem } from 'primeng/api'
+import { ButtonModule } from 'primeng/button'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
+import { ListboxModule } from 'primeng/listbox'
+import { MessageModule } from 'primeng/message'
+import { SelectModule } from 'primeng/select'
+import { Table, TableModule } from 'primeng/table'
+import { TabsModule } from 'primeng/tabs'
+import { TooltipModule } from 'primeng/tooltip'
+
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
-  SLOT_SERVICE,
-  SlotService,
   ocxRemoteComponent,
-  ocxRemoteWebcomponent
+  ocxRemoteWebcomponent,
+  SLOT_SERVICE,
+  SlotService
 } from '@onecx/angular-remote-components'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { UserService } from '@onecx/angular-integration-interface'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
@@ -36,14 +34,21 @@ import {
   UserAPIService,
   UserAssignment,
   UserAssignmentPageResult
-} from '../../shared/generated'
-import { SharedModule } from '../../shared/shared.module'
-import { sortByLocale, sortSelectItemsByLabel } from '../../shared/utils'
-import { environment } from '../../../environments/environment'
+} from 'src/app/shared/generated'
+import { sortByLocale, sortSelectItemsByLabel } from 'src/app/shared/utils'
+import { environment } from 'src/environments/environment'
 
 // properties of UserAssignments
 type PROPERTY_NAME = 'productName' | 'roleName' | 'resource' | 'action'
 export type ExtendedSelectItem = SelectItem & { isUserAssignedRole: boolean }
+type ExtendedColumn = {
+  field: string
+  labelKey: string
+  tooltipKey: string
+  hasFilter: true
+  class?: string
+  value?: string | null
+}
 
 export function slotInitializer(slotService: SlotService) {
   return () => slotService.init()
@@ -58,16 +63,22 @@ export function slotInitializer(slotService: SlotService) {
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
     CommonModule,
-    RouterModule,
+    ButtonModule,
+    FloatLabelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
+    ListboxModule,
+    MessageModule,
+    SelectModule,
     TranslateModule,
-    SharedModule
+    TableModule,
+    TabsModule,
+    TooltipModule
   ],
-  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
 })
-export class OneCXUserRolesPermissionsComponent
-  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnInit, OnChanges
-{
+export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
@@ -78,11 +89,11 @@ export class OneCXUserRolesPermissionsComponent
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionNameFilter') permissionTableFilter: ElementRef | undefined
 
-  public userAssignments$: Observable<UserAssignment[]> = of([])
   private userAssignedRoles: string[] = []
+  public userAssignments$: Observable<UserAssignment[]> = of([])
   public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
   public idmRoles: Role[] = [] // empty list is indicator to init slot
-  public columns
+  public columns: ExtendedColumn[] = []
   public environment = environment
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIdmRoles: string | undefined = undefined
@@ -95,39 +106,35 @@ export class OneCXUserRolesPermissionsComponent
   public componentPermissions: string[] = []
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
-  private readonly remoteComponentConfig$ = new ReplaySubject<RemoteComponentConfig>(1)
   private readonly roleListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
   private readonly productListboxOptionsCache = new WeakMap<UserAssignment[], SelectItem[]>()
 
   constructor(
-    private readonly user: UserService,
-    private readonly slotService: SlotService,
-    private readonly userApi: UserAPIService,
-    private readonly assgnmtApi: AssignmentAPIService,
-    private readonly translate: TranslateService,
-    @Optional()
     @Inject(REMOTE_COMPONENT_CONFIG)
-    private readonly injectedRemoteComponentConfig$: ReplaySubject<RemoteComponentConfig> | null
+    private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
+    private readonly appConfigService: AppConfigService,
+    private readonly slotService: SlotService,
+    private readonly translateService: TranslateService,
+    private readonly userService: UserService,
+    private readonly userApi: UserAPIService,
+    private readonly assgnmtApi: AssignmentAPIService
   ) {
-    this.user.lang$.subscribe((lang) => this.translate.use(lang))
+    this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     this.columns = this.prepareColumn()
   }
 
-  public ngOnInit(): void {
-    slotInitializer(this.slotService)()
-  }
-
   // initialize this component as remote
-  public ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.injectedRemoteComponentConfig$?.next(remoteComponentConfig)
-    this.remoteComponentConfig$.next(remoteComponentConfig)
+  public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.userApi.configuration = new Configuration({
-      basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
+      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
     this.assgnmtApi.configuration = new Configuration({
-      basePath: Location.joinWithSlash(remoteComponentConfig.baseUrl, environment.apiPrefix)
+      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
-    this.componentPermissions = remoteComponentConfig.permissions
+    this.appConfigService.init(config['baseUrl'])
+    this.remoteComponentConfig.next(config)
+    this.componentPermissions = config.permissions
+    slotInitializer(this.slotService)()
   }
 
   public ngOnChanges(): void {
@@ -138,12 +145,15 @@ export class OneCXUserRolesPermissionsComponent
       }
       this.loadingIdmRoles = true
       if (!this.isComponentDefined) {
+        //console.log('check slot for iam component', this.slotName)
         // check if the iam component is assigned to the slot
         this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
           this.isComponentDefined = def
           if (this.isComponentDefined) {
+            //console.log('IAM component is defined for slot', this.slotName)
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
+              //console.log('Received IAM roles for slot', this.slotName, list)
               this.loadingIdmRoles = false
               this.idmRoles = list
               this.idmRoles$ = this.provideIamRoles()
@@ -213,7 +223,7 @@ export class OneCXUserRolesPermissionsComponent
   }
 
   // activate TAB
-  public onTabChange(tabValue: number | string | { index: number }, uas: UserAssignment[]) {
+  public onTabChange(tabValue: any, uas: UserAssignment[]) {
     const selectedTab = typeof tabValue === 'object' ? tabValue.index : Number(tabValue)
     this.selectedTabIndex = selectedTab
     if (selectedTab === 2) {
@@ -237,8 +247,10 @@ export class OneCXUserRolesPermissionsComponent
       return of(roles)
     }
     // user in private context: get roles from token (if not yet done)
+    //console.log('idmRoles', this.idmRoles, this.userId, this.isComponentDefined)
     if (this.idmRoles.length > 0) {
       this.idmRoles?.forEach((r) => {
+        //console.log('role', r.name)
         roles.push({
           label: r.name,
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
@@ -298,44 +310,35 @@ export class OneCXUserRolesPermissionsComponent
     return options
   }
 
-  public applyGlobalFilter($event: Event, primengTable: Table): void {
-    primengTable.filterGlobal(($event.target as HTMLInputElement).value, 'contains')
-  }
-
-  public onClearFilterUserAssignmentTable(): void {
-    if (this.permissionTableFilter) {
-      this.permissionTableFilter.nativeElement.value = ''
-    }
-  }
-
-  private prepareColumn() {
+  private prepareColumn(): ExtendedColumn[] {
     return [
       {
-        field: 'resource',
-        header: 'USER_PERMISSIONS.RESOURCE',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
-        filter: true,
-        value: null
-      },
-      {
-        field: 'action',
-        header: 'USER_PERMISSIONS.ACTION',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
-        filter: true,
+        field: 'roleName',
+        labelKey: 'USER_PERMISSIONS.ROLE',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
+        hasFilter: true,
+        class: 'border-right-1 border-100 border-solid',
         value: null
       },
       {
         field: 'productName',
-        header: 'USER_PERMISSIONS.PRODUCT',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
-        filter: true,
+        labelKey: 'USER_PERMISSIONS.PRODUCT',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
+        hasFilter: true,
         value: null
       },
       {
-        field: 'roleName',
-        header: 'USER_PERMISSIONS.ROLE',
-        tooltip: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
-        filter: true,
+        field: 'resource',
+        labelKey: 'USER_PERMISSIONS.RESOURCE',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
+        hasFilter: true,
+        value: null
+      },
+      {
+        field: 'action',
+        labelKey: 'USER_PERMISSIONS.ACTION',
+        tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
+        hasFilter: true,
         value: null
       }
     ]

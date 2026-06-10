@@ -28,9 +28,9 @@ const config = withModuleFederationPlugin({
     '@onecx/angular-testing': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-utils': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-webcomponents': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-standalone-shell': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true }
-  }),
-  sharedMappings: []
+  })
 })
 config.devServer = { allowedHosts: 'all' }
 
@@ -39,7 +39,9 @@ const plugins = config.plugins.filter((plugin) => !(plugin instanceof ModifyEntr
 const modifyPrimeNgPlugin = new ModifySourcePlugin({
   rules: [
     {
-      test: (module) => module.resource && module.resource.includes('primeng'),
+      test: (module) => {
+        return module.resource && module.resource.includes('primeng')
+      },
       operations: [
         new ReplaceOperation(
           'all',

@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core
 import { CommonModule } from '@angular/common'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { errorTailorImports } from '@ngneat/error-tailor'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DialogModule } from 'primeng/dialog'
@@ -26,16 +25,15 @@ import type { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    errorTailorImports,
+    ButtonModule,
+    CheckboxModule,
     DialogModule,
     FloatLabelModule,
     InputTextModule,
-    CheckboxModule,
     MessageModule,
-    ButtonModule,
-    TooltipModule
+    TooltipModule,
+    TranslateModule,
+    ReactiveFormsModule
   ],
   templateUrl: './permission-detail.component.html',
   styleUrls: ['./permission-detail.component.scss']

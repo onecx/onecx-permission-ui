@@ -1,4 +1,4 @@
-@import '/src/app/_apm-mixins.scss';
+@use 'src/app/apm-mixins' as *;
 
 @include ocx-text-responsive;
 @include ocx-p-floatlabel;
