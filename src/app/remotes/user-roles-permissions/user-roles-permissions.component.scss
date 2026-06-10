@@ -1,6 +1,6 @@
 /* The following two imports are highly unusual in this context, but essential for styling the RC. */
-// @use 'primeflex/primeflex.scss';
-// @use 'primeicons/primeicons.css';
+//@use 'primeflex/primeflex.scss';
+//@use 'primeicons/primeicons.css';
 
 /* Cross used classes */
 @use 'src/app/apm-mixins' as *;
@@ -32,6 +32,9 @@
   .min-w-10rem {
     min-width: 10rem;
     min-height: 2.8rem;
+  }
+  .min-w-20rem {
+    min-width: 20rem;
   }
 
   /* Displaying user profile name within the header on right side */
