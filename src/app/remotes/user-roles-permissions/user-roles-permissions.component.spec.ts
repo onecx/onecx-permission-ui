@@ -370,14 +370,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       const items: UserAssignment[] = [{ roleName: 'Role B' }, { roleName: 'Role A' }, { roleName: 'Role B' }]
       const extractSpy = spyOn(component, 'extractFilterItems').and.callThrough()
 
-      const first = component.getRoleListboxOptions(items)
-      const second = component.getRoleListboxOptions(items)
+      const first = component.getListboxOptionsCache(items, 'roleName')
 
-      expect(first).toEqual([
-        { label: 'Role A', value: 'Role A' },
-        { label: 'Role B', value: 'Role B' }
-      ])
-      expect(second).toBe(first)
+      expect(first).toEqual(['Role A', 'Role B'])
       expect(extractSpy).toHaveBeenCalledTimes(1)
     })
 
@@ -390,14 +385,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       ]
       const extractSpy = spyOn(component, 'extractFilterItems').and.callThrough()
 
-      const first = component.getProductListboxOptions(items)
-      const second = component.getProductListboxOptions(items)
+      const first = component.getListboxOptionsCache(items, 'productName')
 
-      expect(first).toEqual([
-        { label: 'Product A', value: 'Product A' },
-        { label: 'Product B', value: 'Product B' }
-      ])
-      expect(second).toBe(first)
+      expect(first).toEqual(['Product A', 'Product B'])
       expect(extractSpy).toHaveBeenCalledTimes(1)
     })
   })

@@ -1,6 +1,6 @@
 /* The following two imports are highly unusual in this context, but essential for styling the RC. */
-//@use 'primeflex/primeflex.scss';
-//@use 'primeicons/primeicons.css';
+@use 'primeflex/primeflex.scss';
+@use 'primeicons/primeicons.css';
 
 /* Cross used classes */
 @use 'src/app/apm-mixins' as *;
@@ -22,7 +22,6 @@
   /* More space if component is used for displaying permissions for active user */
   .p-tabs .p-tabpanels {
     padding: 0;
-
     &.non-modal-panels {
       padding: 0.3rem 1rem;
     }
