@@ -22,23 +22,23 @@
         [pTooltip]="'USER_PERMISSIONS.TABS.PERMISSIONS.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-        >{{ 'USER_PERMISSIONS.TABS.PERMISSIONS' | translate }}</p-tab
-      >
+        >{{ 'USER_PERMISSIONS.TABS.PERMISSIONS' | translate }}
+      </p-tab>
       <p-tab
         value="1"
         [pTooltip]="'USER_PERMISSIONS.TABS.ROLES_N_MORE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-        >{{ 'USER_PERMISSIONS.TABS.ROLES_N_MORE' | translate }}</p-tab
-      >
+        >{{ 'USER_PERMISSIONS.TABS.ROLES_N_MORE' | translate }}
+      </p-tab>
       <p-tab
         value="2"
         *ocxIfPermission="'IAM_ROLE#VIEW'; permissions: componentPermissions"
         [pTooltip]="'USER_PERMISSIONS.TABS.IAM_ROLES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-        >{{ 'USER_PERMISSIONS.TABS.IAM_ROLES' | translate }}</p-tab
-      >
+        >{{ 'USER_PERMISSIONS.TABS.IAM_ROLES' | translate }}
+      </p-tab>
     </p-tablist>
 
     <p-tabpanels [class]="userId ? '' : 'non-modal-panels'">
