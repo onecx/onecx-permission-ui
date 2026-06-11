@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, ReplaySubject, throwError } from 'rxjs'
@@ -12,11 +13,7 @@ import { AppConfigService } from '@onecx/angular-integration-interface'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
-import {
-  OneCXUserRolesPermissionsComponent,
-  ExtendedSelectItem,
-  slotInitializer
-} from './user-roles-permissions.component'
+import { OneCXUserRolesPermissionsComponent, ExtendedSelectItem } from './user-roles-permissions.component'
 import { environment } from 'src/environments/environment'
 
 const userAssignments: UserAssignment[] = [
@@ -73,7 +70,8 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         { provide: Router, useValue: routerMock },
         { provide: Table, useClass: MockTable },
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideNoopAnimations()
       ]
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
@@ -133,21 +131,6 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       const expectedBasePath = Location.joinWithSlash('base_url', environment.apiPrefix)
       expect((userApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
       expect((assApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
-    })
-  })
-
-  describe('slotInitializer', () => {
-    let slotService: jasmine.SpyObj<SlotService>
-
-    beforeEach(() => {
-      slotService = jasmine.createSpyObj('SlotService', ['init'])
-    })
-
-    it('should call SlotService.init', () => {
-      const initializer = slotInitializer(slotService)
-      initializer()
-
-      expect(slotService.init).toHaveBeenCalled()
     })
   })
 
@@ -395,12 +378,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   describe('idm roles', () => {
     it('should handle primitive tab values in onTabChange', () => {
       initializeComponent()
-      const provideIamRolesSpy = spyOn<any>(component, 'provideIamRoles').and.returnValue(of([]))
+      const provideIdmRolesSpy = spyOn<any>(component, 'provideIdmRoles').and.returnValue(of([]))
 
       component.onTabChange('1', userAssignments)
 
       expect(component.selectedTabIndex).toBe(1)
-      expect(provideIamRolesSpy).not.toHaveBeenCalled()
+      expect(provideIdmRolesSpy).not.toHaveBeenCalled()
     })
 
     it('should getting my idm roles from token - successful', (done) => {
@@ -411,7 +394,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       component.loadingIdmRoles = false
       userApiSpy.getTokenRoles.and.returnValue(of(['role1', 'role2', 'role3']))
 
-      component.onTabChange({ index: 2 }, userAssignments)
+      component.onTabChange(2, userAssignments)
 
       component.idmRoles$.subscribe({
         next: (data) => {
@@ -424,7 +407,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         error: done.fail
       })
       // do it again without extra data call
-      component.onTabChange({ index: 2 }, userAssignments)
+      component.onTabChange(2, userAssignments)
     })
 
     it('should getting my idm roles from token - failed', (done) => {
@@ -436,7 +419,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       userApiSpy.getTokenRoles.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.onTabChange({ index: 2 }, userAssignments)
+      component.onTabChange(2, userAssignments)
 
       component.idmRoles$.subscribe({
         next: (data) => {
@@ -457,7 +440,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-      component.onTabChange({ index: 2 }, userAssignments)
+      component.onTabChange(2, userAssignments)
 
       component.idmRoles$.subscribe({
         next: (data) => {

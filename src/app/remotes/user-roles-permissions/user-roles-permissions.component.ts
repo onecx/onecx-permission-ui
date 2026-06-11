@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, ViewChild } from '@angular/core'
+import { Component, DestroyRef, EventEmitter, Inject, Input, OnChanges, OnDestroy } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { CommonModule, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
@@ -12,7 +13,7 @@ import { InputTextModule } from 'primeng/inputtext'
 import { ListboxModule } from 'primeng/listbox'
 import { MessageModule } from 'primeng/message'
 import { SelectModule } from 'primeng/select'
-import { Table, TableModule } from 'primeng/table'
+import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -47,11 +48,6 @@ type ExtendedColumn = {
   tooltipKey: string
   hasFilter: boolean
   class?: string
-  value?: string | null
-}
-
-export function slotInitializer(slotService: SlotService) {
-  return () => slotService.init()
 }
 
 @Component({
@@ -78,7 +74,9 @@ export function slotInitializer(slotService: SlotService) {
   ],
   providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
 })
-export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges {
+export class OneCXUserRolesPermissionsComponent
+  implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, OnDestroy
+{
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
@@ -86,20 +84,16 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
-  @ViewChild('permissionTable') permissionTable: Table | undefined
-  @ViewChild('permissionNameFilter') permissionTableFilter: ElementRef | undefined
 
   private userAssignedRoles: string[] = []
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
-  public idmRoles: Role[] = [] // empty list is indicator to init slot
-  public columns: ExtendedColumn[] = []
-  public environment = environment
+  public idmRoles: Role[] = []
+  public apiPrefix = environment.apiPrefix
   public exceptionKey: string | undefined = undefined
   public exceptionKeyIdmRoles: string | undefined = undefined
   public loading = false
   public selectedTabIndex = 0
-  public selectedCity: string | undefined = undefined
 
   // manage slot to get roles from iam
   public loadingIdmRoles = false
@@ -107,6 +101,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   public componentPermissions: string[] = []
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<Role[]>()
+
+  public readonly columns: ExtendedColumn[] = this.prepareColumn()
   // cache for listbox options to avoid recalculations on each change detection run
   private readonly listboxOptionsCache = {
     roleName: new WeakMap<UserAssignment[], string[]>(),
@@ -119,28 +115,30 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     @Inject(REMOTE_COMPONENT_CONFIG)
     private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly appConfigService: AppConfigService,
+    private readonly destroyRef: DestroyRef,
     private readonly slotService: SlotService,
     private readonly translateService: TranslateService,
     private readonly userService: UserService,
     private readonly userApi: UserAPIService,
     private readonly assgnmtApi: AssignmentAPIService
   ) {
-    this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-    this.columns = this.prepareColumn()
+    this.userService.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
+      this.translateService.use(lang)
+    })
   }
 
   // initialize this component as remote
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.userApi.configuration = new Configuration({
-      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
+      basePath: Location.joinWithSlash(config.baseUrl, this.apiPrefix)
     })
     this.assgnmtApi.configuration = new Configuration({
-      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
+      basePath: Location.joinWithSlash(config.baseUrl, this.apiPrefix)
     })
-    this.appConfigService.init(config['baseUrl'])
+    this.appConfigService.init(config.baseUrl)
     this.remoteComponentConfig.next(config)
     this.componentPermissions = config.permissions
-    slotInitializer(this.slotService)()
+    this.slotService.init()
   }
 
   public ngOnChanges(): void {
@@ -149,23 +147,28 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         this.exceptionKey = 'EXCEPTIONS.MISSING_ISSUER'
         return
       }
-      this.loadingIdmRoles = true
       if (!this.isComponentDefined) {
         // check if the iam component is assigned to the slot
-        this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
+
+        const slotSubscription = this.slotService.isSomeComponentDefinedForSlot(this.slotName).subscribe((def) => {
+          this.loadingIdmRoles = true
           this.isComponentDefined = def
           if (this.isComponentDefined) {
             // receive data from remote component
             this.roleListEmitter.subscribe((list: Role[]) => {
               this.loadingIdmRoles = false
               this.idmRoles = list
-              this.idmRoles$ = this.provideIamRoles()
+              this.idmRoles$ = this.provideIdmRoles()
+              slotSubscription.unsubscribe()
             })
           }
         })
       }
       this.onReload()
     }
+  }
+  public ngOnDestroy(): void {
+    if (this.isComponentDefined) this.roleListEmitter.unsubscribe()
   }
 
   public onReload() {
@@ -194,7 +197,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
             console.error('searchUserAssignments', err)
             return of([])
           }),
-          finalize(() => (this.loading = false))
+          finalize(() => (this.loading = false)),
+          takeUntilDestroyed(this.destroyRef)
         )
     } else {
       // on user view get my permissions
@@ -207,12 +211,13 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           console.error('getUserAssignments', err)
           return of([])
         }),
-        finalize(() => (this.loading = false))
+        finalize(() => (this.loading = false)),
+        takeUntilDestroyed(this.destroyRef)
       )
     }
   }
 
-  public sortUserAssignments(a: UserAssignment, b: UserAssignment): number {
+  private sortUserAssignments(a: UserAssignment, b: UserAssignment): number {
     return (
       (a.productName ? a.productName.toUpperCase() : '').localeCompare(
         b.productName ? b.productName.toUpperCase() : ''
@@ -226,16 +231,16 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
   }
 
   // activate TAB
-  public onTabChange(tabValue: any, uas: UserAssignment[]) {
-    const selectedTab = typeof tabValue === 'object' ? tabValue.index : Number(tabValue)
+  public onTabChange(tabValue: string | number, uas: UserAssignment[]) {
+    const selectedTab = typeof tabValue === 'string' ? Number(tabValue) : tabValue
     this.selectedTabIndex = selectedTab
     if (selectedTab === 2) {
       this.userAssignedRoles = this.extractFilterItems(uas, 'roleName')
-      this.idmRoles$ = this.provideIamRoles() // used for me permissions
+      this.idmRoles$ = this.provideIdmRoles() // used for me permissions
     }
   }
 
-  private provideIamRoles(): Observable<ExtendedSelectItem[]> {
+  private provideIdmRoles(): Observable<ExtendedSelectItem[]> {
     this.exceptionKeyIdmRoles = undefined
     const roles: ExtendedSelectItem[] = []
 
@@ -251,7 +256,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     }
     // user in private context: get roles from token (if not yet done)
     if (this.idmRoles.length > 0) {
-      this.idmRoles?.forEach((r) => {
+      this.idmRoles.forEach((r) => {
         roles.push({
           label: r.name,
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
@@ -263,8 +268,9 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
       this.loadingIdmRoles = true
       return this.userApi.getTokenRoles().pipe(
         map((data) => {
+          this.idmRoles = []
           data.forEach((role) => {
-            this.idmRoles?.push({ name: role })
+            this.idmRoles.push({ name: role })
             roles.push({
               label: role,
               isUserAssignedRole: this.userAssignedRoles.includes(role)
@@ -277,7 +283,8 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
           console.error('getTokenRoles', err)
           return of([])
         }),
-        finalize(() => (this.loadingIdmRoles = false))
+        finalize(() => (this.loadingIdmRoles = false)),
+        takeUntilDestroyed(this.destroyRef)
       )
     }
   }
@@ -297,7 +304,7 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
     const cachedItems = this.listboxOptionsCache[fieldName].get(items)
     if (cachedItems) return cachedItems
 
-    const options = this.extractFilterItems(items, fieldName).map((value) => value)
+    const options = this.extractFilterItems(items, fieldName)
     this.listboxOptionsCache[fieldName].set(items, options)
     return options
   }
@@ -309,29 +316,25 @@ export class OneCXUserRolesPermissionsComponent implements ocxRemoteComponent, o
         labelKey: 'USER_PERMISSIONS.ROLE',
         tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ROLE',
         hasFilter: true,
-        class: 'border-right-1 border-100 border-solid',
-        value: null
+        class: 'border-right-1 border-100 border-solid'
       },
       {
         field: 'productName',
         labelKey: 'USER_PERMISSIONS.PRODUCT',
         tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.PRODUCT',
-        hasFilter: true,
-        value: null
+        hasFilter: true
       },
       {
         field: 'resource',
         labelKey: 'USER_PERMISSIONS.RESOURCE',
         tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.RESOURCE',
-        hasFilter: true,
-        value: null
+        hasFilter: true
       },
       {
         field: 'action',
         labelKey: 'USER_PERMISSIONS.ACTION',
         tooltipKey: 'USER_PERMISSIONS.TOOLTIPS.ACTION',
-        hasFilter: true,
-        value: null
+        hasFilter: true
       }
     ]
   }
