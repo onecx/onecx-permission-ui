@@ -6,7 +6,6 @@ import { RouterModule, Routes } from '@angular/router'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
-import { SharedModule } from 'src/app/shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AppSearchComponent } from './app-search/app-search.component'
@@ -56,10 +55,9 @@ const routes: Routes = [
     PermissionDeleteComponent,
     PermissionDetailComponent,
     PermissionExportComponent,
-    RouterModule.forChild(routes),
-    SharedModule
+    RouterModule.forChild(routes)
   ],
-  providers: []
+  providers: [LabelResolver]
 })
 export class PermissionModule {
   constructor() {

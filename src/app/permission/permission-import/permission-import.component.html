@@ -1,0 +1,75 @@
+<p-dialog
+  [header]="'ACTIONS.IMPORT.ASSIGNMENT' | translate"
+  [visible]="displayImportDialog"
+  (onHide)="onCloseImportDialog()"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="true"
+  [resizable]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '550px' }"
+  styleClass="disable-max-height-preset"
+>
+  <div class="flex flex-column row-gap-3">
+    <p-fileUpload
+      #fileUploader
+      id="apm_import_file_upload"
+      mode="advanced"
+      name="file"
+      accept=".json"
+      [maxFileSize]="1000000"
+      [customUpload]="true"
+      (uploadHandler)="onImportConfirmation()"
+      (onImportClear)="onImportClear()"
+      (onRemove)="onImportClear()"
+      (onSelect)="onImportFileSelect($event)"
+      [showUploadButton]="importError === undefined"
+      [chooseLabel]="'ACTIONS.IMPORT.CHOOSE' | translate"
+      [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
+      [cancelLabel]="'ACTIONS.CANCEL' | translate"
+    />
+    @if (importError) {
+      <p-message
+        *ngIf="importError.exceptionKey"
+        id="apm_import_error_message_general"
+        class="w-full"
+        severity="error"
+        [text]="importError ? (importError.exceptionKey | translate) : ''"
+      ></p-message>
+      @let err = importError.error ?? { detail: '', invalidParams: [] };
+      <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
+        <div *ngIf="err.detail && !err.invalidParams">
+          {{ err.detail }}
+        </div>
+        <div *ngIf="err.invalidParams?.length > 0">
+          <div *ngIf="importError.statusText === 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ err.invalidParams.length }}):
+          </div>
+          <div *ngIf="importError.statusText !== 'Conflict'">
+            {{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ err.invalidParams.length }}):
+          </div>
+          <ul class="m-2 px-3">
+            <li *ngFor="let param of err.invalidParams.slice(0, 10)">
+              {{ param.name }}
+              <div>{{ param.message }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    }
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+      <p-button
+        id="apm_import_action_cancel"
+        icon="pi pi-times"
+        (onClick)="onCloseImportDialog()"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [ariaLabel]="'ACTIONS.CANCEL' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

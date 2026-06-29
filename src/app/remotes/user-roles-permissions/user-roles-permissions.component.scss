@@ -1,8 +1,8 @@
 /* The following two imports are highly unusual in this context, but essential for styling the RC. 
    Enable if your are working locally on this component.
 */
-//@use 'primeflex/primeflex.scss';
-//@use 'primeicons/primeicons.css';
+@use 'primeflex/primeflex.scss';
+@use 'primeicons/primeicons.css';
 
 /* Cross used classes */
 @use 'src/app/apm-mixins' as *;

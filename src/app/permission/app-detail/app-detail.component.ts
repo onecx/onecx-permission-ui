@@ -1,11 +1,22 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { Location } from '@angular/common'
+import { CommonModule, Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
+import { FormsModule } from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
 import { FilterMatchMode, SelectItem } from 'primeng/api'
-import { Table } from 'primeng/table'
+import { ButtonModule } from 'primeng/button'
+import { CheckboxModule } from 'primeng/checkbox'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
+import { MessageModule } from 'primeng/message'
+import { SelectButtonModule } from 'primeng/selectbutton'
+import { SelectModule } from 'primeng/select'
+import { Table, TableModule } from 'primeng/table'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -34,7 +45,6 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
 
 import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
@@ -68,13 +78,26 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   imports: [
     AngularAcceleratorModule,
     PortalPageComponent,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    ButtonModule,
+    CheckboxModule,
+    FloatLabelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
+    MessageModule,
+    SelectButtonModule,
+    SelectModule,
+    TableModule,
+    TooltipModule,
     RoleDeleteComponent,
     RoleDetailComponent,
     RoleIdmComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
-    PermissionExportComponent,
-    SharedModule
+    PermissionExportComponent
   ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']

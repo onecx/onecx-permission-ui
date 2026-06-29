@@ -1,10 +1,20 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
-import { TranslateService } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { MessageModule } from 'primeng/message'
+import { SelectButtonModule } from 'primeng/selectbutton'
 import { SelectItem } from 'primeng/api'
-import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { PortalPageComponent } from '@onecx/angular-utils'
@@ -23,16 +33,15 @@ import {
 import {
   Application,
   ApplicationAPIService,
-  AssignmentAPIService,
   WorkspaceAbstract,
   WorkspaceAPIService,
   WorkspacePageResult,
-  ApplicationPageResult,
-  Permission
+  ApplicationPageResult
 } from 'src/app/shared/generated'
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
-import { SharedModule } from 'src/app/shared/shared.module'
+import { PermissionImportComponent } from 'src/app/permission/permission-import/permission-import.component'
 import { limitText, sortByLocale } from 'src/app/shared/utils'
+import { OcxChipComponent } from '../../shared/ocx-chip/ocx-chip.component'
 
 export interface AppSearchCriteria {
   appId: FormControl<string | null>
@@ -42,19 +51,28 @@ export interface AppSearchCriteria {
 export type App = Application & { apps?: number; appType: AppType; displayName?: string }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
-export type ImportError = {
-  name: string
-  message: string
-  error: any
-  ok: boolean
-  status: number
-  statusText: string
-  exceptionKey: string
-}
-
 @Component({
   standalone: true,
-  imports: [AngularAcceleratorModule, PortalPageComponent, SharedModule, PermissionExportComponent],
+  imports: [
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    CommonModule,
+    ButtonModule,
+    CardModule,
+    FloatLabelModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    MessageModule,
+    SelectButtonModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
+    PermissionExportComponent,
+    PermissionImportComponent,
+    OcxChipComponent
+  ],
   templateUrl: './app-search.component.html',
   styleUrls: ['./app-search.component.scss']
 })
@@ -78,15 +96,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public globalFilterValue = ''
+  public filters$: Observable<Filter[]>
+  public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
   public sortField = 'displayName'
   public sortOrder = -1
 
   public displayExportDialog = false
   public displayImportDialog = false
-  public importError: ImportError | undefined = undefined
-
-  public importAssignmentItem: Permission | null = null
-  public selectedProductNames: string[] = []
 
   public limitText = limitText
 
@@ -95,14 +111,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     { columnType: ColumnType.STRING, id: 'appType', nameKey: 'DIALOG.DETAIL.FILTER.APP_TYPE', sortable: true },
     { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
   ]
-  public filters$: Observable<Filter[]>
-  public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
-
-  @ViewChild(FileUpload) fileUploader: FileUpload | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
-    private readonly assgnmtApi: AssignmentAPIService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly translate: TranslateService,
@@ -349,53 +360,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   public onOpenImport(): void {
     this.displayImportDialog = true
-  }
-
-  public onImportFileSelect(event: FileSelectEvent): void {
-    this.importError = undefined
-    event.files[0].text().then((text) => {
-      try {
-        const importPermission = JSON.parse(text)
-        this.importAssignmentItem = importPermission
-      } catch (err) {
-        console.error('Import parse error', err)
-        this.importError = {
-          name: 'Parse error',
-          ok: false,
-          status: 400,
-          statusText: 'Parser error',
-          message: '',
-          error: { errorCode: 'PARSER', detail: err },
-          exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
-        }
-      }
-    })
-  }
-
-  public onImportConfirmation(): void {
-    if (this.importAssignmentItem) {
-      this.importError = undefined
-      this.assgnmtApi.importAssignments({ body: this.importAssignmentItem }).subscribe({
-        next: () => {
-          this.displayImportDialog = false
-          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
-          this.searchApps()
-        },
-        error: (err) => {
-          console.error('importAssignments', err)
-          this.importError = { ...err, exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS' }
-          this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
-        }
-      })
-    }
-  }
-  public onCloseImportDialog(): void {
-    this.displayImportDialog = false
-    this.importError = undefined
-    this.fileUploader?.clear()
-  }
-  public onImportClear(): void {
-    this.importError = undefined
   }
 
   /**
