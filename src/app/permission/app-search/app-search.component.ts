@@ -383,17 +383,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       relativeTo: this.route
     })
   }
-  public onAppTypeCriteriaChange(ev: any): void {
-    if (ev.value) this.appSearchCriteria.controls['appType'].setValue(ev.value)
-    if (ev.value === 'ALL') this.appSearchCriteria.controls['name'].disable()
+  public onAppTypeCriteriaChange(val: AppFilterType): void {
+    if (val) this.appSearchCriteria.controls['appType'].setValue(val)
+    if (val === 'ALL') this.appSearchCriteria.controls['name'].disable()
     else this.appSearchCriteria.controls['name'].enable()
   }
 
   /**
    * FILTER & SORT Events
    */
-  public onQuickFilterChange(ev: any): void {
-    if (ev.value) this.quickFilterValue = ev.value
+  public onQuickFilterChange(val: AppFilterType): void {
+    if (val) this.quickFilterValue = val
     if (this.quickFilterValue === 'ALL') this.typeFilterValue$.next('')
     else this.typeFilterValue$.next(this.quickFilterValue)
   }

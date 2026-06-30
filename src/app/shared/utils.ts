@@ -37,13 +37,6 @@ export const Utils = {
     return (a.label ? a.label.toUpperCase() : '').localeCompare(b.label ? b.label.toUpperCase() : '')
   },
 
-  dropDownGetLabelByValue(ddArray: SelectItem[], val: string): string | undefined {
-    const a: any = ddArray.find((item: SelectItem) => {
-      return item?.value == val
-    })
-    return a.label
-  },
-
   getCurrentDateTime(): string {
     const now = new Date()
     const year = now.getFullYear()
@@ -56,5 +49,3 @@ export const Utils = {
     return `${year}-${month}-${day}_${hours}${minutes}${seconds}`
   }
 }
-
-export type DropDownChangeEvent = MouseEvent & { value: any }

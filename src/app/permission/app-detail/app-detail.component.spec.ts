@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -198,8 +197,7 @@ describe('AppDetailComponent', () => {
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: UserService, useValue: mockUserService },
         { provide: Location, useValue: locationSpy }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(AppDetailComponent, {
         set: {
@@ -675,14 +673,14 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {
-      component.onQuickFilterChange({ value: 'ALL' })
+      component.onQuickFilterChange('ALL')
 
       expect(component.filterBy).toEqual(['action', 'resource'])
       expect(component.filterValue).toBe('')
     })
 
     it('should set filterBy correctly and filterValue to quick filter value ', () => {
-      component.onQuickFilterChange({ value: 'VIEW' })
+      component.onQuickFilterChange('VIEW')
 
       expect(component.filterBy).toEqual(['action'])
       expect(component.filterValue).toBe('VIEW')
@@ -693,7 +691,7 @@ describe('AppDetailComponent', () => {
       component.permissionNameFilter = { nativeElement: { value: '' } }
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
-      component.onQuickFilterChange({ value: 'ALL' })
+      component.onQuickFilterChange('ALL')
 
       expect(component.permissionNameFilter.nativeElement.value).toBe('')
       expect(component.tableFilter).toHaveBeenCalledWith('')
@@ -1089,8 +1087,7 @@ describe('AppDetailComponent', () => {
     })
 
     it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
-      const event = { value: 'prodName1' }
-
+      const prod = 'prodName1'
       component.ngOnInit()
       expect(component.roles.length).toBe(2)
       expect(component.permissions.length).toBe(2)
@@ -1099,25 +1096,25 @@ describe('AppDetailComponent', () => {
 
       component.permissionTable = { filter: jasmine.createSpy(), value: component.permissionRows } as unknown as Table
 
-      component.onFilterItemChangeProduct(event)
+      component.onFilterItemChangeProduct(prod)
 
-      expect(component.filterProductValue).toBe(event.value)
+      expect(component.filterProductValue).toBe(prod)
       expect(component.filterAppValue).toBeUndefined()
       expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
-      expect(component.permissionTable.filter).toHaveBeenCalledWith(event.value, 'productName', 'equals')
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(prod, 'productName', 'equals')
     })
 
     it('should reset filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
-      const event = { value: '' }
+      const prod = ''
       component.permissionTable = { filter: jasmine.createSpy() } as unknown as Table
 
       component.ngOnInit()
-      component.onFilterItemChangeProduct(event)
+      component.onFilterItemChangeProduct(prod)
 
-      expect(component.filterProductValue).toBe(event.value)
+      expect(component.filterProductValue).toBe(prod)
       expect(component.filterAppValue).toBeUndefined()
       expect(component.permissionTable.filter).toHaveBeenCalledWith(undefined, 'appId', 'notEquals')
-      expect(component.permissionTable.filter).toHaveBeenCalledWith(event.value, 'productName', 'equals')
+      expect(component.permissionTable.filter).toHaveBeenCalledWith(prod, 'productName', 'equals')
     })
 
     it('should filter apps from permissions for the selected product', () => {

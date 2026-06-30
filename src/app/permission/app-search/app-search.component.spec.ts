@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
@@ -78,8 +77,7 @@ describe('AppSearchComponent', () => {
         { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(AppSearchComponent, {
         set: {
@@ -604,29 +602,27 @@ describe('AppSearchComponent', () => {
 
   describe('onQuickFilterChange', () => {
     it('should set typeFilterValue$ to an empty string when value is "ALL"', () => {
-      const event = { value: 'ALL' }
       spyOn(component.typeFilterValue$, 'next')
 
-      component.onQuickFilterChange(event)
+      component.onQuickFilterChange('ALL')
 
       expect(component.typeFilterValue$.next).toHaveBeenCalledWith('')
     })
 
     it('should set typeFilterValue$ to given value when value is not "ALL" and is truthy', () => {
-      const event = { value: 'SOME_VALUE' }
       spyOn(component.typeFilterValue$, 'next')
 
-      component.onQuickFilterChange(event)
+      component.onQuickFilterChange('WORKSPACE')
 
-      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('SOME_VALUE')
+      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('WORKSPACE')
     })
   })
 
   it('should disable name input field if app type on search is ALL', () => {
-    component.onAppTypeCriteriaChange({ value: 'ALL' })
+    component.onAppTypeCriteriaChange('ALL')
     expect(component.appSearchCriteria.controls['name'].disabled).toBeTrue()
 
-    component.onAppTypeCriteriaChange({ value: 'Apps' })
+    component.onAppTypeCriteriaChange('APP')
     expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
   })
 

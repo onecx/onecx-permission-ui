@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { HttpErrorResponse } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 
 import { ButtonModule } from 'primeng/button'
@@ -12,10 +13,16 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { AssignmentAPIService, Permission } from 'src/app/shared/generated'
 
+export type ImportErrorDetail = {
+  detail?: string
+  errorCode?: string
+  invalidParams?: { name: string; message: string }[]
+}
+
 export type ImportError = {
   name: string
   message: string
-  error: any
+  error: ImportErrorDetail | null
   ok: boolean
   status: number
   statusText: string
@@ -57,7 +64,7 @@ export class PermissionImportComponent {
           status: 400,
           statusText: 'Parser error',
           message: '',
-          error: { errorCode: 'PARSER', detail: err },
+          error: { errorCode: 'PARSER', detail: err instanceof Error ? err.message : String(err) },
           exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
         }
       }
@@ -73,9 +80,13 @@ export class PermissionImportComponent {
           this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
           this.importDone.emit()
         },
-        error: (err) => {
+        error: (err: HttpErrorResponse) => {
           console.error('importAssignments', err)
-          this.importError = { ...err, exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS' }
+          this.importError = {
+            ...err,
+            error: err.error as ImportErrorDetail | null,
+            exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
+          }
           this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
         }
       })

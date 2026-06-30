@@ -8,14 +8,13 @@
   [resizable]="true"
   [dismissableMask]="true"
 >
-  <p-message
-    *ngIf="!isComponentDefined"
-    id="apm_idm_roles_exception_component_not_exist"
-    severity="error"
-    [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
-  ></p-message>
-
-  <ng-container *ngIf="isComponentDefined">
+  @if (!isComponentDefined) {
+    <p-message
+      id="apm_idm_roles_exception_component_not_exist"
+      severity="error"
+      [text]="'EXCEPTIONS.NOT_FOUND.IAM_COMPONENT' | translate"
+    ></p-message>
+  } @else {
     <ocx-slot
       [name]="slotName"
       [inputs]="{ userId: '$$ocx-iam-roles-search-all-indicator$$' }"
@@ -23,21 +22,12 @@
     >
     </ocx-slot>
 
-    <ng-container>
-      <p-message
-        *ngIf="exceptionKey"
-        id="apm_idm_roles_data_access_issue"
-        severity="error"
-        [text]="exceptionKey | translate"
-      ></p-message>
-      <p-message
-        *ngIf="loading"
-        id="apm_idm_roles_loading"
-        severity="info"
-        [text]="'ACTIONS.LOADING' | translate"
-      ></p-message>
-
-      <div *ngIf="!loading && !exceptionKey" class="flex flex-column row-gap-1">
+    @if (exceptionKey) {
+      <p-message id="apm_idm_roles_data_access_issue" severity="error" [text]="exceptionKey | translate"></p-message>
+    } @else if (loading) {
+      <p-message id="apm_idm_roles_loading" severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
+    } @else {
+      <div class="flex flex-column row-gap-1">
         <div>{{ 'ROLE.IDM.LIST' | translate }}: {{ idmRoles.length }}</div>
         <p-listbox
           id="apm_idm_roles_list"
@@ -55,45 +45,45 @@
         />
         <div class="text-xs">{{ 'ROLE.IDM.INFO' | translate }}</div>
       </div>
-    </ng-container>
-  </ng-container>
+    }
+  }
 
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-      <p-button
-        *ngIf="exceptionKey || loading"
-        id="apm_idm_roles_action_close"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="!exceptionKey && !loading"
-        id="apm_idm_roles_action_cancel"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.CANCEL' | translate"
-        [ariaLabel]="'ACTIONS.CANCEL' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="!exceptionKey && !loading"
-        id="apm_idm_roles_action_save"
-        icon="pi pi-check"
-        (onClick)="onAddIamRoles()"
-        [disabled]="idmRolesSelected.length === 0"
-        [label]="'ROLE.IDM.SAVE' | translate"
-        [ariaLabel]="'ROLE.IDM.SAVE' | translate"
-        [pTooltip]="'ROLE.IDM.SAVE.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
+      @if (exceptionKey || loading) {
+        <p-button
+          id="apm_idm_roles_action_close"
+          icon="pi pi-times"
+          (onClick)="dataChanged.emit(false)"
+          [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+          [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+          [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+      } @else {
+        <p-button
+          id="apm_idm_roles_action_cancel"
+          icon="pi pi-times"
+          (onClick)="dataChanged.emit(false)"
+          [label]="'ACTIONS.CANCEL' | translate"
+          [ariaLabel]="'ACTIONS.CANCEL' | translate"
+          [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <p-button
+          id="apm_idm_roles_action_save"
+          icon="pi pi-check"
+          (onClick)="onAddIamRoles()"
+          [disabled]="idmRolesSelected.length === 0"
+          [label]="'ROLE.IDM.SAVE' | translate"
+          [ariaLabel]="'ROLE.IDM.SAVE' | translate"
+          [pTooltip]="'ROLE.IDM.SAVE.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+      }
     </div>
   </ng-template>
 </p-dialog>

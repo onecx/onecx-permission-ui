@@ -77,19 +77,6 @@ describe('Utils', () => {
     })
   })
 
-  describe('dropDownGetLabelByValue', () => {
-    it('should return the label corresponding to the value', () => {
-      const items: SelectItem[] = [
-        { label: 'label2', value: 2 },
-        { label: 'label1', value: 1 }
-      ]
-
-      const result = Utils.dropDownGetLabelByValue(items, '1')
-
-      expect(result).toEqual('label1')
-    })
-  })
-
   describe('sortByLocale', () => {
     it('should sort strings based on locale', () => {
       const strings: string[] = ['str2', 'str1']

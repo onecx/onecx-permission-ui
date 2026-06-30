@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
@@ -39,8 +38,7 @@ describe('PermissionImportComponent', () => {
         provideHttpClient(),
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(PermissionImportComponent, {
         set: {
@@ -130,6 +128,20 @@ describe('PermissionImportComponent', () => {
       expect(component.importError?.name).toEqual(errorResponse.name)
       expect(component.importError?.statusText).toEqual(errorResponse.statusText)
     })
+
+    it('should use String(err) for error detail when thrown exception is not an Error instance', async () => {
+      spyOn(file, 'text').and.returnValue(Promise.resolve('{}'))
+      spyOn(JSON, 'parse').and.callFake(() => {
+        throw 'non-error string'
+      })
+      spyOn(console, 'error')
+
+      await component.onImportFileSelect(event)
+
+      expect(component.importError?.error?.detail).toEqual('non-error string')
+      expect(component.importError?.error?.errorCode).toEqual('PARSER')
+      expect(component.importError?.exceptionKey).toEqual('ACTIONS.IMPORT.ERROR.PARSER')
+    })
   })
 
   describe('on import confirmation => uploading', () => {
@@ -150,13 +162,13 @@ describe('PermissionImportComponent', () => {
     })
 
     it('should handle error on import failure', (done) => {
-      const errorResponse = {
+      const errorResponse: ImportError = {
         name: 'Upload error',
         ok: false,
         status: 409,
         statusText: 'Upload error',
         message: '',
-        error: { errorCode: 'UPLOAD', detail: {} },
+        error: { errorCode: 'UPLOAD', detail: '' },
         exceptionKey: 'EXCEPTIONS.HTTP_STATUS_409.PERMISSIONS'
       }
       assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))

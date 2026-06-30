@@ -34,7 +34,7 @@ const routes: Routes = [
     component: AppDetailComponent,
     data: {
       breadcrumb: 'BREADCRUMBS.DETAIL',
-      breadcrumbFn: (data: any) => `${data.labeli18n}`
+      breadcrumbFn: (data: { labeli18n: string }) => `${data.labeli18n}`
     },
     resolve: {
       labeli18n: LabelResolver

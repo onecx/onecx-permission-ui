@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
@@ -75,8 +74,7 @@ describe('PermissionDetailComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
         { provide: UserService, useValue: mockUserService }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(PermissionDetailComponent, {
         set: {

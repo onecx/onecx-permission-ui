@@ -23,7 +23,7 @@
           inputid="apm_app_search_criteria_app_type"
           formControlName="appType"
           [options]="(appTypeItems$ | async) ?? []"
-          (onChange)="onAppTypeCriteriaChange($event)"
+          (onChange)="onAppTypeCriteriaChange($event.value)"
           [allowEmpty]="false"
           [ariaLabel]="'DIALOG.SEARCH.FILTER.TOOLTIP' | translate"
         >
@@ -56,7 +56,8 @@
     </form>
   </ocx-search-header>
 
-  <ocx-content *ngIf="(filteredApps$ | async) ?? [] as data" class="ocx-content">
+  @let data = (filteredApps$ | async) ?? [];
+  <ocx-content class="ocx-content">
     @if (exceptionKey) {
       <div class="flex flex-wrap justify-content-between align-items-center">
         <p-message id="apm_app_search_exception" severity="error" [text]="exceptionKey | translate"></p-message>
@@ -71,12 +72,7 @@
         ></p-button>
       </div>
     } @else if (loading) {
-      <p-message
-        *ngIf="loading"
-        id="apm_app_search_loading"
-        severity="info"
-        [text]="'ACTIONS.LOADING' | translate"
-      ></p-message>
+      <p-message id="apm_app_search_loading" severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
     } @else {
       <section
         [attr.aria-label]="
@@ -117,7 +113,7 @@
                   [options]="(quickFilterItems$ | async) ?? []"
                   [(ngModel)]="quickFilterValue"
                   [allowEmpty]="false"
-                  (onChange)="onQuickFilterChange($event)"
+                  (onChange)="onQuickFilterChange($event.value)"
                   [ariaLabel]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
                 >
                   <ng-template let-item pTemplate>

@@ -217,7 +217,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private getMyPermissions(): Observable<string[]> {
-    const userService = this.userService as any
+    const userService = this.userService
     if (typeof userService.getPermissions === 'function') {
       const permissions$ = userService.getPermissions()
       if (permissions$ && typeof permissions$.pipe === 'function') {
@@ -680,20 +680,20 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.tableFilter(this.filterValue)
     }
   }
-  public onQuickFilterChange(ev: any): void {
-    if (ev.value === 'ALL') {
+  public onQuickFilterChange(val: string): void {
+    if (val === 'ALL') {
       this.filterBy = ['action', 'resource']
       this.filterValue = ''
     } else {
       this.filterBy = ['action']
-      this.filterValue = ev.value
+      this.filterValue = val
     }
     if (this.permissionNameFilter && this.permissionTable) {
       this.permissionNameFilter.nativeElement.value = this.filterValue
       this.tableFilter(this.filterValue)
     }
   }
-  public tableFilter(val: any): void {
+  public tableFilter(val: string | undefined): void {
     if (this.permissionTable) {
       const activeFilterFields = this.filterBy?.length ? this.filterBy : this.permissionFilterFields
 
@@ -782,8 +782,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   // if product name selected then reload app id filter
-  public onFilterItemChangeProduct(ev: any) {
-    this.filterProductValue = ev.value
+  public onFilterItemChangeProduct(val: string | undefined) {
+    this.filterProductValue = val
     this.filterAppValue = undefined
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
@@ -960,13 +960,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    */
   public onGrantAllPermissions(ev: Event, role: Role): void {
     const prodNames = this.prepareProductListForBulkOperation()
-    const response = function (outside: any, fname: string) {
+    const response = function (outside: AppDetailComponent, fname: string) {
       return {
         next: () => {
           outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
           outside.loadRoleAssignments(false, role.id)
         },
-        error: (err: any) => {
+        error: (err: unknown) => {
           outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
           console.error(fname, err)
         }
@@ -998,13 +998,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   */
   public onRevokeAllPermissions(ev: Event, role: Role): void {
     const prodNames = this.prepareProductListForBulkOperation()
-    const response = function (outside: any, fname: string) {
+    const response = function (outside: AppDetailComponent, fname: string) {
       return {
         next: () => {
           outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
           outside.loadRoleAssignments(false, role.id)
         },
-        error: (err: any) => {
+        error: (err: unknown) => {
           outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
           console.error(fname, err)
         }
