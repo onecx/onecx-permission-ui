@@ -38,10 +38,11 @@ import {
   WorkspacePageResult,
   ApplicationPageResult
 } from 'src/app/shared/generated'
+import { Utils } from 'src/app/shared/utils'
+import { OcxChipComponent } from 'src/app/shared/ocx-chip/ocx-chip.component'
+
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
 import { PermissionImportComponent } from 'src/app/permission/permission-import/permission-import.component'
-import { limitText, sortByLocale } from 'src/app/shared/utils'
-import { OcxChipComponent } from '../../shared/ocx-chip/ocx-chip.component'
 
 export interface AppSearchCriteria {
   appId: FormControl<string | null>
@@ -103,8 +104,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public displayExportDialog = false
   public displayImportDialog = false
-
-  public limitText = limitText
 
   public columnTypes: DataTableColumn[] = [
     { columnType: ColumnType.STRING, id: 'displayName', nameKey: 'APP.DISPLAY_NAME', sortable: true },
@@ -369,7 +368,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.displayExportDialog = true
     this.productNames$ = this.apps$.pipe(
       map((products) =>
-        Array.from(products.filter((app) => app.appType === 'PRODUCT').map((p) => p.displayName!)).sort(sortByLocale)
+        Array.from(products.filter((app) => app.appType === 'PRODUCT').map((p) => p.displayName!)).sort(
+          Utils.sortByLocale
+        )
       )
     )
   }

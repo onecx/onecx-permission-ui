@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
-import { ActivatedRoute } from '@angular/router'
 import { FormsModule } from '@angular/forms'
+import { ActivatedRoute } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
+
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
@@ -45,7 +46,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 
 import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
@@ -114,7 +115,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     'PERMISSION#DELETE',
     'PERMISSION#GRANT'
   ]
-  limitText = limitText
   // dialog control
   public loadingApp = true
   public loadingPermissions = true
@@ -331,7 +331,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onExport(): void {
     if (this.currentApp.appType === 'WORKSPACE') {
       this.productNames =
-        this.currentApp.workspaceDetails?.products?.map((p) => p.productName!).sort(sortByLocale) ?? []
+        this.currentApp.workspaceDetails?.products?.map((p) => p.productName!).sort(Utils.sortByLocale) ?? []
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
     } else if (this.currentApp.isProduct) {
       this.productNames = [this.currentApp.name!]
@@ -552,7 +552,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.displayName, value: product.productName })
       })
-      this.filterProductItems.sort(sortSelectItemsByLabel)
+      this.filterProductItems.sort(Utils.sortSelectItemsByLabel)
     }
   }
 
@@ -578,7 +578,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
-    this.filterAppItems.sort(sortSelectItemsByLabel)
+    this.filterAppItems.sort(Utils.sortSelectItemsByLabel)
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map

@@ -1,32 +1,25 @@
 import { FormGroup, FormControl } from '@angular/forms'
 import { SelectItem } from 'primeng/api'
 
-import {
-  limitText,
-  copyToClipboard,
-  forceFormValidation,
-  sortSelectItemsByLabel,
-  dropDownGetLabelByValue,
-  sortByLocale
-} from './utils'
+import { Utils } from './utils'
 
-describe('util functions', () => {
+describe('Utils', () => {
   describe('limitText', () => {
     it('should truncate text that exceeds the specified limit', () => {
-      const result = limitText('hello', 4)
+      const result = Utils.limitText('hello', 4)
 
       expect(result).toEqual('hell...')
     })
 
     it('should return the original text if it does not exceed the limit', () => {
-      const result = limitText('hello', 6)
+      const result = Utils.limitText('hello', 6)
 
       expect(result).toEqual('hello')
     })
 
     it('should return an empty string for undefined input', () => {
       const str: any = undefined
-      const result = limitText(str, 5)
+      const result = Utils.limitText(str, 5)
 
       expect(result).toEqual('')
     })
@@ -40,7 +33,7 @@ describe('util functions', () => {
     })
 
     it('should copy text to clipboard', () => {
-      copyToClipboard('text')
+      Utils.copyToClipboard('text')
 
       expect(writeTextSpy).toHaveBeenCalledWith('text')
     })
@@ -53,7 +46,7 @@ describe('util functions', () => {
         control2: new FormControl('')
       })
 
-      forceFormValidation(group)
+      Utils.forceFormValidation(group)
 
       expect(group.dirty).toBeTrue()
       expect(group.touched).toBeTrue()
@@ -67,7 +60,7 @@ describe('util functions', () => {
         { label: 'label1', value: 1 }
       ]
 
-      const sortedItems = items.sort(sortSelectItemsByLabel)
+      const sortedItems = items.sort(Utils.sortSelectItemsByLabel)
 
       expect(sortedItems[0].label).toEqual('label1')
     })
@@ -78,7 +71,7 @@ describe('util functions', () => {
         { label: 'label1', value: 2 }
       ]
 
-      const sortedItems = items.sort(sortSelectItemsByLabel)
+      const sortedItems = items.sort(Utils.sortSelectItemsByLabel)
 
       expect(sortedItems[0].label).toEqual(undefined)
     })
@@ -91,7 +84,7 @@ describe('util functions', () => {
         { label: 'label1', value: 1 }
       ]
 
-      const result = dropDownGetLabelByValue(items, '1')
+      const result = Utils.dropDownGetLabelByValue(items, '1')
 
       expect(result).toEqual('label1')
     })
@@ -101,7 +94,7 @@ describe('util functions', () => {
     it('should sort strings based on locale', () => {
       const strings: string[] = ['str2', 'str1']
 
-      const sortedStrings = strings.sort(sortByLocale)
+      const sortedStrings = strings.sort(Utils.sortByLocale)
 
       expect(sortedStrings[0]).toEqual('str1')
     })
