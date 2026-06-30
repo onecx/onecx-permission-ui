@@ -411,7 +411,11 @@
               >
                 {{ 'PERMISSION.ACTIONS' | translate }}
               </th>
-              <th pFrozenColumn class="py-2 hidden xl:table-cell vertical-align-bottom border-bottom-2">
+              <th
+                pFrozenColumn
+                id="apm_app_detail_permission_table_header_mandatory"
+                class="py-2 hidden xl:table-cell vertical-align-bottom border-bottom-2"
+              >
                 <span
                   class="pi pi-exclamation-circle"
                   [attr.aria-label]="'PERMISSION.MANDATORY.COLUMN' | translate"
