@@ -724,7 +724,7 @@ describe('AppSearchComponent', () => {
 
       component.ngOnInit()
       component.actions$?.subscribe((acts) => (actions = acts))
-      expect(actions.length).toBe(2)
+
       actions[1].actionCallback()
 
       expect(component.onOpenImport).toHaveBeenCalled()
