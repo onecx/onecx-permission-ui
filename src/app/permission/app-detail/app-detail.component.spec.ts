@@ -151,10 +151,6 @@ describe('AppDetailComponent', () => {
   ])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const permApiSpy = jasmine.createSpyObj<PermissionAPIService>('PermissionAPIService', ['searchPermissions'])
-  const permissionServiceSpy = {
-    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(of(true)),
-    getPermissions: jasmine.createSpy('getPermissions').and.returnValue(of([]))
-  }
   const roleApiSpy = jasmine.createSpyObj<RoleAPIService>('RoleAPIService', ['searchRoles', 'createRole'])
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['getDetailsByWorkspaceName'])
   const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
@@ -190,7 +186,6 @@ describe('AppDetailComponent', () => {
         { provide: AssignmentAPIService, useValue: assApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionAPIService, useValue: permApiSpy },
-        { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: Router, useValue: mockRouter },
