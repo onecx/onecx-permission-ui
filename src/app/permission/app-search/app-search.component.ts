@@ -16,8 +16,6 @@ import { SelectItem } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
-import { PortalMessageService } from '@onecx/angular-integration-interface'
-import { PortalPageComponent } from '@onecx/angular-utils'
 import {
   Action,
   AngularAcceleratorModule,
@@ -29,6 +27,7 @@ import {
   FilterType,
   ObjectUtils
 } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import {
   Application,
@@ -56,7 +55,6 @@ export type AppFilterType = 'ALL' | AppType
   standalone: true,
   imports: [
     AngularAcceleratorModule,
-    PortalPageComponent,
     CommonModule,
     ButtonModule,
     CardModule,
@@ -70,6 +68,7 @@ export type AppFilterType = 'ALL' | AppType
     ToastModule,
     TooltipModule,
     TranslateModule,
+    PortalPageComponent,
     PermissionExportComponent,
     PermissionImportComponent,
     OcxChipComponent
@@ -87,9 +86,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteria!: FormGroup<AppSearchCriteria>
   // dialog control
-  public actions$: Observable<Action[]> | undefined
   public loading = false
   public exceptionKey: string | undefined = undefined
+  public actions$: Observable<Action[]> | undefined
   public viewMode = 'grid'
   public appTypeItems$: Observable<SelectItem[]> | undefined
   public quickFilterItems$: Observable<SelectItem[]> | undefined
@@ -116,7 +115,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
     private readonly workspaceApi: WorkspaceAPIService
   ) {
     // search criteria

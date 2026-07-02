@@ -1,11 +1,11 @@
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
-import { PermissionService } from '@onecx/angular-utils'
+
+import { Action, DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
@@ -52,10 +52,6 @@ describe('AppSearchComponent', () => {
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const permissionServiceSpy = {
-    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(of(true)),
-    getPermissions: jasmine.createSpy('getPermissions').and.returnValue(of([]))
-  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -74,7 +70,6 @@ describe('AppSearchComponent', () => {
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
@@ -725,11 +720,12 @@ describe('AppSearchComponent', () => {
   describe('open import/export dialog', () => {
     it('should open import dialog', () => {
       spyOn(component, 'onOpenImport')
+      let actions: any = []
 
       component.ngOnInit()
-      component.actions$?.subscribe((action) => {
-        action[1].actionCallback()
-      })
+      component.actions$?.subscribe((acts) => (actions = acts))
+      expect(actions.length).toBe(2)
+      actions[1].actionCallback()
 
       expect(component.onOpenImport).toHaveBeenCalled()
     })
@@ -744,11 +740,11 @@ describe('AppSearchComponent', () => {
 
     it('should open export dialog', () => {
       spyOn(component, 'onExport')
+      let actions: any = []
 
       component.ngOnInit()
-      component.actions$?.subscribe((action) => {
-        action[0].actionCallback()
-      })
+      component.actions$?.subscribe((acts) => (actions = acts))
+      actions[0].actionCallback()
 
       expect(component.onExport).toHaveBeenCalled()
     })
