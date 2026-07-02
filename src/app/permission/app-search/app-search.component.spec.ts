@@ -5,7 +5,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { Action, DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
+import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
