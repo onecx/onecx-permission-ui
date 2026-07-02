@@ -1,13 +1,21 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormControl, FormGroup } from '@angular/forms'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
-import { TranslateService } from '@ngx-translate/core'
-import { SelectItem } from 'primeng/api'
-import { FileSelectEvent, FileUpload } from 'primeng/fileupload'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
-import { PortalMessageService } from '@onecx/angular-integration-interface'
-import { PortalPageComponent } from '@onecx/angular-utils'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { MessageModule } from 'primeng/message'
+import { SelectButtonModule } from 'primeng/selectbutton'
+import { SelectItem } from 'primeng/api'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
+
 import {
   Action,
   AngularAcceleratorModule,
@@ -19,20 +27,21 @@ import {
   FilterType,
   ObjectUtils
 } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import {
   Application,
   ApplicationAPIService,
-  AssignmentAPIService,
   WorkspaceAbstract,
   WorkspaceAPIService,
   WorkspacePageResult,
-  ApplicationPageResult,
-  Permission
+  ApplicationPageResult
 } from 'src/app/shared/generated'
+import { Utils } from 'src/app/shared/utils'
+import { OcxChipComponent } from 'src/app/shared/ocx-chip/ocx-chip.component'
+
 import { PermissionExportComponent } from 'src/app/permission/permission-export/permission-export.component'
-import { SharedModule } from 'src/app/shared/shared.module'
-import { limitText, sortByLocale } from 'src/app/shared/utils'
+import { PermissionImportComponent } from 'src/app/permission/permission-import/permission-import.component'
 
 export interface AppSearchCriteria {
   appId: FormControl<string | null>
@@ -42,19 +51,28 @@ export interface AppSearchCriteria {
 export type App = Application & { apps?: number; appType: AppType; displayName?: string }
 export type AppType = 'APP' | 'PRODUCT' | 'WORKSPACE'
 export type AppFilterType = 'ALL' | AppType
-export type ImportError = {
-  name: string
-  message: string
-  error: any
-  ok: boolean
-  status: number
-  statusText: string
-  exceptionKey: string
-}
-
 @Component({
   standalone: true,
-  imports: [AngularAcceleratorModule, PortalPageComponent, SharedModule, PermissionExportComponent],
+  imports: [
+    AngularAcceleratorModule,
+    CommonModule,
+    ButtonModule,
+    CardModule,
+    FloatLabelModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    MessageModule,
+    SelectButtonModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
+    PortalPageComponent,
+    PermissionExportComponent,
+    PermissionImportComponent,
+    OcxChipComponent
+  ],
   templateUrl: './app-search.component.html',
   styleUrls: ['./app-search.component.scss']
 })
@@ -68,9 +86,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteria!: FormGroup<AppSearchCriteria>
   // dialog control
-  public actions$: Observable<Action[]> | undefined
   public loading = false
   public exceptionKey: string | undefined = undefined
+  public actions$: Observable<Action[]> | undefined
   public viewMode = 'grid'
   public appTypeItems$: Observable<SelectItem[]> | undefined
   public quickFilterItems$: Observable<SelectItem[]> | undefined
@@ -78,35 +96,25 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public typeFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public textFilterValue$ = new BehaviorSubject<string | undefined>(undefined)
   public globalFilterValue = ''
+  public filters$: Observable<Filter[]>
+  public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
   public sortField = 'displayName'
   public sortOrder = -1
 
   public displayExportDialog = false
   public displayImportDialog = false
-  public importError: ImportError | undefined = undefined
-
-  public importAssignmentItem: Permission | null = null
-  public selectedProductNames: string[] = []
-
-  public limitText = limitText
 
   public columnTypes: DataTableColumn[] = [
     { columnType: ColumnType.STRING, id: 'displayName', nameKey: 'APP.DISPLAY_NAME', sortable: true },
     { columnType: ColumnType.STRING, id: 'appType', nameKey: 'DIALOG.DETAIL.FILTER.APP_TYPE', sortable: true },
     { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
   ]
-  public filters$: Observable<Filter[]>
-  public sortDirection: DataSortDirection = DataSortDirection.ASCENDING
-
-  @ViewChild(FileUpload) fileUploader: FileUpload | undefined
 
   constructor(
     private readonly appApi: ApplicationAPIService,
-    private readonly assgnmtApi: AssignmentAPIService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
     private readonly workspaceApi: WorkspaceAPIService
   ) {
     // search criteria
@@ -351,53 +359,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.displayImportDialog = true
   }
 
-  public onImportFileSelect(event: FileSelectEvent): void {
-    this.importError = undefined
-    event.files[0].text().then((text) => {
-      try {
-        const importPermission = JSON.parse(text)
-        this.importAssignmentItem = importPermission
-      } catch (err) {
-        console.error('Import parse error', err)
-        this.importError = {
-          name: 'Parse error',
-          ok: false,
-          status: 400,
-          statusText: 'Parser error',
-          message: '',
-          error: { errorCode: 'PARSER', detail: err },
-          exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
-        }
-      }
-    })
-  }
-
-  public onImportConfirmation(): void {
-    if (this.importAssignmentItem) {
-      this.importError = undefined
-      this.assgnmtApi.importAssignments({ body: this.importAssignmentItem }).subscribe({
-        next: () => {
-          this.displayImportDialog = false
-          this.msgService.success({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
-          this.searchApps()
-        },
-        error: (err) => {
-          console.error('importAssignments', err)
-          this.importError = { ...err, exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS' }
-          this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
-        }
-      })
-    }
-  }
-  public onCloseImportDialog(): void {
-    this.displayImportDialog = false
-    this.importError = undefined
-    this.fileUploader?.clear()
-  }
-  public onImportClear(): void {
-    this.importError = undefined
-  }
-
   /**
    * EXPORT
    */
@@ -405,7 +366,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.displayExportDialog = true
     this.productNames$ = this.apps$.pipe(
       map((products) =>
-        Array.from(products.filter((app) => app.appType === 'PRODUCT').map((p) => p.displayName!)).sort(sortByLocale)
+        Array.from(products.filter((app) => app.appType === 'PRODUCT').map((p) => p.displayName!)).sort(
+          Utils.sortByLocale
+        )
       )
     )
   }
@@ -418,17 +381,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       relativeTo: this.route
     })
   }
-  public onAppTypeCriteriaChange(ev: any): void {
-    if (ev.value) this.appSearchCriteria.controls['appType'].setValue(ev.value)
-    if (ev.value === 'ALL') this.appSearchCriteria.controls['name'].disable()
+  public onAppTypeCriteriaChange(val: AppFilterType): void {
+    if (val) this.appSearchCriteria.controls['appType'].setValue(val)
+    if (val === 'ALL') this.appSearchCriteria.controls['name'].disable()
     else this.appSearchCriteria.controls['name'].enable()
   }
 
   /**
    * FILTER & SORT Events
    */
-  public onQuickFilterChange(ev: any): void {
-    if (ev.value) this.quickFilterValue = ev.value
+  public onQuickFilterChange(val: AppFilterType): void {
+    if (val) this.quickFilterValue = val
     if (this.quickFilterValue === 'ALL') this.typeFilterValue$.next('')
     else this.typeFilterValue$.next(this.quickFilterValue)
   }

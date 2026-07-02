@@ -1,11 +1,23 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { Location } from '@angular/common'
+import { CommonModule, Location } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
+import { FormsModule } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
+
 import { FilterMatchMode, SelectItem } from 'primeng/api'
-import { Table } from 'primeng/table'
+import { ButtonModule } from 'primeng/button'
+import { CheckboxModule } from 'primeng/checkbox'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
+import { MessageModule } from 'primeng/message'
+import { SelectButtonModule } from 'primeng/selectbutton'
+import { SelectModule } from 'primeng/select'
+import { Table, TableModule } from 'primeng/table'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -34,8 +46,7 @@ import {
   WorkspaceDetails,
   ProductDetails
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
-import { sortSelectItemsByLabel, limitText, sortByLocale } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 
 import { PermissionDeleteComponent } from 'src/app/permission/permission-delete/permission-delete.component'
 import { PermissionDetailComponent } from 'src/app/permission/permission-detail/permission-detail.component'
@@ -68,13 +79,26 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   imports: [
     AngularAcceleratorModule,
     PortalPageComponent,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    ButtonModule,
+    CheckboxModule,
+    FloatLabelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
+    MessageModule,
+    SelectButtonModule,
+    SelectModule,
+    TableModule,
+    TooltipModule,
     RoleDeleteComponent,
     RoleDetailComponent,
     RoleIdmComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
-    PermissionExportComponent,
-    SharedModule
+    PermissionExportComponent
   ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
@@ -91,7 +115,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     'PERMISSION#DELETE',
     'PERMISSION#GRANT'
   ]
-  limitText = limitText
   // dialog control
   public loadingApp = true
   public loadingPermissions = true
@@ -194,7 +217,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private getMyPermissions(): Observable<string[]> {
-    const userService = this.userService as any
+    const userService = this.userService
     if (typeof userService.getPermissions === 'function') {
       const permissions$ = userService.getPermissions()
       if (permissions$ && typeof permissions$.pipe === 'function') {
@@ -308,7 +331,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public onExport(): void {
     if (this.currentApp.appType === 'WORKSPACE') {
       this.productNames =
-        this.currentApp.workspaceDetails?.products?.map((p) => p.productName!).sort(sortByLocale) ?? []
+        this.currentApp.workspaceDetails?.products?.map((p) => p.productName!).sort(Utils.sortByLocale) ?? []
       this.listedProductsHeaderKey = 'ACTIONS.EXPORT.WS_APPLICATION_LIST'
     } else if (this.currentApp.isProduct) {
       this.productNames = [this.currentApp.name!]
@@ -529,7 +552,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.currentApp.workspaceDetails?.products.map((product) => {
         this.filterProductItems.push({ label: product.displayName, value: product.productName })
       })
-      this.filterProductItems.sort(sortSelectItemsByLabel)
+      this.filterProductItems.sort(Utils.sortSelectItemsByLabel)
     }
   }
 
@@ -555,7 +578,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         if (this.filterAppItems.filter((item) => item.value === app.appId).length === 0)
           this.filterAppItems.push({ label: app.name, value: app.appId } as SelectItem)
       })
-    this.filterAppItems.sort(sortSelectItemsByLabel)
+    this.filterAppItems.sort(Utils.sortSelectItemsByLabel)
   }
 
   /* 1. Prepare rows of the table: permissions of the <application> as Map
@@ -657,20 +680,20 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       this.tableFilter(this.filterValue)
     }
   }
-  public onQuickFilterChange(ev: any): void {
-    if (ev.value === 'ALL') {
+  public onQuickFilterChange(val: string): void {
+    if (val === 'ALL') {
       this.filterBy = ['action', 'resource']
       this.filterValue = ''
     } else {
       this.filterBy = ['action']
-      this.filterValue = ev.value
+      this.filterValue = val
     }
     if (this.permissionNameFilter && this.permissionTable) {
       this.permissionNameFilter.nativeElement.value = this.filterValue
       this.tableFilter(this.filterValue)
     }
   }
-  public tableFilter(val: any): void {
+  public tableFilter(val: string | undefined): void {
     if (this.permissionTable) {
       const activeFilterFields = this.filterBy?.length ? this.filterBy : this.permissionFilterFields
 
@@ -759,8 +782,8 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   // if product name selected then reload app id filter
-  public onFilterItemChangeProduct(ev: any) {
-    this.filterProductValue = ev.value
+  public onFilterItemChangeProduct(val: string | undefined) {
+    this.filterProductValue = val
     this.filterAppValue = undefined
     this.permissionTable?.filter(this.filterAppValue, 'appId', 'notEquals')
     this.permissionTable?.filter(this.filterProductValue, 'productName', 'equals')
@@ -937,13 +960,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    */
   public onGrantAllPermissions(ev: Event, role: Role): void {
     const prodNames = this.prepareProductListForBulkOperation()
-    const response = function (outside: any, fname: string) {
+    const response = function (outside: AppDetailComponent, fname: string) {
       return {
         next: () => {
           outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ALL_SUCCESS' })
           outside.loadRoleAssignments(false, role.id)
         },
-        error: (err: any) => {
+        error: (err: unknown) => {
           outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.GRANT_ERROR' })
           console.error(fname, err)
         }
@@ -975,13 +998,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   */
   public onRevokeAllPermissions(ev: Event, role: Role): void {
     const prodNames = this.prepareProductListForBulkOperation()
-    const response = function (outside: any, fname: string) {
+    const response = function (outside: AppDetailComponent, fname: string) {
       return {
         next: () => {
           outside.msgService.success({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ALL_SUCCESS' })
           outside.loadRoleAssignments(false, role.id)
         },
-        error: (err: any) => {
+        error: (err: unknown) => {
           outside.msgService.error({ summaryKey: 'PERMISSION.ASSIGNMENTS.REVOKE_ERROR' })
           console.error(fname, err)
         }

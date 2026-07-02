@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -39,8 +38,7 @@ describe('PermissionExportComponent', () => {
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(PermissionExportComponent, {
         set: {
