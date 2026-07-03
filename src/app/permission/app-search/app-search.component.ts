@@ -10,6 +10,7 @@ import { CardModule } from 'primeng/card'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
 import { MessageModule } from 'primeng/message'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { SelectItem } from 'primeng/api'
@@ -63,11 +64,13 @@ export type AppFilterType = 'ALL' | AppType
     ReactiveFormsModule,
     InputGroupModule,
     InputGroupAddonModule,
+    InputTextModule,
     MessageModule,
     SelectButtonModule,
     ToastModule,
     TooltipModule,
     TranslateModule,
+    // components
     PortalPageComponent,
     PermissionExportComponent,
     PermissionImportComponent,

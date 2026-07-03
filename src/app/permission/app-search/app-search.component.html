@@ -37,14 +37,14 @@
         </div>
       </section>
       <!-- decoupling input from select button with extra div tag -->
-      <div>
+      <div class="w-15rem">
         <p-floatlabel variant="on">
           <input
-            id="apm_app_search_criteria_name"
             pInputText
             type="text"
+            id="apm_app_search_criteria_name"
+            class="w-full pt-3 pb-2 text-responsive"
             formControlName="name"
-            class="w-15rem"
             [ariaLabel]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             [pTooltip]="'APP.SEARCH.NAME.TOOLTIP' | translate"
             tooltipPosition="top"
