@@ -70,6 +70,7 @@ export type AppFilterType = 'ALL' | AppType
     ToastModule,
     TooltipModule,
     TranslateModule,
+    // components
     PortalPageComponent,
     PermissionExportComponent,
     PermissionImportComponent,

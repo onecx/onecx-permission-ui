@@ -79,11 +79,10 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   imports: [
     AngularAcceleratorModule,
     CommonModule,
-    FormsModule,
-    TranslateModule,
     ButtonModule,
     CheckboxModule,
     FloatLabelModule,
+    FormsModule,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
@@ -92,14 +91,15 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     SelectModule,
     TableModule,
     TooltipModule,
+    TranslateModule,
     // components
     PortalPageComponent,
-    RoleDeleteComponent,
-    RoleDetailComponent,
-    RoleIdmComponent,
     PermissionDeleteComponent,
     PermissionDetailComponent,
-    PermissionExportComponent
+    PermissionExportComponent,
+    RoleDeleteComponent,
+    RoleDetailComponent,
+    RoleIdmComponent
   ],
   templateUrl: './app-detail.component.html',
   styleUrls: ['./app-detail.component.scss']
