@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { Subject, catchError, combineLatest, from, map, of, Observable, take } from 'rxjs'
+import { catchError, combineLatest, from, map, of, Observable, Subject, take } from 'rxjs'
 
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { ButtonModule } from 'primeng/button'
@@ -55,6 +55,7 @@ import { RoleDeleteComponent } from 'src/app/permission/role-delete/role-delete.
 import { RoleDetailComponent } from 'src/app/permission/role-detail/role-detail.component'
 import { RoleIdmComponent } from 'src/app/permission/role-idm/role-idm.component'
 
+export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 export type App = Application & {
   isProduct: boolean
   appType: AppType
@@ -64,7 +65,6 @@ export type App = Application & {
 export type AppType = 'WORKSPACE' | 'PRODUCT'
 export type ServiceAppType = 'MFE' | 'MS'
 export type RoleAssignments = { [key: string]: string | undefined } // assignment id or undefined
-export type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT' | 'COPY' | 'DELETE'
 export type PermissionViewRow = Permission & {
   key: string // combined resource and action => resource#action
   roles: RoleAssignments
@@ -78,7 +78,6 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   standalone: true,
   imports: [
     AngularAcceleratorModule,
-    PortalPageComponent,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -93,6 +92,8 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     SelectModule,
     TableModule,
     TooltipModule,
+    // components
+    PortalPageComponent,
     RoleDeleteComponent,
     RoleDetailComponent,
     RoleIdmComponent,
@@ -104,33 +105,6 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   styleUrls: ['./app-detail.component.scss']
 })
 export class AppDetailComponent implements OnInit, OnDestroy {
-  private readonly destroy$ = new Subject()
-  private readonly debug = true // to be removed after finalization
-  private readonly relevantPermissions = [
-    'ROLE#EDIT',
-    'ROLE#CREATE',
-    'ROLE#DELETE',
-    'PERMISSION#EDIT',
-    'PERMISSION#CREATE',
-    'PERMISSION#DELETE',
-    'PERMISSION#GRANT'
-  ]
-  // dialog control
-  public loadingApp = true
-  public loadingPermissions = true
-  public exceptionKey: string | undefined = undefined
-  public actions$: Observable<Action[]> | undefined
-  // filter row
-  public filterBy = ['action', 'resource']
-  private readonly permissionFilterFields = ['action', 'resource']
-  public filterNot = false
-  public filterValue: string | undefined
-  public filterMode: string
-  public readonly filterModeContains = FilterMatchMode.CONTAINS
-  public readonly filterModeNotContains = FilterMatchMode.NOT_CONTAINS
-  public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
-  public quickFilterItems$: Observable<SelectItem[]> | undefined
-
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionNameFilter') permissionNameFilter: ElementRef | undefined
   @ViewChild('filterProduct') filterProduct: ElementRef | undefined
@@ -138,15 +112,23 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('sortIconAppId') sortIconAppId: ElementRef | undefined
   @ViewChild('sortIconProduct') sortIconProduct: ElementRef | undefined
 
-  // data
-  private readonly pageSize = 1000
-  public urlParamAppId: string | null
-  public urlParamAppType: string | undefined
-  public currentApp: App = { appId: 'dummy', appType: 'PRODUCT', isProduct: true } as App
-  public dateFormat = 'medium'
+  private readonly destroy$ = new Subject()
+  // dialog
+  public loadingApp = true
+  public loadingPermissions = true
+  public exceptionKey: string | undefined = undefined
+  public actions$: Observable<Action[]> | undefined
   public changeMode: ChangeMode = 'VIEW'
-  public myPermissions = new Array<string>() // permissions of the user
-  // permission filter
+  // filter: row
+  private readonly permissionFilterFields = ['action', 'resource']
+  public filterBy = this.permissionFilterFields
+  public filterNot = false
+  public filterValue: string | undefined
+  public filterMode: string
+  public FilterMatchMode = FilterMatchMode
+  public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
+  public quickFilterItems$: Observable<SelectItem[]> | undefined
+  // filter: permission
   public filterProductItems!: SelectItem[]
   public filterProductValue: string | undefined = undefined
   public filterAppItems!: SelectItem[]
@@ -154,7 +136,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public productApps: App[] = []
   public productNames: string[] = []
   public listedProductsHeaderKey: string = ''
-
+  // data
+  private readonly pageSize = 1000
+  public urlParamAppId: string | null
+  public urlParamAppType: string | undefined
+  public currentApp: App = { appId: 'dummy', appType: 'PRODUCT', isProduct: true } as App
+  public dateFormat = 'medium'
+  public myPermissions = new Array<string>() // permissions of the user
   // permission management
   private permissions$!: Observable<Permission[]>
   public permissions!: Permission[]
@@ -172,7 +160,6 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public emptyRolesExist = false
   public showNonWorkspaceRoles = false
   public protectedAssignments: Array<string> = []
-
   // role management
   private roles$!: Observable<PermissionRole[]>
   public role: Role | undefined
@@ -217,24 +204,33 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   }
 
   private getMyPermissions(): Observable<string[]> {
+    const dialogPermissions = [
+      'ROLE#EDIT',
+      'ROLE#CREATE',
+      'ROLE#DELETE',
+      'PERMISSION#EDIT',
+      'PERMISSION#CREATE',
+      'PERMISSION#DELETE',
+      'PERMISSION#GRANT'
+    ]
     const userService = this.userService
     if (typeof userService.getPermissions === 'function') {
       const permissions$ = userService.getPermissions()
       if (permissions$ && typeof permissions$.pipe === 'function') {
         return permissions$.pipe(
-          map((permissions: string[]) => this.relevantPermissions.filter((p) => permissions.includes(p)))
+          map((permissions: string[]) => dialogPermissions.filter((p) => permissions.includes(p)))
         )
       }
     }
     if (typeof userService.hasPermission === 'function') {
-      const checks = this.relevantPermissions.map((p) => userService.hasPermission(p))
+      const checks = dialogPermissions.map((p) => userService.hasPermission(p))
       const hasAsyncCheck = checks.some((check) => check && typeof check.then === 'function')
       if (!hasAsyncCheck) {
-        return of(this.relevantPermissions.filter((_, index) => !!checks[index]))
+        return of(dialogPermissions.filter((_, index) => !!checks[index]))
       }
       return from(
         Promise.all(
-          this.relevantPermissions.map((permission, index) =>
+          dialogPermissions.map((permission, index) =>
             Promise.resolve(checks[index]).then((hasPermission) => ({
               permission,
               hasPermission

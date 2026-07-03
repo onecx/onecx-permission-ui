@@ -12,7 +12,6 @@ import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
   createTranslateLoader,
-  providePermissionService,
   provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
@@ -44,7 +43,6 @@ bootstrapRemoteComponent(
       }
     }),
     importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
-    providePermissionService(),
     provideThemeConfig()
   ]
 )

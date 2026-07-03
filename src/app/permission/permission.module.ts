@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
+import { providePermissionService } from '@onecx/angular-utils'
+
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AppSearchComponent } from './app-search/app-search.component'
@@ -32,7 +34,7 @@ const routes: Routes = [
 ]
 @NgModule({
   imports: [AppSearchComponent, AppDetailComponent, RouterModule.forChild(routes)],
-  providers: [LabelResolver]
+  providers: [...providePermissionService(), LabelResolver]
 })
 export class PermissionModule {
   constructor() {

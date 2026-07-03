@@ -8,7 +8,6 @@ import { BehaviorSubject, of, throwError } from 'rxjs'
 import { FilterMatchMode } from 'primeng/api'
 import { Table } from 'primeng/table'
 
-import { PermissionService } from '@onecx/angular-utils'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import {
