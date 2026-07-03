@@ -10,6 +10,7 @@ import { CardModule } from 'primeng/card'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
 import { MessageModule } from 'primeng/message'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { SelectItem } from 'primeng/api'
@@ -63,6 +64,7 @@ export type AppFilterType = 'ALL' | AppType
     ReactiveFormsModule,
     InputGroupModule,
     InputGroupAddonModule,
+    InputTextModule,
     MessageModule,
     SelectButtonModule,
     ToastModule,
@@ -124,7 +126,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       name: new FormControl<string | null>(null)
     })
     this.appSearchCriteria.controls['appType'].setValue('ALL') // default: all app types
-    this.appSearchCriteria.controls['name'].disable()
+    //this.appSearchCriteria.controls['name'].disable()
     this.filters$ = this.typeFilterValue$.pipe(
       map((typeValue) => {
         const filters: Filter[] = []
