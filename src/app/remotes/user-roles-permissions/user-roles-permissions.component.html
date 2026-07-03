@@ -154,52 +154,54 @@
                 </th>
               </tr>
               <tr>
-                <th
-                  *ngFor="let col of columns"
-                  [id]="'apm_user_assignments_table_header_' + col.field"
-                  [class]="'py-3 text-center ' + (col.class ?? '')"
-                  [pSortableColumn]="col.field"
-                >
-                  <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-2">
-                    @if (col.hasFilter) {
-                      <p-floatlabel variant="on" class="min-w-10rem">
-                        <p-select
-                          variant="outlined"
-                          [inputId]="'apm_user_assignments_table_filter_' + col.field"
-                          styleClass="min-w-10rem"
-                          (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
-                          [showClear]="true"
-                          [autoDisplayFirst]="false"
-                          [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
-                          [options]="getListboxOptionsCache(items, col.field)"
-                          [ariaLabel]="col.tooltipKey | translate"
-                          [pTooltip]="col.tooltipKey | translate"
-                          tooltipPosition="top"
-                          tooltipEvent="hover"
-                        >
-                        </p-select>
-                        <label [for]="'apm_user_assignments_table_filter_' + col.field" aria-hidden="true">
-                          {{ col.labelKey | translate }}
-                        </label>
-                      </p-floatlabel>
-                    } @else {
-                      <div>{{ col.labelKey | translate }}</div>
-                    }
-                    <p-sortIcon [field]="col.field" aria-hidden="true"></p-sortIcon>
-                  </div>
-                </th>
+                @for (col of columns; track col.field) {
+                  <th
+                    [id]="'apm_user_assignments_table_header_' + col.field"
+                    [class]="'py-3 text-center ' + (col.class ?? '')"
+                    [pSortableColumn]="col.field"
+                  >
+                    <div class="inline-flex flex-row flex-nowrap justify-content-center align-items-center gap-2">
+                      @if (col.hasFilter) {
+                        <p-floatlabel variant="on" class="min-w-10rem">
+                          <p-select
+                            variant="outlined"
+                            [inputId]="'apm_user_assignments_table_filter_' + col.field"
+                            styleClass="min-w-10rem"
+                            (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
+                            [showClear]="true"
+                            [autoDisplayFirst]="false"
+                            [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
+                            [options]="getListboxOptionsCache(items, col.field)"
+                            [ariaLabel]="col.tooltipKey | translate"
+                            [pTooltip]="col.tooltipKey | translate"
+                            tooltipPosition="top"
+                            tooltipEvent="hover"
+                          >
+                          </p-select>
+                          <label [for]="'apm_user_assignments_table_filter_' + col.field" aria-hidden="true">
+                            {{ col.labelKey | translate }}
+                          </label>
+                        </p-floatlabel>
+                      } @else {
+                        <div>{{ col.labelKey | translate }}</div>
+                      }
+                      <p-sortIcon [field]="col.field" aria-hidden="true"></p-sortIcon>
+                    </div>
+                  </th>
+                }
               </tr>
             </ng-template>
 
             <ng-template pTemplate="body" let-item let-columns="columns" let-i="rowIndex">
               <tr>
-                <td
-                  *ngFor="let col of columns"
-                  [id]="'apm_user_assignments_table_row_' + i + '_' + col.field"
-                  [class]="'text-center align-middle ' + (col.class ?? '')"
-                >
-                  {{ item[col.field] }}
-                </td>
+                @for (col of columns; track col.field) {
+                  <td
+                    [id]="'apm_user_assignments_table_row_' + i + '_' + col.field"
+                    [class]="'text-center align-middle ' + (col.class ?? '')"
+                  >
+                    {{ item[col.field] }}
+                  </td>
+                }
               </tr>
             </ng-template>
 

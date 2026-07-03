@@ -43,46 +43,47 @@
           {{ 'PERMISSION.APP_ID' | translate }}
         </label>
       </p-floatlabel>
-      <div
-        *ngIf="changeMode !== 'CREATE'"
-        class="px-2 flex flex-row justify-content-between align-items-center column-gap-3"
-      >
-        <div class="flex align-items-center gap-2">
-          <p-checkbox
-            type="text"
-            inputId="apm_permission_detail_operator"
-            formControlName="operator"
-            [binary]="true"
-            [styleClass]="'cursor-auto shadow-none'"
-            [ariaLabel]="'PERMISSION.OPERATOR' | translate"
-            [pTooltip]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
-            tooltipPosition="right"
-            tooltipEvent="hover"
-          ></p-checkbox>
-          <label for="apm_permission_detail_operator">{{ 'PERMISSION.OPERATOR' | translate }}</label>
+      @if (changeMode !== 'CREATE') {
+        <div class="px-2 flex flex-row justify-content-between align-items-center column-gap-3">
+          <div class="flex align-items-center gap-2">
+            <p-checkbox
+              type="text"
+              inputId="apm_permission_detail_operator"
+              formControlName="operator"
+              [binary]="true"
+              [styleClass]="'cursor-auto shadow-none'"
+              [ariaLabel]="'PERMISSION.OPERATOR' | translate"
+              [pTooltip]="'PERMISSION.OPERATOR.TOOLTIP' | translate"
+              tooltipPosition="right"
+              tooltipEvent="hover"
+            ></p-checkbox>
+            <label for="apm_permission_detail_operator">{{ 'PERMISSION.OPERATOR' | translate }}</label>
+          </div>
+          <div class="flex align-items-center gap-2">
+            <p-checkbox
+              type="text"
+              inputId="apm_permission_detail_mandatory"
+              formControlName="mandatory"
+              [binary]="true"
+              [styleClass]="'cursor-auto shadow-none'"
+              [ariaLabel]="'PERMISSION.MANDATORY' | translate"
+              [pTooltip]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
+              tooltipPosition="right"
+              tooltipEvent="hover"
+            ></p-checkbox>
+            <label for="apm_permission_detail_mandatory">{{ 'PERMISSION.MANDATORY' | translate }}</label>
+          </div>
         </div>
-        <div class="flex align-items-center gap-2">
-          <p-checkbox
-            type="text"
-            inputId="apm_permission_detail_mandatory"
-            formControlName="mandatory"
-            [binary]="true"
-            [styleClass]="'cursor-auto shadow-none'"
-            [ariaLabel]="'PERMISSION.MANDATORY' | translate"
-            [pTooltip]="'PERMISSION.MANDATORY.TOOLTIP' | translate"
-            tooltipPosition="right"
-            tooltipEvent="hover"
-          ></p-checkbox>
-          <label for="apm_permission_detail_mandatory">{{ 'PERMISSION.MANDATORY' | translate }}</label>
-        </div>
-      </div>
-      <p-message
-        *ngIf="permission?.operator"
-        id="apm_permission_detail_operator_message"
-        styleClass="mb-1"
-        severity="info"
-        [text]="'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate"
-      ></p-message>
+      }
+
+      @if (permission?.operator) {
+        <p-message
+          id="apm_permission_detail_operator_message"
+          styleClass="mb-1"
+          severity="info"
+          [text]="'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate"
+        ></p-message>
+      }
       <p-floatlabel variant="on" controlErrorAnchor>
         <input
           pInputText
@@ -131,42 +132,42 @@
 
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-      <p-button
-        *ngIf="changeMode === 'VIEW'"
-        autofocus
-        id="apm_permission_detail_action_close"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
-        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="changeMode !== 'VIEW'"
-        autofocus
-        id="apm_permission_detail_action_cancel"
-        icon="pi pi-times"
-        (onClick)="dataChanged.emit(false)"
-        [label]="'ACTIONS.CANCEL' | translate"
-        [ariaLabel]="'ACTIONS.CANCEL' | translate"
-        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <p-button
-        *ngIf="changeMode !== 'VIEW'"
-        id="apm_permission_detail_action_save"
-        icon="pi pi-save"
-        (onClick)="onSave()"
-        [disabled]="!formGroup.valid"
-        [label]="'ACTIONS.SAVE' | translate"
-        [ariaLabel]="'ACTIONS.SAVE' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
+      @if (changeMode === 'VIEW') {
+        <p-button
+          autofocus
+          id="apm_permission_detail_action_close"
+          icon="pi pi-times"
+          (onClick)="dataChanged.emit(false)"
+          [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+          [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+          [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+      } @else {
+        <p-button
+          autofocus
+          id="apm_permission_detail_action_cancel"
+          icon="pi pi-times"
+          (onClick)="dataChanged.emit(false)"
+          [label]="'ACTIONS.CANCEL' | translate"
+          [ariaLabel]="'ACTIONS.CANCEL' | translate"
+          [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <p-button
+          id="apm_permission_detail_action_save"
+          icon="pi pi-save"
+          (onClick)="onSave()"
+          [disabled]="!formGroup.valid"
+          [label]="'ACTIONS.SAVE' | translate"
+          [ariaLabel]="'ACTIONS.SAVE' | translate"
+          [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+      }
     </div>
   </ng-template>
 </p-dialog>

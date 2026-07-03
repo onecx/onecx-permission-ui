@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
@@ -54,8 +53,7 @@ describe('RoleDetailComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: UserService, useValue: mockUserService }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(RoleDetailComponent, {
         set: {

@@ -18,7 +18,9 @@
       <div id="apm_permission_delete_role_name" class="font-bold text-center danger-action-text">
         {{ permission?.resource }} # {{ permission?.action }}
       </div>
-      <div *ngIf="permission?.operator">{{ 'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate }}</div>
+      @if (permission?.operator) {
+        <div>{{ 'ACTIONS.DELETE.MESSAGE.OPERATOR_TEXT' | translate }}</div>
+      }
       <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.NO_UNDO' | translate }}</div>
     </div>
   </div>

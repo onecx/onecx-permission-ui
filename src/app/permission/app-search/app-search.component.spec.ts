@@ -1,14 +1,11 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-import { FileSelectEvent } from 'primeng/fileupload'
 
 import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
-import { PermissionService } from '@onecx/angular-utils'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import {
@@ -18,10 +15,9 @@ import {
   WorkspacePageResult,
   ApplicationPageResult,
   Application,
-  AssignmentAPIService,
-  Permission
+  AssignmentAPIService
 } from 'src/app/shared/generated'
-import { App, AppSearchComponent, ImportError } from './app-search.component'
+import { App, AppSearchComponent } from './app-search.component'
 
 const wsAbstract: WorkspaceAbstract = { name: 'wsName' }
 const wsAbstract2: WorkspaceAbstract = { name: 'wsName2' }
@@ -40,11 +36,6 @@ const app2: Application = {
 const appPageRes: ApplicationPageResult = {
   stream: [app, app2]
 }
-const permission: Permission = {
-  appId: 'onecx-app',
-  productName: 'onecx-product'
-}
-
 describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
@@ -58,14 +49,9 @@ describe('AppSearchComponent', () => {
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assgnmtApiSpy = {
     searchAssignments: jasmine.createSpy('searchAssignments').and.returnValue(of({})),
-    importAssignments: jasmine.createSpy('importAssignments').and.returnValue(of({})),
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const permissionServiceSpy = {
-    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(of(true)),
-    getPermissions: jasmine.createSpy('getPermissions').and.returnValue(of([]))
-  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -84,11 +70,9 @@ describe('AppSearchComponent', () => {
         { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
         { provide: WorkspaceAPIService, useValue: wsApiSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionService, useValue: permissionServiceSpy },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(AppSearchComponent, {
         set: {
@@ -110,7 +94,6 @@ describe('AppSearchComponent', () => {
   afterEach(() => {
     appApiSpy.searchApplications.calls.reset()
     assgnmtApiSpy.searchAssignments.calls.reset()
-    assgnmtApiSpy.importAssignments.calls.reset()
     assgnmtApiSpy.exportAssignments.calls.reset()
     wsApiSpy.searchWorkspaces.calls.reset()
     appApiSpy.searchApplications.and.returnValue(of({}) as any)
@@ -614,29 +597,27 @@ describe('AppSearchComponent', () => {
 
   describe('onQuickFilterChange', () => {
     it('should set typeFilterValue$ to an empty string when value is "ALL"', () => {
-      const event = { value: 'ALL' }
       spyOn(component.typeFilterValue$, 'next')
 
-      component.onQuickFilterChange(event)
+      component.onQuickFilterChange('ALL')
 
       expect(component.typeFilterValue$.next).toHaveBeenCalledWith('')
     })
 
     it('should set typeFilterValue$ to given value when value is not "ALL" and is truthy', () => {
-      const event = { value: 'SOME_VALUE' }
       spyOn(component.typeFilterValue$, 'next')
 
-      component.onQuickFilterChange(event)
+      component.onQuickFilterChange('WORKSPACE')
 
-      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('SOME_VALUE')
+      expect(component.typeFilterValue$.next).toHaveBeenCalledWith('WORKSPACE')
     })
   })
 
   it('should disable name input field if app type on search is ALL', () => {
-    component.onAppTypeCriteriaChange({ value: 'ALL' })
+    component.onAppTypeCriteriaChange('ALL')
     expect(component.appSearchCriteria.controls['name'].disabled).toBeTrue()
 
-    component.onAppTypeCriteriaChange({ value: 'Apps' })
+    component.onAppTypeCriteriaChange('APP')
     expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
   })
 
@@ -739,11 +720,12 @@ describe('AppSearchComponent', () => {
   describe('open import/export dialog', () => {
     it('should open import dialog', () => {
       spyOn(component, 'onOpenImport')
+      let actions: any = []
 
       component.ngOnInit()
-      component.actions$?.subscribe((action) => {
-        action[1].actionCallback()
-      })
+      component.actions$?.subscribe((acts) => (actions = acts))
+
+      actions[1].actionCallback()
 
       expect(component.onOpenImport).toHaveBeenCalled()
     })
@@ -756,134 +738,15 @@ describe('AppSearchComponent', () => {
       expect(component.displayImportDialog).toBeTrue()
     })
 
-    it('should close displayImportDialog', () => {
-      component.displayImportDialog = true
-
-      component.onCloseImportDialog()
-
-      expect(component.displayImportDialog).toBeFalse()
-    })
-
     it('should open export dialog', () => {
       spyOn(component, 'onExport')
+      let actions: any = []
 
       component.ngOnInit()
-      component.actions$?.subscribe((action) => {
-        action[0].actionCallback()
-      })
+      component.actions$?.subscribe((acts) => (actions = acts))
+      actions[0].actionCallback()
 
       expect(component.onExport).toHaveBeenCalled()
-    })
-  })
-
-  /*
-   * IMPORT
-   */
-  describe('on import file select', () => {
-    let file: File
-    let event: FileSelectEvent = {
-      originalEvent: new Event('change'),
-      files: [],
-      currentFiles: []
-    }
-
-    beforeEach(() => {
-      file = new File(['file content'], 'test.txt', { type: 'text/plain' })
-      event = { originalEvent: new Event('change'), files: [file], currentFiles: [file] }
-    })
-
-    it('should select a file and parse', async () => {
-      const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
-      spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
-
-      await component.onImportFileSelect(event)
-
-      expect(file.text).toHaveBeenCalled()
-      expect(component.importAssignmentItem).toEqual(JSON.parse(mockContent))
-    })
-
-    it('should handle JSON parse error on invalid file content', async () => {
-      const mockContent = 'content'
-      const errorResponse: ImportError = {
-        name: 'Parse error',
-        ok: false,
-        status: 400,
-        statusText: 'Parser error',
-        message: '',
-        error: { errorCode: 'PARSER', detail: 'SyntaxError: Unexpected token \'c\', "content"' },
-        exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
-      }
-      spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
-      spyOn(console, 'error')
-
-      await component.onImportFileSelect(event)
-
-      expect(console.error).toHaveBeenCalled()
-      expect(component.importError?.name).toEqual(errorResponse.name)
-      expect(component.importError?.statusText).toEqual(errorResponse.statusText)
-    })
-
-    it('should reset errors when clear button is clicked', () => {
-      component.importError = {
-        name: 'Parse error',
-        ok: false,
-        status: 400,
-        statusText: 'Parser error',
-        message: '',
-        error: { errorCode: 'PARSER', detail: 'parse error' },
-        exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
-      }
-      component.onImportClear()
-      expect(component.importError).toBeUndefined()
-    })
-  })
-
-  describe('on import confirmation => uploading', () => {
-    it('should successfully import assignments', (done) => {
-      assgnmtApiSpy.importAssignments.and.returnValue(of(permission))
-      spyOn(component, 'searchApps')
-      component.importAssignmentItem = permission
-
-      component.onImportConfirmation()
-
-      setTimeout(() => {
-        expect(component.displayImportDialog).toBeFalse()
-        expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.OK' })
-        expect(component.searchApps).toHaveBeenCalled()
-        done()
-      })
-    })
-
-    it('should import assignments fails and handle error', (done) => {
-      const errorResponse = {
-        name: 'Upload error',
-        ok: false,
-        status: 409,
-        statusText: 'Upload error',
-        message: '',
-        error: { errorCode: 'UPLOAD', detail: {} },
-        exceptionKey: 'EXCEPTIONS.HTTP_STATUS_409.PERMISSIONS'
-      }
-      assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-      component.importAssignmentItem = permission
-
-      component.onImportConfirmation()
-
-      setTimeout(() => {
-        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
-        expect(component.importError).toEqual(errorResponse)
-        expect(console.error).toHaveBeenCalledWith('importAssignments', errorResponse)
-        done()
-      }, 0)
-    })
-
-    it('should not call importAssignments if importAssignmentItem is not defined', () => {
-      component.importAssignmentItem = null
-
-      component.onImportConfirmation()
-
-      expect(assgnmtApiSpy.importAssignments).not.toHaveBeenCalled()
     })
   })
 

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import FileSaver from 'file-saver'
+
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { ListboxModule } from 'primeng/listbox'
@@ -12,7 +13,7 @@ import { MessageModule } from 'primeng/message'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { AssignmentAPIService } from 'src/app/shared/generated'
-import { getCurrentDateTime } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-permission-export',
@@ -51,7 +52,7 @@ export class PermissionExportComponent {
             const permissionsJson = JSON.stringify(item, null, 2)
             FileSaver.saveAs(
               new Blob([permissionsJson], { type: 'text/json' }),
-              'onecx-permissions_' + getCurrentDateTime() + '.json'
+              'onecx-permissions_' + Utils.getCurrentDateTime() + '.json'
             )
             this.msgService.success({ summaryKey: 'ACTIONS.EXPORT.MESSAGE.ASSIGNMENT.EXPORT_OK' })
             this.selectedProductNames = []

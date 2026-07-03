@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
@@ -52,8 +51,7 @@ describe('RoleIdmComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: RoleAPIService, useValue: roleApiSpy },
         { provide: UserService, useValue: mockUserService }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     })
       .overrideComponent(RoleIdmComponent, {
         set: {

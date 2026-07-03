@@ -53,6 +53,16 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   }
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
 
+  function initializeComponent(id?: string, issuer?: string) {
+    fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
+    component = fixture.componentInstance
+    component.active = true
+    component.userId = id
+    component.issuer = issuer
+    fixture.detectChanges()
+    component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
+  }
+
   beforeEach(waitForAsync(() => {
     baseUrlSubject = new ReplaySubject<any>(1)
 
@@ -91,22 +101,12 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     routerMock.navigateByUrl.calls.reset()
   }))
 
-  function initializeComponent(id?: string, issuer?: string) {
-    fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
-    component = fixture.componentInstance
-    component.active = true
-    component.userId = id
-    component.issuer = issuer
-    fixture.detectChanges()
-    component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
-  }
+  describe('initialization', () => {
+    it('should create', () => {
+      initializeComponent()
+      expect(component).toBeTruthy()
+    })
 
-  it('should create with correct data', () => {
-    initializeComponent()
-    expect(component).toBeTruthy()
-  })
-
-  describe('RemoteComponent initialization', () => {
     it('should call ocxInitRemoteComponent with the correct config', () => {
       const mockConfig: RemoteComponentConfig = {
         appId: 'appId',

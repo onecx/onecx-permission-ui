@@ -18,6 +18,8 @@ import { TabsModule } from 'primeng/tabs'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import {
   AngularRemoteComponentsModule,
   ocxRemoteComponent,
@@ -25,8 +27,6 @@ import {
   SLOT_SERVICE,
   SlotService
 } from '@onecx/angular-remote-components'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
   AssignmentAPIService,
@@ -36,7 +36,7 @@ import {
   UserAssignment,
   UserAssignmentPageResult
 } from 'src/app/shared/generated'
-import { sortByLocale, sortSelectItemsByLabel } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 // properties of UserAssignments
@@ -262,7 +262,7 @@ export class OneCXUserRolesPermissionsComponent
           isUserAssignedRole: this.userAssignedRoles.includes(r.name!)
         } as ExtendedSelectItem)
       })
-      roles.sort(sortSelectItemsByLabel)
+      roles.sort(Utils.sortSelectItemsByLabel)
       return of(roles)
     } else {
       this.loadingIdmRoles = true
@@ -276,7 +276,7 @@ export class OneCXUserRolesPermissionsComponent
               isUserAssignedRole: this.userAssignedRoles.includes(role)
             } as ExtendedSelectItem)
           })
-          return roles.sort(sortSelectItemsByLabel)
+          return roles.sort(Utils.sortSelectItemsByLabel)
         }),
         catchError((err) => {
           this.exceptionKeyIdmRoles = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ROLES'
@@ -296,7 +296,7 @@ export class OneCXUserRolesPermissionsComponent
     items.forEach((item: UserAssignment) => {
       if (item[fieldName] && item[fieldName] !== '') if (!arr.includes(item[fieldName])) arr.push(item[fieldName])
     })
-    arr.sort(sortByLocale)
+    arr.sort(Utils.sortByLocale)
     return arr
   }
 

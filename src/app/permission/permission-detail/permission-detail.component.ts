@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core
 import { CommonModule } from '@angular/common'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DialogModule } from 'primeng/dialog'
