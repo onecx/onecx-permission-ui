@@ -126,7 +126,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       name: new FormControl<string | null>(null)
     })
     this.appSearchCriteria.controls['appType'].setValue('ALL') // default: all app types
-    //this.appSearchCriteria.controls['name'].disable()
+    this.appSearchCriteria.controls['name'].disable()
     this.filters$ = this.typeFilterValue$.pipe(
       map((typeValue) => {
         const filters: Filter[] = []
