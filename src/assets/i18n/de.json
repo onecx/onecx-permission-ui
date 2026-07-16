@@ -42,6 +42,7 @@
         "PERMISSION": "Möchten Sie diese Berechtigung löschen?",
         "PERMISSION_OK": "Die Berechtigung wurde erfolgreich gelöscht",
         "PERMISSION_NOK": "Ein Fehler ist aufgetreten. Die Berechtigung wurde nicht gelöscht.",
+        "WORKSPACE_ROLE": "Diese Rolle existiert auch im Workspace. Sie können hier nur die Rolle im Permission Mangement löschen.",
         "ROLE": "Möchten Sie diese Rolle löschen?",
         "ROLE_OK": "Die Rolle wurde erfolgreich gelöscht.",
         "ROLE_NOK": "Ein Fehler ist aufgetreten. Die Rolle wurde nicht gelöscht."
@@ -215,6 +216,7 @@
         "FILTER.LABEL": "Rollenfilter",
         "FILTER.TOOLTIP": "Filter für Rollenname",
         "EMPTY_ROLE": "Rolle hat keine zugewiesenen Berechtigungen",
+        "WORKSPACE_ROLE": "Rolle existiert im Workspace",
         "HIDE_EMPTY_ROLES": "Nicht zugewiesene Rollen ausblenden",
         "HIDE_EMPTY_ROLES.TOOLTIP": "Rollen ohne zugewiesene Berechtigungen ausblenden",
         "SHOW_EMPTY_ROLES": "Nicht zugewiesene Rollen anzeigen",

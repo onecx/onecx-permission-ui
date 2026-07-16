@@ -6,10 +6,11 @@ import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
-import { Role, RoleAPIService } from 'src/app/shared/generated'
+import { RoleAPIService } from 'src/app/shared/generated'
 import { RoleDeleteComponent } from './role-delete.component'
+import { PermissionRole } from 'src/app/permission/app-detail/app-detail.component'
 
-const role: Role = {
+const role: PermissionRole = {
   id: 'roleId',
   name: 'roleName'
 }

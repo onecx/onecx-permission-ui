@@ -72,7 +72,7 @@ export type PermissionViewRow = Permission & {
   appDisplayName: string
   productDisplayName: string
 }
-export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
+export type PermissionRole = Role & { isWorkspaceRole?: boolean | undefined; hasAssignments?: boolean }
 
 @Component({
   standalone: true,
@@ -163,7 +163,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public protectedAssignments: Array<string> = []
   // role management
   private roles$!: Observable<PermissionRole[]>
-  public role: Role | undefined
+  public role: PermissionRole | undefined
   public roles: PermissionRole[] = []
   public rolesFiltered: PermissionRole[] = []
   public missingWorkspaceRoles = false
@@ -844,13 +844,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'CREATE'
     this.displayRoleDetailDialog = true
   }
-  public onEditRole(ev: Event, role: Role): void {
+  public onEditRole(ev: Event, role: PermissionRole): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'EDIT'
     this.displayRoleDetailDialog = true
   }
-  public onDeleteRole(ev: Event, role: Role): void {
+  public onDeleteRole(ev: Event, role: PermissionRole): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'DELETE'
