@@ -98,10 +98,7 @@ export class PermissionDetailComponent implements OnChanges {
    * Save a PERMISSION
    */
   public onSave(): void {
-    if (!this.formGroup.valid) {
-      console.info('form not valid')
-      return
-    }
+    if (!this.formGroup.valid) return
     if (this.permissions.length > 0) {
       let permExist = this.permissions.filter(
         (p) =>

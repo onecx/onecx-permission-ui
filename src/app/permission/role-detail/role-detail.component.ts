@@ -62,10 +62,7 @@ export class RoleDetailComponent implements OnChanges {
    * Save a ROLE
    */
   public onSaveRole(): void {
-    if (!this.formGroup.valid) {
-      console.info('form not valid')
-      return
-    }
+    if (!this.formGroup.valid) return
     let roleExists = false
     if (this.roles.length > 0) {
       let roles = this.roles.filter((r) => r.name === this.formGroup.controls['name'].value)
