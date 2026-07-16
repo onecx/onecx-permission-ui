@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 
@@ -32,7 +31,7 @@ export type ImportError = {
 @Component({
   selector: 'app-permission-import',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DialogModule, FileUploadModule, ButtonModule, TooltipModule, MessageModule],
+  imports: [ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule, TranslateModule],
   templateUrl: './permission-import.component.html'
 })
 export class PermissionImportComponent {

@@ -1,10 +1,9 @@
-import { Component, DestroyRef, EventEmitter, Inject, Input, OnChanges, OnDestroy } from '@angular/core'
+import { Component, DestroyRef, EventEmitter, inject, Inject, Input, OnChanges, OnDestroy } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { CommonModule, Location } from '@angular/common'
+import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, finalize, map, Observable, of, ReplaySubject } from 'rxjs'
 
-import { SelectItem } from 'primeng/api'
 import { ButtonModule } from 'primeng/button'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputGroupModule } from 'primeng/inputgroup'
@@ -12,6 +11,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputTextModule } from 'primeng/inputtext'
 import { ListboxModule } from 'primeng/listbox'
 import { MessageModule } from 'primeng/message'
+import { SelectItem } from 'primeng/api'
 import { SelectModule } from 'primeng/select'
 import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
@@ -52,13 +52,12 @@ type ExtendedColumn = {
 
 @Component({
   selector: 'app-user-roles-permissions',
-  templateUrl: './user-roles-permissions.component.html',
-  styleUrls: ['./user-roles-permissions.component.scss'],
   standalone: true,
   imports: [
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
-    CommonModule,
+    AsyncPipe,
+    NgClass,
     ButtonModule,
     FloatLabelModule,
     InputGroupModule,
@@ -67,12 +66,14 @@ type ExtendedColumn = {
     ListboxModule,
     MessageModule,
     SelectModule,
-    TranslateModule,
     TableModule,
     TabsModule,
-    TooltipModule
+    TooltipModule,
+    TranslateModule
   ],
-  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
+  templateUrl: './user-roles-permissions.component.html',
+  styleUrl: './user-roles-permissions.component.scss'
 })
 export class OneCXUserRolesPermissionsComponent
   implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, OnDestroy
@@ -85,6 +86,7 @@ export class OneCXUserRolesPermissionsComponent
     this.ocxInitRemoteComponent(config)
   }
 
+  private readonly destroyRef = inject(DestroyRef)
   private userAssignedRoles: string[] = []
   public userAssignments$: Observable<UserAssignment[]> = of([])
   public idmRoles$: Observable<ExtendedSelectItem[]> = of([])
@@ -115,7 +117,6 @@ export class OneCXUserRolesPermissionsComponent
     @Inject(REMOTE_COMPONENT_CONFIG)
     private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly appConfigService: AppConfigService,
-    private readonly destroyRef: DestroyRef,
     private readonly slotService: SlotService,
     private readonly translateService: TranslateService,
     private readonly userService: UserService,
@@ -155,7 +156,7 @@ export class OneCXUserRolesPermissionsComponent
           this.isComponentDefined = def
           if (this.isComponentDefined) {
             // receive data from remote component
-            this.roleListEmitter.subscribe((list: Role[]) => {
+            this.roleListEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((list: Role[]) => {
               this.loadingIdmRoles = false
               this.idmRoles = list
               this.idmRoles$ = this.provideIdmRoles()

@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
@@ -13,9 +12,10 @@ import type { PermissionViewRow } from 'src/app/permission/app-detail/app-detail
 @Component({
   selector: 'app-permission-delete',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DialogModule, ButtonModule, TooltipModule],
+  imports: [ButtonModule, DialogModule, TooltipModule, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './permission-delete.component.html',
-  styleUrls: ['./permission-delete.component.scss']
+  styleUrl: './permission-delete.component.scss'
 })
 export class PermissionDeleteComponent {
   @Input() permission: PermissionViewRow | undefined

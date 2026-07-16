@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
 import { providePermissionService } from '@onecx/angular-utils'
@@ -34,11 +33,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  imports: [AppSearchComponent, AppDetailComponent, CommonModule, RouterModule.forChild(routes)],
+  imports: [AppSearchComponent, AppDetailComponent, RouterModule.forChild(routes)],
   providers: [...providePermissionService(), LabelResolver]
 })
-export class PermissionModule {
-  constructor() {
-    console.info('Permission Module constructor')
-  }
-}
+export class PermissionModule {}

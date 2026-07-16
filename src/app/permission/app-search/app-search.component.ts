@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core'
+import { AsyncPipe } from '@angular/common'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { combineLatest, map, of, Observable, Subject, catchError, BehaviorSubject } from 'rxjs'
@@ -56,7 +56,7 @@ export type AppFilterType = 'ALL' | AppType
   standalone: true,
   imports: [
     AngularAcceleratorModule,
-    CommonModule,
+    AsyncPipe,
     ButtonModule,
     CardModule,
     FloatLabelModule,
@@ -76,8 +76,9 @@ export type AppFilterType = 'ALL' | AppType
     PermissionImportComponent,
     OcxChipComponent
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app-search.component.html',
-  styleUrls: ['./app-search.component.scss']
+  styleUrl: './app-search.component.scss'
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject()

@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy } from '@angular/core'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
@@ -17,17 +16,17 @@ import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.c
   selector: 'app-role-detail',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
+    ButtonModule,
     DialogModule,
     FloatLabelModule,
     InputTextModule,
-    ButtonModule,
-    TooltipModule
+    ReactiveFormsModule,
+    TooltipModule,
+    TranslateModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './role-detail.component.html',
-  styleUrls: ['./role-detail.component.scss']
+  styleUrl: './role-detail.component.scss'
 })
 export class RoleDetailComponent implements OnChanges {
   @Input() currentApp!: App

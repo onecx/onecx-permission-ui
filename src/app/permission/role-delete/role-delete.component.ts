@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
@@ -12,9 +11,9 @@ import { Role, RoleAPIService } from 'src/app/shared/generated'
 @Component({
   selector: 'app-role-delete',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DialogModule, ButtonModule, TooltipModule],
+  imports: [ButtonModule, DialogModule, TooltipModule, TranslateModule],
   templateUrl: './role-delete.component.html',
-  styleUrls: ['./role-delete.component.scss']
+  styleUrl: './role-delete.component.scss'
 })
 export class RoleDeleteComponent {
   @Input() role: Role | undefined

@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { Component, DestroyRef, EventEmitter, inject, Input, OnChanges, OnInit, Output } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
@@ -12,6 +11,7 @@ import { AngularRemoteComponentsModule, SLOT_SERVICE, SlotService } from '@onecx
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { Role, RoleAPIService } from 'src/app/shared/generated'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 
 export function slotInitializer(slotService: SlotService) {
   return () => slotService.init()
@@ -22,25 +22,25 @@ export type IDMRole = { name?: string } // replica from a IAM role
   selector: 'app-role-idm',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
+    AngularRemoteComponentsModule,
+    ButtonModule,
     DialogModule,
+    FormsModule,
     ListboxModule,
     MessageModule,
-    ButtonModule,
     TooltipModule,
-    AngularRemoteComponentsModule
+    TranslateModule
   ],
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
   templateUrl: './role-idm.component.html',
-  styleUrls: ['./role-idm.component.scss'],
-  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }]
+  styleUrl: './role-idm.component.scss'
 })
 export class RoleIdmComponent implements OnInit, OnChanges {
   @Input() roles: Role[] = []
   @Input() visible = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
 
+  private readonly destroyRef = inject(DestroyRef)
   public loading = true
   public exceptionKey: string | undefined = undefined
   public idmRoles: IDMRole[] = []
@@ -86,7 +86,7 @@ export class RoleIdmComponent implements OnInit, OnChanges {
     }, 5000)
 
     // receive data from remote component
-    this.roleListEmitter.subscribe((list) => {
+    this.roleListEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((list) => {
       this.loading = false
       // exclude roles which already exists in Permission Mgmt
       this.idmRolesOrg = list

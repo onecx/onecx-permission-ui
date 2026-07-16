@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
@@ -78,7 +78,8 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
   standalone: true,
   imports: [
     AngularAcceleratorModule,
-    CommonModule,
+    AsyncPipe,
+    NgClass,
     ButtonModule,
     CheckboxModule,
     FloatLabelModule,
@@ -102,7 +103,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     RoleIdmComponent
   ],
   templateUrl: './app-detail.component.html',
-  styleUrls: ['./app-detail.component.scss']
+  styleUrl: './app-detail.component.scss'
 })
 export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('permissionTable') permissionTable: Table | undefined

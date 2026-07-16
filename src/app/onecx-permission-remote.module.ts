@@ -1,6 +1,5 @@
 import { DoBootstrap, Injector, NgModule, inject, provideAppInitializer } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
@@ -36,7 +35,6 @@ const routes: Routes = [
     AppEntrypointComponent,
     AngularAcceleratorModule,
     AngularAuthModule,
-    BrowserModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     TranslateModule.forRoot({
@@ -65,9 +63,7 @@ const routes: Routes = [
   ]
 })
 export class OneCXPermissionModule implements DoBootstrap {
-  constructor(private readonly injector: Injector) {
-    console.info('OneCX Permission Module constructor')
-  }
+  private readonly injector = inject(Injector)
 
   ngDoBootstrap(): void {
     createAppEntrypoint(AppEntrypointComponent, 'ocx-permission-component', this.injector)
