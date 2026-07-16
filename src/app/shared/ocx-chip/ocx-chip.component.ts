@@ -13,9 +13,7 @@ import { TooltipModule } from 'primeng/tooltip'
 export class OcxChipComponent {
   @Input() public id = 'ocx-chip'
   @Input() public label: string | undefined
-  @Input() public title: string | undefined
+  @Input() public title: string | undefined // tooltip
   @Input() public styleClass: string | undefined
   @Input() public filled = false
-
-  constructor() {}
 }

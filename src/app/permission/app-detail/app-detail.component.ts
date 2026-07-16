@@ -72,7 +72,7 @@ export type PermissionViewRow = Permission & {
   appDisplayName: string
   productDisplayName: string
 }
-export type PermissionRole = Role & { isWorkspaceRole?: boolean | undefined; hasAssignments?: boolean }
+export type PermissionRole = Role & { isWorkspaceRole?: boolean; hasAssignments?: boolean }
 
 @Component({
   standalone: true,
