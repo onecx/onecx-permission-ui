@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy } from '@angular/core'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -25,7 +24,6 @@ import type { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-
   selector: 'app-permission-detail',
   standalone: true,
   imports: [
-    CommonModule,
     ButtonModule,
     CheckboxModule,
     DialogModule,
@@ -36,8 +34,9 @@ import type { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-
     TranslateModule,
     ReactiveFormsModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './permission-detail.component.html',
-  styleUrls: ['./permission-detail.component.scss']
+  styleUrl: './permission-detail.component.scss'
 })
 export class PermissionDetailComponent implements OnChanges {
   @Input() currentApp!: App
@@ -99,10 +98,7 @@ export class PermissionDetailComponent implements OnChanges {
    * Save a PERMISSION
    */
   public onSave(): void {
-    if (!this.formGroup.valid) {
-      console.info('form not valid')
-      return
-    }
+    if (!this.formGroup.valid) return
     if (this.permissions.length > 0) {
       let permExist = this.permissions.filter(
         (p) =>

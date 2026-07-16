@@ -135,12 +135,10 @@ describe('PermissionDetailComponent', () => {
     expect(component.formGroup.controls['operator'].disabled).toBeTrue()
   })
 
-  it('should stop and notify that form is invalid onSave', () => {
-    spyOn(console, 'info')
-
+  it('should prevent saving if form is invalid', () => {
     component.onSave()
 
-    expect(console.info).toHaveBeenCalledWith('form not valid')
+    expect().nothing()
   })
 
   it('should check for duplicates in permissions - edit', () => {

@@ -633,9 +633,14 @@
                     }
                   </div>
                 }
+                <!-- explain the (w) => role exists in workspace -->
+                @let wTooltip =
+                  role.isWorkspaceRole
+                    ? (role.description ? ' - ' : '') + ('DIALOG.DETAIL.ROLES.WORKSPACE_ROLE' | translate)
+                    : '';
                 <div
                   class="word-break-all text-sm sm:text-base flex flex-row justify-content-center"
-                  [pTooltip]="role.description ? role.description : ''"
+                  [pTooltip]="(role.description ?? '') + wTooltip"
                   tooltipPosition="top"
                   tooltipEvent="hover"
                 >

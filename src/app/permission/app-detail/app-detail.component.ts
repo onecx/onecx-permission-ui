@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
@@ -72,13 +72,14 @@ export type PermissionViewRow = Permission & {
   appDisplayName: string
   productDisplayName: string
 }
-export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasAssignments?: boolean }
+export type PermissionRole = Role & { isWorkspaceRole?: boolean; hasAssignments?: boolean }
 
 @Component({
   standalone: true,
   imports: [
     AngularAcceleratorModule,
-    CommonModule,
+    AsyncPipe,
+    NgClass,
     ButtonModule,
     CheckboxModule,
     FloatLabelModule,
@@ -102,7 +103,7 @@ export type PermissionRole = Role & { isWorkspaceRole: boolean | undefined; hasA
     RoleIdmComponent
   ],
   templateUrl: './app-detail.component.html',
-  styleUrls: ['./app-detail.component.scss']
+  styleUrl: './app-detail.component.scss'
 })
 export class AppDetailComponent implements OnInit, OnDestroy {
   @ViewChild('permissionTable') permissionTable: Table | undefined
@@ -162,7 +163,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public protectedAssignments: Array<string> = []
   // role management
   private roles$!: Observable<PermissionRole[]>
-  public role: Role | undefined
+  public role: PermissionRole | undefined
   public roles: PermissionRole[] = []
   public rolesFiltered: PermissionRole[] = []
   public missingWorkspaceRoles = false
@@ -843,13 +844,13 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.changeMode = 'CREATE'
     this.displayRoleDetailDialog = true
   }
-  public onEditRole(ev: Event, role: Role): void {
+  public onEditRole(ev: Event, role: PermissionRole): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'EDIT'
     this.displayRoleDetailDialog = true
   }
-  public onDeleteRole(ev: Event, role: Role): void {
+  public onDeleteRole(ev: Event, role: PermissionRole): void {
     ev.stopPropagation()
     this.role = { ...role }
     this.changeMode = 'DELETE'

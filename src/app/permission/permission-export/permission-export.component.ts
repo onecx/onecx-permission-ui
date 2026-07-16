@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import FileSaver from 'file-saver'
@@ -18,16 +17,7 @@ import { Utils } from 'src/app/shared/utils'
 @Component({
   selector: 'app-permission-export',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    DialogModule,
-    ListboxModule,
-    ButtonModule,
-    TooltipModule,
-    MessageModule
-  ],
+  imports: [ButtonModule, DialogModule, FormsModule, ListboxModule, MessageModule, TooltipModule, TranslateModule],
   templateUrl: './permission-export.component.html'
 })
 export class PermissionExportComponent {
