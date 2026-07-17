@@ -5,12 +5,13 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, ReplaySubject, throwError } from 'rxjs'
+import { BehaviorSubject, of, ReplaySubject, throwError } from 'rxjs'
+
 import { Table } from 'primeng/table'
 
 import { SlotService } from '@onecx/angular-remote-components'
-import { AppConfigService } from '@onecx/angular-integration-interface'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { providePermissionService, REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
 import { OneCXUserRolesPermissionsComponent, ExtendedSelectItem } from './user-roles-permissions.component'
@@ -51,11 +52,16 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     init: jasmine.createSpy('init'),
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(false))
   }
-  const routerMock = jasmine.createSpyObj<Router>('Router', ['navigateByUrl'])
 
   function initializeComponent(id?: string, issuer?: string) {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
     component = fixture.componentInstance
+    component.ocxRemoteComponentConfig = {
+      appId: 'testApp',
+      productName: 'testProduct',
+      permissions: ['IAM_ROLE#VIEW'],
+      baseUrl: 'http://localhost'
+    }
     component.active = true
     component.userId = id
     component.issuer = issuer
@@ -75,13 +81,13 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
-        { provide: SlotService, useValue: slotServiceSpy },
-        { provide: Router, useValue: routerMock },
-        { provide: Table, useClass: MockTable },
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideNoopAnimations()
+        provideNoopAnimations(),
+        providePermissionService(),
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
+        { provide: SlotService, useValue: slotServiceSpy },
+        { provide: Table, useClass: MockTable }
       ]
     })
       .overrideComponent(OneCXUserRolesPermissionsComponent, {
@@ -94,12 +100,15 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         }
       })
       .compileComponents()
+  }))
 
+  afterEach(() => {
+    // to spy data: reset
     slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     userApiSpy.getUserAssignments.calls.reset()
+    userApiSpy.getTokenRoles.calls.reset()
     assApiSpy.searchUserAssignments.calls.reset()
-    routerMock.navigateByUrl.calls.reset()
-  }))
+  })
 
   describe('initialization', () => {
     it('should create', () => {

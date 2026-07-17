@@ -20,19 +20,6 @@ export const Utils = {
     if (text) navigator.clipboard.writeText(text)
   },
 
-  forceFormValidation(form: AbstractControl): void {
-    if (form instanceof FormGroup || form instanceof FormArray) {
-      for (const inner in form.controls) {
-        const control = form.get(inner)
-        control && Utils.forceFormValidation(control)
-      }
-    } else {
-      form.markAsDirty()
-      form.markAsTouched()
-      form.updateValueAndValidity()
-    }
-  },
-
   sortSelectItemsByLabel(a: SelectItem, b: SelectItem): number {
     return (a.label ? a.label.toUpperCase() : '').localeCompare(b.label ? b.label.toUpperCase() : '')
   },
