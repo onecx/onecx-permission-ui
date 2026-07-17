@@ -1,13 +1,14 @@
-import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { ApplicationAPIService, WorkspaceAPIService, AssignmentAPIService } from 'src/app/shared/generated'
-import { PermissionExportComponent } from './permission-export.component'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
-import { provideHttpClient } from '@angular/common/http'
-import { provideNoopAnimations } from '@angular/platform-browser/animations'
+
+import { AssignmentAPIService } from 'src/app/shared/generated'
+import { PermissionExportComponent } from './permission-export.component'
 
 describe('PermissionExportComponent', () => {
   let component: PermissionExportComponent
