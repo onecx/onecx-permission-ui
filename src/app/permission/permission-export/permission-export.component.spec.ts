@@ -7,19 +7,17 @@ import { ApplicationAPIService, WorkspaceAPIService, AssignmentAPIService } from
 import { PermissionExportComponent } from './permission-export.component'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 
 describe('PermissionExportComponent', () => {
   let component: PermissionExportComponent
   let fixture: ComponentFixture<PermissionExportComponent>
 
-  const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assgnmtApiSpy = {
     searchAssignments: jasmine.createSpy('searchAssignments').and.returnValue(of({})),
     importAssignments: jasmine.createSpy('importAssignments').and.returnValue(of({})),
     exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
   }
-
-  const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
 
   beforeEach(waitForAsync(() => {
@@ -31,19 +29,10 @@ describe('PermissionExportComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      providers: [
-        provideHttpClientTesting(),
-        provideHttpClient(),
-        { provide: ApplicationAPIService, useValue: appApiSpy },
-        { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
-        { provide: WorkspaceAPIService, useValue: wsApiSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy }
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideNoopAnimations()]
     })
       .overrideComponent(PermissionExportComponent, {
         set: {
-          template: '',
-          imports: [],
           providers: [
             { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
             { provide: PortalMessageService, useValue: msgServiceSpy }

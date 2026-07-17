@@ -39,18 +39,14 @@ describe('RoleDeleteComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: RoleAPIService, useValue: roleApiSpy },
-        { provide: UserService, useValue: mockUserService }
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
     })
       .overrideComponent(RoleDeleteComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: RoleAPIService, useValue: roleApiSpy }
+          ]
         }
       })
       .compileComponents()
