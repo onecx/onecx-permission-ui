@@ -3,14 +3,13 @@ import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { BehaviorSubject, of, ReplaySubject, throwError } from 'rxjs'
+import { of, ReplaySubject, throwError } from 'rxjs'
 
 import { Table } from 'primeng/table'
 
 import { SlotService } from '@onecx/angular-remote-components'
-import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService } from '@onecx/angular-integration-interface'
 import { providePermissionService, REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
