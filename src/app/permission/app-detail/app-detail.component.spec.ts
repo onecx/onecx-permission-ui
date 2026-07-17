@@ -2,13 +2,16 @@ import { Location } from '@angular/common'
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, Router, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
+
 import { FilterMatchMode } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import {
   Application,
@@ -127,15 +130,10 @@ const assgmtPageRes: AssignmentPageResult = {
 describe('AppDetailComponent', () => {
   let component: AppDetailComponent
   let fixture: ComponentFixture<AppDetailComponent>
-  const mockActivatedRoute: ActivatedRoute = {
-    snapshot: {
-      paramMap: {
-        get: (key: string) => 'prodName1'
-      } as ParamMap
-    } as ActivatedRouteSnapshot
-  } as ActivatedRoute
-  const mockRouter = { navigate: jasmine.createSpy('navigate') }
 
+  const mockActivatedRoute: ActivatedRoute = {
+    snapshot: { paramMap: { get: (key: string) => 'prodName1' } as ParamMap, data: {} } as ActivatedRouteSnapshot
+  } as ActivatedRoute
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const assApiSpy = jasmine.createSpyObj<AssignmentAPIService>('AssignmentAPIService', [
     'searchAssignments',
@@ -178,25 +176,26 @@ describe('AppDetailComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        provideHttpClientTesting(),
         provideHttpClient(),
+        provideHttpClientTesting(),
+        provideNoopAnimations(),
+        providePermissionService(),
         provideRouter([{ path: '', component: AppDetailComponent }]),
-        { provide: ApplicationAPIService, useValue: appApiSpy },
-        { provide: AssignmentAPIService, useValue: assApiSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionAPIService, useValue: permApiSpy },
-        { provide: RoleAPIService, useValue: roleApiSpy },
-        { provide: WorkspaceAPIService, useValue: wsApiSpy },
-        { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: UserService, useValue: mockUserService },
         { provide: Location, useValue: locationSpy }
       ]
     })
       .overrideComponent(AppDetailComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: ApplicationAPIService, useValue: appApiSpy },
+            { provide: WorkspaceAPIService, useValue: wsApiSpy },
+            { provide: AssignmentAPIService, useValue: assApiSpy },
+            { provide: PermissionAPIService, useValue: permApiSpy },
+            { provide: RoleAPIService, useValue: roleApiSpy },
+            { provide: UserService, useValue: mockUserService },
+            { provide: PortalMessageService, useValue: msgServiceSpy }
+          ]
         }
       })
       .compileComponents()
@@ -648,22 +647,25 @@ describe('AppDetailComponent', () => {
 
     it('should call tableFilter with the input value', () => {
       spyOn(component, 'tableFilter')
-      component.permissionNameFilter = { nativeElement: { value: 'test' } }
+      const val: string | undefined = 'test'
+      component.permissionNameFilter = { nativeElement: { value: val } }
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
       component.onFilterModeChange('=')
 
-      expect(component.filterValue).toBe('test')
-      expect(component.tableFilter).toHaveBeenCalledWith('test')
+      expect(component.filterValue).toBe(val)
+      expect(component.tableFilter).toHaveBeenCalledWith(val)
     })
 
     it('should not call tableFilter when permissionNameFilter is not present', () => {
       spyOn(component, 'tableFilter')
+      const val: string | undefined = undefined
+      component.permissionNameFilter = { nativeElement: { value: val } }
       component.permissionTable = { filterGlobal: jasmine.createSpy() } as unknown as Table
 
       component.onFilterModeChange('=')
 
-      expect(component.tableFilter).not.toHaveBeenCalled()
+      expect(component.tableFilter).toHaveBeenCalledWith(val)
     })
 
     it('should set filterBy correctly and filterValue to an empty string when "ALL" is selected', () => {

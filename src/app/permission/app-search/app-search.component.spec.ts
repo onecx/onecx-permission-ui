@@ -41,6 +41,7 @@ describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
   let router: Router
+
   const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' }, data: {} }
   const mockActivatedRoute: ActivatedRoute = {
     snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
