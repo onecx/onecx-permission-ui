@@ -3,10 +3,10 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { BehaviorSubject, of, throwError } from 'rxjs'
+import { of, throwError } from 'rxjs'
 
 import { SlotService } from '@onecx/angular-remote-components'
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { Role, RoleAPIService } from 'src/app/shared/generated'
 import { IDMRole, RoleIdmComponent, slotInitializer } from './role-idm.component'
