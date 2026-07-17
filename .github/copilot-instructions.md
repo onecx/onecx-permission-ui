@@ -13,3 +13,4 @@ Before changing code:
   - OneCX imports
   - Local imports
 - Use english as the language for comments and documentation.
+- In Tests prevent the use of an empty template. Use a template with the necessary elements to test the component.

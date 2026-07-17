@@ -14,7 +14,6 @@ import { InputTextModule } from 'primeng/inputtext'
 import { MessageModule } from 'primeng/message'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { SelectItem } from 'primeng/api'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import {
@@ -67,7 +66,6 @@ export type AppFilterType = 'ALL' | AppType
     InputTextModule,
     MessageModule,
     SelectButtonModule,
-    ToastModule,
     TooltipModule,
     TranslateModule,
     // components
@@ -89,7 +87,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public productNames$!: Observable<string[]>
   private workspaces$!: Observable<WorkspacePageResult>
   public appSearchCriteria!: FormGroup<AppSearchCriteria>
-  // dialog control
+  // dialog
   public loading = false
   public exceptionKey: string | undefined = undefined
   public actions$: Observable<Action[]> | undefined

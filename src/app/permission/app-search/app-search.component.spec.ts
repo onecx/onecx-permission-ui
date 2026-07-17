@@ -1,12 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import {
   ApplicationAPIService,
@@ -14,8 +16,7 @@ import {
   WorkspaceAbstract,
   WorkspacePageResult,
   ApplicationPageResult,
-  Application,
-  AssignmentAPIService
+  Application
 } from 'src/app/shared/generated'
 import { App, AppSearchComponent } from './app-search.component'
 
@@ -39,18 +40,13 @@ const appPageRes: ApplicationPageResult = {
 describe('AppSearchComponent', () => {
   let component: AppSearchComponent
   let fixture: ComponentFixture<AppSearchComponent>
-
-  const mockRouter = { navigate: jasmine.createSpy('navigate') }
-  const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' } }
-  const mockActivatedRoute: Partial<ActivatedRoute> = {
+  let router: Router
+  const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' }, data: {} }
+  const mockActivatedRoute: ActivatedRoute = {
     snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
-  }
+  } as ActivatedRoute
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
-  const assgnmtApiSpy = {
-    searchAssignments: jasmine.createSpy('searchAssignments').and.returnValue(of({})),
-    exportAssignments: jasmine.createSpy('exportAssignments').and.returnValue(of({}))
-  }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
 
   beforeEach(waitForAsync(() => {
@@ -63,21 +59,21 @@ describe('AppSearchComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        provideHttpClientTesting(),
         provideHttpClient(),
+        provideHttpClientTesting(),
+        provideNoopAnimations(),
+        providePermissionService(),
         provideRouter([{ path: '', component: AppSearchComponent }]),
-        { provide: ApplicationAPIService, useValue: appApiSpy },
-        { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
-        { provide: WorkspaceAPIService, useValue: wsApiSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
     })
       .overrideComponent(AppSearchComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: ApplicationAPIService, useValue: appApiSpy },
+            { provide: WorkspaceAPIService, useValue: wsApiSpy },
+            { provide: PortalMessageService, useValue: msgServiceSpy }
+          ]
         }
       })
       .compileComponents()
@@ -86,6 +82,8 @@ describe('AppSearchComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AppSearchComponent)
     component = fixture.componentInstance
+    router = TestBed.inject(Router)
+    spyOn(router, 'navigate')
     appApiSpy.searchApplications.and.returnValue(of(appPageRes) as any)
     wsApiSpy.searchWorkspaces.and.returnValue(of(wsPageRes) as any)
     fixture.detectChanges()
@@ -93,8 +91,6 @@ describe('AppSearchComponent', () => {
 
   afterEach(() => {
     appApiSpy.searchApplications.calls.reset()
-    assgnmtApiSpy.searchAssignments.calls.reset()
-    assgnmtApiSpy.exportAssignments.calls.reset()
     wsApiSpy.searchWorkspaces.calls.reset()
     appApiSpy.searchApplications.and.returnValue(of({}) as any)
   })
@@ -586,13 +582,18 @@ describe('AppSearchComponent', () => {
    */
   it('should navigate to detail page when a tile is clicked', () => {
     const app: App = { appId: 'appId', appType: 'APP' }
-    const product: App = { appId: 'appId', appType: 'PRODUCT' }
+    const product: App = { appId: 'productAppId', appType: 'PRODUCT', productName: 'someProduct' }
 
     component.onAppClick(app)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
+
+    expect(router.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], {
+      relativeTo: mockActivatedRoute
+    })
 
     component.onAppClick(product)
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['./', 'app', app.appId], { relativeTo: mockActivatedRoute })
+    expect(router.navigate).toHaveBeenCalledWith(['./', 'product', product.productName], {
+      relativeTo: mockActivatedRoute
+    })
   })
 
   describe('onQuickFilterChange', () => {
