@@ -50,18 +50,14 @@ describe('PermissionDeleteComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionAPIService, useValue: permApiSpy },
-        { provide: UserService, useValue: mockUserService }
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
     })
       .overrideComponent(PermissionDeleteComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: PermissionAPIService, useValue: permApiSpy }
+          ]
         }
       })
       .compileComponents()

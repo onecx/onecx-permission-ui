@@ -1,11 +1,12 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { BehaviorSubject, of, throwError } from 'rxjs'
+import { of, throwError } from 'rxjs'
 
 import { SlotService } from '@onecx/angular-remote-components'
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { Role, RoleAPIService } from 'src/app/shared/generated'
 import { IDMRole, RoleIdmComponent, slotInitializer } from './role-idm.component'
@@ -27,13 +28,6 @@ describe('RoleIdmComponent', () => {
     init: jasmine.createSpy('init'),
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(true))
   }
-  const langSubject = new BehaviorSubject('en')
-  const mockUserService = {
-    lang$: langSubject,
-    hasPermission: jasmine.createSpy('hasPermission').and.callFake((permission) => {
-      return permission === 'ROLE#CREATE'
-    })
-  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -45,18 +39,18 @@ describe('RoleIdmComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        provideHttpClientTesting(),
         provideHttpClient(),
-        { provide: SlotService, useValue: slotServiceSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: RoleAPIService, useValue: roleApiSpy },
-        { provide: UserService, useValue: mockUserService }
+        provideHttpClientTesting(),
+        provideNoopAnimations(),
+        { provide: SlotService, useValue: slotServiceSpy }
       ]
     })
       .overrideComponent(RoleIdmComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: RoleAPIService, useValue: roleApiSpy }
+          ]
         }
       })
       .compileComponents()

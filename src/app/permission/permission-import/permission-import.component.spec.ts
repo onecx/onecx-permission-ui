@@ -33,17 +33,14 @@ describe('PermissionImportComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      providers: [
-        provideHttpClientTesting(),
-        provideHttpClient(),
-        { provide: AssignmentAPIService, useValue: assgnmtApiSpy },
-        { provide: PortalMessageService, useValue: msgServiceSpy }
-      ]
+      providers: [provideHttpClientTesting(), provideHttpClient()]
     })
       .overrideComponent(PermissionImportComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: AssignmentAPIService, useValue: assgnmtApiSpy }
+          ]
         }
       })
       .compileComponents()

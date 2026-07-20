@@ -666,12 +666,9 @@ export class AppDetailComponent implements OnInit, OnDestroy {
    * Table Filter
    */
   public onFilterModeChange(mode?: string): void {
-    if (mode === '=') {
-      this.filterMode = FilterMatchMode.CONTAINS
-    }
-    if (mode === '!=') {
-      this.filterMode = FilterMatchMode.NOT_CONTAINS
-    }
+    if (mode === '=') this.filterMode = FilterMatchMode.CONTAINS
+    if (mode === '!=') this.filterMode = FilterMatchMode.NOT_CONTAINS
+
     if (this.permissionNameFilter && this.permissionTable) {
       this.filterValue = this.permissionNameFilter.nativeElement.value
       this.tableFilter(this.filterValue)
