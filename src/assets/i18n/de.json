@@ -64,7 +64,7 @@
     },
     "EXPORT": {
       "LABEL": "Export",
-      "HINT": "Exporttiert werden nur die Berechtigungszuordnungen (Berechtigung <=> Rolle) der ausgewählten Applikationen, nicht die Berechtigungen oder Rollen selbst.",
+      "HINT": "Exportiert werden nur die Berechtigungszuordnungen (Berechtigung <=> Rolle) der ausgewählten Applikationen, nicht die Berechtigungen oder Rollen selbst.",
       "ASSIGNMENT": "Export Zuordnungen",
       "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen exportieren",
       "ITEMS_SELECTED.TOOLTIP": "Die Zuweisungen der ausgewählten Applikationen exportieren (lokal speichern).",
@@ -80,10 +80,12 @@
       "LABEL": "Import",
       "CHOOSE": "Datei auswählen",
       "UPLOAD": "Datei hochladen",
+      "GENERAL_MESSAGE": "Wählen Sie zunächst eine Datei mit Berechtigungszuordnungen aus. Bei Fehlerfreiheit kann die Datei hochgeladen werden. Für einen erfolgreichen Import müssen die verwendeten Berechtigungen und Rollen bereits existieren.",
       "ASSIGNMENT": "Berechtigungszuordnungen importieren",
       "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen importieren",
       "ERROR": {
         "PARSER": "Fehler beim Lesen der Datei",
+        "CONTENT": "Fehler beim Lesen der Datei",
         "CONFLICTS": "Konflikte",
         "PROBLEMS": "Probleme"
       },
@@ -347,6 +349,8 @@
       "FORMAT_URL": "Format: "
     },
     "ERRORS": {
+      "IMPORT_GENERAL_ERROR": "Parserfehler: Der Dateiinhalt scheint nicht im JSON-Format zu sein. Bitte prüfen Sie die Datei und versuchen Sie es erneut.",
+      "IMPORT_CONTENT_ERROR": "Parserfehler: Die enthaltene Struktur entspricht nicht dem erwarteten Format. Bitte prüfen Sie die Datei und versuchen Sie es erneut.",
       "PERMISSION.CREATE_ALREADY_EXISTS": "Die Berechtigung konnte nicht erstellt werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
       "PERMISSION.EDIT_ALREADY_EXISTS": "Berechtigung konnte nicht geändert werden, da eine Berechtigung für die Ressource/Aktion bereits existiert.",
       "ROLE.CREATE_ALREADY_EXISTS": "Rolle konnte nicht erstellt werden, da eine Rolle mit diesem Namen bereits existiert.",

@@ -28,6 +28,13 @@
       [uploadLabel]="'ACTIONS.IMPORT.UPLOAD' | translate"
       [cancelLabel]="'ACTIONS.CANCEL' | translate"
     />
+    @if (!importError && !importSnapshot) {
+      <p-message
+        id="apm_import_general_message"
+        severity="info"
+        [text]="'ACTIONS.IMPORT.GENERAL_MESSAGE' | translate"
+      ></p-message>
+    }
     @if (importError) {
       @if (importError.exceptionKey) {
         <p-message
@@ -37,40 +44,44 @@
           [text]="importError ? (importError.exceptionKey | translate) : ''"
         ></p-message>
       }
-      @let err = importError.error ?? { detail: '', invalidParams: [] };
-      <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
-        @if (err.detail && !err.invalidParams) {
-          <div>{{ err.detail }}</div>
-        }
-        @if (err.invalidParams && err.invalidParams.length > 0) {
-          <div>
-            @if (importError.statusText === 'Conflict') {
-              <div>{{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ err.invalidParams.length }}):</div>
-            } @else {
-              <div>{{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ err.invalidParams.length }}):</div>
-            }
-            <ul class="m-2 px-3">
-              @for (param of err.invalidParams.slice(0, 10); track param.name) {
-                <li>
-                  {{ param.name }}
-                  <div>{{ param.message }}</div>
-                </li>
+      @let err = importError.error;
+      @if (err) {
+        <!-- additional information about the error, sent by server -->
+        <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
+          @if (err.detail && !err.invalidParams) {
+            <div>{{ err.detail }}</div>
+          }
+          @if (err.invalidParams && err.invalidParams.length > 0) {
+            <div>
+              @if (importError.statusText === 'Conflict') {
+                <div>{{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ err.invalidParams.length }}):</div>
+              } @else {
+                <div>{{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ err.invalidParams.length }}):</div>
               }
-            </ul>
-          </div>
-        }
-      </div>
+              <ul class="m-2 px-3">
+                @for (param of err.invalidParams.slice(0, 10); track param.name) {
+                  <li>
+                    {{ param.name }}
+                    <div>{{ param.message }}</div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      }
     }
   </div>
+
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
       <p-button
-        id="apm_import_action_cancel"
+        id="apm_import_action_close"
         icon="pi pi-times"
         (onClick)="onCloseImportDialog()"
-        [label]="'ACTIONS.CANCEL' | translate"
-        [ariaLabel]="'ACTIONS.CANCEL' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       />
