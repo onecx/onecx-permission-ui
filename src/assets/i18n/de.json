@@ -84,8 +84,8 @@
       "ASSIGNMENT": "Berechtigungszuordnungen importieren",
       "ASSIGNMENT.TOOLTIP": "Berechtigungszuordnungen importieren",
       "ERROR": {
-        "PARSER": "Fehler beim Lesen der Datei",
-        "CONTENT": "Fehler beim Lesen der Datei",
+        "CONFLICT": "Konflikt",
+        "PROBLEM": "Problem",
         "CONFLICTS": "Konflikte",
         "PROBLEMS": "Probleme"
       },
@@ -406,7 +406,7 @@
       "WORKSPACE": "Es konnten keine Daten zu diesem Workspace gefunden werden"
     },
     "HTTP_STATUS_409": {
-      "PERMISSIONS": "Datei konnte nicht importiert werden."
+      "PERMISSIONS": "Die Datei konnte nicht importiert werden, siehe Details."
     },
     "HTTP_STATUS_418": {
       "ROLES": "Eine Rollenauswahl ist nicht möglich da das IDM nicht zur Verfügung steht."

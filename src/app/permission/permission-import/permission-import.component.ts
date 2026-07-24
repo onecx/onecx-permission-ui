@@ -66,7 +66,7 @@ export type ImportError = {
   templateUrl: './permission-import.component.html'
 })
 export class PermissionImportComponent {
-  private readonly cd = inject(ChangeDetectorRef)
+  private readonly cdr = inject(ChangeDetectorRef)
   private readonly assgnmtApi = inject(AssignmentAPIService)
   private readonly msgService = inject(PortalMessageService)
   // in/out properties
@@ -108,7 +108,7 @@ export class PermissionImportComponent {
           exceptionKey: 'VALIDATION.ERRORS.IMPORT_GENERAL_ERROR'
         }
       } finally {
-        this.cd.detectChanges()
+        this.cdr.detectChanges()
       }
     })
   }
@@ -130,6 +130,7 @@ export class PermissionImportComponent {
             exceptionKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PERMISSIONS'
           }
           this.msgService.error({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
+          this.cdr.detectChanges()
         }
       })
     }

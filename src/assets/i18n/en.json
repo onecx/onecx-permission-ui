@@ -84,7 +84,8 @@
       "ASSIGNMENT": "Import Permission Assignments",
       "ASSIGNMENT.TOOLTIP": "Import of Permissions Assignments from JSON file",
       "ERROR": {
-        "PARSER": "Error reading file",
+        "CONFLICT": "Conflict",
+        "PROBLEM": "Issue",
         "CONFLICTS": "Conflicts",
         "PROBLEMS": "Issues"
       },
@@ -405,7 +406,7 @@
       "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_STATUS_409": {
-      "PERMISSIONS": "File could not be imported."
+      "PERMISSIONS": "The file could not be imported, see details."
     },
     "HTTP_STATUS_418": {
       "ROLES": "A role selection is not possible because IDM is not available."

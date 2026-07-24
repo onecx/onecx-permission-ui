@@ -47,22 +47,23 @@
       @let err = importError.error;
       @if (err) {
         <!-- additional information about the error, sent by server -->
-        <div class="card max-h-8rem p-2 surface-100 border-round overflow-auto">
+        <div class="max-h-8rem p-2 surface-50 border-round overflow-auto">
           @if (err.detail && !err.invalidParams) {
             <div>{{ err.detail }}</div>
           }
           @if (err.invalidParams && err.invalidParams.length > 0) {
             <div>
-              @if (importError.statusText === 'Conflict') {
-                <div>{{ 'ACTIONS.IMPORT.ERROR.CONFLICTS' | translate }} ({{ err.invalidParams.length }}):</div>
-              } @else {
-                <div>{{ 'ACTIONS.IMPORT.ERROR.PROBLEMS' | translate }} ({{ err.invalidParams.length }}):</div>
-              }
+              @let typeOfKey =
+                'ACTIONS.IMPORT.ERROR.' +
+                (importError.statusText === 'Conflict' ? 'CONFLICT' : 'PROBLEM') +
+                (err.invalidParams.length > 1 ? 'S' : '');
+              <div>{{ err.invalidParams.length }} {{ typeOfKey | translate }}:</div>
               <ul class="m-2 px-3">
                 @for (param of err.invalidParams.slice(0, 10); track param.name) {
                   <li>
-                    {{ param.name }}
-                    <div>{{ param.message }}</div>
+                    <b>{{ param.name }}</b>
+                    <br />
+                    {{ param.message }}
                   </li>
                 }
               </ul>
