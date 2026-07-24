@@ -1,18 +1,32 @@
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
+
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { AssignmentAPIService, Permission } from 'src/app/shared/generated'
-import { ImportError, PermissionImportComponent } from './permission-import.component'
+import { AssignmentAPIService } from 'src/app/shared/generated'
+import { ImportError, PermissionImportComponent, AssignmentSnapshot } from './permission-import.component'
 
-const permission: Permission = {
-  appId: 'onecx-app',
-  productName: 'onecx-product'
+const assignmentSnapshot: AssignmentSnapshot = {
+  id: '123',
+  created: '2024-06-01T12:00:00Z',
+  assignments: {
+    'onecx-app': {
+      'onecx-product': {
+        'onecx-microservice': {
+          'onecx-role': {
+            resource1: ['read', 'write'],
+            resource2: ['read', 'write', 'delete']
+          }
+        }
+      }
+    }
+  }
 }
 
 describe('PermissionImportComponent', () => {
@@ -33,7 +47,7 @@ describe('PermissionImportComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      providers: [provideHttpClientTesting(), provideHttpClient()]
+      providers: [provideHttpClientTesting(), provideHttpClient(), provideNoopAnimations()]
     })
       .overrideComponent(PermissionImportComponent, {
         add: {
@@ -96,13 +110,13 @@ describe('PermissionImportComponent', () => {
     })
 
     it('should select a file and parse', async () => {
-      const mockContent = '{ "appId": "id", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
+      const mockContent = '{ "id": "123", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
 
       await component.onImportFileSelect(event)
 
       expect(file.text).toHaveBeenCalled()
-      expect(component.importAssignmentItem).toEqual(JSON.parse(mockContent))
+      expect(component.importSnapshot).toEqual(JSON.parse(mockContent))
     })
 
     it('should handle JSON parse error on invalid file content', async () => {
@@ -137,16 +151,16 @@ describe('PermissionImportComponent', () => {
 
       expect(component.importError?.error?.detail).toEqual('non-error string')
       expect(component.importError?.error?.errorCode).toEqual('PARSER')
-      expect(component.importError?.exceptionKey).toEqual('ACTIONS.IMPORT.ERROR.PARSER')
+      expect(component.importError?.exceptionKey).toEqual('VALIDATION.ERRORS.IMPORT_GENERAL_ERROR')
     })
   })
 
   describe('on import confirmation => uploading', () => {
     it('should successfully import assignments', (done) => {
-      assgnmtApiSpy.importAssignments.and.returnValue(of(permission))
+      assgnmtApiSpy.importAssignments.and.returnValue(of(assignmentSnapshot))
       spyOn(component.displayImportDialogChange, 'emit')
       spyOn(component.importDone, 'emit')
-      component.importAssignmentItem = permission
+      component.importSnapshot = assignmentSnapshot
 
       component.onImportConfirmation()
 
@@ -170,20 +184,20 @@ describe('PermissionImportComponent', () => {
       }
       assgnmtApiSpy.importAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      component.importAssignmentItem = permission
+      component.importSnapshot = assignmentSnapshot
 
       component.onImportConfirmation()
 
       setTimeout(() => {
         expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.IMPORT.MESSAGE.NOK' })
         expect(component.importError).toEqual(errorResponse)
-        expect(console.error).toHaveBeenCalledWith('importAssignments', errorResponse)
+        expect(console.error).toHaveBeenCalledWith('importSnapshot', errorResponse)
         done()
       }, 0)
     })
 
-    it('should not call importAssignments if importAssignmentItem is not defined', () => {
-      component.importAssignmentItem = null
+    it('should not call importAssignments if importAssignments is not defined', () => {
+      component.importSnapshot = undefined
 
       component.onImportConfirmation()
 

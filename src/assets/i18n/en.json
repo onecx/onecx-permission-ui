@@ -80,10 +80,12 @@
       "LABEL": "Import",
       "CHOOSE": "Choose file",
       "UPLOAD": "Upload file",
+      "GENERAL_MESSAGE": "First, select a file with permission assignments. If there are no errors, the file can be uploaded. For a successful import, the used permissions and roles must already exist.",
       "ASSIGNMENT": "Import Permission Assignments",
       "ASSIGNMENT.TOOLTIP": "Import of Permissions Assignments from JSON file",
       "ERROR": {
-        "PARSER": "Error reading file",
+        "CONFLICT": "Conflict",
+        "PROBLEM": "Issue",
         "CONFLICTS": "Conflicts",
         "PROBLEMS": "Issues"
       },
@@ -347,6 +349,8 @@
       "FORMAT_URL": "Format: "
     },
     "ERRORS": {
+      "IMPORT_GENERAL_ERROR": "Parse error: The file content seems not in JSON format. Please check the file and try again.",
+      "IMPORT_CONTENT_ERROR": "Parse error: The contained structure does not match the expected format. Please check the file and try again.",
       "PERMISSION.CREATE_ALREADY_EXISTS": "Couldn't create Permission because it already exists",
       "PERMISSION.EDIT_ALREADY_EXISTS": "Couldn't change Permission because it already exists",
       "ROLE.CREATE_ALREADY_EXISTS": "Couldn't create Role because it already exists",
@@ -402,7 +406,7 @@
       "WORKSPACE": "No data could be found for this Workspace."
     },
     "HTTP_STATUS_409": {
-      "PERMISSIONS": "File could not be imported."
+      "PERMISSIONS": "The file could not be imported, see details."
     },
     "HTTP_STATUS_418": {
       "ROLES": "A role selection is not possible because IDM is not available."
