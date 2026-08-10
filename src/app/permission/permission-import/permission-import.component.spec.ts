@@ -92,7 +92,7 @@ describe('PermissionImportComponent', () => {
       statusText: 'Parser error',
       message: '',
       error: { errorCode: 'PARSER', detail: 'parse error' },
-      exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
+      exceptionKey: 'VALIDATION.ERRORS.IMPORT_GENERAL_ERROR'
     }
 
     component.onImportClear()
@@ -109,14 +109,38 @@ describe('PermissionImportComponent', () => {
       event = { originalEvent: new Event('change'), files: [file], currentFiles: [file] }
     })
 
-    it('should select a file and parse', async () => {
-      const mockContent = '{ "id": "123", "name": "onecx-permission-ui", "productName": "onecx-permission" }'
+    it('should select a file and parse - content structure ok', async () => {
+      const mockContent =
+        '{ "id": "123", "assignments": {"onecx-permission-ui": {"onecx-admin": {"password": "write"} } } }'
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
 
       await component.onImportFileSelect(event)
 
       expect(file.text).toHaveBeenCalled()
       expect(component.importSnapshot).toEqual(JSON.parse(mockContent))
+    })
+
+    it('should select a file and parse - content structure not ok', async () => {
+      const mockContent = '{ "id": "123", "unknown": {"blabla": "blub"} }'
+      const errorResponse: ImportError = {
+        name: 'Invalid data',
+        ok: false,
+        status: 400,
+        statusText: 'Invalid data',
+        message: '',
+        error: { errorCode: 'CONTENT' },
+        exceptionKey: 'VALIDATION.ERRORS.IMPORT_CONTENT_ERROR'
+      }
+      spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
+      spyOn(console, 'error')
+
+      await component.onImportFileSelect(event)
+
+      expect(file.text).toHaveBeenCalled()
+      expect(component.importSnapshot).toEqual(JSON.parse(mockContent))
+      expect(component.importError?.name).toEqual(errorResponse.name)
+      expect(component.importError?.statusText).toEqual(errorResponse.statusText)
+      expect(component.importError?.exceptionKey).toEqual(errorResponse.exceptionKey)
     })
 
     it('should handle JSON parse error on invalid file content', async () => {
@@ -128,7 +152,7 @@ describe('PermissionImportComponent', () => {
         statusText: 'Parser error',
         message: '',
         error: { errorCode: 'PARSER', detail: 'SyntaxError: Unexpected token \'c\', "content"' },
-        exceptionKey: 'ACTIONS.IMPORT.ERROR.PARSER'
+        exceptionKey: 'VALIDATION.ERRORS.IMPORT_GENERAL_ERROR'
       }
       spyOn(file, 'text').and.returnValue(Promise.resolve(mockContent))
       spyOn(console, 'error')
@@ -138,6 +162,7 @@ describe('PermissionImportComponent', () => {
       expect(console.error).toHaveBeenCalled()
       expect(component.importError?.name).toEqual(errorResponse.name)
       expect(component.importError?.statusText).toEqual(errorResponse.statusText)
+      expect(component.importError?.exceptionKey).toEqual(errorResponse.exceptionKey)
     })
 
     it('should use String(err) for error detail when thrown exception is not an Error instance', async () => {
