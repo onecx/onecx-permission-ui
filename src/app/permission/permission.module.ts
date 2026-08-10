@@ -43,7 +43,6 @@ const routes: Routes = [
   imports: [AppSearchComponent, AppDetailComponent, RouterModule.forChild(routes)],
   providers: [
     ...providePermissionService(),
-    LabelResolver,
     { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
   ]
 })
