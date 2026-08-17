@@ -2,15 +2,21 @@
 openapi: 3.0.3
 info:
   title: onecx-permission-bff
+  description: Backend-For-Frontend (BFF) service for onecx-permission. This API provides endpoints to manage Permissions, Roles, Assignments and Applications.
   version: 1.0.0
 servers:
   - url: "http://onecx-permission-bff:8080"
 tags:
   - name: application
+    description: Managing Applications
   - name: assignment
+    description: Managing Assignments
   - name: permission
+    description: Managing Permissions
   - name: role
+    description: Managing Roles
   - name: workspace
+    description: Managing Workspace
 paths:
   /roles:
     post:
@@ -20,7 +26,7 @@ paths:
             - write
       tags:
         - role
-      description: create role
+      description: Create a new role
       operationId: createRole
       requestBody:
         required: true
@@ -30,7 +36,7 @@ paths:
               $ref: '#/components/schemas/CreateRolesRequest'
       responses:
         201:
-          description: OK
+          description: Role created successfully
           content:
             application/json:
               schema:
@@ -51,7 +57,7 @@ paths:
             - read
       tags:
         - role
-      description: Return role by ID
+      description: Get a role by its id
       operationId: getRoleById
       parameters:
         - name: id
@@ -61,7 +67,7 @@ paths:
             type: string
       responses:
         200:
-          description: OK
+          description: Role retrieved successfully
           content:
             application/json:
               schema:
@@ -75,7 +81,7 @@ paths:
             - write
       tags:
         - role
-      description: Update role by ID
+      description: Update a role by its id
       operationId: updateRole
       parameters:
         - name: id
@@ -91,7 +97,7 @@ paths:
               $ref: '#/components/schemas/UpdateRoleRequest'
       responses:
         204:
-          description: Theme updated
+          description: Role updated successfully
           content:
             application/json:
               schema:
@@ -111,7 +117,7 @@ paths:
             - delete
       tags:
         - role
-      description: Delete role by ID
+      description: Delete role by its id
       operationId: deleteRole
       parameters:
         - name: id
@@ -121,7 +127,7 @@ paths:
             type: string
       responses:
         204:
-          description: Role deleted
+          description: Role deleted successfully
   /roles/search:
     post:
       x-onecx:
@@ -130,7 +136,7 @@ paths:
             - read
       tags:
         - role
-      description: Search for roles
+      description: Search for roles by search criteria
       operationId: searchRoles
       requestBody:
         required: true
@@ -140,7 +146,7 @@ paths:
               $ref: '#/components/schemas/RoleSearchCriteria'
       responses:
         200:
-          description: OK
+          description: Role search results retrieved successfully
           content:
             application/json:
               schema:
@@ -159,7 +165,7 @@ paths:
             - write
       tags:
         - permission
-      description: Create permission
+      description: Create a new permission
       operationId: createPermission
       requestBody:
         required: true
@@ -169,7 +175,7 @@ paths:
               $ref: '#/components/schemas/CreatePermissionRequest'
       responses:
         201:
-          description: New permission created
+          description: Permission created successfully
           headers:
             Location:
               required: true
@@ -194,7 +200,7 @@ paths:
             - read
       tags:
         - permission
-      description: Get permission
+      description: Get a permission by its id
       operationId: getPermission
       parameters:
         - name: id
@@ -204,7 +210,7 @@ paths:
             type: string
       responses:
         200:
-          description: Get permission
+          description: Permission retrieved successfully
           content:
             application/json:
               schema:
@@ -218,7 +224,7 @@ paths:
             - delete
       tags:
         - permission
-      description: Delete permission
+      description: Delete a permission by its id
       operationId: deletePermission
       parameters:
         - name: id
@@ -228,7 +234,7 @@ paths:
             type: string
       responses:
         204:
-          description: Permission deleted
+          description: Permission deleted successfully
     put:
       x-onecx:
         permissions:
@@ -236,7 +242,7 @@ paths:
             - write
       tags:
         - permission
-      description: Update permission by ID
+      description: Update a permission by its id
       operationId: updatePermission
       parameters:
         - name: id
@@ -252,7 +258,7 @@ paths:
               $ref: '#/components/schemas/UpdatePermissionRequest'
       responses:
         200:
-          description: Permission updated
+          description: Permission updated successfully
           content:
             application/json:
               schema:
@@ -273,7 +279,7 @@ paths:
             - read
       tags:
         - permission
-      description: Search for permissions
+      description: Search for permissions by search criteria
       operationId: searchPermissions
       requestBody:
         required: true
@@ -283,7 +289,7 @@ paths:
               $ref: '#/components/schemas/PermissionSearchCriteria'
       responses:
         200:
-          description: OK
+          description: Permission search results retrieved successfully
           content:
             application/json:
               schema:
@@ -302,7 +308,7 @@ paths:
             - read
       tags:
         - assignment
-      description: Search for assignments
+      description: Search for assignments by search criteria
       operationId: searchAssignments
       requestBody:
         required: true
@@ -312,7 +318,7 @@ paths:
               $ref: '#/components/schemas/AssignmentSearchCriteria'
       responses:
         200:
-          description: OK
+          description: Assignment search results retrieved successfully
           content:
             application/json:
               schema:
@@ -331,7 +337,7 @@ paths:
             - read
       tags:
         - assignment
-      description: Search for assignments
+      description: Search for assignments of a specific user by its id and issuer
       operationId: searchUserAssignments
       requestBody:
         required: true
@@ -341,7 +347,7 @@ paths:
               $ref: '#/components/schemas/AssignmentUserSearchCriteria'
       responses:
         200:
-          description: OK
+          description: Assignments retrieved successfully
           content:
             application/json:
               schema:
@@ -360,7 +366,7 @@ paths:
             - write
       tags:
         - assignment
-      description: Create new assignment
+      description: Create a new assignment
       operationId: createAssignment
       requestBody:
         required: true
@@ -370,7 +376,7 @@ paths:
               $ref: '#/components/schemas/CreateAssignmentRequest'
       responses:
         201:
-          description: New assignment created
+          description: Assignment created successfully
           headers:
             Location:
               required: true
@@ -382,7 +388,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Assignment'
         404:
-          description: Data not found
+          description: Role or Permission not found
         400:
           description: Bad request
           content:
@@ -393,7 +399,7 @@ paths:
     post:
       tags:
         - assignment
-      description: Create new assignments for role
+      description: Create assignments for all permissions by role id
       operationId: grantRoleAssignments
       parameters:
         - name: roleId
@@ -403,14 +409,14 @@ paths:
             type: string
       responses:
         201:
-          description: New assignment created
+          description: Assignments created successfully
         404:
-          description: Data not found
+          description: Role not found
   /assignments/grant/{roleId}/application:
     post:
       tags:
         - assignment
-      description: Create new assignments for role and application
+      description: Create assignments for all permissions of the given application for a role id
       operationId: grantRoleApplicationAssignments
       parameters:
         - name: roleId
@@ -426,9 +432,9 @@ paths:
               $ref: '#/components/schemas/CreateRoleApplicationAssignmentRequest'
       responses:
         201:
-          description: New assignment created
+          description: Assignments created successfully
         404:
-          description: Data not found
+          description: Role or application not found
         400:
           description: Bad request
           content:
@@ -439,7 +445,7 @@ paths:
     post:
       tags:
         - assignment
-      description: Create new assignments for role and products
+      description: Create new assignments for permissions of the given products for a role by its id
       operationId: grantRoleProductsAssignments
       parameters:
         - name: roleId
@@ -455,9 +461,9 @@ paths:
               $ref: '#/components/schemas/CreateRoleProductsAssignmentRequest'
       responses:
         201:
-          description: New assignment created
+          description: Assignment created successfully
         404:
-          description: Data not found
+          description: Role or product not found
         400:
           description: Bad request
           content:
@@ -468,7 +474,7 @@ paths:
     post:
       tags:
         - assignment
-      description: Revoke assignments for role
+      description: Revoke all assignments for a role by its id
       operationId: revokeRoleAssignments
       parameters:
         - name: roleId
@@ -478,14 +484,14 @@ paths:
             type: string
       responses:
         204:
-          description: assignment revoked
+          description: Assignment revoked successfully
         404:
-          description: Data not found
+          description: Role not found
   /assignments/revoke/{roleId}/application:
     post:
       tags:
         - assignment
-      description: Revoke assignments for role and application
+      description: Revoke all assignments for the given application and role by its id
       operationId: revokeRoleApplicationAssignments
       parameters:
         - name: roleId
@@ -501,9 +507,9 @@ paths:
               $ref: '#/components/schemas/RevokeRoleApplicationAssignmentRequest'
       responses:
         204:
-          description: assignments revoked
+          description: Assignments revoked successfully
         404:
-          description: Data not found
+          description: Assignment not found
         400:
           description: Bad request
           content:
@@ -514,7 +520,7 @@ paths:
     post:
       tags:
         - assignment
-      description: Revoke assignments for role and products
+      description: Revoke all assignments for the given products and a role by its id
       operationId: revokeRoleProductsAssignments
       parameters:
         - name: roleId
@@ -530,9 +536,9 @@ paths:
               $ref: '#/components/schemas/RevokeRoleProductsAssignmentRequest'
       responses:
         204:
-          description: assignment revoked
+          description: Assignments revoked successfully
         404:
-          description: Data not found
+          description: Assignment not found
         400:
           description: Bad request
           content:
@@ -547,7 +553,7 @@ paths:
             - read
       tags:
         - assignment
-      description: Get assignment
+      description: Get a assignment by its id
       operationId: getAssignment
       parameters:
         - name: id
@@ -557,7 +563,7 @@ paths:
             type: string
       responses:
         200:
-          description: Get assignment
+          description: Assignment retrieved successfully
           content:
             application/json:
               schema:
@@ -571,7 +577,7 @@ paths:
             - delete
       tags:
         - assignment
-      description: Delete assignment
+      description: Delete a assignment by its id
       operationId: deleteAssignment
       parameters:
         - name: id
@@ -581,7 +587,7 @@ paths:
             type: string
       responses:
         204:
-          description: Assignment deleted
+          description: Assignment deleted successfully
   /assignments/export:
     x-onecx:
       permissions:
@@ -600,13 +606,13 @@ paths:
               $ref: '#/components/schemas/ExportAssignmentsRequest'
       responses:
         "200":
-          description: OK
+          description: Assignments exported successfully
           content:
             application/json:
               schema:
                 type: object
         "404":
-          description: No themes founds
+          description: Assignments not found
   /assignments/import:
     x-onecx:
       permissions:
@@ -625,7 +631,7 @@ paths:
               type: object
       responses:
         "200":
-          description: Import successful
+          description: Assignments imported successfully
         "400":
           description: Bad request
           content:
@@ -640,7 +646,7 @@ paths:
             - read
       tags:
         - application
-      description: Search for applications
+      description: Search for applications by search criteria
       operationId: searchApplications
       requestBody:
         required: true
@@ -650,7 +656,7 @@ paths:
               $ref: '#/components/schemas/ApplicationSearchCriteria'
       responses:
         200:
-          description: OK
+          description: Application search results retrieved successfully
           content:
             application/json:
               schema:
@@ -669,7 +675,7 @@ paths:
             - read
       tags:
         - workspace
-      description: search workspaces by criteria
+      description: Search workspaces by criteria
       operationId: searchWorkspaces
       requestBody:
         required: true
@@ -679,7 +685,7 @@ paths:
               $ref: '#/components/schemas/WorkspaceSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Workspaces retrieved successfully
           content:
             application/json:
               schema:
@@ -692,7 +698,7 @@ paths:
             - read
       tags:
         - workspace
-      description: get detailed information to all workspace related products and roles
+      description: Get detailed information to all workspace related products and roles
       operationId: getDetailsByWorkspaceName
       parameters:
         - name: workspaceName
@@ -702,7 +708,7 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
+          description: Workspace retrieved successfully
           content:
             application/json:
               schema:
@@ -715,7 +721,7 @@ paths:
             - read
       tags:
         - user
-      description: get user permissions
+      description: Get all permissions of the requesting user
       operationId: getUserPermissions
       requestBody:
         required: true
@@ -725,7 +731,7 @@ paths:
               $ref: '#/components/schemas/UserCriteria'
       responses:
         "200":
-          description: OK
+          description: Permission retrieved successfully
           content:
             application/json:
               schema:
@@ -738,7 +744,7 @@ paths:
             - read
       tags:
         - user
-      description: get user roles
+      description: Get all roles of the requesting user
       operationId: getUserRoles
       requestBody:
         required: true
@@ -748,7 +754,7 @@ paths:
               $ref: '#/components/schemas/UserCriteria'
       responses:
         "200":
-          description: OK
+          description: Roles retrieved successfully
           content:
             application/json:
               schema:
@@ -761,11 +767,11 @@ paths:
             - read
       tags:
         - user
-      description: get token roles
+      description: Get all roles of the request-token
       operationId: getTokenRoles
       responses:
         "200":
-          description: OK
+          description: Roles retrieved successfully
           content:
             application/json:
               schema:
@@ -780,7 +786,7 @@ paths:
             - read
       tags:
         - user
-      description: get user assignments
+      description: Get all assignments of the requesting user
       operationId: getUserAssignments
       requestBody:
         required: true
@@ -790,7 +796,7 @@ paths:
               $ref: '#/components/schemas/UserCriteria'
       responses:
         "200":
-          description: OK
+          description: Assignment retrieved successfully
           content:
             application/json:
               schema:
