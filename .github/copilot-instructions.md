@@ -3,7 +3,7 @@
 ## Project overview & Context
 - Angular 19 **Module Federation micro-frontend** for a OneCX project.
 - Built with **standalone components**, **OnPush change detection**, and **signal-first** state management.
-  - **Do not convert everything to pure Standalone components.** Follow the existing NgModule bootstrap structure for Module Federation (`app.module.ts`, `*theme*.module.ts`) as outlined in the architecture diagram.
+  - **Do not convert everything to pure Standalone components.** Follow the existing NgModule bootstrap structure for Module Federation (`app.module.ts`, `*permission*.module.ts`) as outlined in the architecture diagram.
 - The project uses PrimeNG components (p-button, p-select, p-message, etc.).
 - Testing framework: **Karma + Jasmine** — do NOT replace with Jest and do NOT add Jest dependencies.
 
@@ -27,7 +27,7 @@
 
 ```bash
 npm start               # Dev server on localhost:4200 (proxy via proxy.conf.js)
-npm run build           # Production build → dist/onecx-theme-ui
+npm run build           # Production build → dist/onecx-permission-ui
 npm run test            # Run all Karma/Jasmine tests (watch mode)
 npm run karma           # CI mode: no watch, headless, with coverage → reports/
 npm run lint            # ESLint + Prettier check
