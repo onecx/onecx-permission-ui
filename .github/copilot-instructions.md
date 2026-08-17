@@ -146,4 +146,4 @@ public readonly headers = computed(() => {
 
 ---
 
-For architecture, code-style rules, and project-specific patterns see [coding_standards.md](coding_standards.md).
+For architecture, code-style rules, and project-specific patterns see [coding_standards.md](../coding_standards.md).
