@@ -58,7 +58,7 @@ describe('Utils', () => {
 
       const sortedItems = items.sort(Utils.sortSelectItemsByLabel)
 
-      expect(sortedItems[0].label).toEqual(undefined)
+      expect(sortedItems[0].label).toBeUndefined()
     })
   })
 

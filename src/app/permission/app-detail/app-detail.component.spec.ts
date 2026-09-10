@@ -376,7 +376,7 @@ describe('AppDetailComponent', () => {
     it('should detect manage roles/permissions on creation', () => {
       component.ngOnInit()
 
-      expect(component.myPermissions.length).toBe(9) // all
+      expect(component.myPermissions).toHaveSize(9)
 
       component.myPermissions = ['ROLE#CREATE', 'PERMISSION#CREATE']
       component['initializeComponent']()
@@ -458,8 +458,8 @@ describe('AppDetailComponent', () => {
 
       component.ngOnInit()
 
-      expect(component.roles.length).toBe(2)
-      expect(component.permissions.length).toBe(2)
+      expect(component.roles).toHaveSize(2)
+      expect(component.permissions).toHaveSize(2)
     })
 
     it('should filter roles', () => {
@@ -471,14 +471,14 @@ describe('AppDetailComponent', () => {
 
       component.onRoleFilterChange('role1')
 
-      expect(component.roles.length).toBe(2)
-      expect(component.rolesFiltered.length).toBe(1)
+      expect(component.roles).toHaveSize(2)
+      expect(component.rolesFiltered).toHaveSize(1)
 
       component.rolesFiltered = []
 
       component.onRoleFilterChange('')
 
-      expect(component.rolesFiltered.length).toBe(2)
+      expect(component.rolesFiltered).toHaveSize(2)
     })
 
     it('should display error when loading roles fails', () => {
@@ -498,6 +498,8 @@ describe('AppDetailComponent', () => {
       component.urlParamAppType = 'WORKSPACE'
 
       component.ngOnInit()
+
+      expect(roleApiSpy.searchRoles).toHaveBeenCalled()
     })
 
     it('should go if no roles are loaded', () => {
@@ -591,7 +593,7 @@ describe('AppDetailComponent', () => {
     it('should search assigments', () => {
       component['searchAssignments'](true, ['appId1'])
 
-      expect(component.protectedAssignments.length).toBe(1)
+      expect(component.protectedAssignments).toHaveSize(1)
     })
 
     it('should display error if search assigments fails', () => {
@@ -1085,9 +1087,9 @@ describe('AppDetailComponent', () => {
     it('should set filterProductValue and filterAppValue, call filter on permissionTable with "notEquals" and "equals", and call prepareFilterApps', () => {
       const prod = 'prodName1'
       component.ngOnInit()
-      expect(component.roles.length).toBe(2)
-      expect(component.permissions.length).toBe(2)
-      expect(component.permissionRows.length).toBe(2)
+      expect(component.roles).toHaveSize(2)
+      expect(component.permissions).toHaveSize(2)
+      expect(component.permissionRows).toHaveSize(2)
       // component.permissionRows => permPageRes
 
       component.permissionTable = { filter: jasmine.createSpy(), value: component.permissionRows } as unknown as Table
@@ -1122,16 +1124,16 @@ describe('AppDetailComponent', () => {
       component.ngOnInit()
       expect(component.currentApp).toEqual(loadedApp)
 
-      expect(component.roles.length).toBe(2)
-      expect(component.permissions.length).toBe(2)
+      expect(component.roles).toHaveSize(2)
+      expect(component.permissions).toHaveSize(2)
       expect(component.permissions).toEqual([
         { id: 'permId1', appId: 'appId1', productName: 'prodName1', mandatory: false },
         { id: 'permId2', appId: 'appId2', productName: 'prodName2' }
       ])
       // component.permissionRows => permPageRes
-      expect(component.permissionRows.length).toBe(2)
+      expect(component.permissionRows).toHaveSize(2)
 
-      expect(component.productApps.length).toBe(2)
+      expect(component.productApps).toHaveSize(2)
       expect(component.productApps).toEqual([
         { name: 'appName1', appId: 'appId1', productName: 'prodName1' } as App,
         { name: 'appName2', appId: 'appId2', productName: 'prodName1' } as App
@@ -1139,14 +1141,14 @@ describe('AppDetailComponent', () => {
       expect(loadedApp.productName).toEqual('prodName1')
 
       component.prepareFilterApps()
-      expect(component.filterAppItems.length).toBe(2)
+      expect(component.filterAppItems).toHaveSize(2)
       expect(component.filterAppItems).toEqual([
         { label: 'appId2', value: 'appId2' },
         { label: 'appName1', value: 'appId1' }
       ])
 
       component.prepareFilterApps('prodName2')
-      expect(component.filterAppItems.length).toBe(1)
+      expect(component.filterAppItems).toHaveSize(1)
     })
   })
 
