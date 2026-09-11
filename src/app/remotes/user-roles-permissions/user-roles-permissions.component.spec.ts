@@ -406,7 +406,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.idmRoles$.subscribe({
         next: (data) => {
-          expect(data.length).toBe(3)
+          expect(data).toHaveSize(3)
           expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
           expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
           expect(data[2]).toEqual({ label: 'role3', isUserAssignedRole: false } as ExtendedSelectItem)
@@ -431,7 +431,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.idmRoles$.subscribe({
         next: (data) => {
-          expect(data.length).toBe(0)
+          expect(data).toHaveSize(0)
           expect(console.error).toHaveBeenCalledWith('getTokenRoles', errorResponse)
           expect(component.exceptionKeyIdmRoles).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ROLES')
           done()
@@ -452,7 +452,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
       component.idmRoles$.subscribe({
         next: (data) => {
-          expect(data.length).toBe(2)
+          expect(data).toHaveSize(2)
           expect(data[0]).toEqual({ label: 'role1', isUserAssignedRole: true } as ExtendedSelectItem)
           expect(data[1]).toEqual({ label: 'role2', isUserAssignedRole: true } as ExtendedSelectItem)
           done()

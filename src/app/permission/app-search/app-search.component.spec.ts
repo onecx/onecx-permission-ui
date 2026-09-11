@@ -109,7 +109,7 @@ describe('AppSearchComponent', () => {
           expect(filters).toContain(
             jasmine.objectContaining({ columnId: 'appType', value: 'filterValue', filterType: FilterType.EQUALS })
           )
-          expect(filters.length).toBe(1)
+          expect(filters).toHaveSize(1)
           done()
         }
       })
@@ -128,7 +128,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(2)
+          expect(apps).toHaveSize(2)
           apps.forEach((app) => {
             expect(app.appType).toEqual('WORKSPACE')
           })
@@ -146,7 +146,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(0)
+          expect(apps).toHaveSize(0)
           done()
         },
         error: done.fail
@@ -163,7 +163,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (result) => {
-          expect(result.length).toBe(0)
+          expect(result).toHaveSize(0)
           expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.WORKSPACE')
           expect(console.error).toHaveBeenCalledWith('searchWorkspaces', errorResponse)
           done()
@@ -182,7 +182,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -201,7 +201,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -220,7 +220,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -249,7 +249,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -267,7 +267,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -295,7 +295,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(2)
+          expect(apps).toHaveSize(2)
           expect(apps.some((a) => a.appType === 'WORKSPACE')).toBeTrue()
           expect(apps.some((a) => a.appType === 'PRODUCT')).toBeTrue()
           done()
@@ -312,7 +312,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -330,7 +330,7 @@ describe('AppSearchComponent', () => {
 
       component.apps$.subscribe({
         next: (apps) => {
-          expect(apps.length).toBe(1)
+          expect(apps).toHaveSize(1)
           apps.forEach((app) => {
             expect(app.appType).toEqual('PRODUCT')
           })
@@ -354,7 +354,7 @@ describe('AppSearchComponent', () => {
 
         component.apps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(2)
+            expect(apps).toHaveSize(2)
             apps.forEach((app) => {
               expect(app.appType).toEqual('PRODUCT')
             })
@@ -372,7 +372,7 @@ describe('AppSearchComponent', () => {
 
         component.apps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(0)
+            expect(apps).toHaveSize(0)
             done()
           },
           error: done.fail
@@ -389,7 +389,7 @@ describe('AppSearchComponent', () => {
 
         component.apps$.subscribe({
           next: (result) => {
-            expect(result.length).toBe(0)
+            expect(result).toHaveSize(0)
             expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
             expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
             done()
@@ -412,7 +412,7 @@ describe('AppSearchComponent', () => {
 
         component.filteredApps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(1)
+            expect(apps).toHaveSize(1)
             expect(apps[0].appType).toBe('PRODUCT')
             done()
           },
@@ -434,7 +434,7 @@ describe('AppSearchComponent', () => {
 
         component.filteredApps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(1)
+            expect(apps).toHaveSize(1)
             done()
           },
           error: done.fail
@@ -459,7 +459,7 @@ describe('AppSearchComponent', () => {
 
         component.filteredApps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(1)
+            expect(apps).toHaveSize(1)
             expect(apps[0].displayName).toBe('display-miss')
             expect(apps[0].productName).toBe('product-hit')
             done()
@@ -482,7 +482,7 @@ describe('AppSearchComponent', () => {
 
         component.filteredApps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(1)
+            expect(apps).toHaveSize(1)
             expect(apps[0].displayName).toBeUndefined()
             expect(apps[0].productName).toBeUndefined()
             done()
@@ -505,7 +505,7 @@ describe('AppSearchComponent', () => {
 
         component.filteredApps$.subscribe({
           next: (apps) => {
-            expect(apps.length).toBe(1)
+            expect(apps).toHaveSize(1)
             expect(apps[0].appId).toBe('target-app-id')
             done()
           },
@@ -768,7 +768,7 @@ describe('AppSearchComponent', () => {
       expect(component.displayExportDialog).toBeTrue()
       component.productNames$.subscribe({
         next: (productNames) => {
-          expect(productNames.length).toBe(2)
+          expect(productNames).toHaveSize(2)
           expect(productNames[0]).toEqual('product3')
           expect(productNames[1]).toEqual('product4')
           done()
@@ -787,7 +787,7 @@ describe('AppSearchComponent', () => {
 
       component.productNames$.subscribe({
         next: (productNames) => {
-          expect(productNames.length).toBe(0)
+          expect(productNames).toHaveSize(0)
           expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.APPS')
           expect(console.error).toHaveBeenCalledWith('searchApplications', errorResponse)
           done()
