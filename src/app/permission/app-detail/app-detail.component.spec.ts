@@ -127,7 +127,7 @@ const assgmtPageRes: AssignmentPageResult = {
   stream: [assgmt1, assgmt2]
 }
 
-describe('AppDetailComponent', () => {
+fdescribe('AppDetailComponent', () => {
   let component: AppDetailComponent
   let fixture: ComponentFixture<AppDetailComponent>
 

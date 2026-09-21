@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, combineLatest, from, map, of, Observable, Subject, take } from 'rxjs'
+import { catchError, combineLatest, from, map, of, Observable, Subject, take, forkJoin } from 'rxjs'
 
 import { FilterMatchMode, SelectItem } from 'primeng/api'
 import { ButtonModule } from 'primeng/button'
@@ -224,21 +224,14 @@ export class AppDetailComponent implements OnInit, OnDestroy {
       }
     }
     if (typeof userService.hasPermission === 'function') {
-      const checks = dialogPermissions.map((p) => userService.hasPermission(p))
-      const hasAsyncCheck = checks.some((check) => check && typeof check.then === 'function')
-      if (!hasAsyncCheck) {
-        return of(dialogPermissions.filter((_, index) => !!checks[index]))
-      }
-      return from(
-        Promise.all(
-          dialogPermissions.map((permission, index) =>
-            Promise.resolve(checks[index]).then((hasPermission) => ({
-              permission,
-              hasPermission
-            }))
-          )
-        ).then((checks) => checks.filter((check) => check.hasPermission).map((check) => check.permission))
-      )
+      const checks$ = dialogPermissions.map((permission) => {
+        const result = userService.hasPermission(permission)
+        const obs$ =
+          result && typeof (result as any).then === 'function' ? from(result as Promise<boolean>) : of(!!result)
+
+        return obs$.pipe(map((hasPerm) => ({ permission, hasPerm })))
+      })
+      return forkJoin(checks$).pipe(map((results) => results.filter((r) => r.hasPerm).map((r) => r.permission)))
     }
     return of([])
   }
