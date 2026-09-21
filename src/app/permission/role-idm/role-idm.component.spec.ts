@@ -100,7 +100,7 @@ describe('RoleIdmComponent', () => {
 
       component.roleListEmitter.emit([{ name: 'role1' }, { name: 'role2' }])
 
-      expect(component.idmRoles.length).toBe(2)
+      expect(component.idmRoles).toHaveSize(2)
       expect(component.idmRoles[0]).toEqual({ name: 'role1' } as IDMRole)
       expect(component.idmRoles[1]).toEqual({ name: 'role2' } as IDMRole)
     }))
@@ -113,7 +113,7 @@ describe('RoleIdmComponent', () => {
 
       component.ngOnChanges()
 
-      expect(component.idmRoles.length).toBe(2)
+      expect(component.idmRoles).toHaveSize(2)
       expect(component.idmRoles[0]).toEqual({ name: 'role1' } as IDMRole)
       expect(component.idmRoles[1]).toEqual({ name: 'role2' } as IDMRole)
     })
