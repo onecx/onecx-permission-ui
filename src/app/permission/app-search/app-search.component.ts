@@ -142,7 +142,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.prepareAppTypeItems()
     this.prepareQuickFilterItems()
     this.prepareDialogTranslations()
-    this.searchApps()
+    const restored = this.restoreStateFromHash()
+    if (!restored) this.searchApps()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
@@ -154,6 +155,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   public onSearch() {
     this.searchApps()
+    this.updateHashFromState()
   }
   public onSearchReset() {
     this.appSearchCriteria.reset({ appType: 'ALL' })
@@ -396,6 +398,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     if (val) this.quickFilterValue = val
     if (this.quickFilterValue === 'ALL') this.typeFilterValue$.next('')
     else this.typeFilterValue$.next(this.quickFilterValue)
+    this.updateHashFromState()
   }
   public onFilterChange(filter: string): void {
     this.textFilterValue$.next(filter)
@@ -403,15 +406,18 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onGlobalFilter(value: string): void {
     this.globalFilterValue = value
     this.textFilterValue$.next(value)
+    this.updateHashFromState()
   }
   public onClearGlobalFilter(): void {
     this.globalFilterValue = ''
     this.textFilterValue$.next(undefined)
+    this.updateHashFromState()
   }
 
   public onSortChange(sort: string | { sortColumn: string; sortDirection: DataSortDirection }): void {
     if (typeof sort === 'string') {
       this.sortField = sort
+      this.updateHashFromState()
       return
     }
 
@@ -424,9 +430,56 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       sortOrder = 1
     }
     this.sortOrder = sortOrder
+    this.updateHashFromState()
   }
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1
     this.sortDirection = asc ? DataSortDirection.ASCENDING : DataSortDirection.DESCENDING
+    this.updateHashFromState()
+  }
+
+  private updateHashFromState(): void {
+    const state = {
+      appType: this.appSearchCriteria.controls['appType'].value,
+      name: this.appSearchCriteria.controls['name'].enabled ? this.appSearchCriteria.controls['name'].value : undefined,
+      quickFilter: this.quickFilterValue,
+      globalFilter: this.globalFilterValue,
+      sortField: this.sortField,
+      sortDirection: this.sortDirection
+    }
+    const encoded = encodeURIComponent(JSON.stringify(state))
+    if (window.location.hash !== `#${encoded}`) {
+      window.location.hash = encoded
+    }
+  }
+
+  private restoreStateFromHash(): boolean {
+    const raw = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash
+    if (!raw) return false
+    const parsed = JSON.parse(decodeURIComponent(raw)) as any
+    if (parsed.appType) {
+      this.appSearchCriteria.controls['appType'].setValue(parsed.appType)
+      if (parsed.appType === 'ALL') {
+        this.appSearchCriteria.controls['name'].disable()
+      } else {
+        this.appSearchCriteria.controls['name'].enable()
+      }
+    }
+    if (parsed.name !== undefined) {
+      this.appSearchCriteria.controls['name'].setValue(parsed.name)
+    }
+    if (parsed.quickFilter) {
+      this.quickFilterValue = parsed.quickFilter
+      this.typeFilterValue$.next(this.quickFilterValue === 'ALL' ? '' : this.quickFilterValue)
+    }
+    if (parsed.globalFilter !== undefined) {
+      this.globalFilterValue = parsed.globalFilter
+      this.textFilterValue$.next(parsed.globalFilter || undefined)
+    }
+    if (parsed.sortField) this.sortField = parsed.sortField
+    if (parsed.sortDirection) this.sortDirection = parsed.sortDirection
+
+    this.searchApps()
+    return true
   }
 }
