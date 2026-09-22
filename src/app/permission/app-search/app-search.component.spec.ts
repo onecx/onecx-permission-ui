@@ -828,4 +828,42 @@ describe('AppSearchComponent', () => {
       expect(items[0].value).toEqual('ALL')
     })
   })
+
+  describe('hash state persistence', () => {
+    it('should include the name value in hash when the name field is enabled', () => {
+      component.appSearchCriteria.controls['appType'].setValue('APP')
+      component.appSearchCriteria.controls['name'].enable()
+      component.appSearchCriteria.controls['name'].setValue('search-name')
+      component.quickFilterValue = 'WORKSPACE'
+      component.globalFilterValue = 'my-filter'
+      component.sortField = 'displayName'
+      component.sortDirection = DataSortDirection.ASCENDING
+
+      component['updateHashFromState']()
+
+      const raw = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash
+      const parsed = JSON.parse(decodeURIComponent(raw))
+
+      expect(parsed.appType).toBe('APP')
+      expect(parsed.name).toBe('search-name')
+    })
+
+    it('should restore the name control and value from hash when appType is not ALL', () => {
+      const state = {
+        appType: 'APP',
+        name: 'restored-name',
+        quickFilter: 'WORKSPACE',
+        globalFilter: 'restored-filter',
+        sortField: 'displayName',
+        sortDirection: DataSortDirection.ASCENDING
+      }
+      window.location.hash = '#' + encodeURIComponent(JSON.stringify(state))
+
+      component['restoreStateFromHash']()
+
+      expect(component.appSearchCriteria.controls['appType'].value).toBe('APP')
+      expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
+      expect(component.appSearchCriteria.controls['name'].value).toBe('restored-name')
+    })
+  })
 })
