@@ -42,13 +42,35 @@ describe('AppSearchComponent', () => {
   let fixture: ComponentFixture<AppSearchComponent>
   let router: Router
 
-  const mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot> = { params: { id: 'mockId' }, data: {} }
-  const mockActivatedRoute: ActivatedRoute = {
-    snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
-  } as ActivatedRoute
   const wsApiSpy = jasmine.createSpyObj<WorkspaceAPIService>('WorkspaceAPIService', ['searchWorkspaces'])
   const appApiSpy = jasmine.createSpyObj<ApplicationAPIService>('ApplicationAPIService', ['searchApplications'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
+
+  function createMockSnapshot(
+    queryParams: Record<string, string> = {},
+    includeQueryParamMap = true
+  ): ActivatedRouteSnapshot {
+    return {
+      params: { id: 'mockId' },
+      data: { mfeInfo: { baseHref: '/permission', productName: 'Permission' } },
+      url: [],
+      queryParams,
+      queryParamMap: includeQueryParamMap
+        ? {
+            keys: Object.keys(queryParams),
+            get: (key: string) => queryParams[key] ?? null
+          }
+        : undefined
+    } as unknown as ActivatedRouteSnapshot
+  }
+
+  const mockActivatedRoute: ActivatedRoute = {
+    snapshot: createMockSnapshot()
+  } as ActivatedRoute
+
+  function setRouteSnapshot(queryParams: Record<string, string> = {}, includeQueryParamMap = true): void {
+    ;(mockActivatedRoute as any).snapshot = createMockSnapshot(queryParams, includeQueryParamMap)
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -81,6 +103,7 @@ describe('AppSearchComponent', () => {
   }))
 
   beforeEach(() => {
+    setRouteSnapshot()
     fixture = TestBed.createComponent(AppSearchComponent)
     component = fixture.componentInstance
     router = TestBed.inject(Router)
@@ -829,41 +852,59 @@ describe('AppSearchComponent', () => {
     })
   })
 
-  describe('hash state persistence', () => {
-    it('should include the name value in hash when the name field is enabled', () => {
+  describe('query param search state', () => {
+    it('should persist only search params in router state when searching', () => {
       component.appSearchCriteria.controls['appType'].setValue('APP')
       component.appSearchCriteria.controls['name'].enable()
       component.appSearchCriteria.controls['name'].setValue('search-name')
-      component.quickFilterValue = 'WORKSPACE'
-      component.globalFilterValue = 'my-filter'
-      component.sortField = 'displayName'
-      component.sortDirection = DataSortDirection.ASCENDING
 
-      component['updateHashFromState']()
+      component.onSearch()
 
-      const raw = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash
-      const parsed = JSON.parse(decodeURIComponent(raw))
-
-      expect(parsed.appType).toBe('APP')
-      expect(parsed.name).toBe('search-name')
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        relativeTo: mockActivatedRoute,
+        queryParams: { appType: 'APP', name: 'search-name' },
+        replaceUrl: true,
+        queryParamsHandling: 'merge'
+      })
     })
 
-    it('should restore the name control and value from hash when appType is not ALL', () => {
-      const state = {
-        appType: 'APP',
-        name: 'restored-name',
-        quickFilter: 'WORKSPACE',
-        globalFilter: 'restored-filter',
-        sortField: 'displayName',
-        sortDirection: DataSortDirection.ASCENDING
-      }
-      window.location.hash = '#' + encodeURIComponent(JSON.stringify(state))
+    it('should restore search params and disable name field when app type is ALL', () => {
+      setRouteSnapshot({ appType: 'ALL', name: 'silent-name' })
 
-      component['restoreStateFromHash']()
+      const searchSpy = spyOn(component, 'searchApps')
+      const restored = component['restoreStateFromQueryParams']()
 
+      expect(restored).toBeTrue()
+      expect(component.appSearchCriteria.controls['appType'].value).toBe('ALL')
+      expect(component.appSearchCriteria.controls['name'].disabled).toBeTrue()
+      expect(component.appSearchCriteria.controls['name'].value).toBe('silent-name')
+      expect(searchSpy).toHaveBeenCalled()
+    })
+
+    it('should default app type to ALL when query params do not include appType', () => {
+      setRouteSnapshot({ name: 'name-only' }, false)
+
+      const searchSpy = spyOn(component, 'searchApps')
+      const restored = component['restoreStateFromQueryParams']()
+
+      expect(restored).toBeTrue()
+      expect(component.appSearchCriteria.controls['appType'].value).toBe('ALL')
+      expect(component.appSearchCriteria.controls['name'].disabled).toBeTrue()
+      expect(component.appSearchCriteria.controls['name'].value).toBe('name-only')
+      expect(searchSpy).toHaveBeenCalled()
+    })
+
+    it('should keep name unset when query params do not include name', () => {
+      setRouteSnapshot({ appType: 'APP' }, false)
+
+      const searchSpy = spyOn(component, 'searchApps')
+      const restored = component['restoreStateFromQueryParams']()
+
+      expect(restored).toBeTrue()
       expect(component.appSearchCriteria.controls['appType'].value).toBe('APP')
       expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
-      expect(component.appSearchCriteria.controls['name'].value).toBe('restored-name')
+      expect(component.appSearchCriteria.controls['name'].value).toBeNull()
+      expect(searchSpy).toHaveBeenCalled()
     })
   })
 })
