@@ -158,7 +158,7 @@
       "CRITERIA": "Search Criteria",
       "RESULTS": "Search Results",
       "QUICK_FILTER": {
-        "LABEL": "Select application type for search",
+        "LABEL": "Select type for search",
         "TOOLTIP": "Quick Filter for App type",
         "ALL": "All",
         "PRODUCT": "Applications",
