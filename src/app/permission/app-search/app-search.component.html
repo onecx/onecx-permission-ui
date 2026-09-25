@@ -9,11 +9,10 @@
   >
     <form
       [formGroup]="appSearchCriteria"
-      class="flex flex-wrap flex-row column-gap-4 row-gap-3 md:px-2"
+      class="flex flex-wrap flex-row column-gap-4 justify-content-between align-items-center row-gap-3 md:px-2"
       [attr.aria-label]="'DIALOG.SEARCH.CRITERIA' | translate"
     >
       <section
-        class="flex flex-wrap flex-column row-gap-0"
         [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
         [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
         tooltipPosition="top"
@@ -31,10 +30,6 @@
             <span [id]="'apm_app_search_criteria_app_type_' + item.value"> {{ item.label }}</span>
           </ng-template>
         </p-selectButton>
-        <div class="flex flex-row flex-nowrap column-gap-3 opacity-90 text-sm" aria-hidden="true">
-          <span> {{ 'DIALOG.SEARCH.FILTER.LABEL' | translate }}: </span>
-          <span> {{ 'DIALOG.SEARCH.QUICK_FILTER.' + appSearchCriteria.controls['appType'].value | translate }}</span>
-        </div>
       </section>
       <!-- decoupling input from select button with extra div tag -->
       <div class="w-15rem">
@@ -102,8 +97,7 @@
             <div class="flex flex-wrap flex-row justify-content-between align-items-center gap-2">
               <!-- QUICK Filter -->
               <section
-                class="app-search-quickfilter slim-selectbutton align-items-start search-criteria-selectbutton"
-                [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.LABEL' | translate"
+                [attr.aria-label]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
                 [pTooltip]="'DIALOG.SEARCH.QUICK_FILTER.TOOLTIP' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"

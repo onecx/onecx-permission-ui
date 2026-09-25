@@ -158,15 +158,13 @@
       "CRITERIA": "Suchfelder",
       "RESULTS": "Suchergebnisse",
       "QUICK_FILTER": {
-        "LABEL": "Quickfilter für Typ",
+        "LABEL": "Wähle einen Typ zur Suche",
         "TOOLTIP": "Quickfilter für Typ",
         "ALL": "Alle",
-        "APP": "Apps (Komponenten von Applikationen)",
         "PRODUCT": "Applikationen",
         "WORKSPACE": "Workspaces"
       },
       "FILTER": {
-        "LABEL": "Typ",
         "TOOLTIP": "Filter für Typ",
         "ALL": "Alle",
         "APP": "Apps",

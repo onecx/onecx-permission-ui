@@ -47,7 +47,6 @@
             <!-- Permission QUICK Filter -->
             <div class="flex align-items-center sm:ml-1 gap-1">
               <div
-                class="slim-selectbutton align-items-start search-criteria-selectbutton"
                 [pTooltip]="'DIALOG.DETAIL.QUICK_FILTER.TOOLTIP' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
@@ -65,7 +64,6 @@
                     ><span [id]="'pm_app_detail_quick_filter_' + item.value"> {{ item.label }}</span></ng-template
                   >
                 </p-selectButton>
-                <div class="text-sm opacity-80">{{ 'DIALOG.DETAIL.QUICK_FILTER.LABEL' | translate }}</div>
               </div>
             </div>
 

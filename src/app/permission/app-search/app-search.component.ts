@@ -142,7 +142,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.prepareAppTypeItems()
     this.prepareQuickFilterItems()
     this.prepareDialogTranslations()
-    this.searchApps()
+    const restored = this.restoreStateFromQueryParams()
+    if (!restored) this.searchApps()
   }
   public ngOnDestroy(): void {
     this.destroy$.next(undefined)
@@ -154,6 +155,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   public onSearch() {
     this.searchApps()
+    this.updateSearchParamsFromState()
   }
   public onSearchReset() {
     this.appSearchCriteria.reset({ appType: 'ALL' })
@@ -428,5 +430,46 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public onSortDirChange(asc: boolean): void {
     this.sortOrder = asc ? -1 : 1
     this.sortDirection = asc ? DataSortDirection.ASCENDING : DataSortDirection.DESCENDING
+  }
+
+  private updateSearchParamsFromState(): void {
+    const queryParams = {
+      appType: this.appSearchCriteria.controls['appType'].value,
+      name:
+        this.appSearchCriteria.controls['name'].enabled && this.appSearchCriteria.controls['name'].value
+          ? this.appSearchCriteria.controls['name'].value
+          : undefined
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true,
+      queryParamsHandling: 'merge'
+    })
+  }
+
+  private restoreStateFromQueryParams(): boolean {
+    const snapshot = this.route.snapshot
+    const queryParams = snapshot?.queryParams
+    const paramKeys = Object.keys(queryParams)
+
+    if (!paramKeys.length) return false
+
+    const appType = (queryParams['appType'] as AppFilterType | null) ?? 'ALL'
+    const name = queryParams['name'] ?? undefined
+
+    this.appSearchCriteria.controls['appType'].setValue(appType)
+    if (appType === 'ALL') {
+      this.appSearchCriteria.controls['name'].disable()
+    } else {
+      this.appSearchCriteria.controls['name'].enable()
+    }
+    if (name !== undefined) {
+      this.appSearchCriteria.controls['name'].setValue(name)
+    }
+
+    this.searchApps()
+    return true
   }
 }
