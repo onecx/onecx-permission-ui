@@ -19,7 +19,7 @@ import {
 import { environment } from 'src/environments/environment'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 
-bootstrapRemoteComponent(
+void bootstrapRemoteComponent(
   OneCXUserRolesPermissionsComponent,
   'ocx-user-roles-permissions-component',
   environment.production,

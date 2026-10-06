@@ -381,9 +381,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * UI Events
    */
   public onAppClick(app: App): void {
-    this.router.navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
-      relativeTo: this.route
-    })
+    void this.router.navigate(
+      ['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId],
+      {
+        relativeTo: this.route
+      }
+    )
   }
   public onAppTypeCriteriaChange(val: AppFilterType): void {
     if (val) this.appSearchCriteria.controls['appType'].setValue(val)
@@ -441,7 +444,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           : undefined
     }
 
-    this.router.navigate([], {
+    void this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
       replaceUrl: true,

@@ -59,7 +59,7 @@ export class RoleIdmComponent implements OnInit, OnChanges {
   ) {}
 
   public ngOnInit(): void {
-    slotInitializer(this.slotService)()
+    void slotInitializer(this.slotService)()
   }
 
   public ngOnChanges(): void {

@@ -136,10 +136,10 @@ export class OneCXUserRolesPermissionsComponent
     this.assgnmtApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, this.apiPrefix)
     })
-    this.appConfigService.init(config.baseUrl)
+    void this.appConfigService.init(config.baseUrl)
     this.remoteComponentConfig.next(config)
     this.componentPermissions = config.permissions
-    this.slotService.init()
+    void this.slotService.init()
   }
 
   public ngOnChanges(): void {

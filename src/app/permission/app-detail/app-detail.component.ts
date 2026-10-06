@@ -226,10 +226,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     if (typeof userService.hasPermission === 'function') {
       const checks$ = dialogPermissions.map((permission) => {
         const result = userService.hasPermission(permission)
-        const obs$ =
-          result && typeof (result as any).then === 'function' ? from(result as Promise<boolean>) : of(!!result)
+        const hasPermissionResult$ =
+          result && typeof (result as Promise<boolean>).then === 'function'
+            ? from(result as Promise<boolean>)
+            : of(Boolean(result))
 
-        return obs$.pipe(map((hasPerm) => ({ permission, hasPerm })))
+        return hasPermissionResult$.pipe(map((hasPerm) => ({ permission, hasPerm })))
       })
       return forkJoin(checks$).pipe(map((results) => results.filter((r) => r.hasPerm).map((r) => r.permission)))
     }
