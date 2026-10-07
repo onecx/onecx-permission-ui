@@ -245,7 +245,11 @@
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (wird ignoriert bei ALLE)"
+      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (wird ignoriert bei ALLE)",
+      "RESET_BUTTON_SEARCH_AND_RESULTS": {
+        "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
+        "DETAIL": "Suchkriterien und Ergebnisse zurücksetzen"
+      }
     }
   },
   "PERMISSION": {

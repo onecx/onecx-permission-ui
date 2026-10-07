@@ -245,7 +245,11 @@
     "EDIT_HEADER": "Edit App",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "The corresponding name to match the App type (ignored by ALL)"
+      "NAME.TOOLTIP": "The corresponding name to match the App type (ignored by ALL)",
+      "RESET_BUTTON_SEARCH_AND_RESULTS": {
+        "ARIA_LABEL": "Reset search criteria and results",
+        "DETAIL": "Reset search criteria and results"
+      }
     }
   },
   "PERMISSION": {

@@ -161,6 +161,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.appSearchCriteria.reset({ appType: 'ALL' })
     this.apps$ = of([] as (App & RowListGridData)[])
     this.filteredApps$ = of([] as (App & RowListGridData)[])
+    this.onSearch()
   }
 
   /**

@@ -632,6 +632,21 @@ describe('AppSearchComponent', () => {
     expect(console.error).toHaveBeenCalledWith(error)
   })
 
+  it('should log an error when query param navigation rejects in updateSearchParamsFromState', async () => {
+    const error = new Error('query param update failed')
+    spyOn(console, 'error')
+    ;(router.navigate as jasmine.Spy).and.returnValue(Promise.reject(error))
+
+    component.appSearchCriteria.controls['appType'].setValue('APP')
+    component.appSearchCriteria.controls['name'].enable()
+    component.appSearchCriteria.controls['name'].setValue('search-name')
+
+    component['updateSearchParamsFromState']()
+    await Promise.resolve()
+
+    expect(console.error).toHaveBeenCalledWith(error)
+  })
+
   describe('onQuickFilterChange', () => {
     it('should set typeFilterValue$ to an empty string when value is "ALL"', () => {
       spyOn(component.typeFilterValue$, 'next')
@@ -736,21 +751,20 @@ describe('AppSearchComponent', () => {
       expect(component.searchApps).toHaveBeenCalled()
     })
 
-    it('should reset search criteria group and assign empty array to apps observable', (done) => {
-      spyOn(component.appSearchCriteria, 'reset')
+    it('should reset search criteria when reset is triggered', () => {
+      spyOn(component.appSearchCriteria, 'reset').and.callThrough()
+
+      component.appSearchCriteria.controls['appType'].setValue('APP')
+      component.appSearchCriteria.controls['name'].enable()
+      component.appSearchCriteria.controls['name'].setValue('custom-search')
 
       component.onSearchReset()
 
       expect(component.appSearchCriteria.reset).toHaveBeenCalledOnceWith({ appType: 'ALL' })
-      component.apps$.subscribe({
-        next: (res) => {
-          if (res) {
-            expect(res).toEqual([] as (App & RowListGridData)[])
-          }
-          done()
-        },
-        error: done.fail
-      })
+      expect(component.appSearchCriteria.controls['appType'].value).toBe('ALL')
+      expect(component.appSearchCriteria.controls['name'].enabled).toBeTrue()
+      expect(component.appSearchCriteria.controls['name'].value).toBeNull()
+      expect(component.apps$).toBeDefined()
     })
   })
 

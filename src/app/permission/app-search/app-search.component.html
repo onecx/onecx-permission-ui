@@ -2,6 +2,8 @@
   <ocx-search-header
     [header]="'DIALOG.SEARCH.HEADER' | translate"
     [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
+    [resetButtonAriaLabel]="'APP.SEARCH.RESET_BUTTON_SEARCH_AND_RESULTS.ARIA_LABEL' | translate"
+    [resetButtonTooltip]="'APP.SEARCH.RESET_BUTTON_SEARCH_AND_RESULTS.DETAIL' | translate"
     [actions]="(actions$ | async) ?? []"
     (searched)="onSearch()"
     (resetted)="onSearchReset()"
