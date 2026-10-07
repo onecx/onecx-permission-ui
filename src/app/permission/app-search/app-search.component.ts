@@ -381,12 +381,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * UI Events
    */
   public onAppClick(app: App): void {
-    void this.router.navigate(
-      ['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId],
-      {
+    this.router
+      .navigate(['./', app.appType.toLowerCase(), app.appType === 'PRODUCT' ? app.productName : app.appId], {
         relativeTo: this.route
-      }
-    )
+      })
+      .catch((err) => console.error(err))
   }
   public onAppTypeCriteriaChange(val: AppFilterType): void {
     if (val) this.appSearchCriteria.controls['appType'].setValue(val)
@@ -444,12 +443,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           : undefined
     }
 
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
-      replaceUrl: true,
-      queryParamsHandling: 'merge'
-    })
+    this.router
+      .navigate([], {
+        relativeTo: this.route,
+        queryParams,
+        replaceUrl: true,
+        queryParamsHandling: 'merge'
+      })
+      .catch((err) => console.error(err))
   }
 
   private restoreStateFromQueryParams(): boolean {

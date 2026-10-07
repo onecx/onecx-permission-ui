@@ -19,7 +19,7 @@ import {
 import { environment } from 'src/environments/environment'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
 
-void bootstrapRemoteComponent(
+bootstrapRemoteComponent(
   OneCXUserRolesPermissionsComponent,
   'ocx-user-roles-permissions-component',
   environment.production,
@@ -45,4 +45,4 @@ void bootstrapRemoteComponent(
     importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
     provideThemeConfig()
   ]
-)
+).catch((err) => console.error(err))
