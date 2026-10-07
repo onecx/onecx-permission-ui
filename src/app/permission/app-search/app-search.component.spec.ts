@@ -620,6 +620,18 @@ describe('AppSearchComponent', () => {
     })
   })
 
+  it('should log an error when router.navigate rejects in onAppClick', async () => {
+    const error = new Error('navigation failed')
+    const app: App = { appId: 'appId', appType: 'APP' }
+    spyOn(console, 'error')
+    ;(router.navigate as jasmine.Spy).and.returnValue(Promise.reject(error))
+
+    component.onAppClick(app)
+    await Promise.resolve()
+
+    expect(console.error).toHaveBeenCalledWith(error)
+  })
+
   describe('onQuickFilterChange', () => {
     it('should set typeFilterValue$ to an empty string when value is "ALL"', () => {
       spyOn(component.typeFilterValue$, 'next')

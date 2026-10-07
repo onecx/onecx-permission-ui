@@ -16,7 +16,10 @@ export const Utils = {
   },
 
   copyToClipboard(text?: string): void {
-    if (text) navigator.clipboard.writeText(text).catch((err) => console.error(err))
+    if (text) {
+      const clipboardWritePromise = navigator.clipboard?.writeText(text)
+      clipboardWritePromise?.catch((err) => console.error(err))
+    }
   },
 
   sortSelectItemsByLabel(a: SelectItem, b: SelectItem): number {

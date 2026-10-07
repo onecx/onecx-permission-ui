@@ -36,6 +36,17 @@ describe('Utils', () => {
 
       expect(writeTextSpy).toHaveBeenCalledWith('text')
     })
+
+    it('should log an error when clipboard write rejects', async () => {
+      const error = new Error('clipboard failed')
+      spyOn(console, 'error')
+      writeTextSpy.and.returnValue(Promise.reject(error))
+
+      Utils.copyToClipboard('text')
+      await Promise.resolve()
+
+      expect(console.error).toHaveBeenCalledWith(error)
+    })
   })
 
   describe('sortSelectItemsByLabel', () => {

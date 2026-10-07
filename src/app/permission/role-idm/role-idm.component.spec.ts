@@ -86,6 +86,17 @@ describe('RoleIdmComponent', () => {
 
       expect(slotService.init).toHaveBeenCalled()
     })
+
+    it('should log an error when SlotService.init rejects in ngOnInit', async () => {
+      const error = new Error('slot init failed')
+      slotServiceSpy.init.and.returnValue(Promise.reject(error))
+      spyOn(console, 'error')
+
+      component.ngOnInit()
+      await Promise.resolve()
+
+      expect(console.error).toHaveBeenCalledWith(error)
+    })
   })
 
   describe('get IAM roles', () => {
