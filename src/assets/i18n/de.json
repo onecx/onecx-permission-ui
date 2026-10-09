@@ -120,6 +120,10 @@
         "CLEAR": "Filter entfernen",
         "MODE_CONTAINS": "Filterwert enthalten",
         "MODE_NOT_CONTAINS": "Filterwert nicht enthalten"
+      },
+      "RESET_BUTTON": {
+        "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
+        "TOOLTIP": "Suchkriterien und Ergebnisse zurücksetzen"
       }
     },
     "VIEW": {
@@ -245,11 +249,7 @@
     "EDIT_HEADER": "App ändern",
     "SEARCH": {
       "NAME": "Name",
-      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (wird ignoriert bei ALLE)",
-      "RESET_BUTTON_SEARCH_AND_RESULTS": {
-        "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
-        "DETAIL": "Suchkriterien und Ergebnisse zurücksetzen"
-      }
+      "NAME.TOOLTIP": "Passend zum App-Typ der entsprechende Name (wird ignoriert bei ALLE)"
     }
   },
   "PERMISSION": {
