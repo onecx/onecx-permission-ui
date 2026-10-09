@@ -51,6 +51,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     init: jasmine.createSpy('init'),
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(false))
   }
+  const appConfigServiceSpy = {
+    init: jasmine.createSpy('init')
+  }
 
   function initializeComponent(id?: string, issuer?: string) {
     fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
@@ -86,6 +89,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
         providePermissionService(),
         { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: SlotService, useValue: slotServiceSpy },
+        { provide: AppConfigService, useValue: appConfigServiceSpy },
         { provide: Table, useClass: MockTable }
       ]
     })
@@ -94,7 +98,7 @@ describe('OneCXUserRolesPermissionsComponent', () => {
           providers: [
             { provide: UserAPIService, useValue: userApiSpy },
             { provide: AssignmentAPIService, useValue: assApiSpy },
-            { provide: AppConfigService }
+            { provide: AppConfigService, useValue: appConfigServiceSpy }
           ]
         }
       })
@@ -103,7 +107,9 @@ describe('OneCXUserRolesPermissionsComponent', () => {
 
   afterEach(() => {
     // to spy data: reset
+    slotServiceSpy.init.calls.reset()
     slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
+    appConfigServiceSpy.init.calls.reset()
     userApiSpy.getUserAssignments.calls.reset()
     userApiSpy.getTokenRoles.calls.reset()
     assApiSpy.searchUserAssignments.calls.reset()
@@ -139,6 +145,27 @@ describe('OneCXUserRolesPermissionsComponent', () => {
       const expectedBasePath = Location.joinWithSlash('base_url', environment.apiPrefix)
       expect((userApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
       expect((assApiSpy as any).configuration.basePath).toEqual(expectedBasePath)
+    })
+
+    it('should log an error when app config and slot initialization reject', async () => {
+      const error = new Error('init failed')
+      appConfigServiceSpy.init.and.returnValue(Promise.reject(error))
+      slotServiceSpy.init.and.returnValue(Promise.reject(error))
+      spyOn(console, 'error')
+
+      fixture = TestBed.createComponent(OneCXUserRolesPermissionsComponent)
+      component = fixture.componentInstance
+      component.ocxInitRemoteComponent({
+        appId: 'appId',
+        productName: 'prodName',
+        permissions: ['permission'],
+        baseUrl: 'base_url'
+      } as RemoteComponentConfig)
+
+      await Promise.resolve()
+
+      expect(console.error).toHaveBeenCalledWith(error)
+      expect(console.error).toHaveBeenCalledTimes(2)
     })
   })
 

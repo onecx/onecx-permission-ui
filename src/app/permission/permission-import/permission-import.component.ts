@@ -79,38 +79,42 @@ export class PermissionImportComponent {
 
   @ViewChild(FileUpload) fileUploader: FileUpload | undefined
 
-  public onImportFileSelect(event: FileSelectEvent): void {
+  public async onImportFileSelect(event: FileSelectEvent): Promise<void> {
     this.importError = undefined
-    event.files[0].text().then((text) => {
-      try {
-        this.importSnapshot = JSON.parse(text)
-        if (!this.isAssignmentSnapshot(this.importSnapshot)) {
-          console.error('Assignment Import Error: not valid data ')
-          this.importError = {
-            name: 'Invalid data',
-            ok: false,
-            status: 400,
-            statusText: 'Invalid data',
-            message: '',
-            error: { errorCode: 'CONTENT' },
-            exceptionKey: 'VALIDATION.ERRORS.IMPORT_CONTENT_ERROR'
-          }
-        }
-      } catch (err) {
-        console.error('Assignment Import Error: parse error', err)
+
+    try {
+      const text = await event.files[0].text()
+      this.importSnapshot = JSON.parse(text)
+
+      if (!this.isAssignmentSnapshot(this.importSnapshot)) {
         this.importError = {
-          name: 'Parse error',
+          name: 'Invalid data',
           ok: false,
           status: 400,
-          statusText: 'Parser error',
+          statusText: 'Invalid data',
           message: '',
-          error: { errorCode: 'PARSER', detail: err instanceof Error ? err.message : String(err) },
-          exceptionKey: 'VALIDATION.ERRORS.IMPORT_GENERAL_ERROR'
+          error: { errorCode: 'CONTENT' },
+          exceptionKey: 'VALIDATION.ERRORS.IMPORT_CONTENT_ERROR'
         }
-      } finally {
-        this.cdr.detectChanges()
       }
-    })
+    } catch (err) {
+      console.error('Assignment Import Error', err)
+
+      this.importError = {
+        name: 'Parse error',
+        ok: false,
+        status: 400,
+        statusText: 'Parser error',
+        message: '',
+        error: {
+          errorCode: 'PARSER',
+          detail: err instanceof Error ? err.message : String(err)
+        },
+        exceptionKey: 'VALIDATION.ERRORS.IMPORT_GENERAL_ERROR'
+      }
+    } finally {
+      this.cdr.detectChanges()
+    }
   }
 
   public onImportConfirmation(): void {

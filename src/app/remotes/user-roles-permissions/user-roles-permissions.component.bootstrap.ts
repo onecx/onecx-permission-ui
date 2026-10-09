@@ -45,4 +45,4 @@ bootstrapRemoteComponent(
     importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
     provideThemeConfig()
   ]
-)
+).catch((err) => console.error(err))

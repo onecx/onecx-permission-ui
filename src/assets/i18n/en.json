@@ -120,6 +120,10 @@
         "CLEAR": "Clear Filter",
         "MODE_CONTAINS": "Filter value is contained",
         "MODE_NOT_CONTAINS": "Filter value is NOT contained"
+      },
+      "RESET_BUTTON": {
+        "ARIA_LABEL": "Reset search criteria and results",
+        "TOOLTIP": "Reset search criteria and results"
       }
     },
     "VIEW": {

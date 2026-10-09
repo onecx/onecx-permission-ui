@@ -59,7 +59,8 @@ export class RoleIdmComponent implements OnInit, OnChanges {
   ) {}
 
   public ngOnInit(): void {
-    slotInitializer(this.slotService)()
+    const slotInitPromise = slotInitializer(this.slotService)()
+    slotInitPromise?.catch((err) => console.error(err))
   }
 
   public ngOnChanges(): void {
