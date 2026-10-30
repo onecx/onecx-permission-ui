@@ -861,8 +861,6 @@ describe('AppSearchComponent', () => {
       let items: any = []
       component.quickFilterItems$!.subscribe((data) => (items = data))
 
-      items[0].value
-
       expect(items[0].value).toEqual('ALL')
     })
 
@@ -871,8 +869,6 @@ describe('AppSearchComponent', () => {
 
       let items: any = []
       component.appTypeItems$!.subscribe((data) => (items = data))
-
-      items[0].value
 
       expect(items[0].value).toEqual('ALL')
     })
