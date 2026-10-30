@@ -1533,8 +1533,6 @@ describe('AppDetailComponent', () => {
       let items: any = []
       component.quickFilterItems$!.subscribe((data) => (items = data))
 
-      items[0].value
-
       expect(items[0].value).toEqual('ALL')
     })
   })
