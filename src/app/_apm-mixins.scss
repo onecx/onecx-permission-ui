@@ -9,7 +9,7 @@
     &.p-floatlabel-over {
       &:has(.p-filled) label,
       &:has(.p-focus) label {
-        top: -5px !important;
+        top: -5px;
         background-color: white;
         padding: 0 0.5rem;
       }
@@ -107,7 +107,7 @@
     .card-badge-left {
       display: inline-block;
       position: absolute;
-      padding: 4px !important;
+      padding: 4px;
       &.badge-1 {
         top: 3px;
       }
@@ -207,7 +207,7 @@
       }
       &.p-inputtext:hover,
       &.p-select:hover {
-        border-color: rgb(0 0 0 / 30%) !important;
+        border-color: rgb(0 0 0 / 30%);
       }
     }
   }
@@ -219,7 +219,7 @@
     .p-fileupload {
       .p-fileupload-buttonbar,
       .p-fileupload-content {
-        background-color: var(--surface-100) !important;
+        background-color: var(--surface-100);
       }
       .p-fileupload-content {
         padding: 0.5rem;
@@ -293,12 +293,12 @@
     }
     /* correct header layouting by lib */
     .table-header-wrapper {
-      flex-direction: row !important;
-      justify-content: flex-start !important;
-      flex-wrap: nowrap !important;
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
     }
     .table-header-wrapper span:first-child {
-      margin-right: 10px !important;
+      margin-right: 10px;
     }
   }
 }
@@ -392,7 +392,7 @@
       button[icon='pi pi-angle-double-right'],
       button:nth-child(2),
       button:nth-child(4) {
-        display: none !important;
+        display: none;
       }
     }
   }
@@ -466,13 +466,13 @@
     button.p-button.inline-button {
       &.p-button-icon-only {
         padding: 0.5rem;
-        width: 2rem !important;
+        width: 2rem;
       }
       &.p-button-rounded {
-        height: 2rem !important;
+        height: 2rem;
       }
       &:disabled {
-        opacity: 0.38 !important;
+        opacity: 0.38;
       }
     }
   }
@@ -491,22 +491,22 @@
     /* responsive table result view */
     @media screen and (min-width: 576px) {
       .sm\:table-cell {
-        display: table-cell !important;
+        display: table-cell;
       }
     }
     @media screen and (min-width: 768px) {
       .md\:table-cell {
-        display: table-cell !important;
+        display: table-cell;
       }
     }
     @media screen and (min-width: 992px) {
       .lg\:table-cell {
-        display: table-cell !important;
+        display: table-cell;
       }
     }
     @media screen and (min-width: 1200px) {
       .xl\:table-cell {
-        display: table-cell !important;
+        display: table-cell;
       }
     }
   }
