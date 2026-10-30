@@ -376,7 +376,12 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.productApps = []
     this.loadingApp = true
     this.exceptionKey = undefined
-    this.urlParamAppType === 'WORKSPACE' ? this.loadWorkspaceDetails() : this.loadProductDetails()
+
+    if (this.urlParamAppType === 'WORKSPACE') {
+      this.loadWorkspaceDetails()
+    } else {
+      this.loadProductDetails()
+    }
   }
 
   private loadProductDetails() {

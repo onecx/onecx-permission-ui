@@ -16,12 +16,12 @@
   // Fix hover color
   #apm_app_detail_permission_table_filter_clear > button {
     &:not(:disabled):hover {
-      background: var(--onecx-permission-onecx-permission-ui-button-primary-hover-background) !important;
+      background: var(--onecx-permission-onecx-permission-ui-button-primary-hover-background);
     }
   }
 
   .button-letter-icon {
-    padding: 1px 4px !important;
+    padding: 1px 4px;
   }
 
   .p-select {
