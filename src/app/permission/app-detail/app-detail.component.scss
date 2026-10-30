@@ -13,6 +13,8 @@
 @include listbox-zebra-rows;
 
 :host ::ng-deep {
+  --onecx-permission-onecx-permission-ui-togglebutton-content-padding: 0.25rem 0.5rem;
+
   // Fix hover color
   #apm_app_detail_permission_table_filter_clear > button {
     &:not(:disabled):hover {

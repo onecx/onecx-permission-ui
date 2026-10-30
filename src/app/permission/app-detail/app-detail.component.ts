@@ -127,7 +127,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public filterValue: string | undefined
   public filterMode: string
   public FilterMatchMode = FilterMatchMode
-  public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'VIEW' | 'OTHERS' = 'ALL'
+  public quickFilterValue: 'ALL' | 'DELETE' | 'EDIT' | 'SEARCH' | 'VIEW' | 'OTHERS' = 'ALL'
   public quickFilterItems$: Observable<SelectItem[]> | undefined
   // filter: permission
   public filterProductItems!: SelectItem[]
@@ -263,6 +263,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         'DIALOG.DETAIL.QUICK_FILTER.DELETE',
         'DIALOG.DETAIL.QUICK_FILTER.EDIT',
         'DIALOG.DETAIL.QUICK_FILTER.READ',
+        'DIALOG.DETAIL.QUICK_FILTER.SEARCH',
         'DIALOG.DETAIL.QUICK_FILTER.VIEW',
         'DIALOG.DETAIL.QUICK_FILTER.WRITE'
       ])
@@ -273,6 +274,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
             { label: data['DIALOG.DETAIL.QUICK_FILTER.DELETE'], value: 'DELETE' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.EDIT'], value: 'EDIT' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.READ'], value: 'READ' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.SEARCH'], value: 'SEARCH' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.VIEW'], value: 'VIEW' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.WRITE'], value: 'WRITE' }
           ]
