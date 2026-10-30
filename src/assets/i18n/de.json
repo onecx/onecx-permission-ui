@@ -201,6 +201,7 @@
         "EDIT": "EDIT",
         "DELETE": "DELETE",
         "READ": "READ",
+        "SEARCH": "SEARCH",
         "WRITE": "WRITE",
         "OTHERS": "OTHERS"
       },

@@ -65,6 +65,7 @@ describe('RoleIdmComponent', () => {
   afterEach(() => {
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
+    slotServiceSpy.init.and.returnValue(undefined)
     slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     roleApiSpy.createRole.calls.reset()
   })
