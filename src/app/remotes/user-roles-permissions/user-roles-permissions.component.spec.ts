@@ -108,8 +108,10 @@ describe('OneCXUserRolesPermissionsComponent', () => {
   afterEach(() => {
     // to spy data: reset
     slotServiceSpy.init.calls.reset()
+    slotServiceSpy.init.and.returnValue(undefined)
     slotServiceSpy.isSomeComponentDefinedForSlot.calls.reset()
     appConfigServiceSpy.init.calls.reset()
+    appConfigServiceSpy.init.and.returnValue(undefined)
     userApiSpy.getUserAssignments.calls.reset()
     userApiSpy.getTokenRoles.calls.reset()
     assApiSpy.searchUserAssignments.calls.reset()
