@@ -57,7 +57,12 @@
   <ocx-content class="ocx-content">
     @if (exceptionKey) {
       <div class="flex flex-wrap justify-content-between align-items-center">
-        <p-message id="apm_app_search_exception" severity="error" [text]="exceptionKey | translate"></p-message>
+        <p-message
+          id="apm_app_search_exception"
+          styleClass="w-fit"
+          severity="error"
+          [text]="exceptionKey | translate"
+        ></p-message>
         <p-button
           id="apm_app_search_action_reload"
           icon="pi pi-refresh"
@@ -69,7 +74,12 @@
         ></p-button>
       </div>
     } @else if (loading) {
-      <p-message id="apm_app_search_loading" severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
+      <p-message
+        id="apm_app_search_loading"
+        styleClass="m-3 w-fit"
+        severity="info"
+        [text]="'ACTIONS.LOADING' | translate"
+      ></p-message>
     } @else {
       <section
         [attr.aria-label]="

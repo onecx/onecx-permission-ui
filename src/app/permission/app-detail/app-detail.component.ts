@@ -260,6 +260,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
     this.quickFilterItems$ = this.translate
       .get([
         'DIALOG.DETAIL.QUICK_FILTER.ALL',
+        'DIALOG.DETAIL.QUICK_FILTER.CREATE',
         'DIALOG.DETAIL.QUICK_FILTER.DELETE',
         'DIALOG.DETAIL.QUICK_FILTER.EDIT',
         'DIALOG.DETAIL.QUICK_FILTER.READ',
@@ -271,6 +272,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
         map((data) => {
           return [
             { label: data['DIALOG.DETAIL.QUICK_FILTER.ALL'], value: 'ALL' },
+            { label: data['DIALOG.DETAIL.QUICK_FILTER.CREATE'], value: 'CREATE' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.DELETE'], value: 'DELETE' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.EDIT'], value: 'EDIT' },
             { label: data['DIALOG.DETAIL.QUICK_FILTER.READ'], value: 'READ' },
