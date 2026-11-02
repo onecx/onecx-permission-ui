@@ -11,9 +11,19 @@
   </div>
 }
 @if (loading) {
-  <p-message id="apm_user_assignments_loading" severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
+  <p-message
+    id="apm_user_assignments_loading"
+    styleClass="m-1 w-fit"
+    severity="info"
+    [text]="'ACTIONS.LOADING' | translate"
+  ></p-message>
 } @else if (exceptionKey) {
-  <p-message id="apm_user_assignments_exception" severity="error" [text]="exceptionKey | translate"></p-message>
+  <p-message
+    id="apm_user_assignments_exception"
+    styleClass="m-1 w-fit"
+    severity="error"
+    [text]="exceptionKey | translate"
+  ></p-message>
 } @else {
   <p-tabs (valueChange)="onTabChange($event, items)" value="0">
     <p-tablist>
