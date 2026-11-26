@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import FileSaver from 'file-saver'
@@ -21,17 +21,15 @@ import { Utils } from 'src/app/shared/utils'
   templateUrl: './permission-export.component.html'
 })
 export class PermissionExportComponent {
+  private readonly assgnmtApi = inject(AssignmentAPIService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() products: string[] = []
   @Input() listedProductsHeaderKey = ''
   @Input() displayExportDialog = false
   @Output() displayExportDialogChange = new EventEmitter<boolean>()
 
   public selectedProductNames: string[] = []
-
-  constructor(
-    private readonly assgnmtApi: AssignmentAPIService,
-    private readonly msgService: PortalMessageService
-  ) {}
 
   public onExportConfirmation(): void {
     if (this.selectedProductNames.length > 0) {

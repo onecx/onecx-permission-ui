@@ -1,20 +1,20 @@
 import { DoBootstrap, Injector, NgModule, inject, provideAppInitializer } from '@angular/core'
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
-import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
+import { provideTranslateService, provideTranslateLoader, provideMissingTranslationHandler } from '@ngx-translate/core'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import {
-  createTranslateLoader,
   MultiLanguageMissingTranslationHandler,
+  OnecxTranslateLoader,
   PortalApiConfiguration,
-  provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
+import { provideThemeConfig } from '@onecx/angular-utils/theme/primeng'
 import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
-import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 
 import { Configuration } from './shared/generated'
 import { LabelResolver } from './shared/label.resolver'
@@ -37,19 +37,7 @@ const routes: Routes = [
     AngularAcceleratorModule,
     AngularAuthModule,
     BrowserAnimationsModule,
-    RouterModule.forRoot(routes),
-    TranslateModule.forRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      },
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: MultiLanguageMissingTranslationHandler
-      }
-    })
+    RouterModule.forRoot(routes)
   ],
   providers: [
     LabelResolver,
@@ -58,6 +46,11 @@ const routes: Routes = [
     provideAppInitializer(() => {
       const initializerFn = initializeRouter(inject(Router), inject(AppStateService))
       return initializerFn()
+    }),
+    provideTranslateService({
+      defaultLanguage: 'en',
+      loader: provideTranslateLoader(OnecxTranslateLoader),
+      missingTranslationHandler: provideMissingTranslationHandler(MultiLanguageMissingTranslationHandler)
     }),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi()),

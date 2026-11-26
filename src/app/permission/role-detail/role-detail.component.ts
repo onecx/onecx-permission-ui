@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy, inject } from '@angular/core'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
@@ -29,6 +29,10 @@ import type { App, ChangeMode } from 'src/app/permission/app-detail/app-detail.c
   styleUrl: './role-detail.component.scss'
 })
 export class RoleDetailComponent implements OnChanges {
+  private readonly roleApi = inject(RoleAPIService)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() currentApp!: App
   @Input() role: Role | undefined
   @Input() roles: Role[] = []
@@ -38,11 +42,7 @@ export class RoleDetailComponent implements OnChanges {
 
   public formGroup: FormGroup
 
-  constructor(
-    private readonly roleApi: RoleAPIService,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService
-  ) {
+  constructor() {
     this.formGroup = new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),

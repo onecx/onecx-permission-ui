@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core'
 import { AsyncPipe } from '@angular/common'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -79,6 +79,12 @@ export type AppFilterType = 'ALL' | AppType
   styleUrl: './app-search.component.scss'
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
+  private readonly appApi = inject(ApplicationAPIService)
+  private readonly route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
+  private readonly translate = inject(TranslateService)
+  private readonly workspaceApi = inject(WorkspaceAPIService)
+
   private readonly destroy$ = new Subject()
   // data
   public apps$!: Observable<(App & RowListGridData)[]>
@@ -112,13 +118,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     { columnType: ColumnType.STRING, id: 'appId', nameKey: '' }
   ]
 
-  constructor(
-    private readonly appApi: ApplicationAPIService,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly translate: TranslateService,
-    private readonly workspaceApi: WorkspaceAPIService
-  ) {
+  constructor() {
     // search criteria
     this.appSearchCriteria = new FormGroup<AppSearchCriteria>({
       appId: new FormControl<string | null>(null),

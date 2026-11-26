@@ -1,14 +1,19 @@
 import { NgModule } from '@angular/core'
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes } from '@angular/router'
-import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { provideTranslateService, provideTranslateLoader, provideMissingTranslationHandler } from '@ngx-translate/core'
 
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { APP_CONFIG } from '@onecx/angular-integration-interface'
-import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { StandaloneShellModule, provideStandaloneProviders } from '@onecx/angular-standalone-shell'
-import { createTranslateLoader, provideThemeConfig, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import {
+  MultiLanguageMissingTranslationHandler,
+  OnecxTranslateLoader,
+  provideTranslationPathFromMeta
+} from '@onecx/angular-utils'
+import { provideThemeConfig } from '@onecx/angular-utils/theme/primeng'
 
 import { environment } from 'src/environments/environment'
 import { AppComponent } from './app.component'
@@ -29,23 +34,19 @@ const routes: Routes = [
       initialNavigation: 'enabledBlocking',
       enableTracing: true
     }),
-    StandaloneShellModule,
-    TranslateModule.forRoot({
-      isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: AngularAcceleratorMissingTranslationHandler
-      }
-    })
+    StandaloneShellModule
   ],
   providers: [
     { provide: APP_CONFIG, useValue: environment },
+    provideTranslateService({
+      defaultLanguage: 'en',
+      loader: provideTranslateLoader(OnecxTranslateLoader),
+      missingTranslationHandler: provideMissingTranslationHandler(MultiLanguageMissingTranslationHandler)
+    }),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi()),
     provideStandaloneProviders(),
-    provideThemeConfig(),
-    provideAnimations()
+    provideThemeConfig()
   ]
 })
 export class AppModule {}

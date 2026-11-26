@@ -36,6 +36,10 @@ export type IDMRole = { name?: string } // replica from a IAM role
   styleUrl: './role-idm.component.scss'
 })
 export class RoleIdmComponent implements OnInit, OnChanges {
+  private readonly roleApi = inject(RoleAPIService)
+  private readonly msgService = inject(PortalMessageService)
+  private readonly slotService = inject(SlotService)
+
   @Input() roles: Role[] = []
   @Input() visible = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
@@ -51,12 +55,6 @@ export class RoleIdmComponent implements OnInit, OnChanges {
   public isComponentDefined = false
   public slotName = 'onecx-permission-iam-user-roles'
   public roleListEmitter = new EventEmitter<IDMRole[]>()
-
-  constructor(
-    private readonly roleApi: RoleAPIService,
-    private readonly msgService: PortalMessageService,
-    private readonly slotService: SlotService
-  ) {}
 
   public ngOnInit(): void {
     const slotInitPromise = slotInitializer(this.slotService)()

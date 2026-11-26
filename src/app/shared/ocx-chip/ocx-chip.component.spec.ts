@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { OcxChipComponent } from './ocx-chip.component'
 
@@ -9,14 +9,13 @@ describe('OcxChipComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        OcxChipComponent,
-        TranslateTestingModule.withTranslations({
+      imports: [OcxChipComponent],
+      providers: [
+        provideTranslateTestingService({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
-      providers: []
+        })
+      ]
     }).compileComponents()
   }))
 

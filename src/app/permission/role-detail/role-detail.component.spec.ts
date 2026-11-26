@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { Role, RoleAPIService } from 'src/app/shared/generated'
 import { RoleDetailComponent } from './role-detail.component'
@@ -40,14 +40,16 @@ describe('RoleDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RoleDetailComponent,
-        TranslateTestingModule.withTranslations({
+      imports: [RoleDetailComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideTranslateTestingService({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
-      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
+        }),
+        { provide: UserService, useValue: mockUserService }
+      ]
     })
       .overrideComponent(RoleDetailComponent, {
         add: {

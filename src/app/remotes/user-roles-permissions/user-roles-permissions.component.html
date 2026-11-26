@@ -25,7 +25,7 @@
     [text]="exceptionKey | translate"
   ></p-message>
 } @else {
-  <p-tabs (valueChange)="onTabChange($event, items)" value="0">
+  <p-tabs (valueChange)="onTabChange($event ?? 0, items)" value="0">
     <p-tablist>
       <p-tab
         value="0"
@@ -72,7 +72,6 @@
             [styleClass]="'p-datatable-striped pb-2' + (!userId ? ' px-2 sm:px-3' : '')"
             [tableStyle]="{ 'text-align': 'center' }"
             [scrollable]="true"
-            [autoLayout]="true"
             [globalFilterFields]="['role', 'action', 'resource', 'productName']"
             [rows]="100"
             [rowsPerPageOptions]="[100, 500, 1000]"
@@ -179,7 +178,6 @@
                             styleClass="min-w-10rem"
                             (onChange)="permissionTable.filter($event.value, col.field, 'equals')"
                             [showClear]="true"
-                            [autoDisplayFirst]="false"
                             [emptyMessage]="'USER_PERMISSIONS.NO_RESULTS' | translate"
                             [options]="getListboxOptionsCache(items, col.field)"
                             [ariaLabel]="col.tooltipKey | translate"

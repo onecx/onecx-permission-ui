@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges, ChangeDetectionStrategy, inject } from '@angular/core'
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -39,6 +39,10 @@ import type { App, ChangeMode, PermissionViewRow } from 'src/app/permission/app-
   styleUrl: './permission-detail.component.scss'
 })
 export class PermissionDetailComponent implements OnChanges {
+  private readonly permApi = inject(PermissionAPIService)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() currentApp!: App
   @Input() permission: PermissionViewRow | undefined
   @Input() permissions: Permission[] = []
@@ -48,11 +52,7 @@ export class PermissionDetailComponent implements OnChanges {
 
   public formGroup: FormGroup
 
-  constructor(
-    private readonly permApi: PermissionAPIService,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService
-  ) {
+  constructor() {
     this.formGroup = new FormGroup({
       appId: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
       productName: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),

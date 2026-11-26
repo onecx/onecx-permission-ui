@@ -4,13 +4,13 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRouteSnapshot, ActivatedRoute, ParamMap, provideRouter } from '@angular/router'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { FilterMatchMode } from 'primeng/api'
 import { Table } from 'primeng/table'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { providePermissionService } from '@onecx/angular-utils'
 
 import {
@@ -168,19 +168,17 @@ describe('AppDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        AppDetailComponent,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
+      imports: [AppDetailComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
         providePermissionService(),
         provideRouter([{ path: '', component: AppDetailComponent }]),
+        provideTranslateTestingService({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }),
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: Location, useValue: locationSpy }
       ]

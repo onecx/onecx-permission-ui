@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core'
 import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
@@ -106,6 +106,17 @@ export type PermissionRole = Role & { isWorkspaceRole?: boolean; hasAssignments?
   styleUrl: './app-detail.component.scss'
 })
 export class AppDetailComponent implements OnInit, OnDestroy {
+  private readonly appApi = inject(ApplicationAPIService)
+  private readonly assApi = inject(AssignmentAPIService)
+  private readonly permApi = inject(PermissionAPIService)
+  private readonly roleApi = inject(RoleAPIService)
+  private readonly workspaceApi = inject(WorkspaceAPIService)
+  private readonly route = inject(ActivatedRoute)
+  private readonly location = inject(Location)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+  private readonly userService = inject(UserService)
+
   @ViewChild('permissionTable') permissionTable: Table | undefined
   @ViewChild('permissionNameFilter') permissionNameFilter: ElementRef | undefined
   @ViewChild('filterProduct') filterProduct: ElementRef | undefined
@@ -172,18 +183,7 @@ export class AppDetailComponent implements OnInit, OnDestroy {
   public displayIdmRolesDialog = false
   public showRoleTools = false
 
-  constructor(
-    private readonly appApi: ApplicationAPIService,
-    private readonly assApi: AssignmentAPIService,
-    private readonly permApi: PermissionAPIService,
-    private readonly roleApi: RoleAPIService,
-    private readonly workspaceApi: WorkspaceAPIService,
-    private readonly route: ActivatedRoute,
-    private readonly location: Location,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
-    private readonly userService: UserService
-  ) {
+  constructor() {
     this.urlParamAppId = this.route.snapshot.paramMap.get('appId')
     this.urlParamAppType = this.route.snapshot.paramMap.get('appType')?.toUpperCase()
     this.dateFormat = this.userService.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'medium'

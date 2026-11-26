@@ -63,6 +63,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "extractLicenses": false,
               "extraWebpackConfig": "webpack.prod.config.js"
             }
           },

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 
 import { ButtonModule } from 'primeng/button'
@@ -20,14 +20,12 @@ import { PermissionRole } from 'src/app/permission/app-detail/app-detail.compone
   styleUrl: './role-delete.component.scss'
 })
 export class RoleDeleteComponent {
+  private readonly roleApi = inject(RoleAPIService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() role: PermissionRole | undefined
   @Input() visible = false
   @Output() dataChanged: EventEmitter<boolean> = new EventEmitter()
-
-  constructor(
-    private readonly roleApi: RoleAPIService,
-    private readonly msgService: PortalMessageService
-  ) {}
 
   public onDeleteConfirmation(): void {
     if (!this.role?.id) return

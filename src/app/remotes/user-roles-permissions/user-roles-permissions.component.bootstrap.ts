@@ -1,20 +1,20 @@
 import { importProvidersFrom } from '@angular/core'
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { MissingTranslationHandler, TranslateLoader } from '@ngx-translate/core'
+import { provideTranslateService, provideTranslateLoader, provideMissingTranslationHandler } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
 
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
-import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
-import { AngularAcceleratorModule, AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import {
+  MultiLanguageMissingTranslationHandler,
+  OnecxTranslateLoader,
+  provideTranslationPathFromMeta,
   REMOTE_COMPONENT_CONFIG,
-  RemoteComponentConfig,
-  createTranslateLoader,
-  provideThemeConfig,
-  provideTranslationPathFromMeta
+  RemoteComponentConfig
 } from '@onecx/angular-utils'
+import { provideThemeConfig } from '@onecx/angular-utils/theme/primeng'
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 
 import { environment } from 'src/environments/environment'
 import { OneCXUserRolesPermissionsComponent } from './user-roles-permissions.component'
@@ -30,17 +30,10 @@ bootstrapRemoteComponent(
       useValue: new ReplaySubject<RemoteComponentConfig>(1)
     },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      },
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: AngularAcceleratorMissingTranslationHandler
-      }
+    provideTranslateService({
+      defaultLanguage: 'en',
+      loader: provideTranslateLoader(OnecxTranslateLoader),
+      missingTranslationHandler: provideMissingTranslationHandler(MultiLanguageMissingTranslationHandler)
     }),
     importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
     provideThemeConfig()

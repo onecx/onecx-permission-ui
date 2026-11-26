@@ -2,10 +2,10 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { Permission, PermissionAPIService } from 'src/app/shared/generated'
 import { PermissionDetailComponent } from './permission-detail.component'
@@ -61,14 +61,16 @@ describe('PermissionDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        PermissionDetailComponent,
-        TranslateTestingModule.withTranslations({
+      imports: [PermissionDetailComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideTranslateTestingService({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
-      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
+        }),
+        { provide: UserService, useValue: mockUserService }
+      ]
     })
       .overrideComponent(PermissionDetailComponent, {
         add: {

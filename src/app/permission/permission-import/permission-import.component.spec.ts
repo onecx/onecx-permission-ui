@@ -2,12 +2,11 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { FileSelectEvent } from 'primeng/fileupload'
 import { of, throwError } from 'rxjs'
 
-import { FileSelectEvent } from 'primeng/fileupload'
-
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { AssignmentAPIService } from 'src/app/shared/generated'
 import { ImportError, PermissionImportComponent, AssignmentSnapshot } from './permission-import.component'
@@ -40,14 +39,16 @@ describe('PermissionImportComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        PermissionImportComponent,
-        TranslateTestingModule.withTranslations({
+      imports: [PermissionImportComponent],
+      providers: [
+        provideHttpClientTesting(),
+        provideHttpClient(),
+        provideNoopAnimations(),
+        provideTranslateTestingService({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
-      providers: [provideHttpClientTesting(), provideHttpClient(), provideNoopAnimations()]
+        })
+      ]
     })
       .overrideComponent(PermissionImportComponent, {
         add: {

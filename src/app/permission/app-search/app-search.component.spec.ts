@@ -3,11 +3,11 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router } from '@angular/router'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { DataSortDirection, FilterType, RowListGridData } from '@onecx/angular-accelerator'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { providePermissionService } from '@onecx/angular-utils'
 
 import {
@@ -74,19 +74,17 @@ describe('AppSearchComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        AppSearchComponent,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
+      imports: [AppSearchComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
         providePermissionService(),
         provideRouter([{ path: '', component: AppSearchComponent }]),
+        provideTranslateTestingService({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }),
         { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
     })

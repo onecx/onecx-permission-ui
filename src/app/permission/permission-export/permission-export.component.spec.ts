@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { AssignmentAPIService } from 'src/app/shared/generated'
 import { PermissionExportComponent } from './permission-export.component'
@@ -23,14 +23,16 @@ describe('PermissionExportComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        PermissionExportComponent,
-        TranslateTestingModule.withTranslations({
+      imports: [PermissionExportComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideNoopAnimations(),
+        provideTranslateTestingService({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideNoopAnimations()]
+        })
+      ]
     })
       .overrideComponent(PermissionExportComponent, {
         set: {

@@ -3,13 +3,13 @@ import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, ReplaySubject, throwError } from 'rxjs'
 
 import { Table } from 'primeng/table'
 
 import { SlotService } from '@onecx/angular-remote-components'
 import { AppConfigService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { providePermissionService, REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AssignmentAPIService, UserAPIService, UserAssignment } from 'src/app/shared/generated'
@@ -75,18 +75,15 @@ describe('OneCXUserRolesPermissionsComponent', () => {
     baseUrlSubject = new ReplaySubject<any>(1)
 
     TestBed.configureTestingModule({
-      declarations: [],
-      imports: [
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
         providePermissionService(),
+        provideTranslateTestingService({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }),
         { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: SlotService, useValue: slotServiceSpy },
         { provide: AppConfigService, useValue: appConfigServiceSpy },

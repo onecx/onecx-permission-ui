@@ -66,6 +66,7 @@ export default defineConfig([
         }
       ],
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-deprecated': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@angular-eslint/directive-selector': [
         'error',

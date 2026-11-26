@@ -2,11 +2,11 @@ import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angul
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { SlotService } from '@onecx/angular-remote-components'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { SlotService } from '@onecx/angular-remote-components'
 
 import { Role, RoleAPIService } from 'src/app/shared/generated'
 import { IDMRole, RoleIdmComponent, slotInitializer } from './role-idm.component'
@@ -31,17 +31,15 @@ describe('RoleIdmComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RoleIdmComponent,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
+      imports: [RoleIdmComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
+        provideTranslateTestingService({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }),
         { provide: SlotService, useValue: slotServiceSpy }
       ]
     })

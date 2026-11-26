@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const { ModifyEntryPlugin } = require('@angular-architects/module-federation/src/utils/modify-entry-plugin')
 const { share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack')
 const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')
@@ -75,7 +76,14 @@ const modifyMaterialPlugin = new ModifySourcePlugin({
 
 module.exports = {
   ...config,
-  plugins: [...plugins, modifyPrimeNgPlugin, modifyMaterialPlugin],
+  plugins: [
+    ...plugins,
+    modifyPrimeNgPlugin,
+    modifyMaterialPlugin,
+    new webpack.DefinePlugin({
+      ngDevMode: true
+    })
+  ],
   module: { parser: { javascript: { importMeta: false } } },
   output: { uniqueName: 'onecx-permission-ui', publicPath: 'auto' },
   experiments: { ...config.experiments, topLevelAwait: true },

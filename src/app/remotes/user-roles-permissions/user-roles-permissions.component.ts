@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, Inject, Input, OnChanges, OnDestroy } from '@angular/core'
+import { Component, DestroyRef, EventEmitter, inject, Input, OnChanges, OnDestroy } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -78,6 +78,14 @@ type ExtendedColumn = {
 export class OneCXUserRolesPermissionsComponent
   implements ocxRemoteComponent, ocxRemoteWebcomponent, OnChanges, OnDestroy
 {
+  private readonly remoteComponentConfig = inject<ReplaySubject<RemoteComponentConfig>>(REMOTE_COMPONENT_CONFIG)
+  private readonly appConfigService = inject(AppConfigService)
+  private readonly slotService = inject(SlotService)
+  private readonly translateService = inject(TranslateService)
+  private readonly userService = inject(UserService)
+  private readonly userApi = inject(UserAPIService)
+  private readonly assgnmtApi = inject(AssignmentAPIService)
+
   @Input() public userId: string | undefined = undefined // userId is set on admin mode
   @Input() public issuer: string | undefined = undefined // issuer is set on admin mode
   @Input() public displayName: string | undefined = undefined
@@ -113,16 +121,7 @@ export class OneCXUserRolesPermissionsComponent
     action: new WeakMap<UserAssignment[], string[]>()
   }
 
-  constructor(
-    @Inject(REMOTE_COMPONENT_CONFIG)
-    private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
-    private readonly appConfigService: AppConfigService,
-    private readonly slotService: SlotService,
-    private readonly translateService: TranslateService,
-    private readonly userService: UserService,
-    private readonly userApi: UserAPIService,
-    private readonly assgnmtApi: AssignmentAPIService
-  ) {
+  constructor() {
     this.userService.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
       this.translateService.use(lang)
     })
